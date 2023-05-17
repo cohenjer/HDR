@@ -22,8 +22,13 @@ This page shows off a notebook written in MyST Markdown.
 
 With MyST Markdown, you can define code cells with a directive like so:
 
-```{code-cell}
+```{code-cell} ipython3
 print(2 + 2)
+def test(a):
+  """
+  this is a test of the syntax color highlighting. Neat.
+  """
+  return a+1
 ```
 
 When your book is built, the contents of any `{code-cell}` blocks will be
