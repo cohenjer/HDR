@@ -1,4 +1,17 @@
-jupyter-book
-jupyter
+# For the code
 matplotlib
 numpy
+plotly
+
+# custom libraries
+./tensorly_hdr
+
+# correct branch of tensorly
+tensorly @ git+https://github.com/cohenjer/tensorly@tensorly_HDR
+
+# For building the book
+sphinx
+sphinx-proof
+jupyter-book
+jupyter
+jupytext
