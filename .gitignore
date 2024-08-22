@@ -1,2 +1,3 @@
 _build/
 tensorly_hdr/build
+.vscode

@@ -1,5 +1,6 @@
 # For conda and mamba, requirements.txt contains pip installed packages
 # A voir si ca marche bien avec binder, pour l'instant ca build mais ca launch pas.
+# disabled pour le moment
 
 name: hdr_auto
 channels:
