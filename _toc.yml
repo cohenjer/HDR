@@ -4,6 +4,14 @@
 format: jb-book
 root: intro
 chapters:
-- file: chapter1/markdown
-- file: chapter2/notebooks
-- file: chapter2/markdown-notebooks
+  - file: intro/scratchpad
+  - file: chapter1/intro1
+    sections:
+    - file: chapter1/notations
+  - file: chapter2/intro2 
+    sections:
+    - file: chapter2/proco-als
+    - file: chapter2/DL_identifiability
+      sections:
+      - file: chapter2/DL_identifiability_code
+  - file: bibliography/biblio

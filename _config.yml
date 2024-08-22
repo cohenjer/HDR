@@ -8,7 +8,8 @@ logo: cube_on_dico_page.png
 # Force re-execution of notebooks on each build.
 # See https://jupyterbook.org/content/execute.html
 execute:
-  execute_notebooks: force
+  execute_notebooks: cache
+  allow_errors: true
 
 # Define the name of the latex output file for PDF builds
 latex:
@@ -18,6 +19,7 @@ latex:
 # Add a bibtex file so that we can create citations
 bibtex_bibfiles:
   - all_refs.bib #todo fuse with others
+  - HDR.bib
 
 # Information about where the book exists on the web
 repository:
@@ -34,3 +36,14 @@ repository:
 sphinx:
   config:
     mathjax_path: https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
+  extra_extensions:
+    - sphinx_proof
+
+# Use Hypothesis for book reviews
+html:
+  comments:
+    hypothesis: true
+
+# Make the cells runable online??
+launch_buttons:
+  thebe                  : true

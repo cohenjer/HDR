@@ -1,4 +1,6 @@
-# Welcome to your Jupyter Book
+# Manuscript Home
+
+LANDING PAGE AND ROOT OF ALL
 
 This is a small sample book to give you a feel for how book content is
 structured.
@@ -18,4 +20,9 @@ e = mc^2
 Check out the content pages bundled with this sample book to see more.
 
 ```{tableofcontents}
+```
+
+Status of executed notebooks
+
+```{nb-exec-table}
 ```

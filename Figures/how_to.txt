@@ -1,0 +1,4 @@
+Put any self-contained tikz figure here, then launch the fig_build script.
+The figure will be compiled and rendered in .pdf and .svg.
+
+The script scans the repo for .tex files, builds a one_figure.tex file to compile them and does the conversions.
