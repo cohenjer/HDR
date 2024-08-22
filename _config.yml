@@ -8,7 +8,7 @@ logo: cube_on_dico_page.png
 # Force re-execution of notebooks on each build.
 # See https://jupyterbook.org/content/execute.html
 execute:
-  execute_notebooks: cache
+  execute_notebooks: force # cache
   allow_errors: true
 
 # Define the name of the latex output file for PDF builds
@@ -39,13 +39,14 @@ sphinx:
   extra_extensions:
     - sphinx_proof
 
-# Use Hypothesis for book reviews
 html:
+  use_repository_button: true
+  # Use Hypothesis for book reviews
   comments:
     hypothesis: true
 
 # Make the cells runable online??
 launch_buttons:
-  thebe                  : true
-  notebook_interface: : "classic" # jupyterlab"  # or "classic"
+  thebe: true
+  notebook_interface: "classic" # jupyterlab"  # or "classic"
   binderhub_url: "https://mybinder.org"  # The URL for your BinderHub (e.g., https://mybinder.org)
