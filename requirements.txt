@@ -1,7 +1,7 @@
 # For the code
-matplotlib
-numpy
-plotly
+#matplotlib
+#numpy
+#plotly
 
 # custom libraries
 ./tensorly_hdr
@@ -10,8 +10,8 @@ plotly
 tensorly @ git+https://github.com/cohenjer/tensorly@tensorly_HDR
 
 # For building the book
-sphinx
+#sphinx
 sphinx-proof
-jupyter-book
-jupyter
-jupytext
+#jupyter-book
+#jupyter
+#jupytext

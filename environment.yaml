@@ -1,0 +1,19 @@
+# For conda and mamba, requirements.txt contains pip installed packages
+
+name: hdr_auto
+channels:
+  - conda-forge
+dependencies:
+  - python==3.11
+  - numpy
+  - matplotlib
+  - plotly
+  - pip
+  - sphinx
+  - jupyter
+  - jupyter-book
+  - jupytext
+  - pip:
+    - -r requirements.txt 
+
+
