@@ -50,7 +50,7 @@ points with spark $r$.
 
 This is maybe better understood with a visualisation. First, note that we may normalize the dictionary $D$ columnwise without loss of generality, because of scale invariance in the product $DB$. Therefore we may suppose that atoms live on the simplex. Furthermore, we can normalize the columns of $M$ with the $\ell_1$ norm, and it can be shown {cite}`gillisNonnegativeMatrixFactorization2020` that this amount to normalizing the columns of $B$ also by the $\ell_1$ norm. In other words, for an $r$-dimensional cDL problem, we can assume that the data points and the atoms are located on the $r-1$ dimensional simplex. This means we can visualize the case $r=3$ in two dimensions which is convenient. In the figures below, we set $k=2$, and the white circles and squares are two sets of correct dictionary atoms $D[:,i]$ that may be used to write the data point $M[:,i]$ (black dots) as a 2-sparse combination of these atoms.
 
-```{figure} ../Figures/ex1.*
+```{figure} ../../Figures/ex1.*
 ---
 width: 600px
 align: center
@@ -59,7 +59,7 @@ name: DL_identifiability_ex1
 Two points per facet.
 ```
 
-```{figure} ../Figures/ex3.*
+```{figure} ../../Figures/ex3.*
 ---
 width: 600px
 align: center
@@ -68,7 +68,7 @@ name: DL_identifiability_ex3
 Four points per facet.
 ```
 
-```{figure} ../Figures/ex2.*
+```{figure} ../../Figures/ex2.*
 ---
 width: 600px
 align: center

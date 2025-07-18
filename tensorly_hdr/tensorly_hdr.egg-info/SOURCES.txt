@@ -1,4 +1,8 @@
 setup.py
+tensorly_hdr/__init__.py
+tensorly_hdr/gradients.py
+tensorly_hdr/image_utils.py
+tensorly_hdr/sep_nmf.py
 tensorly_hdr.egg-info/PKG-INFO
 tensorly_hdr.egg-info/SOURCES.txt
 tensorly_hdr.egg-info/dependency_links.txt

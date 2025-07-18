@@ -3,15 +3,47 @@
 
 format: jb-book
 root: intro
-chapters:
-  - file: intro/scratchpad
-  - file: chapter1/intro1
-    sections:
-    - file: chapter1/notations
-  - file: chapter2/intro2 
-    sections:
-    - file: chapter2/proco-als
-    - file: chapter2/DL_identifiability
-      sections:
-      - file: chapter2/DL_identifiability_code
-  - file: bibliography/biblio
+defaults:  # The defaults key will be applied to all chapters and sub-sections
+  titlesonly: True
+parts:
+  - caption: How to use this book
+    chapters:
+      - file: intro/scratchpad
+      - file: bibliography/biblio
+  - caption: Introduction to rLRA
+    chapters:
+      - file: part1/intro1
+      - file: part1/notations
+      - file: part1/nnls
+  - caption: Theory, algorithms and applications of rLRA
+    chapters:
+      - file: part2/intro2 
+      - file: part2/Theory_of_rLRA/intro
+        sections:
+        - file: part2/Theory_of_rLRA/HRSI_theory
+          sections:
+          - file: part2/Theory_of_rLRA/HRSI_algorithm
+        - file: part2/Theory_of_rLRA/DL_identifiability
+          sections:
+          - file: part2/Theory_of_rLRA/DL_identifiability_code
+        - file: part2/Theory_of_rLRA/DLRA  
+          sections:
+          - file: part2/Theory_of_rLRA/onesparseDLRA
+          - file: part2/Theory_of_rLRA/MixedSparseCoding
+          - file: part2/Theory_of_rLRA/multiple_dictionaries
+        - file: part2/Theory_of_rLRA/sparse_nnls
+      - file: part2/Fast_algorithms_for_rLRA/intro
+        sections:
+        - file: part2/Fast_algorithms_for_rLRA/proco-als
+        - file: part2/Fast_algorithms_for_rLRA/mSOM
+        - file: part2/Fast_algorithms_for_rLRA/inertial_BCD
+        - file: part2/Fast_algorithms_for_rLRA/CMTF
+          sections:
+          - file: part2/Fast_algorithms_for_rLRA/NNParafac2
+          - file: part2/Fast_algorithms_for_rLRA/LinearCoupling
+        - file: part2/Fast_algorithms_for_rLRA/UnrolledNMF
+      - file: part2/Applications_of_rLRA/intro
+        sections:
+        - file: part2/Applications_of_rLRA/Spectral_unmixing
+        - file: part2/Applications_of_rLRA/AMT
+        - file: part2/Applications_of_rLRA/LCMS_GCMS

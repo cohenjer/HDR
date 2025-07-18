@@ -1,13 +1,30 @@
+# Note: packages can be duplicated from the _environment.yaml file, conda will install these packages first.
+# This allows installation by both conda+pip, and pip in standalone.
+# TODO: check julia install with pip only, should be handled by juliacall
+
 # For the code
 matplotlib
 numpy
 plotly
+bokeh
+
+# correct branch of tensorly
+tensorly @ git+https://github.com/cohenjer/tensorly@tensorly_HDR
+
+# Tensorly eco-system
+tensorly-viz
 
 # custom libraries
 ./tensorly_hdr
 
-# correct branch of tensorly
-tensorly @ git+https://github.com/cohenjer/tensorly@tensorly_HDR
+# Julia packages
+# julia !!
+# giant --> how to handle ? Conda ? redistribute code ?
+juliacall
+
+# Few personnal external packages for DLRA
+mscode @git+https://github.com/cohenjer/mscode
+dlra @git+https://github.com/cohenjer/dlra
 
 # For building the book
 sphinx

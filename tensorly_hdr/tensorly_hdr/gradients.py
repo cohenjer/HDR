@@ -16,6 +16,6 @@ def err_calc_simple(cp_e, mttkrp, norm_tensor):
     factors_norm = cp_norm(cp_e)
     iprod = tl.sum(tl.sum(mttkrp * tl.conj(cp_e[1][-1]), axis=0))
     unnorml_rec_error = tl.sqrt(
-        tl.abs(norm_tensor + factors_norm**2 - 2 * iprod)
+        tl.abs(norm_tensor**2 + factors_norm**2 - 2 * iprod)
     )
     return unnorml_rec_error
