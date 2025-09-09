@@ -14,7 +14,10 @@ parts:
     chapters:
       - file: part1/intro1
       - file: part1/notations
+      - file: part1/lra
       - file: part1/nnls
+      - file: part1/AlternatingOptimization
+      - file: part1/ALS
   - caption: Theory, algorithms and applications of rLRA
     chapters:
       - file: part2/intro2 
@@ -40,10 +43,10 @@ parts:
         - file: part2/Fast_algorithms_for_rLRA/CMTF
           sections:
           - file: part2/Fast_algorithms_for_rLRA/NNParafac2
-          - file: part2/Fast_algorithms_for_rLRA/LinearCoupling
         - file: part2/Fast_algorithms_for_rLRA/UnrolledNMF
       - file: part2/Applications_of_rLRA/intro
         sections:
         - file: part2/Applications_of_rLRA/Spectral_unmixing
         - file: part2/Applications_of_rLRA/AMT
-        - file: part2/Applications_of_rLRA/LCMS_GCMS
+        - file: part2/Applications_of_rLRA/Music_structure_estimation
+        - file: part2/Applications_of_rLRA/Optical_Biopsy_separable_nmf

@@ -4,6 +4,7 @@ import xarray
 import tensorly as tl
 import numpy as np
 
+
 def load_eem():
     """
     Load the EEM dataset from a .mat file and return it as a tensor.
@@ -27,3 +28,43 @@ def load_eem():
         dims = ["Sample index", "Emission wavelength", "Excitation wavelength"]
     )
     return dataset, tensor_noised, tensor
+
+
+def load_gcms_interval():
+    """
+    Load the raw GCMS dataset from a .mat file and return it as a tensor.
+    """
+    # Load the GCMS data
+    data = scipy.io.loadmat('../../tensorly_hdr/dataset/gcms_data.mat')
+    tensor = tl.tensor(data['tensor'])
+    time_steps = data['time_steps'][0]
+    # Creating a dataset for tlviz
+    dataset = xarray.DataArray(
+        data=tensor,
+        coords={
+            "Mass over charge index": np.linspace(1,155,155),
+            "Elution time": time_steps,
+            "Sample index": np.linspace(1, 251, 251)
+        },
+        dims=["Mass over charge index", "Elution time", "Sample index"]
+    )
+    
+    # To load the GCMS data, m/z spectra x time x experiment from the set of all intervals
+    #data = loadmat('../../tensorly_hdr/dataset/Intervals.mat')
+    #tensor = tl.tensor(data['Int38'])
+    #tensor = tensor/tl.max(tensor)
+    #time_steps = data["rt38"][0]
+    ## Creating a dataset for tlviz
+    #dataset = xarray.DataArray(
+        #data = tensor,
+        #coords={
+            #"Mass over charge index": np.linspace(1,155,155),
+            #"Elution time": time_steps,
+            #"Sample index": np.linspace(1, 251, 251)
+        #},
+        #dims = ["Mass over charge index", "Elution time", "Sample index"]
+    #)
+    
+    return dataset, tensor, time_steps
+
+

@@ -101,16 +101,11 @@ $$
 
 for known linear coupling matrices $H_1$ and $H_2$ and a shared, unknown latent factor matrix $A$ which size may differ from $A_1$ and $A_2$.
 
-This model is flexible enough to express several interesting coupling scenarios:
+This model is flexible enough to express several interesting coupling scenarios: [TODO explain more]
 - Partially shared components [Eqs et Figures Carla]
 - PARAFAC2 with known rotation matrices
 - unaligned data
 
 Necessary condition for identifiability of $\vec{A}$: $[H_1; H_2]$ invertible.
 
-
-## Algorithms for Constrained CMTF (next section)
-
-### Nonnegative Parafac2
-
-### AOADMM for linearly coupled regularized CMTF
+The section discuss the design of algorithms for [regularized PARAFAC2](./NNParafac2.ipynb). 

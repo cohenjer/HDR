@@ -9,6 +9,7 @@ logo: cube_on_dico_page.png
 # See https://jupyterbook.org/content/execute.html
 execute:
   execute_notebooks: force # cache
+  timeout: 600  # Increase timeout for long-running notebooks
   allow_errors: true
 
 # Define the name of the latex output file for PDF builds
@@ -37,10 +38,6 @@ repository:
 # Using latex-like math in markdown cells
 # NUMBERING CAN BE DONE NATIVELY
 # See https://jupyterbook.org/content/math.html
-#parse:
-  #myst_enable_extensions:
-    #- amsmath 
-    #- ?
 
 sphinx:
   config:
@@ -55,6 +52,7 @@ sphinx:
           "argmin": ["\\underset{#1}{\\text{argmin}}~",1]
           "R": ["\\mathbb{R}^{#1}",1]
           "vec": ["\\text{vec}\\left(#1\\right)",1]
+          "KL": ["\\mathcal{D}_{\\text{KL}}\\left(#1\\right)",1]
   extra_extensions:
     - sphinx_proof
 

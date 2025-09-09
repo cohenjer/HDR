@@ -13,6 +13,7 @@ tensorly @ git+https://github.com/cohenjer/tensorly@tensorly_HDR
 
 # Tensorly eco-system
 tensorly-viz
+matcouply
 
 # custom libraries
 ./tensorly_hdr
