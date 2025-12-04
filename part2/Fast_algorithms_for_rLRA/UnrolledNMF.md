@@ -131,11 +131,146 @@ The supervision loss for NALMU is defined as
 $$
   \mathcal{L} = \sum_{i=1}^{p} \sum_{k=1}^{K} \nu_k \left(\ell_W(W_i^{k}(\theta), W_i^{gt}) + \ell_H(H_i^{k}(\theta), H_i^{gt})\right)
 $$
+
 where $W_i^{k}(\theta)$ and $H_i^{k}(\theta)$ ar the estimated factors from algorithm $\mathcal{A}$ after $k\leq K$ iterations. Functions $\ell_W$ and $\ell_H$ are user-defined loss functions for the factor matrices, typically $\ell_2$ norms or application-specific metrics such as the Spectral Angular Distance (SAD) used in remote sensing. Parameters $\nu_k$ control how much the estimated factor after $k$ iterations impact the supervision loss; for instance if only the final output of algorithm $\mathcal{A}$ should match the ground-truth, then $\nu_k = 0$ for any $k<K$. Setting nontrivial values for parameters $\nu_k$ avoids training issues such as vanishing gradients and is a common trick in the unrolling literature [ref?].
 
-Initialization ?
-Algorithm ?
+The initial weights $A_W$ and $A_H$ can be set to one to start the learning phase from the MU algorithm. The number of truncated iterations $K$ is in general set rather low compared to the maximum number of iteration used in MU, typically we choose $K=25$. The training algorithm can be any classic optimizer in the deep learning community with default parameters, for instance the AdamW optimizer [ref TODO] running for 1000 epochs, with a learning rate of $10^{-5}$.
+
+An issue with unrolled NMF is the scaling ambiguity, which makes the training less consistent. A simple solution we propose is to normalize the columns of data matrices $Y_i$ when this is reasonable, and normalize the initial guesses for the factors accordingly. As a rule of thumb, normalisation in regularized and unrolled LRA can be tricky and should be designed depending on the application at hand.
+
 
 ## Toy example
 
-todo le code zzz sur un truc bateau ? En autosupervisé jvais tenter sur une petite image ou sur une image synthétique avec 3 zones (2 purs et 1 mélangé ?)
+Providing a full example of unrolled NMF in this manuscript is rather challenging, as the training of NALMU typically requires large computing resources. Rather, a minimal working example is implemented below to train NNLS (*i.e.* NMF with a fixed factor matrix, here $W$) on synthetic images generated with a noisy mixture. The goal of this toy experiment is to showcase one key feature of unrolled algorithms: they often provide a good reconstruction in much fewer iterations than the baseline algorithm.
+
+```{code-cell} ipython3
+:tags: [hide-output]
+
+import torch 
+import matplotlib.pyplot as plt
+# runs on CPU
+
+# Hyperparameters
+n = 5
+m = 20
+p = 500
+sig = 0.1
+K = 20
+itermax = 1000
+nu = torch.logspace(-7, 0, K)  # logspaced weights
+#nu = torch.zeros(K)
+#nu[K-1] = 1.0
+
+# define training data
+torch.manual_seed(2)
+mu = 50*torch.rand(n, 1)
+H = torch.randn(n, p) + mu  # H are generated around a true value mu
+W = torch.rand(m, n)
+Y = W@H + sig*torch.randn(m, p)
+
+# define trainable parameters
+Ah = torch.ones(n,K, requires_grad=True)
+#Ah = torch.ones(n, requires_grad=True)
+
+# define loss function
+def loss_fn(Y, W, H):
+    return torch.norm(Y - W@H)**2
+
+# define MU updates
+def MU_update(W, Y, Xinit, itermax=1000, Xgt=None):
+    X = Xinit.clone().detach()
+    WtW = W.T@W
+    WtY = W.T@Y
+    loss = [loss_fn(Y, W, X)]
+    sup_loss = []
+    for i in range(itermax):
+        X = X*WtY/(WtW@X)
+        loss.append(loss_fn(Y, W, X))  # can be optimized using stored quantities
+        if Xgt is not None:
+            sup_loss.append(torch.norm(X - Xgt)**2)
+    return X, loss, sup_loss
+
+# define unrolled MU updates
+def NALMU(W, Y, Xinit, Ah, itermax=25, Xgt=None):
+    X = Xinit.clone().detach()
+    loss = [loss_fn(Y, W, X)]
+    WtW = W.T@W
+    WtY = W.T@Y
+    Xs = []
+    sup_loss = []
+    for i in range(itermax):
+        XAh = (X.T*Ah[:,i]).T
+        #XAh = (X.T*Ah).T
+        X = XAh*WtY/(WtW@X)
+        Xs.append(X)
+        loss.append(loss_fn(Y, W, X))  # can be optimized using stored quantities
+        if Xgt is not None:
+            supl = torch.norm(X - Xgt)**2
+            sup_loss.append(supl.detach().numpy())
+    return X, Xs, loss, sup_loss
+
+# define optimizer
+optimizer = torch.optim.Adam([Ah], lr=1e-2)   # using the Adam optimizer for simplicity
+
+# Training
+for epoch in range(500):
+    optimizer.zero_grad()
+    Hinit = torch.ones(n, p)
+    H_est, Hs, _, _ = NALMU(W, Y, Hinit, Ah, itermax=K)
+    loss = sum([nu[i]*torch.norm(Hs[i] - H)**2 for i in range(K)])  # weighted loss
+    loss.backward()
+    optimizer.step()
+    if epoch % 10 == 0:
+        print(f'Epoch {epoch}, Loss: {loss.item()}')
+
+```
+
+```{code-cell} ipython3
+:tags: [hide-input]
+
+# Test time!
+p_test = 40
+Htest = mu+torch.rand(n, p_test)
+Ytest = W@Htest + sig*torch.randn(m, p_test)
+
+H_NALMU, _, loss_NALMU, sup_loss_NALMU = NALMU(W, Ytest, torch.ones(n, p_test), Ah, itermax=K, Xgt=Htest)
+H_MU, loss_MU, sup_loss_MU = MU_update(W, Ytest, torch.ones(n, p_test), itermax=5*K, Xgt=Htest)
+
+# PLotting errors for MU and showing line with NALMU error after K iterations
+fig, ax = plt.subplots(1,3, figsize=(8,4))
+ax[0].semilogy(loss_MU)
+ax[0].semilogy([loss_NALMU[i].detach().numpy() for i in range(len(loss_NALMU))])
+ax[0].set_title('Test data fitting loss')
+ax[0].set_xlabel('Iteration')
+ax[0].set_ylabel('Loss')
+ax[0].legend(['MU', 'NALMU'])
+
+# Plot error bars for each sample
+ax[1].semilogy(sup_loss_MU, 'b-')
+ax[1].semilogy(sup_loss_NALMU, 'r-')
+ax[1].set_title('Supervised loss at test')
+ax[1].set_xlabel('sample')
+ax[1].set_ylabel('Error')
+ax[1].legend(['MU', 'NALMU'])
+
+# Showing matrix Ah as an image
+ax[2].imshow(Ah.detach().numpy(), aspect='auto')
+ax[2].set_title('Learned parameters Ah')
+ax[2].set_xlabel('Iteration')
+ax[2].set_ylabel('Entry index')
+#colorbar
+ax[2].figure.colorbar(ax[2].images[0], ax=ax[2])
+plt.tight_layout()
+plt.show()
+
+```
+
+A few lessons to learn from this toy experiment:
+- The choice of the $\nu_k$ values greatly affect how far the weights $A_W$ are from one. With the proposed choice (logarithimically spaced values in $[10^{-7}, 1]$), the weights in the last layers are barely updated. Try setting all $\nu_k$ to zero except the last one: the result is reversed, and the overall perforance of NALMU decreases!
+- Tied weights (when $A_W$ does not depend on the iteration index) do not perform well in this example. This can be checked by changing the definition of $A_W$ and modifying the update rule of NALMU accordingly. In particular, NALMU with tied weights has trouble decreasing the NMF loss $\|Y-WH\|^2$ across iterations.
+- Unrolling algorithms is tricky in practice, and one needs to toy with the various hyperparameters and design choices.
+
+## Extensions of NALMU
+
+RALMU
+Active topic, see perspectives

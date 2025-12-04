@@ -21,9 +21,30 @@ X = U@V + noise * np.random.randn(n,m)
 K2, U2, V2 = snpa(X, r)
 K1, U1, V1 = spa(X, r)
 
+# torch test
+import tensorly as tl
+import torch
+tl.set_backend('pytorch')
+
+U = torch.rand(n, r)
+U = U/tl.sum(U, axis=0)
+V = torch.rand(m, r)
+V = V/tl.sum(V, axis=0)
+V = V.T  # fat matrix
+
+for i in range(r):
+    V[:, i] = 0
+    V[i, i] = 1
+
+X = U@V + noise * torch.randn(n,m)
+
+K2, U2, V2 = snpa(X, r)
+K1, U1, V1 = spa(X, r)
+
+
 # Test on urban
 rank = 4 
-data = 1.0*loadmat('Urban.mat')['A'].T
+data = 1.0*loadmat('../dataset/Urban.mat')['A'].T  # no Urban
 normalize = True
 out = spa(data, rank, tol=1e-8, normalize=normalize)
 #out = snpa(data, 6, normalize=normalize)

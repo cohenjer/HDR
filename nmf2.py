@@ -50,7 +50,7 @@ lambset = [0, 0.05, 0.1, 0.15, 0.2, 0.3, 0.4, 0.6, 0.7, 0.75, 0.78, 0.8, 1, 1.2,
 
 import copy
 for lamb in lambset:
-    # Computing the sparse NMF with Tensorly (the algorithm is HALS, which is state-of-the-art for this problem)
+    # Computing the sparse NMF with Tensorly (the algorithm is HALS, which is state of the art for this problem)
     out = tl.decomposition.non_negative_parafac_hals(Yn, r, sparsity_coefficients=[lamb, lamb], init=copy.deepcopy((None, [W0, H0])))
     # Estimated factors
     We[lamb] = out[1][0]

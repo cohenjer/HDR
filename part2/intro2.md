@@ -24,7 +24,7 @@ Despite the significant amount of existing works on rLRA, their use by practitio
 - Available side information (semi-supervised) --> how to account for it; 
 - Multimodality
 - Modeling: nature of the solutions? guarantees ?
-- For Tensors: software tools, large scale contractions, GPU support and so on
+- For Tensors: software tools, large-scale contractions, GPU support and so on
 
 My work has been dedicated to proposing (partial) solutions to these issues.
 I have grouped my contributions in three sections, dealing respectively with theoretical contributions, applications-oriented contributions and algorithmic-focused contributions. However in most of these works, all three aspects (theory, algorithms, applications) are intertwined, so this is no a strict segmentation of my work.

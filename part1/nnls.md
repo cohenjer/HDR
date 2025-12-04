@@ -1,4 +1,4 @@
-(subsec:nnls)=
+(sec:nnls)=
 # Nonnegative Regressions: NNLS and NNKL
 
 Section basée en partie sur le cours à iTWIST 2020, et sur des travaux plus récents autour de MU.

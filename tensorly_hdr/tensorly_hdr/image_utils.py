@@ -78,3 +78,23 @@ def generate_splines_DLRA(n1, width, deg):
     D = D/np.linalg.norm(D,axis=0)
     
     return D
+
+
+def permute_spectra(W):
+    """Permutes the columns of W to have them sorted by increasing frequency of the maximum value in each column.
+
+    Parameters
+    ----------
+    W : 2darray
+        The input numpy array (spectra)
+
+    Returns
+    -------
+    W_perm : 2darray
+        The permuted array
+    perm : list
+        The permutation applied to the columns
+    """
+    max_indices = np.argmax(W, axis=0)
+    perm = np.argsort(max_indices)
+    return perm

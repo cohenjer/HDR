@@ -316,7 +316,7 @@ W_gdg, H_gdg, err_gdg = AmSOM(Y, Winit, Hinit, method="GD", niter=niter, gamma=1
 ```
 
 
-```{code-cell}
+```{code-cell} ipython3
 :tags: [hide-input]
 
 # comparing the convergence plot

@@ -2,6 +2,7 @@ import tensorly as tl
 import numpy as np
 import copy
 
+
 def scale_factors_fro(
     tensor,
     data,

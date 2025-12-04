@@ -1,0 +1,16 @@
+# Utile si je veux avoir des dépendances spécifiques pour le projet
+
+[project]
+name = "mypackage"
+version = "0.1.0"
+description = "An example package"
+requires-python = ">=3.9"
+
+dependencies = [
+    "requests>=2.31",
+]
+
+[project.optional-dependencies]
+dev = ["pytest", "black"]
+docs = ["sphinx"]
+all = ["pytest", "black", "sphinx"]

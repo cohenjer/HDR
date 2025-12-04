@@ -9,6 +9,8 @@ parts:
   - caption: How to use this book
     chapters:
       - file: intro/scratchpad
+      - file: intro/acknowledgements
+      - file: intro/terminology_list
       - file: bibliography/biblio
   - caption: Introduction to rLRA
     chapters:
@@ -46,7 +48,10 @@ parts:
         - file: part2/Fast_algorithms_for_rLRA/UnrolledNMF
       - file: part2/Applications_of_rLRA/intro
         sections:
-        - file: part2/Applications_of_rLRA/Spectral_unmixing
         - file: part2/Applications_of_rLRA/AMT
         - file: part2/Applications_of_rLRA/Music_structure_estimation
         - file: part2/Applications_of_rLRA/Optical_Biopsy_separable_nmf
+        - file: part2/Applications_of_rLRA/Single_pixel_spectral_imaging
+  - caption: Perspectives and open problems
+    chapters:
+      - file: part3/Perspectives
