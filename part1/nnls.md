@@ -505,6 +505,10 @@ $$
 
 The MU algorithm was introduced in the source separation and machine learning communities by Lee and Seung in 1999 {cite}`Lee1999Learning` as a majorization minimization algorithm. We follow in this paragraph the derivations of Fevotte and Idier {cite}`fevotte2011algorithms` that work for the more general class of $\beta$-divergences. For simplicity, we restrict the presentation to the case of a convex loss function for $\beta\in[1,2]$. We show in the next paragraph that for the particular case of KL-divergence, the MM derivations fall in the Expectation Maximization (EM) framework.
 
+```{margin}
+MM is often introduced without the requirement that the tangent of the cost and the majorant are equal, see also [](./AlternatingOptimization.md).
+```
+
 The main idea of MM is to fix a current iterate $x^{(k)}$, build a global majorant of the cost $\xi(x,x^{(k)})\leq f\left(y,x\right)$ tight and tangent to the cost at $x^{(k)}$, and then minimize this cost.
 [insert figure]
 To obtain the MU algorithm, one may use the convexity inequality for the loss function, also called the Jensen inequality in this context:

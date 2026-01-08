@@ -2,6 +2,8 @@
 
 This document lists all acronyms, technical terms, and words with ambiguous spelling found in the manuscript.
 
+TODO: add a one-liner def for all technical terms used but not properly defined.
+
 ## Acronyms
 
 - **ACMTF** [[CMTF]](../part2/Fast_algorithms_for_rLRA/CMTF)
