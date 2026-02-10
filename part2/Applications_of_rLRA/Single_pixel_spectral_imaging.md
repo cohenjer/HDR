@@ -638,4 +638,4 @@ plt.show()
 ```
 
 ### A primal-dual algorithm for joint reconstruction and unmixing
-Si j'ai la foi, sinon juste mentionner.
+Si j'ai la foi, sinon juste mentionner. --> Dans les pespectives.

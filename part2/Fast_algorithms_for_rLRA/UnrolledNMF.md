@@ -269,8 +269,3 @@ A few lessons to learn from this toy experiment:
 - The choice of the $\nu_k$ values greatly affect how far the weights $A_W$ are from one. With the proposed choice (logarithimically spaced values in $[10^{-7}, 1]$), the weights in the last layers are barely updated. Try setting all $\nu_k$ to zero except the last one: the result is reversed, and the overall perforance of NALMU decreases!
 - Tied weights (when $A_W$ does not depend on the iteration index) do not perform well in this example. This can be checked by changing the definition of $A_W$ and modifying the update rule of NALMU accordingly. In particular, NALMU with tied weights has trouble decreasing the NMF loss $\|Y-WH\|^2$ across iterations.
 - Unrolling algorithms is tricky in practice, and one needs to toy with the various hyperparameters and design choices.
-
-## Extensions of NALMU
-
-RALMU
-Active topic, see perspectives

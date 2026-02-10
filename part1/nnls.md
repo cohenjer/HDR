@@ -113,7 +113,8 @@ Sometimes, using the Euclidean norm to measure the discrepancies between the mea
 
 These two observations are connected: under the Poisson distribution, the larger the expected observation $Wx$, the larger the noise, but the variance also grows with $Wx$. This means that small data values are more likely to be accurate than large values (in absolute value, not in relative error). 
 
-### Problem definition
+(subsec:Dkldef)=
+### NNKL problem definition
 The maximum likelihood estimator for Poisson noise implies the minimization of the Kullback-Leibler divergence (KL-divergence) between a measurement vector $y$ and some vector $z\in\mathbb{R}_+^{m}$, defined as the separable function
 
 $$
@@ -365,12 +366,12 @@ Then the algorithm loops back to step 2. An important remark is that for each su
 The AS algorithm is the workhorse method for solving NNLS efficiently when the data is a one-dimensional vector. However, it is not well-suited for batch computations when solving the matrix NNLS problem of the form
 
 $$
-\argmin{H\geq 0} \|Y - WH\|_F^2 = \argmin{H\geq 0} \sum_{i\leq n} \|Y[:,i] - WH[:,i]\|_2^2.
+\argmin{H\geq 0} \|Y - WH^T\|_F^2 = \argmin{H\geq 0} \sum_{i\leq n} \|Y[:,i] - WH^T[i,:]\|_2^2.
 $$
 
-Indeed, the AS algorithm would search for the optimal support of each column of the unknown matrix $H$. These supports can all be different. The costly operation in AS is solving the least-squares systems restricted to the current support estimate, and for matrix NNLS, these operations must be performed independently for each column. The fast active-set algorithm {cite}`ref`[ref Bro] improves on this issue by precomputing the grammians $W^TW$ and $W^TY$ in the case where $W$ is a tall matrix.
+Indeed, the AS algorithm would search for the optimal support of each column of the unknown matrix $H^T$. These supports can all be different. The costly operation in AS is solving the least-squares systems restricted to the current support estimate, and for matrix NNLS, these operations must be performed independently for each column. The fast active-set algorithm {cite}`ref`[ref Bro] improves on this issue by precomputing the grammians $W^TW$ and $W^TY$ in the case where $W$ is a tall matrix.
 
-For matrix NNLS, it is, however, useful to design an algorithm that can update all columns $H[:,i]$ simultaneously. This is the rationale behind the Hierarchical Alternating Least Squares (HALS) algorithm. HALS updates each row of matrix $H$ sequentially, and this update is known in closed form. Indeed, notice that for any nonzero vector $a\in\mathbb{R}^{m}$ and any matrix $Z\in\mathbb{R}^{m\times n}$,
+For matrix NNLS, it is, however, useful to design an algorithm that can update all columns $H^T[:,i]$ simultaneously. This is the rationale behind the Hierarchical Alternating Least Squares (HALS) algorithm. HALS updates each row of matrix $H$ sequentially, and this update is known in closed form. Indeed, notice that for any nonzero vector $a\in\mathbb{R}^{m}$ and any matrix $Z\in\mathbb{R}^{m\times n}$,
 
 $$
    \argmin{h\in\mathbb{R}_+^{n}} \|Z - ah^T  \|^2_2 = \left[\frac{a^TZ}{\|a\|_2^2} \right]^+.
@@ -386,7 +387,9 @@ for any column index $i\leq n$. The minimum of a scalar quadratic function under
 
 [TODO Figure]
 
-HALS uses this strategy over each row $j$ of matrix $H$, solving iteratively problem {eq}`eq:HALS_trick` with $Z = Y - W[:,-j]H[:,-j]$ and $w = W[:,j]$. Because each update is an exact minimization procedure, HALS is an instance of exact alternating optimization. As long as each block update is uniquely defined, which happens when $W$ has nonzero columns, the convergence towards the global minimizer is ensured, see [ref Bertsekas dans AO]. A simple implementation of HALS is provided below, and is also [available in tensorly](https://tensorly.org/dev/modules/generated/tensorly.solvers.nnls.hals_nnls.html#tensorly.solvers.nnls.hals_nnls). The input of the algorithm is the grammians $W^TW$ and $W^TY$ to utilize faster inner products for high-order tensors.
+HALS uses this strategy over each row $j$ of matrix $H^T$, solving iteratively problem {eq}`eq:HALS_trick` with $Z = Y - W[:,-j]H^T[:,-j]$ and $w = W[:,j]$. Because each update is an exact minimization procedure, HALS is an instance of exact alternating optimization. As long as each block update is uniquely defined, which happens when $W$ has nonzero columns, the convergence towards the global minimizer is ensured, see [ref Bertsekas dans AO]. A simple implementation of HALS is provided below, and is also [available in tensorly](https://tensorly.org/dev/modules/generated/tensorly.solvers.nnls.hals_nnls.html#tensorly.solvers.nnls.hals_nnls). The input of the algorithm is the grammians $W^TW$ and $W^TY$ to utilize faster inner products for high-order tensors.
+
+TODO: change code for Ht
 
 ```{code-cell}ipython
 
@@ -757,7 +760,8 @@ $$
 $$
 
 ```
- 
+
+(subsec:bestr1)=
 ## Best nonnegative rank-one approximations
 
 We have mainly focused in this section on solving nonnegative regression problems. We will discuss algorithms for LRA throughout the rest of this manuscript, with a particular focus on alternating algorithms in [](./AlternatingOptimization.md). However, there exist closed-form algorithms for the best rank-one nonnegative approximation that are related to the discussion of NNLS and NNKL.
@@ -806,7 +810,7 @@ $$
 \argmin{w\in\mathbb{R}_+^{m},\; h\in\mathbb{R}_+^{n}} \|Y -  wh^T\|_F^2
 $$
 
-in general is NP-hard {cite}`ref`[Nicolas book, older refs are also from Nicolas]. However, for nonnegative data $Y\in\mathbb{R}_+^{m\times n}$, the solution can be computed efficiently (in particular, in polynomial time) using a rank-one Singular Value Decomposition. Indeed, for positive matrices, the Perron-Frobenius theorem {cite}`ref`[Perron Frobenius] guarantees that the first singular vectors and the first singular value are always positive. If the data has zero entries, then the Perron-Frobenius theorem does not hold in general, but it has been shown that the solution is still obtained by using the absolute values of the first components. Indeed, following {cite}`ref`[Gillis book]:
+in general is NP-hard {cite}`ref`[Nicolas book, older refs are also from Nicolas]. However, for nonnegative data $Y\in\mathbb{R}_+^{m\times n}$, the solution can be computed efficiently (in particular, in polynomial time) using a rank-one Singular Value Decomposition. Indeed, for positive matrices, the Perron-Frobenius theorem {cite}`ref`[Perron Frobenius] guarantees that the first singular vectors and the first singular value are always positive. If the data has zero entries, then the Perron-Frobenius theorem does not hold in general, but it has been shown that the solution is still obtained by using the absolute values of the first components. Indeed, following {cite}`gillisNonnegativeMatrixFactorization2020`:
 
 ```{margin}
 This relationship holds for any couple $(w,h)$ because the data matrix $X$ is elementwise nonnegative.

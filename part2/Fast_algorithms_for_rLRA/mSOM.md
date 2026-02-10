@@ -19,7 +19,7 @@ kernelspec:
 
 ## Separable quadratic majorization minimization
 
-In {ref}`subsec:nnls-kl`, various equivalent formulations of MU have been discussed. There is however one more equivalent procedure that leads to MU updates for both Frobenius loss and KL-divergence loss that we leverage in {cite}`phamSecondOrderMajorantAlgorithm2025` to derive more efficient algorithms for NMF (or nonnegative tensor decomposition). This procedure is not limited to matrix and tensor factorizations.
+In [](../../part1/nnls.md), various equivalent formulations of MU have been discussed. There is however one more equivalent procedure that leads to MU updates for both Frobenius loss and KL-divergence loss that we leverage in {cite}`phamSecondOrderMajorantAlgorithm2025` to derive more efficient algorithms for NMF (or nonnegative tensor decomposition). This procedure is not limited to matrix and tensor factorizations.
 
 Instead, let us consider the optimization problem
 

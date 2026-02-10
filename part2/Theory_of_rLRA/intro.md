@@ -1,4 +1,4 @@
-# Chapter 1: Contributions to the theory of regularized low-rank approximations
+# Summary
 
 ```{margin}
 Essential uniqueness in LRA means uniqueness up to permutations and scalings [TODO] (surement dit avant).

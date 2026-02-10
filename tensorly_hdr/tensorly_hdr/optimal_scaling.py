@@ -24,6 +24,7 @@ def scale_factors_fro(
     note: sparsity works only under nonnegativity constraints
     note: comment on nonnegative keyword
     """
+    print("TODO USE THE FONCTION FROM TENSORLY HDR")
     factors = copy.deepcopy(tensor[1])
     if format_tensor == "tucker":
         factors.append(tensor[0])

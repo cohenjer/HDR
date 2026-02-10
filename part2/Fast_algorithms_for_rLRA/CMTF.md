@@ -20,6 +20,7 @@ kernelspec:
 {cite}`schenkerFlexibleOptimizationFramework2021`
 {cite}`roaldPARAFAC2AOADMMConstraints2021`
 {cite}`roaldAOADMMApproachConstraining2022a`
+TODO add christos
 :::
 
 
@@ -109,3 +110,19 @@ This model is flexible enough to express several interesting coupling scenarios:
 Necessary condition for identifiability of $\vec{A}$: $[H_1; H_2]$ invertible.
 
 The section discuss the design of algorithms for [regularized PARAFAC2](./NNParafac2.ipynb). 
+
+### Other related works
+
+There are a couple related published works of mine that are worth mentionning here.
+
+#### Temporal-aware CMTF
+
+An extension of the [regularized PARAFAC2 work](../Fast_algorithms_for_rLRA/NNParafac2.ipynb) includes temporal dynamics modeling. A simple way to model the evolution along time of a multivariate vector is through a linear dynamical system, which essentially acts as a linear coupling across slices of a tensor data. In a collaboration with Christos Chatzis, we have studied the result time-varying CMTF model and proposed an algorithm to estimate the parameters of the model when the linear dynamical system is known.
+
+
+#### EEG artifact removal using okular measurements
+
+In a collaboration with Bertrand Rivet and Rodrigo Cabral-Farias, we used eye-movements signals recorded with an oculometer to remove artifacts in EEG signals [TODO ref]. The signals were acquired by Emmanuelle Kristensen. The goal was to detect the eye movements, and remove the peaks in the EEG synchronized with those movements. In order to identify eye sacades, the data needs to be aligned in the temporal domain. The problem may be formulated as a coupled matrix factorization problem, where the sacades are identified by low-rank factorization, and the coupled sacades are related by a time warping.
+
+Instead of using PARAFAC2 that can model time warping implicitly, we propose to model the time warping explicitly using a diffeomorphism. Our contribution was to propose an algorithm to estimate the parameters of the diffeomorphism along with the low-rank parameter matrices. The low-rank parameter matrices are estimated as in CMTF, while the diffeomorphism parameters are one-dimensional and estimated by binary search. This work was a proof of concept, but the algorithm is too unstable to use in practice, and our earlier work using non-parametric coupling with dynamic time warping proved more convenient in the long run [TODO ref].
+

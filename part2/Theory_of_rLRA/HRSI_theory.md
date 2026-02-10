@@ -125,7 +125,7 @@ This balancing identity will be used in [](./HRSI_algorithm.ipynb) to refine the
 
 Another interesting case of implicit regularization effect concerns the (double) sparse NMF model
 
-$$\argmin{X_1\geq 0, X_2\geq 0} \|M - X_1X_2\|_F^2 + \mu \left( \|X_1\|_1 + \|X_2\|_1 \right). $$
+$$\argmin{X_1\geq 0, X_2\geq 0} \|M - X_1X_2^T\|_F^2 + \mu \left( \|X_1\|_1 + \|X_2\|_1 \right). $$
 
 Intuitively, a practionner using sparse NMF with $\ell_1$ penalizations on both factors would be expecting sparse entries in both matrices, leveraging the behavior of the $\ell_1$ norm in regression problems. The implicit formulation shows that, while both factors are indeed penalized to be sparse, there is another group-sparse effect that prunes entire components,
 

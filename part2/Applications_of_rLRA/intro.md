@@ -11,7 +11,7 @@ kernelspec:
 ---
 
 (part:applications)=
-# Chapter 3: Contribution to applications of rLRA
+# Summary
 
 Regularizations in LRA are necessarily driven by the properties of the low-rank factors one seeks to recover from the computation of LRA. Therefore, by understanding deeper the applications of LRA in signal processing, one is able to derive both interesting fundamental problems related to LRA, and ideas on how to design regularizations for LRA and algorithms to compute rLRA. Conversely, in some applications such as medical imaging, having theoretical guaranties on the quality of the reconstructed factors in rLRA is important because interpretation mistakes on the outputs of these methods may have significant impact. In the optical biopsy example detailed in [](TODO), rLRA outputs allow a surgeon to decide whether or not to remove brain cells during a surgery. Removing too few may lead to cancer recurrence, but removing too much may harm critical brain functionalities.
 
@@ -50,15 +50,15 @@ In scientific imaging, both additive and substractive mixtures are usually encou
 
 a. Fluorescence Spectroscopy in chemometrics. A mixture of several fluorophores is observed with a spectrometer. Each fluorophore emits a light wave with a specific spectrum. Since the fluorophores are loosely mixed inside the sample, and each individually emmit a fluorescence signal, the measured spectrum is simply the sum of the fluorescence spectra of each component. The light emitted by the fluorophores depends on the wavelength of the light exciting the sample; using a laser excitation with a controlled wavelength leads to a series of spectra acquisitions, stored into a matrix (fluorescence excitation emission matrix) $Y$ with $n$ columns corresponding to excitation wavelengths and $m$ rows containing the measured additive mixture of fluorescence spectra. Additive mixture in this context also related to the Beer-Lambert law [ref thèse], and translates into an (approximate) low-rank NMF
 
-$$ Y = WH $$
+$$ Y = WH^T $$
 
 where $W$ is a matrix containing the spectral of each individual fluorophore in the chemical mixture, and $H$ contains the amplitude of each fluorophore response to the excitation wavelength. Applying NMF to the data matrix $Y$, or nonnegative tensor factorization to several such measurement matrices, can in principle recover the individual fluorescence spectra, essentially performing spectral unmixing.
 
 b. The linear mixing model in remote sensing makes the hypothesis that materials on an observed scene are spatially distributed and non-overlapping. The scene is cut into pixels by the camera, and each pixel may therefore contain several materials [see figure TODO] with proportions given by the portion of the pixel covered by each material. The spectra acquisition is then the additive mixture of the reflectance spectra (the spectrum of ambient light, essentially white, filtered by each material). For a single pixel $Y[:,i]$ of the acquired spectral image $Y$ with $m$ spectral wavelengths (or spectral bands if spectra are acquired in a compressed spectral representation) and $n$ pixels, the additive mixture of $K$ materials simply translates into a linear model
 
-$$ Y[:,i] = \sum_{k=1}^{K} W[i,k] H[:,k];\; Y=WH $$
+$$ Y[:,i] = \sum_{k=1}^{K} W[i,k] H^T[:,k];\; Y=WH^T $$
 
-where $W$ contains columnwise the spectra of each material in the scene (supposing they are consistent over the whole image), and H contains the proportions of each material in each pixel rowwise, also called abundances. Interestingly, extensions of the linear mixing model that account for multiple reflexions typically involve products of matrix $W$ with itself; this is coherent with the substractive mixture model where the ambient light is filtered consecutively by several materials [ref Dobigeon].
+where $W$ contains columnwise the spectra of each material in the scene (supposing they are consistent over the whole image), and H contains the proportions of each material in each pixel columnwise, also called abundances. Interestingly, extensions of the linear mixing model that account for multiple reflexions typically involve products of matrix $W$ with itself; this is coherent with the substractive mixture model where the ambient light is filtered consecutively by several materials [ref Dobigeon].
 
 To conclude this introduction to spectral unmixing, we can now answer the abvove question: is it possible to additively mix paints to produce white. The answer is nuanced. It is impossible to mix paint to produce pure white. Mixing paints intimately will result in a filtering effect that negates the ambient light spectrum in all wavelengths, leading to a black color. However, we can produce grey by juxtaposing paints on a surface and looking from afar. Spatial juxtaposition will result in additive filtering of the filtered white light, as in the linear mixing model. If three paints red, blue and green are used in equal proportions, the resulting spectrum is the sum of blue, red and green light but with reduced intensity, and the object will appear gray. Screens are able to produce white because they can emit red, blue and green spectra at full intensity, which is not possible with reflectance spectra.
 
