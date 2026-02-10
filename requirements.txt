@@ -38,7 +38,7 @@ dlra @git+https://github.com/cohenjer/dlra
 # For building the book
 sphinx
 sphinx-proof
-jupyter-book
+jupyter-book==1.0.0
 jupyter
 jupytext
 ghp-import
