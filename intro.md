@@ -18,7 +18,8 @@ TODOlist:
 - Figures design
 - Figure inline integration with glue and environments
 - Acronyms list
-- Github build
+- Binder build
+- Precise Version and package dependence
 - How to use (0.25d)
 - Latex build fork ?
 
