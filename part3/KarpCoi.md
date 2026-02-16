@@ -1,36 +1,121 @@
+---
+jupytext:
+  formats: md:myst
+  text_representation:
+    extension: .md
+    format_name: myst
+kernelspec:
+  display_name: Python 3
+  language: python
+  name: python3
+---
+
 # Numerical Optimization for KL-based Regularized Inverse Problems
 
-TODO:
-- Intro to Perspectives
-- Link existing works to relevant sections of the book
-- Technical details on
-  - Burg entropy (cf code)
-  - Split KL
+The main theme of my research in the last ten years have been regularized low-rank approximation models (rLRA). rLRA is a discipline at the crossroad of inverse problems, statistics, numerical optimization and machine learning, with diverse applications such as music information retrieval and spectral imaging that require specific expertise. While I have always enjoyed embracing the diversity of the mathematical tools required to make contributions on rLRA, in the comming years I want to spend time focussing especially on numerical optimization, with potential contributions outside the scope of rLRA. I enjoy the idea that in numerical optimization, there is often a clear problem solving objective such as cost minimization or speed maximization, that allows to compare methods against each other. I also enjoy the mathematical framework of both smooth and discrete optimization problems and algorithms. Numerical optimization provides an opiniated view of the world as many tasks can be expressed in this framework. On the mathematical side, theoretical results and proofs are both intuitive and rigorously enunciated.
 
-Le contenu de l'ANR, plutôt le format long (partie scientifique)
+```{margin}
+KARP-COI stands for Kullback-Leibler divergence And Regularized inverse Problems Call for faster OptimIzation algorithms.
+```
 
-## Objectives of the project and research hypotheses
+A family of problems that I want to study in particular, related to nonnegativity of the parameters and data, is Kullback-Leibler-divergence (KL-divergence) based estimation, such as [NN-KL](../part1/nnls.md). KL-divergence is a rich loss function to study because it lacks Lischitz-smoothness at zero (its gradient tends to infinity), but it is also assymptotically flat towards infinity. This makes the design of global strategies, such as gradient with fixed stepsize or global majorization-minimization, rather difficult. In the following, I explain why KL-divergence appears in inverse problems, what are the hypotheses and challenges of my research project and its positioning in the state-of-the-art. I then detail the various contributions I have in mind for the comming years with identified collaborators. This research project has been named KARP-COI, in the context of an ANR submission.
+
+There are other, smaller scale aspects to my research project that are detailled in [a separate document](./others.md). This chapter contains redundant information on the basic mathematical tools described in this HDR manuscript to ensure that it can be read independently, to some degree.
+
+## Scientific context
+
+Kullback-Leibler divergence (KL divergence), a fundamental measure of similarity between probability distributions in machine learning, naturally arises from [Poisson maximum likelihood models](../part1/nnls.md) [6], but also provides a robust measure of discrepancies compared to the Euclidean​ norm. This robustness is particularly relevant for audio spectrograms that exhibit large dynamic ranges, and for low signal to noise ratio counting processes that constitute the future of many existing computational imaging devices with reduced acquisition time. KL-divergence between two vectors $y$ (the data) and $Ax$ (the unknown) in $\R{n}_+$ is defined as
+
+$$ \KL{y, Ax} = \sum_{i=1}^{n} y[i]\log\left(\frac{y[i]}{Ax[i]}\right) + Ax[i] - y[i]. $$
 
 
-### Why Kullback-Leibler divergence as a loss function?
-Kullback-Leibler divergence (KL divergence), a fundamental measure of similarity between probability distributions in machine learning, naturally arises from Poisson maximum likelihood models [6], but also provides a robust measure of discrepancies compared to the Euclidean​ norm. This robustness is particularly relevant for audio spectrograms that exhibit large dynamic ranges, and for low signal to noise ratio counting processes that constitute the future of many existing computational imaging devices with reduced acquisition time.
+% ANR add figure of KL and technical details
 
-TODO KL formula
+Inverse problems aim at estimating physically meaningful parameters (images, audio representations, sources) from incomplete and noisy data. In this research project, I focus on two problems, Nonnegative regression problems (NN-KL) and Nonnegative matrix and tensor factorization problems (NMF-KL), see the [dedicated chapter on NN-KL](../part1/nnls.md), and the figure [TODO]. NN-KL reconstructs or denoises images in many computational imaging applications such as tomography, Compton camera, cryoEM and [single-pixel imagers](../part2/Applications_of_rLRA/single_pixel.ipynb) [7, B].  NMF-KL is a linear dimensionality reduction technique similar to Principal Component Analysis, where nonnegativity ensures an interpretable part-based representation [1, A, D]. NMF-KL is also a blind extension of NN-KL and has been used extensively to analyse spectrograms found in music information retrieval tasks, in particular to perform [Automatic Music Transcription](../part2/Applications_of_rLRA/AMT.md) that translates music recordings into MIDI files (numerical music sheets) [F]. NN-KL and NMF-KL problems are generally ill-posed: there are too few measurements or too much noise to uniquely and precisely recover the unknowns, which compromises interpretability. Regularization is thus essential. It can be introduced via handcrafted priors (e.g., sparsity, smoothness), via pre-trained priors using Plug-and-Play (PnP) denoisers, or [Unrolled algorithms](../part2/Fast_algorithms_for_rLRA/UnrolledNMF.md) that exploit training datasets [4, 8, A].
 
-### Why Regularized Inverse Problems?
-Inverse problems aim at estimating physically meaningful parameters (images, audio representations, sources) from incomplete and noisy data. Within KARP-COI, we focus on two problems, Nonnegative regression problems (NN-KL) and Nonnegative matrix and tensor factorization problems (NMF-KL), see Figure above. NN-KL reconstructs or denoises images in many computational imaging applications such as tomography, Compton camera, cryoEM and single-pixel imagers [7, B].  NMF-KL is a linear dimensionality reduction technique similar to Principal Component Analysis, where nonnegativity ensures an interpretable part-based representation [1, A, D]. NMF-KL is also a blind extension of NN-KL and has been used extensively to analyse spectrograms found in music information retrieval tasks, in particular to perform Automatic Transcription that translates music recordings into MIDI files (numerical music sheets) [F]. NN-KL and NMF-KL problems are generally ill-posed: there are too few measurements or too much noise to uniquely and precisely recover the unknowns, which compromises interpretability. Regularization is thus essential. It can be introduced via handcrafted priors (e.g., sparsity, smoothness), via pre-trained priors using Plug-and-Play (PnP) denoisers, or Unrolled algorithms that exploit training datasets [4, 8, A].
-
+% ANR add explanation on application to audio, and to SPI spectral unmixing
+% Add summary figure updated
 
 ### Hypotheses and challenges
-We hypothesize that it is possible to design algorithms that are both fast and provably convergent for KL-based regularized inverse problems. The main difficulty is the lack of Lipschitz continuity at zero of KL divergence, which causes instabilities with sparse data or low counts when using first-order methods [1]. This explains why most existing approaches rely on second-order information, typically through separable quadratic surrogates derived from Hessian approximations. Our challenge is twofold: (i) to optimize the design of surrogates for NN-KL and NMF-KL, striking the right balance between accuracy and per-iteration cost, and (ii) to extend these strategies to include data-driven regularizations, which fall within variable metric forward–backward methods and remain difficult to implement for both handcrafted and data-driven priors [5]. Beyond algorithm design, the project will unify contributions scattered across numerical optimization, source separation, and computational imaging, producing a benchmark and a toolbox for KL-based inverse problems. The methodology will be validated on two applications where the consortium has strong expertise: single-pixel imaging and automatic music transcription [A, F]
+I hypothesize that it is possible to design algorithms that are both fast and provably convergent for KL-based regularized inverse problems. Purely from a smooth numerical optimization perspective, the main difficulties are
+1. the lack of Lipschitz continuity at zero of the KL-divergence, which causes instabilities with sparse data or low counts when using first-order methods [1]. This explains why most existing approaches rely on second-order information, typically through separable quadratic surrogates derived from Hessian approximations.
+2. the assymptotic linearity of the KL-divergence (when the term $Ax[i]$ dominates the cost$) which make any gradient based algorithm hard to use. The cost is not strongly convex, and the Hessian has near-zero singular values. Both these issues are known to imply slower convergence. 
+3. the presence of nonnengativity constraints, as well as other regularizations possibly based on deep-learning. 
+Our challenge is twofold. First, to optimize the design of algorithms for NN-KL and NMF-KL, striking the right balance between accuracy and per-iteration cost. I plan to rely on local (instead of global) approximations of the cost function and tools from linear programming. Local majorants are expected to work well because they do not need to diverge at zero, but the assymptotic flatness, in particular for sparse data, must be dealt with carefully. Second, to extend these strategies to include data-driven regularizations, which fall within variable metric forward–backward methods and remain difficult to implement for both handcrafted and data-driven priors [5]. Beyond algorithm design, the project will unify contributions scattered across numerical optimization, source separation, and computational imaging, producing a benchmark and a toolbox for KL-based inverse problems. The methodology will be validated on two applications where the consortium has strong expertise: single-pixel imaging and automatic music transcription [A, F]
 
-## Positioning with respect to the state of the art
-Multiplicative Updates (MU), or Maximum-Likelihood Expectation-Maximization in computational imaging, remain the historical baseline for KL-based problems. Despite their simplicity and implicit use of second-order information, they can be slow, unstable with sparse data, and difficult to adapt to regularizations. The computational imaging literature is filled with more ad-hoc stochastic and regularized algorithms [6, 7] that require further theoretical scrutiny. Dedicated NMF-KL algorithms such as alternating extrapolated MU suffer from limited flexibility and are fundamentally limited compared to all-at-once approaches. Classical constrained formulations (ℓ1​, ℓ2​, Total Variation) lack a general framework for KL-based problems. Data-driven approaches (Plug-and-Play, Unrolled NMF) are promising to reach state-of-the-art performance while ensuring interpretability of the model, yet their KL-based theoretical grounding is weak. In particular, PnP algorithms for KL divergence rely on a loose Bregman divergence, Burg’s entropy, resulting in poor convergence speed [2, 8]. Finally, existing algorithms are designed for small, dense matrices, while our applications also lead to sparse, large matrices. In summary, no existing method simultaneously achieves speed, robustness to data-sparsity and theoretical guarantees, leaving a clear gap that KARP-COI aims to fill.
+### Positioning with respect to the state of the art
+Multiplicative Updates (MU), or Maximum-Likelihood Expectation-Maximization in computational imaging, remain the historical baseline for KL-based problems. MU is simple to implement and makes use of second-order information in the form of preconditionning. It is a baseline that can be slow, unstable with sparse data and difficult to adapt with regularizations. However it is not so easily beaten, espectially in the context of NMF-KL [TODO ref Gillis]. MU have a wide number of variants, some of which have been developped in the computational imaging community and involve block-coordinate updates [OSEM Fessler TODO 6, 7], while other come from the signal processing community and focus, for instance, on all-at-once updates for wider classes of loss functions [ref Fevotte] or high-order tensor decompositions [MU gen ref]. Most algorithms for NN-KL and NMF-KL, including MU, fall within the majorization-minimization framework, where the cost is globally majorized by a simpler function, often separable with respect to each parameter, then this majorant is minimized efficiently. In this project, we will make use of local approximations, which do not belong to the majorization-minimization framework.
 
-[TODO Burg entropy figure Pourri]
+```{margin}
+The topic of linking MU and mirror descent is under active research in team TOMORADIO.
+```
+
+Classical constrained formulations lack a general framework for KL-based problems. MU can be applied, after non-trivial modifications, for a limited set of priors such as $\ell_p$ norms and TV regularization. Data-driven approaches (Plug-and-Play, Unrolled NMF) are promising to reach state-of-the-art performance while ensuring interpretability of the model, yet their KL-based theoretical grounding is weak. In particular, PnP algorithms for KL divergence rely on a loose Bregman divergence, Burg’s entropy, resulting in poor convergence speed [2, 8]. Burg's entropy is used in proximal mirror descent to build a global majorant of the cost, but it can be observed on the following simple synthetic example that MU is typically much faster than Burg's entropy. The reason why Burg's entropy is used despite its loose majoration of the KL-divergence is that is unclear how to relate the majorant leading to MU or other existing faster algorithms with proximal mirror gradient descent, and therefore obtain a clean setup for non-Euclidean data-driven algorithms. In this research project, I hypothesize that such links can be obtained, and that other frameworks than mirror gradient descent may be used for convergent data-driven non-Euclidean algorithms.
+
+```{code-cell}ipython3
+from matplotlib.pylab import f
+import numpy as np
+
+# Let's compare MU and Bregman mirror descent on a simple Poisson regression problem
+
+# Hyperparameters
+m, n = 100, 20  # number of samples and features
+alpha = 100 # Poisson signal level
+
+hgt = np.maximum(np.random.randn(n),0)
+W = np.random.rand(m,n)
+y = np.random.poisson(alpha * W @ hgt)
+
+def loss(h):  # KL divergence
+    return np.sum(W@h-y) + np.sum(y * np.log((y+1e-10)/(W @ h)))
+
+def MU(y, W, h, itermax=1000, epsilon=1e-10):
+    Wtsum = W.T @ np.ones_like(y)  # suboptimal but ok
+    hout = np.copy(h)
+    loss_val = [loss(hout)]
+    for i in range(itermax):
+        hout = np.maximum(epsilon, hout * (W.T @ (y / (W @ hout ))) / (Wtsum))
+        loss_val.append(loss(hout))
+    return hout, loss_val
+
+def BurgMU(y, W, h, itermax=1000, epsilon=1e-10):  # NoLIPS by Bauschke et al
+    Wtsum = W.T @ np.ones_like(y)
+    lamb = 1/2/np.sum(y)
+    hout = np.copy(h)
+    loss_val = [loss(hout)]
+    for i in range(itermax):
+        hout = np.maximum(epsilon, hout / ( 1 + lamb* hout * ( Wtsum - W.T @ (y / (W @ hout )))))
+        loss_val.append(loss(hout))
+    return hout, loss_val 
+
+
+hmu, loss_mu = MU(y, W, alpha*np.ones(n), itermax=5000)
+hburg, loss_burg = BurgMU(y, W, alpha*np.ones(n), itermax=5000)
+
+
+# Printing the final estimation error
+print(f"Final loss MU: {loss_mu[-1]}, Burg MU: {loss_burg[-1]}")
+print(f"Estimation error MU: {np.linalg.norm(hmu - alpha*hgt)/np.linalg.norm(alpha*hgt)}, Burg MU: {np.linalg.norm(hburg - alpha*hgt)/np.linalg.norm(alpha*hgt)}")
+
+```
+
+```{code-cell}ipython3
+import matplotlib.pyplot as plt
+plt.figure(figsize=(8,5))
+plt.semilogy(loss_mu, label='MU')
+plt.semilogy(loss_burg, label='Burg MU')
+plt.title('Loss convergence for Poisson regression NN-KL')
+plt.xlabel('Iteration')
+plt.ylabel('Loss (KL divergence)')
+plt.legend()
+plt.show()
+```
+
+Finally, existing algorithms are designed for small, dense matrices, while the audio application also lead to sparse, large matrices. In summary, no existing method simultaneously achieves speed, robustness to data-sparsity and theoretical guarantees, leaving a clear gap that I aim to fill.
+
 
 ## Methodology and scientific coverage
-The KARP-COI project is divided into four complementary Work Packages to achieve the global objective of conceiving faster regularized algorithms for KL-based inverse problems, see Figure above. The project is grounded in the numerical optimization community, but with strong interactions with the machine learning and signal processing communities.
+The research project is divided into four complementary subtasks to achieve the global objective of conceiving faster regularized algorithms for KL-based inverse problems, see Figure above [TODO]. The project is grounded in the numerical optimization community, but with strong interactions with the machine learning and signal processing communities.
 
 
 ### NMF toolbox and benchmark
@@ -67,19 +152,19 @@ Computational imaging has a long history of handling Poisson noise in inverse pr
 
 In modern signal processing and machine learning algorithms for inverse problems, we build on top of the classical estimation algorithms, such as solvers for NN-KL, with prior information provided by deep models. The general idea is that a neural network can be trained on denoising problems to provide information on the distribution of clean data, which in turns allows to build efficient priors for other inverse problems. The Plug-and-play (PnP) framework [TODO ref] simply plugs a pretrained network in place of a proximal (projection) operator in iterative proximal gradient algorithms, while other methods like RED [TODO ref] use differentiable architectures plugged in the cost function.
 
-Something important to acknowledge is that, while these data-driven techniques allow to significantly improve the estimation performance of algorithms in inverse problems, they inherit from the ups and downs of classical methods they are built from. In this research project, I believe that while fellow researchers have focussed on improving the data-driven aspect of data-driven algorithms for Poisson inverse problem, based for instance on generalized Tweedie's formula [ref TODO], the interplay between deep regularizers, classical methods including variance stabilizing transformations, and specific computational imaging applications is under-explored. There is certainly no need for data-driven KL-divergence based algorithms for high-count data where the Anscombe transform can be applied without issue. There is in contrast a definitive need for a more detailled analysis of when to use heavy computational tools such as PnP with complex NN-KL solvers. Nevertheless, part of this project is also to developp such data-driven Poisson algorithms, this is ongoing work within the PhD thesis of Serena Hariga [TODO ref Gretsi].
+Something important to acknowledge is that, while these data-driven techniques allow to significantly improve the estimation performance of algorithms in inverse problems, they inherit from the ups and downs of classical methods they are built from. In this research project, I believe that while fellow researchers have focussed on improving the data-driven aspect of data-driven algorithms for Poisson inverse problem, based for instance on generalized Tweedie's formula [ref TODO], **the interplay between deep regularizers, classical methods including variance stabilizing transformations, and specific computational imaging applications is under-explored**. There is probably no need for data-driven KL-divergence based algorithms for high-count data when the Anscombe transform can be applied without issue. There is in contrast a definitive need for a more detailled analysis of when to use heavy computational tools such as PnP with complex NN-KL solvers. Nevertheless, part of this project is also to developp such data-driven Poisson algorithms, this is ongoing work within the PhD thesis of Serena Hariga [TODO ref Gretsi].
 
 We will target our contributions towards the computational imaging modalities developped at CREATIS, in particular [spectral single pixel imaging](../part2/Applications_of_rLRA/single_pixel.ipynb) (SPI). SPI is interesting because the Poison noise level depends on the acquisition technique, and on the output wavelength. The energy of incomming photos is split between spectral bands, and some spectral bands recieve significantly fewer photons than others. This kind of data is perfect to analyse the effect of signal noise on estimation performance. Moreover, the spectral data require unmixing which can be performed efficiently with NN-KL, or NMF-KL in the blind case, inside the reconstruction problem. In the blind case, the problem of estimating sources and abundances in SPI can be formulated as
 
 $$ \argmin{U\geq 0,\; V\geq 0} \KL{Y, HUV^T} + g_1(U) + g_2(V)  $$
-where $H$ is the acquisition matrix (such as Hadamard patterns), and $g_i$ are deep of classical regularizations required to ensure intepretability of the results and proper image reconstruction. A particularity of SPI is that the noise can be modeled as a mixture of Poisson and Gaussian noise, for which the exact MLE is not known in closed form and is often approximated using variance-stabilizing transformations [TODO ref]. Other interesting modalities include the spectral CT scanner, compton camera and cryo-EM [TODO refs help!]
+where $H$ is the acquisition matrix (such as Hadamard patterns), and $g_i$ are deep of classical regularizations required to ensure intepretability of the results and proper image reconstruction. A particularity of SPI is that the noise can be modeled as a **mixture of Poisson and Gaussian noise**, for which the exact MLE is not known in closed form and is often approximated using variance-stabilizing transformations [TODO ref]. Other interesting modalities include the spectral CT scanner, compton camera and cryo-EM [TODO refs help!]
 
 Algorithms developped in the second research direction will also be good candidates for extensions to the data-driven framework. Many authors focus on Burg entropy for building data-driven algorithms with Poisson noise [TODO ref], but better results should be achieved by considering better majorants of the KL-divergence, at the cost of more difficult convergence proofs.
 
-**Collaborations**: TODO
+**Collaborations**: Single Pixel imaging is the topic of an ongoing fruitful collaboration with Nicolas Ducros (INSA Lyon, CREATIS). The PhD thesis of Serena Harriga, co-supervised with Prof. Ducros, that started in 2023, is concerned with primal-dual data-driven algorithms for SPI. At the national level, joint spectral unmixing and inverse reconstruction in the context of Poisson noise is one of the topics discussed in an ANR project under construction with HORIBA, a spectrometer manufacturer, also in collaboration with the team DyNaChem of the LASIRE (Lille). 
 
 ### Automatic transcription using NMF-KL, neural architectures and unsupervised learning
-(quite big change from ANR v1)
+%(quite big change from ANR v1)
 
 NMF has a twenty-year long history of usage within music information retrieval. One of its first use case, which has remained an application of choice for NMF, is Automatic Music Transcription (AMT) [ref Smaragdis TODO]. NMF has shown promising performance for AMT, in particular when KL-divergence (and other $beta$-divergences) are used as loss functions. It has been outperformed by deep networks trained end-to-end for almost a decade [ref Onset Frames].
 
@@ -91,4 +176,4 @@ Second, training deep networks for AMT, and in fact for most music information r
  
 Research on AMT is by nature translational, and therefore it should be a priority to produces an open source software with a friendly user-interface and a python backend that can be used to transcribe multi-instruments professional recordings, provided that the research is fruitful enough to reach satisfactory performance.
 
-**Collaboration**: Christophe Kervazo and Mathieu Fontaine (Telecom Paris). TODO
+**Collaboration**: I started working on AMT with Nancy Bertin in Rennes, who is currently on leave from CNRS, and with Axel Marmoret, my former PhD student. Axel is still working on AMT but because I want him to be as independent as possible, I refrain from collaborating with him on this topic. Since 2023, we have started to collaborate with Christophe Kervazo and Mathieu Fontaine (Telecom Paris) on [unrolled NMF](../part2/Fast_algorithms_for_rLRA/UnrolledNMF.md) for AMT. We are currently in the process of looking for motivated PhD candidates and funding.
