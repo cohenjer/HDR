@@ -9,18 +9,19 @@ The book contains code snippets with barebone implementations of algorithms, num
 The scientific content of the book is summarized in the [](./intro/introduction.md). Below is the table of content for quick access.
 
 TODOlist:
-- Perpsectives audio and others (0.5d)
+- Assumptions of Alternating algorithms (0.5d)
 - Flexible CMTF content (0.5d)
-- Dictionary-based Content (0.5d)
 - References
-- Relecture, complete missing parts
 - Figures design
 - Figure inline integration with glue and environments
-- Acronyms list
+- Relecture
+    - Coherence between parts, intro, perspectives.
+    - Acronyms, vocabulary and math notations list
+    - Broken links
 - Binder build
 - Precise Version and package dependence
-- How to use (0.25d)
 - Latex build fork ?
+- How to use (0.25d)
 
 
 ```{tableofcontents}

@@ -143,11 +143,4 @@ An interesting property of the spectrogram of a single note is that it is well a
 
 ## Music structure estimation
 
-We can also use spectrograms of full songs to detect similarities between bars. I will not detail this contribution in this manuscript, it was already detailed in length in Axel Marmoret's PhD manuscript [ref] and falls slightly outside the scope of this HDR. There are also available tutorials in the BarMusComp toolbox [link](https://gitlab.imt-atlantique.fr/a23marmo/barmuscomp) and the more recent Autosimilarity Segmentation toolbox [link](https://gitlab.imt-atlantique.fr/a23marmo/autosimilarity_segmentation) [todo refs]. The main methdological tool to enhance the similarity detection is the Nonnegative Tucker Factorization of the tensor spectrogramm obtained by stacking spectrogramms of each bar of a song [refs Nieto et nous].
-
-2. [Music structure estimation](./Music_structure_estimation.md): Si j'ai le temps et l'envie.
-
-## Others not covered in this manuscript
-
-- Chemometrics (few words cf book)
-- ?
+We can also use spectrograms of full songs to detect similarities between bars. I will not detail this contribution in this manuscript, it was already detailed in length in Axel Marmoret's PhD manuscript [ref]. There are also available tutorials in the BarMusComp toolbox [link](https://gitlab.imt-atlantique.fr/a23marmo/barmuscomp) and the more recent Autosimilarity Segmentation toolbox [link](https://gitlab.imt-atlantique.fr/a23marmo/autosimilarity_segmentation) [todo refs]. The main methdological tool to enhance the similarity detection is the Nonnegative Tucker Factorization of the tensor spectrogramm obtained by stacking spectrogramms of each bar of a song [refs Nieto et nous]. See also [the related paragraph in the HDR summary](../../introduction/summary.md#music-segmentation).

@@ -35,11 +35,11 @@ parts:
         - file: part2/Theory_of_rLRA/onesparseDLRA
         - file: part2/Theory_of_rLRA/MixedSparseCoding
         - file: part2/Theory_of_rLRA/multiple_dictionaries
-      - file: part2/Theory_of_rLRA/sparse_nnls
   - caption: Fast algorithms for rLRA
     chapters:
       - file: part2/Fast_algorithms_for_rLRA/intro
       - file: part2/Fast_algorithms_for_rLRA/proco-als
+      - file: part2/Fast_algorithms_for_rLRA/sparse_nnls
       - file: part2/Fast_algorithms_for_rLRA/mSOM
       - file: part2/Fast_algorithms_for_rLRA/inertial_BCD
       - file: part2/Fast_algorithms_for_rLRA/CMTF
