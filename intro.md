@@ -9,7 +9,7 @@ The book contains code snippets with barebone implementations of algorithms, num
 The scientific content of the book is summarized in the [](./intro/introduction.md). Below is the table of content for quick access.
 
 TODOlist:
-- Perpsectives audio and others (1d)
+- Perpsectives audio and others (0.5d)
 - Flexible CMTF content (0.5d)
 - Dictionary-based Content (0.5d)
 - References

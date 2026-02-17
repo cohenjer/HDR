@@ -1,30 +1,48 @@
 # Other topics
 
+% 1 paragraph please
 
-## Single pixel
+The topics discussed in this section are scientific questions that I want to address, that are not directly related to KL-divergence and Poisson noise.
 
-TODO dvp, this is the introduction text. Write an equation for each one typically.
+## Single pixel imaging and compressive acquisition
 
-Another important line of work for the future revolves around single-pixel imaging. [Perspectives on this topic](../part3/others.md#single-pixel) include
-- a better understanding the impact of acquisition patterns and acquisition subsampling on reconstruction performances. This topic is under scrutiny with Nicolas Ducros in collaboration with Laurent Jacques and Clément Thomas.
-- a joint reconstruction and unmixing of single pixel images with deep priors (such as plug-and-play and unrolling). This is the topic of the end of Serena Hariga's PhD thesis.
-- better algorithms for Poisson noise problems, as discussed above.
-- a deeper understanding of Poisson-Gaussian equivalences, and estimation under Poisson-Gaussian noise. Emilie Chouzenoux and co-authors have already worked on this problem, but I believe there could be additional discoveries to be made. In particular, known results about Poisson-Gaussian equivalences in high-count settings, although standard in the optics and statistics community [ref truc ML Poisson Gaussien, etc], are not easily summarized or put in use in a numerical optimization context [refs Chouzenoux]. This work could be performed in collaboration with Valentin Debarnot, recently recruted in CREATIS.
+Single-pixel imaging has already been discussed in [](../part3/KarpCoi.md). While the reconstruction algorithm is of critical importance, to improve the overall algorithmic and hardware pipeline, the acquisition system is maybe even more important. The acquisition is modeled as a linear system $y=Hx$ where matrix $H$ contains at each row the pattern of ones and zeroes representing the micro-mirror positions at each acquisition. There are two relatively open questions regarding the choice of these patterns.
 
-important for practice: inverse separable NMF. Seems hard.
+As discussed in [](../part2/Applications_of_rLRA/single_pixel.ipynb), the acquisition matrix coefficients have to belong to the interval $[0,1]$. The statistical optimality of Hadamard patterns holds for additive noise and entries in $[-1,1]$. There are other acquisition matrices such as $S$ matrices [TODO ref] that are shown to be optimal up to a factor $2$. We are working on a research paper summarizing these ideas [Ref nous TODO]. Ongoing research in the team is also concerned with learning the acquisition patterns from a training dataset, or from the color camera in a multimodal acquisition setup. I will not explore this direction. 
+
+Once the patterns have been chosen, another question of importance is how to subsample the acquisition patterns to acquire $y_S = H[S,:]x$, where $S$ is the index set of acquired patterns. The compressive sensing litterature informs on how to choose these patterns, based mostly on improving the reconstruction with sparsity-based priors. Because of Poisson noise and the usage of other reconstruction methods, in particular based on deep priors, practical observations result in a different policy for choosing the samples $S$. A better understanding the impact of acquisition patterns and acquisition subsampling on reconstruction performances is therefore needed. This topic is under scrutiny with Nicolas Ducros in collaboration with Laurent Jacques (UCLouvain), Marc Georges (ULiège) and Clément Thomas (PhD student ULiège).
+
+### Spectral unmixing dataset acquisition
+
+A problem that plagues signal processing research on hyperspectral imaging is the lack of dataset with reliable ground truth. In the context of remote sensing, where the hyperspectral images often span several kilometers, it is simply not possible to go on the ground at the exact same time the image was acquired and measure the spectra of each macroscopic element. Even if this were possible, the acquisition parameters, such as incidence angle or illumination, could be different. In hyperspectral microscopy however, it may be possible to have a finer control on the scene. In the PhD thesis of Serena Hariga, we tried to print unicolor shapes, hoping that the inks in the printer would be combinations of three primal colors, resulting in predictible mixing of three components spatially distributed. However, the printer does not make use solely of [additive mixing](../part2/Applications_of_rLRA/intro.md), and the printed image is therefore not rank three.
+
+With Nicolas Ducros, we plan to design another acquisition protocole for hyperspectral microscopic images with controlled ground truth. One possible direction is to use several lamps to illuminate a binary scene, and rely on the additive spatial mixing of the two lights. The challenge would be to control precisely the spatial distribution of each light on the scene.
+
+[figure si je suis chaud]
+
+## Inverse problems and separable NMF
+Once the single pixel data has been acquired, one may want to perform jointly the reconstruction and the spectral unmixing. This is the research project of Serena Hariga, currently finishing her PhD. We are designing Primal-Dual algorithms with data-driven priors, that result in complicated algorithms even when the spectral unmixing is not blind (matrix $W$ containing the spectra is known). In the future we want to obtain a stable algorithm for perfoming reconstruction and blind spectral unmixing. One important missing step is a good initialization algorithm. 
+
+A powerful way to initialize NMF in other contexts is by perfoming [separable NMF](../part1/lra.md). Separable NMF searches for the spectra directly in the data matrix. However in the context of inverse problems, this data matrix is not available. Ignoring the Poisson nature of the noise, the inverse separable NMF model may be formalized as the following optimization problem:
+
+$$ \argmin{X\in\R{n\times p} ,\; V\in \R{p\times r}_+,\; \#S=r} \|Y - HX\|_F^2 + \|X - X[:,S]V^T\|_F^2 + g(X) $$
+where $Y$ is the spectral measurement matrix, $H$ the acquisition matrix, $S$ the indices of the pure pixels in the reconstructed matrix $X$ and $g(X)$ is some regularization, typically data-driven. The issue with this simple formulation is that it is unclear how to derive a fast algorithm to compute the solutions. The strength of separable NMF lies in the fact that algorithms such as SPA [ref TODO] that solve it are extremely cheap to run.
+
+There are several ways to solve this issue. First, in the case where the acquisition matrix $H$ is orthogonal, one may simply run separable NMF on $H^TY$. But as soon as the patterns are subsampled, this strategy may not perform well. Our goal is therefore to improve with respect to a two-step strategy where the reconstruction and separable NMF are performed sequentially in the presence of subsampling. Another possible direction is to use other variational formulations of separable NMF recently proposed [ref TODO]. It may be possible to design a fast algorithm for inverse separable NMF when the regularization $g$ is ignored or simple enough.
+
+The core problem behind inverse separable NMF is that performing spectral unmixing in the measurement domain of an inverse problem is inherently diffcult. Indeed, spectral unmixing relies heavily on the geometry of the data, where the true spectra generate a cone containing the data that can often be observed directly by plotting the data. The forward operator of an inverse problem mixes all the data points, and the geometry of the problem is consequently heavily modified. Wether it is possible and useful to perform spectral unmixing on the measurement coefficients is an open question.
 
 ## Borgen plots revisited
 
-steal pictures from article ?
+Many theoretical results on the identifiability of rLRA models exist, that allow to choose a priori the model and constraints adapted to a given practical signal processing problem. While these results are very useful, in most practical cases they cannot be applied as some of the quantites required to prove uniqueness are unknown or hard to estimate. Another important line of work concerns a posteriori methods to check if the solutions to an inverse problem or rLRA optimization algorithm are unique. I belive this line of work has been largely ignored by the community despite its obvious usefulness for practitionners. 
 
-ideas: higher dims ? sampling based ?
-tensor equivalents --> thomas
-more generally, borgen plots for other inverse problems ? --> related to works of Pierre Weiss
+There is a small but deep litterature on numerical algorithms for the visualization of solutions to NMF in small ranks (less than four) from the chemometrics community [Borgen ref], see [ref TODO] for a mathematical survey. Borgen and Kowalski proposed what is now sometimes called Borgen plots, see figure below for the rank three case. The set of solutions to NMF are parameterized explicitly with $r-1$ parameters as
 
-## Automatic transcription
+$$ Y = UTT^{-1}V^T, $$
+where $T$ is a $r\times r$ invertible matrix. The trick to Borgen plots is noting that scaling and permutation ambiguities can be leveraged to restrict the parameterization of matrix $T$ to the parameterization of its first row, and that its first column may be set to one. Therefore, the set of feasible solution is parameterized in the rank three case by only two parameters $\alpha_1$ and $\alpha_2$, therefore exhaustive search for all equivalent solutions is reasonably doable. This was proposed rather recently in 2011 by A. Golshan, H. Abdollahi, and M. Maede [ref TODO], using covering triangles. It is possible to show other properties on the set of feasible NMF solutions, for instance it is a convex polytope, that fasten this process. A matlab toolbox exists that provides efficients numerical algorithms for computing Borgen plots [ref Facpack].
 
-Do something that works with deep learning, DDSP and the likes ? Quid NMF ? PhD on that topic.
+[Figure Borgen plot]
 
-## Wasserstein source separation
+Borgen plots are an amazing tool for visualisation of NMF solutions a posteriori. However, there are a number of problems with them. Most importantly, they have been designed for very small ranks. Visualization becomes more difficult at higher ranks, and as rank and dimensions increase, the numerical strategies based on exhaustive search become intractable. The cost of verification of the validity of a matrix parameterized by vector $\alpha$ also involves solving a small problem with matrix inversion, that can be costly in higher dimensions. Consequently, there is room for the development of methods that scale to higher dimensions. Another issue is that the current design of Borgen plots may return infeasible solutions, and that some solutions may be ignored in the visualization if the data is not irreducible (in which case the Perron Frobenius theorem does not apply), or if the set of solutions has several disconnected convex subsets (because the geometric construction of the feasible set works locally).
 
-serpent de mer. Mais peut être cool en NMF/chemometrics.
+Besides NMF, I want to extend this kind of numerical representation of solution sets to other inverse problems. One possible direction is to work in the null-space of the Jacobian matrix, as proposed by Pierre Weiss and co-authors [TODO ref].
