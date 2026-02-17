@@ -9,9 +9,8 @@ The book contains code snippets with barebone implementations of algorithms, num
 The scientific content of the book is summarized in the [](./intro/introduction.md). Below is the table of content for quick access.
 
 TODOlist:
-- Assumptions of Alternating algorithms (0.5d)
-- Flexible CMTF content (0.5d)
 - References
+- lower-semicontinuous pas impliqué par continuous sur l'interrieur du domaine, prendre 10min pour checker dans Beck
 - Figures design
 - Figure inline integration with glue and environments
 - Relecture
