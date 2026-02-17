@@ -1,5 +1,6 @@
 _build/
 tensorly_hdr/build
+tensorly_hdr/tensorly_hdr/__pycache__/
 .vscode
 code-workspace
 *.log
