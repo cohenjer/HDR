@@ -1,7 +1,5 @@
 # Other topics
 
-% 1 paragraph please
-
 The topics discussed in this section are scientific questions that I want to address, that are not directly related to KL-divergence and Poisson noise.
 
 ## Single pixel imaging and compressive acquisition
