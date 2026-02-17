@@ -1,7 +1,10 @@
 _build/
 tensorly_hdr/build
-tensorly_hdr/tensorly_hdr/__pycache__/
+tensorly_hdr/tensorly_hdr/__pycache__
 .vscode
 code-workspace
 *.log
-*.pyc
+*.cpython-311.pyc
+tensorly_hdr/tensorly_hdr/__pycache__/sep_nmf.cpython-311.pyc
+tensorly_hdr/tensorly_hdr/__pycache__/optimal_scaling.cpython-311.pyc
+tensorly_hdr/tensorly_hdr/__pycache__/image_utils.cpython-311.pyc
