@@ -1,9 +1,5 @@
 # Summary
 
-```{margin}
-Essential uniqueness in LRA means uniqueness up to permutations and scalings [TODO] (surement dit avant).
-```
-
 Despite their widespread usage in the signal processing and machine learning communitites, regularized LRA models are still rather poorly understood to this day. In particular there are two kind of questions without clear answers in the literature.
 
 - **Identifiability**: given an exact factorization model, e.g. $M=X_1X_2$, and a set of constraints $\mathcal{C}_i$ such that $X_i\in\mathcal{C}_i$, are solutions to the factorization problem under these constraints essentially unique ?
@@ -18,7 +14,7 @@ for some regularization functions $g_1$ and $g_2$, what are the properties satis
 
 These two questions are related at first glance but differ fundamentally. The identifiability of rLRA models is a cornerstone of source separation techniques since it allows to give a physical meaning to estimated factor matrices. Characterizing the solutions to an optimization problem amounts to ensuring that certain properties are satisfied by the estimated factor matrices, independently of the uniqueness of the solution. For instance in some cases the user only care about the sparsity level of factor matrices or their orthogonality.
 
-Identifiability of rLRA has recieved significant attention, in particular for matrix factorization models such as dictionary learning {cite}`f`, NMF {cite}`f`, or tensor decomposition models such as nonnegative CPD {cite}`f` and, more recently, nonnegative Tucker decomposition {cite}`f`. My contribution on the identifiability question has been to provide deterministic sufficient conditions for the [identifiability of complete dictionary learning](./DL_identifiability.md), improving upon other works and correcting mistakes in the literature. I also show how to [compute complete DL](./DL_identifiability_code.ipynb) in practice with Tensorly.
+Identifiability of rLRA has recieved significant attention, in particular for matrix factorization models such as dictionary learning, NMF, or tensor decomposition models such as nonnegative CPD and, more recently, nonnegative Tucker decomposition, see [](../../part1/lra.md). My contribution on the identifiability question has been to provide deterministic sufficient conditions for the [identifiability of complete dictionary learning](./DL_identifiability.md), improving upon other works and correcting mistakes in the literature. I also show how to [compute complete DL](./DL_identifiability_code.ipynb) in practice with Tensorly.
 
 Solution characterization on the other hand has not been considered much in the literature, in particular in contrast to the significant body of work that concerns regularized regression problems such as ridge regression or LASSO {cite}`foucart2013introduction`. For instance it is still unclear wether solutions to a sparse NMF problem
 

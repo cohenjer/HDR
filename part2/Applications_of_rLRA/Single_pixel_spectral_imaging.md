@@ -14,15 +14,15 @@ kernelspec:
 
 :::{admonition} Reference
 :class: tip
-{cite}`harigaJointReconstructionSpectral2024` TODO
-{cite}`harigaApprochePlugandplayPour2025` TODO
+{cite:p}`harigaJointReconstructionSpectral2024` S. Hariga, J. E. Cohen and N. Ducros, "Joint Reconstruction and Spectral Unmixing from Single-Pixel Acquisitions", EUPSICO 2024. [hal](https://hal.science/hal-04539349)
+{cite:p}`harigaApprochePlugandplayPour2025` S. Hariga, A. Repetti, N. Ducros, J. E. Cohen,  "Approche plug-and-play pour la reconstruction des cartes d’abondance en imagerie hyperspectrale mono-pixel" GRETSI 2025 [hal](https://hal.science/hal-05235066v1/document)
 :::
 
 ## Single-pixel hyperspectral imaging principle
 
 Spectral cameras are invaluable tools to acquire detailed spectral information. They function by spatially spreading an incoming light flux with respect to its composing wavelengths. This spectral-spatial (Fourier) transformation implies that it is by design difficult to acquire spectral images that have a high spatial and spectral resolution. This is particularly true if the imaging device must remain affordable and lightweight.
 
-Following the development of compressive sensing in the 2010s, xx et. al. [ref Nicolas] proposed to make use of spatial multiplexing [TODO Duarte et al] to feed focalized masked images into a high-resolution ponctual spectrometer. The hyperspectral cube containing both the spatial information (images) and the spectral information (spectra) is then reconstructed by solving an inverse problem, following a long tradition of reconstruction imaging techniques in the computational imaging community. 
+Although the idea of compressive acquisitions in computational optics preceedes the development of compressive sensing {cite:p}`nelsonHadamardSpectroscopy1970c`, Duarte and co-authors proposed the single-pixel camera, that uses spatial multiplexing to feed focalized masked images into a high-resolution ponctual spectrometer {cite:p}`duarteSinglepixelImagingCompressive2008, Duarte2012Kronecker`. In the setup available at CREATIS, the compressed light flux is the input of a spectrometer. The hyperspectral cube containing both the spatial information (images) and the spectral information (spectra) is then reconstructed by solving an inverse problem, following a long tradition of reconstruction imaging techniques in the computational imaging community {cite:p}`ducrosIntroductionSinglePixelImaging2024` (todo ask Nicolas better ref). 
 
 [Figure explicative]
 
@@ -42,11 +42,11 @@ The reconstruction of the hypercube $X$ knowning the measurements $Y$ and the ac
 
 Before considering a baseline reconstruction method, it is necessary to discuss more about the choice of the acquisition matrix $A$. There are both practical and theoretical constraints that guide the choice of $A$. 
 - Practically, the patterns are applied on the image by leveraging a micromirror matrix (DMD). The image is focalized on the DMD, which has small mirrors corresponding to pixels that can point in two different directions. All the mirror that point towards the lens targeting the spectrometer reflect the light incoming from the observed object and will contribute to the measured spectrum. The other mirror effectively block all the incoming light. Therefore, we may assume that the observation matrix is binary. Contrary to other imaging modalities such as magnetic resonance imaging, the patterns can be changed at will for each acquisition.
-- Theoretically, if the patterns could be negative in $[-1, 1]$, the "optimal" acquisition patterns are known to be Hadamard matrices [ref oldies]. Optimality here is meant in the sense of statistical minimal linear reconstruction error, *i.e.* minimal estimation variance. In particular, Hadamard patterns are shown to outperform raster scan that observes each pixel individually and therefore do not perform spatial multiplexing. The theoretical gain of Hadamard matrices versus raster scan is known as the Felgett advantage [ref oldies].
+- Theoretically, if the patterns could be negative in $[-1, 1]$, the "optimal" acquisition patterns are known to be Hadamard matrices {cite:p}`nelsonHadamardSpectroscopy1970c`. Optimality here is meant in the sense of statistical minimal linear reconstruction error, *i.e.* minimal estimation variance. In particular, Hadamard patterns are shown to outperform raster scan that observes each pixel individually and therefore do not perform spatial multiplexing. The theoretical gain of Hadamard matrices versus raster scan is known as the Felgett advantage.
 
 :::{admonition} Why are Hadamard patterns "optimal"
 
-In 1970, Nelson and Fredman [cite] introduced the concept of Hadamard spectrocopy. In their seminal work, they prove that Hadamard patterns are an "optimal" choice for the acquisition basis. Let us clarify in what sense is this optimality meant, and under which assumptions.
+In 1970, Nelson and Fredman introduced the concept of Hadamard spectrocopy {cite:p}`nelsonHadamardSpectroscopy1970c`. In their seminal work, they prove that Hadamard patterns are an "optimal" choice for the acquisition basis. Let us clarify in what sense is this optimality meant, and under which assumptions.
 
 Nelson and Fredman are concerned with linear reconstructions of acquisitions $y=Ax + e$, with matrix $A$ either the identity matrix (raster scan) or a complete Hadamard basis. The noise $e$ is supposed to be additive, i.i.d. with finite variance $\sigma$, but the distribution of $n$ is not necessarily Gaussian. 
 
@@ -84,7 +84,7 @@ The optimality of the Hadamard patterns however is meant under many unrealistic 
 - The reconstruction is linear. Most state-of-the-art reconsruction algorithms employ more sofisticated reconstruction strategies.
 - The error is measured with the RMSE, which is not a robust or statistically meaningfull error metric for Poisson-Gaussian noise.
 
-There are therefore ample research avenues for improving upon the (nonnegative) Hadamard patterns design. Revisiting the MSE gains for Poisson-Gaussian noise is a work in progress [ref] [lien perspectives].
+There are therefore ample research avenues for improving upon the (nonnegative) Hadamard patterns design. Revisiting the MSE gains for Poisson-Gaussian noise is one of my [research perspectives](../../part3/KarpCoi.md#kl-based-inverse-problems-for-computational-imaging).
 :::
 
 A practical solution to the implementation on the DMD of Hadamard patterns is to acquire the positive and negative parts of the Hadamard patterns sequentially, and concatenate the measurements into a single vector. If the image has $n$ pixels and $n$ Hadamard patterns where to be acquires, the number of measurements is then $m:=2n-1$ (one pattern is full of zeros and ignored) and the data vector $y$ has size $m$. Doing so preserves the Poisson distribution. Another usual post-processing method computes the difference of the positive and negative acquisitions, resulting in a simulated Hadamard acquisition, but the noise distribution is modified. Formally, we define 
@@ -97,7 +97,7 @@ where $H$ here denotes a Hadamard matrix, and $[x]^- \geq 0$ is the negative par
 
 In short, we suppose that measurements $Y$ are a stored in a matrix of size $m\times p$ are acquired, and assume the model $Y\sim \mathcal{P}\left(\alpha AX\right)$ with $A$ of size $m\times n$ a matrix with entries in $\{0,1\}$.
 
-Hadamard matrices have both a simple form for the pseudo-inverse and a cheap matrix-vector product [ref]. It is natural to question wether one can apply and invert the split operator $A$ at a similar cost. Both questions have a positive answer. The product $A^{\dagger}y$ can be performed efficiently using the fast Hadamard transform. [Rework, we dont invert H-] Indeed, $[H]^{\pm} = \frac{1}{2} \left[H \pm 1\right]$. The pseudo-inverse also admits a closed-form expression although this is less immediate [ref Sloane 1978 cf article demander à Nicolas]. Matrix $[H]^+$ is left-invertible, and by noticing that
+Hadamard matrices have both a simple form for the pseudo-inverse and a cheap matrix-vector product {cite:p}`magoarouChasingButterfliesSearch2015`. It is natural to question wether one can apply and invert the split operator $A$ at a similar cost. Both questions have a positive answer. The product $A^{\dagger}y$ can be performed efficiently using the fast Hadamard transform. [Rework, we dont invert H-] Indeed, $[H]^{\pm} = \frac{1}{2} \left[H \pm 1\right]$. The pseudo-inverse also admits a closed-form expression although this is less immediate [TODO ref Sloane 1978 cf article demander à Nicolas]. Matrix $[H]^+$ is left-invertible, and by noticing that
 
 $$ \frac{1}{n}H^T[H]^+ = \frac{1}{2}I + \frac{1}{2} e_1 \mathbb{1}^T,\; e_1 = [1,0,\ldots,0]^T  $$
 
@@ -364,7 +364,7 @@ and our goal is to design a state-of-the-art reconstruction algorithm that estim
 
 ### Joint reconstruction and unmixing in one step
 
-In {cite}`harigaJointReconstructionSpectral2024`, a simple strategy to jointly reconstruct and unmix a single-pixel image was proposed, computing the maximum likelihood estimator from Equation {eq}`eq:joint-reco-unmixing-model` with an alternating optimization algorithm, in this case alternating Multiplicative Updates (MU). The update rule for the spectra $V$ is the same as detailled in [](../../part1/nnls.md#multiplicatives-updates), and for $U$ it can be obtained simply by 1) flattening the variables, 2) computing the classical MU rule and 3) folding the output into a matrix (see also {cite}`fevotte2011algorithms`). This yields after simplification
+In {cite:p}`harigaJointReconstructionSpectral2024`, a simple strategy to jointly reconstruct and unmix a single-pixel image was proposed, computing the maximum likelihood estimator from Equation {eq}`eq:joint-reco-unmixing-model` with an alternating optimization algorithm, in this case alternating Multiplicative Updates (MU). The update rule for the spectra $V$ is the same as detailled in [](../../part1/nnls.md#multiplicatives-updates), and for $U$ it can be obtained simply by 1) flattening the variables, 2) computing the classical MU rule and 3) folding the output into a matrix (see also {cite:p}`fevotte2011algorithms`). This yields after simplification
 
 $$
  U^{(k+1)} = U^{(k)} \ast \frac{A^T\frac{Y}{AUV^T}V}{A^T\mathbb{1}_{m,p}V}.
@@ -378,7 +378,7 @@ $$
 \argmin{U\geq 0, V\geq 0} \KL{Y, AUV^T} + \lambda \left( \|U\|_1 + \|V\|_1 \right)
 $$
 
-is jointly non-convex, initialization is important. A viable optimization for simple unmixing problems is to first perform the reconstruction, for instance solving a NNLS problem, then use a pure-pixel selection algorithm such as SNPA {cite}`` [todo] to initialize $V$.
+is jointly non-convex, initialization is important. A viable optimization for simple unmixing problems is to first perform the reconstruction, for instance solving a NNLS problem, then use a pure-pixel selection algorithm such as SNPA {cite}`gillisSuccessiveNonnegativeProjection2014` to initialize $V$.
 
 This procedure is illustrated below on, first, a synthetic exemple, and then on a real dataset acquired in CREATIS.
 

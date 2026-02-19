@@ -14,12 +14,13 @@ kernelspec:
 
 :::{admonition} Reference
 :class: tip
-{cite}`wuSemiSupervisedConvolutiveNMF2022` TODO
+{cite:p}`wuSemiSupervisedConvolutiveNMF2022`  H. Wu, A. Marmoret and J. E. Cohen, "Semi-Supervised Convolutive NMF for Automatic Music Transcription", SMC2022, [pdf](https://arxiv.org/abs/2202.04989) [code](https://github.com/cohenjer/TransSSCNMF) [data](https://zenodo.org/records/14947906)
+
 :::
 
 ## Nonnegative matrix factorization for automatic music transcription
 
-Spectrogramms of piano recordings contain the spectral information of notes played in the recording along time.  An interesting property of the spectrogram of a single piano note recording is that it is typically well approximated by a rank-one matrix. For instance on a recorded piano A4 (440Hz) from the dataset MAPS [ref], the best rank-one approximation of the magnitude spectrogram looks similar to the magnitude spectrogram, in particular when using Kullback-Leibler divergence as a loss function [ref rank one, link section, ref Axel], see [](../../part1/nnls.md#nonnegative-kullback-leibler-regression-nnkl) for a discussion on the rank-one approximation closed-form algorithm.
+Spectrogramms of piano recordings contain the spectral information of notes played in the recording along time.  An interesting property of the spectrogram of a single piano note recording is that it is typically well approximated by a rank-one matrix. For instance on a recorded piano A4 (440Hz) from the dataset MAPS {cite:p}`emiya2010maps`, the best rank-one approximation of the magnitude spectrogram looks similar to the magnitude spectrogram, in particular when using Kullback-Leibler divergence as a loss function, see [](../../part1/nnls.md#best-nonnegative-rank-one-approximations) for a discussion on the rank-one approximation closed-form algorithm.
 
 ```{code-cell} ipython3
 from cmath import phase
@@ -84,7 +85,7 @@ plt.tight_layout()
 plt.show()
 
 ```
-Magnitude spectrogramms are rather well approximated by rank-one matrices. This suggests the use of low-rank NMF to analyse recordings containing multiple notes. Assuming a linear additive mixture of time-signals however does not lead to a low-rank model exactly. In practice this approximation is reasonable and we shall make use of it, see [encadré below] for more details.
+Magnitude spectrogramms are rather well approximated by rank-one matrices. This suggests the use of low-rank NMF to analyse recordings containing multiple notes. Assuming a linear additive mixture of time-signals however does not lead to a low-rank model exactly because the additive mixture is complex, as explained next.
 
 ### Simplified model and low-rank spectrograms
 Assume two notes are played simultaneously by the piano, with time signals $s_1(t)$ and $s_2(t)$. We focus on a single time window in the STFT. We assume linear mixing, and record the sum of the two signals $s(t) = s_1(t) + s_2(t)$. The Fourier transform of the summed signal $\mathcal{F}[s](\nu)$, by linearity of the Fourier transform, is exactly $ \mathcal{F}[s_1](\nu) + \mathcal{F}[s_2](\nu) $.
@@ -95,7 +96,7 @@ $$ \left| \mathcal{F}[s](\nu) \right|^2  = \left| \mathcal{F}[s_1](\nu) + \mathc
 
 and by Cauchy-Schwartz, the spectrogram computed from the recording is rank-two if and only if $ \mathcal{F}[s_1](\nu) = \lambda_\nu \mathcal{F}[s_2](\nu) $ for each $\nu$ and $\lambda_nu\geq 0$. This condition is equivalent to assuming that the two signals are in phase, in other words $\mathcal{Im}\left(\mathcal{F}[s_1]^\ast(\nu) \mathcal{F}[s_2](\nu)\right)=0$.
 
-A particular case of the equality condition in Cauchy-Schwartz is obtained when the two frequency spectra have disjoint support, in which case $\lambda_\nu$ is null. In other words, if the notes $s_1(t)$ and $s_2(t)$ have no partials in common, then the spectrogram of their additive mixture in the temporal domain should remain low-rank, and one can hope to recover each rank-one spectrogram by performing a rank-two NMF. This assumption is related to time-frequency masking, a technique that has been used for decades in audio source separation and remained used at the start of the era of deep learning {cite}`araki30YearsSource2025`. 
+A particular case of the equality condition in Cauchy-Schwartz is obtained when the two frequency spectra have disjoint support, in which case $\lambda_\nu$ is null. In other words, if the notes $s_1(t)$ and $s_2(t)$ have no partials in common, then the spectrogram of their additive mixture in the temporal domain should remain low-rank, and one can hope to recover each rank-one spectrogram by performing a rank-two NMF. This assumption is related to time-frequency masking, a technique that has been used for decades in audio source separation and remained used at the start of the era of deep learning {cite:p}`araki30YearsSource2025`. 
 
 The disjoint support hypothesis is useful, but incorrect in practice. For instance two notes separated by an octave have similar spectra, but the colinearity condition will be significantly violated. Not only are the fundamental frequencies and partials different in amplitude, the phase of each signal can also change. This can be observed on the MAPS dataset below with notes A4 and A3. Observe that the imaginary part of the cross product is in particular nonzero at locations where the sum of the modulus is far from the modulus of the sum, and that this corresponds to partials of interest. This implies that methods based on low-rank approximations of spectrograms are particularly prone to octave errors.
 
@@ -202,7 +203,7 @@ AMT entered the [MIREX competition](https://www.music-ir.org/mirex/wiki/MIREX_HO
 Spectrograms have a few hyperparameters that should be fixed, most importantly the time window size and type, and the amount of overlap for the windows. In the following, we use parameters found in the litterature [ref AD], hann windows, 4096 samples per window and 4096 - 882 overlapping samples. This leads to a time resolution of about 20ms (the sample rate is usually 44kHz) with spectra computed over 93ms, and a frequency resolution of about 10.7Hz which is a reasonable time-frequency resolution trade-off for piano transcription.
 ```
 
-Given a spectrogram $Y$ of an audio recording, based on the observation that individual notes have approximately rank-one spectrograms, and assuming both linear mixture and marginally overlapping support of the spectrograms, one may hope to recover each individual note spectrogram with NMF. In fact if the supports of the spectrograms of each note do not overlap, NMF is separable (each row of the data spectrogram belongs to exactly one note specrogram) and therefore the unique NMF solution can be recovered by any reasonable NMF algorithm. On top of estimating each individual spectrogram, these spectrograms are factorized into a temporal activation, telling when each note is played and at which intensity, and a frequency spectrum containing the fundamental and partials characteristic of the note. A simple post-processing step thus involves identifying the fundamental frequency for each rank-one NMF component, and thresholding the time-activation {cite}`vincentHarmonicInharmonicNonnegative2008a`. Although more elaborate strategies could be designed, this pipeline is essentially what has been used in the AMT literature to post-process NMF factors.
+Given a spectrogram $Y$ of an audio recording, based on the observation that individual notes have approximately rank-one spectrograms, and assuming both linear mixture and marginally overlapping support of the spectrograms, one may hope to recover each individual note spectrogram with NMF. In fact if the supports of the spectrograms of each note do not overlap, NMF is separable (each row of the data spectrogram belongs to exactly one note specrogram) and therefore the unique NMF solution can be recovered by any reasonable NMF algorithm. On top of estimating each individual spectrogram, these spectrograms are factorized into a temporal activation, telling when each note is played and at which intensity, and a frequency spectrum containing the fundamental and partials characteristic of the note. A simple post-processing step thus involves identifying the fundamental frequency for each rank-one NMF component, and thresholding the time-activation {cite:p}`vincentHarmonicInharmonicNonnegative2008a`. Although more elaborate strategies could be designed, this pipeline is essentially what has been used in the AMT literature to post-process NMF factors.
 
 ```{figure} ../../Figures/partition.png
 ---
@@ -213,7 +214,7 @@ name: partition
 Symbolic notation for the recorded audio sample. In green, the first six seconds with isolated notes, and in red the second part up to eight seconds with chords.
 ```
 
-We can try this on a simple recording from the MAPS dataset {cite}`emiyaMAPSAPianoDatabase2010` with many isolated notes and few chords. A first example below is performed on a song with only isolated notes. Notice how good the reconstruction is. There are six notes played in the first six seconds of the recording. We used a rank seven NMF. One of the component models the hammer action; this can be seen by the spectral signature which is not comb-shaped, and the time activation following each played note except the high F which has a softer attack. 
+We can try this on a simple recording from the MAPS dataset {cite:p}`emiyaMAPSAPianoDatabase2010` with many isolated notes and few chords. A first example below is performed on a song with only isolated notes. Notice how good the reconstruction is. There are six notes played in the first six seconds of the recording. We used a rank seven NMF. One of the component models the hammer action; this can be seen by the spectral signature which is not comb-shaped, and the time activation following each played note except the high F which has a softer attack. 
 
 ```{code-cell} ipython3
 # Load song
@@ -374,15 +375,15 @@ This suggests a few problems with NMF:
 - The rank-one hypothesis for isolated notes is not good enough. Therefore the model tends to use several components to model a single note. This makes the choice of the rank harder, and the post-processing also more challenging.
 - We have little guarantee that the output spectra are indeed interpretable as comb-like spectra with a clear fundamental frequency. We clearly see in the above example that the components with smallest fundamental frequency are hardly interpretable. Their time activation is also far from the standard attack-hold-sustain-decay pattern. In other words, the uniqueness of NMF is unclear as soon as many notes overlap in time and frequency, which is usually the case with chords in tonal music.
 
-Tentative improvements to blind NMF for AMT involve parameterizing the time activations to actually follow and attack-decay pattern {cite}`chengAttackDecayModel2016`. We used a different route and utilized the so-called Convolutive NMF with supervision.
+Tentative improvements to blind NMF for AMT involve parameterizing the time activations to actually follow and attack-decay pattern {cite:p}`chengAttackDecayModel2016`. We used a different route and utilized the so-called Convolutive NMF with supervision.
 
 ## Convolutive pretrained NMF for improved piano transcriptions
 
-In {cite}`wuSemiSupervisedConvolutiveNMF2022`, we proposed to address both issues: the modeling errors of spectrograms of single notes are reduced by introducing convolutive rank-one components, while the interpretability is ensured by pretraining the dictionary $W$ on isolated notes recordings, thus switching from an unsupervised setup to a (weakly)-supervised framework. Let us first discuss convolutive NMF.
+In {cite:p}`wuSemiSupervisedConvolutiveNMF2022`, we proposed to address both issues: the modeling errors of spectrograms of single notes are reduced by introducing convolutive rank-one components, while the interpretability is ensured by pretraining the dictionary $W$ on isolated notes recordings, thus switching from an unsupervised setup to a (weakly)-supervised framework. Let us first discuss convolutive NMF.
 
 ### Convolutive NMF, a better model for notes spectrograms
 
-As mentionned in [](./intro.md), magnitude spectrograms of single piano notes are not exactly rank-one matrices. While it is rather accurate that a single activation vector can describe the dynamics of the note along time, the description of a single note as a fixed frequency spectrum is wrong. The spectrum at the attack contains transients that rapidly dissipate. It therefore may differ significantly from the spectrum measured when the note is sustained. Ideally to obtain a linear model we could split attack and decay/sustain spectra as proposed in {cite}`chengAttackDecayModel2016`. We proposed rather to model each single note spectrogram $Y[f,t]$ as the convolution of a small time-frequency matrix with a time activation:
+As mentionned in [](./intro.md), magnitude spectrograms of single piano notes are not exactly rank-one matrices. While it is rather accurate that a single activation vector can describe the dynamics of the note along time, the description of a single note as a fixed frequency spectrum is wrong. The spectrum at the attack contains transients that rapidly dissipate. It therefore may differ significantly from the spectrum measured when the note is sustained. Ideally to obtain a linear model we could split attack and decay/sustain spectra as proposed in {cite:p}`chengAttackDecayModel2016`. We proposed rather to model each single note spectrogram $Y[f,t]$ as the convolution of a small time-frequency matrix with a time activation:
 
 $$
  \hat{Y}[f,t] = \sum_{\tau=0}^{T-1} W[f,\tau] h[t+\tau],
@@ -392,7 +393,7 @@ where $T$ is the size of the convolution window. This rank-one convolutive model
 
 $$ \hat{Y} = W \tilde{H}. $$
 
-Convolutive NMF is obtained by modeling a nonnegative matrix as the sum of rank-one convolutive terms as defined in {eq}`eq:rank1CNMF`, that now depend on the component index $q$. It was proposed originally in the context of speech separation {cite}`smaragdisConvolutiveSpeechBases2006`, and writes
+Convolutive NMF is obtained by modeling a nonnegative matrix as the sum of rank-one convolutive terms as defined in {eq}`eq:rank1CNMF`, that now depend on the component index $q$. It was proposed originally in the context of speech separation {cite:p}`smaragdisConvolutiveSpeechBases2006`, and writes
 
 $$ \hat{Y} = \sum_{q=1}^{r} \sum_{\tau=0}^{T-1} W[f,\tau,q] H[q,t-\tau]. $$
 
@@ -407,7 +408,7 @@ name: CNMF
 Illustration of the CNMF model compared to NMF.
 ```
 
-Computing CNMF is typically done in an alternating fashion. Here we do not really need the full update for the tensor $W$ in CNMF since we will only work with rank-one CNMF at training time, see [](#a-cnmf-dictionary-of-pure-notes-with-rank-one-cnmf). The update for $H$ provided in the original CNMF paper is a heuristic, but it was later refined using majorization-minimization techniques {cite}`fagotMajorizationminimizationAlgorithmsConvolutive2019b` similar to what we describe in [](../../part1/nnls.md). In terms of optimization, multiplicative update rules for CNMF are obtained essentially with the same majorization techniques as introduced in [](../../part1/nnls.md). Indeed, the MU algorithm relies on a majorization that removes the dependence of each variable with the others, and CNMF in that aspect has the same structure as NMF. The updates for tensor $W^{(k)}$ and matrix $H^{(k)}$ and iteration $k$ can be written in matrix format as follows (following the MM2 algorithm from {cite}`fagotMajorizationminimizationAlgorithmsConvolutive2019b`):
+Computing CNMF is typically done in an alternating fashion. Here we do not really need the full update for the tensor $W$ in CNMF since we will only work with rank-one CNMF at training time, see [](#a-cnmf-dictionary-of-pure-notes-with-rank-one-cnmf). The update for $H$ provided in the original CNMF paper is a heuristic, but it was later refined using majorization-minimization techniques {cite:p}`fagotMajorizationminimizationAlgorithmsConvolutive2019b` similar to what we describe in [](../../part1/nnls.md). In terms of optimization, multiplicative update rules for CNMF are obtained essentially with the same majorization techniques as introduced in [](../../part1/nnls.md). Indeed, the MU algorithm relies on a majorization that removes the dependence of each variable with the others, and CNMF in that aspect has the same structure as NMF. The updates for tensor $W^{(k)}$ and matrix $H^{(k)}$ and iteration $k$ can be written in matrix format as follows (following the MM2 algorithm from {cite:p}`fagotMajorizationminimizationAlgorithmsConvolutive2019b`):
 
 $$ W^{(k+1)} = W^{(k)}\ast \frac{\frac{Y}{\hat{X}^{(k)}}{\tilde{H}^{(k)}}^T }{\mathbf{1}\otimes\sum_{t} \tilde{H}^{(k)}[:,t]} \text{ and }  H^{(k+1)}[:,t] = H^{(k)}[:,t] \ast \frac{  W^{(k)} \times_{1,2} \frac{Y}{\hat{Y}}[:,t:t+T]}{\sum_{f,\tau} W^{(k)}[f,\tau,:] \mathbf{1}_{t+\tau\leq n}},   $$
 
@@ -417,7 +418,7 @@ Similarly to NMF, CNMF is a non-convex problem. Personal observations lead me to
 
 ### A CNMF dictionary of pure notes with rank-one CNMF
 
-Armed with the iterative algorithm we just described, we can decompose the spectrogram of a single note, say A4, with rank-one CNMF. The template tensor $W$, which has a single slice for rank-one CNMF and is therefore essentially a matrix, is initialized by copying the slice of the input spectrogram $Y[:,t_0-3:t_0-3+T]$ where $t_0$ is the index of the maximum column in $ell_1$ norm, and $T$ is set to 10. This corresponds to selecting the most intense 0.2 seconds of the input spectrogram. This way we ensure that the CNMF template is interpretable as a part of the spectrogram of A4. Random initialization may lead to smaller loss function at convergence but results are harder to interpret. Separable CNMF has been studied in the litterature [ref nicolas].
+Armed with the iterative algorithm we just described, we can decompose the spectrogram of a single note, say A4, with rank-one CNMF. The template tensor $W$, which has a single slice for rank-one CNMF and is therefore essentially a matrix, is initialized by copying the slice of the input spectrogram $Y[:,t_0-3:t_0-3+T]$ where $t_0$ is the index of the maximum column in $ell_1$ norm, and $T$ is set to 10. This corresponds to selecting the most intense 0.2 seconds of the input spectrogram. This way we ensure that the CNMF template is interpretable as a part of the spectrogram of A4. Random initialization may lead to smaller loss function at convergence but results are harder to interpret. Separable CNMF has been studied in the litterature {cite:p}`degleris2020provably`.
 
 ```{code-cell} ipython3
 A4_wav, sr = sf.read('../../tensorly_hdr/dataset/MAPS_ISOL_LG_M_S0_M69_ENSTDkAm.wav')
@@ -723,5 +724,5 @@ plt.show()
 
 The song is now well transcribed. In particular the last two chords have the right five notes, played simultaneously. The chords activations are still imperfect, but this is expected because of the non-linear mixing artifacts and the frequency similarity between octaves. We also see that all components slightly activate on each attack. This might be due to the hammer action sound which is the same for all notes and has not been taken into account separately.
 
-The full model, weakly supervised on all piano notes, has performance close to that of fully supervised networks but is not robust to distribution shift (e.g. changing the piano or the recording conditions) {cite}`wuSemiSupervisedConvolutiveNMF2022`. Improving these aspects, and the training procedure, is part of my research project [link].
+The full model, weakly supervised on all piano notes, has performance close to that of fully supervised networks but is not robust to distribution shift (e.g. changing the piano or the recording conditions) {cite:p}`wuSemiSupervisedConvolutiveNMF2022`. Improving these aspects, and the training procedure, is part of my research project [link].
 

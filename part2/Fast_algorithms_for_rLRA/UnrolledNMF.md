@@ -12,8 +12,8 @@ kernelspec:
 # Unrolled MU for data-driven NMF
 
 :::{admonition} Reference
-{cite}`kervazoDeepUnrollingMultiplicative2024` TODO
-{cite}`kervazoMisesJourMultiplicatives2025` TODO
+{cite:p}`kervazoDeepUnrollingMultiplicative2024` C. Kervazo, A. Chetoui and J. E. Cohen, "Deep unrolling of the multiplicative updates algorithm for blind source separation, with application to spectral unmixing", EUSIPCO 2024. [hal](https://hal.science/hal-04736884) 
+{cite:p}`kervazoMisesJourMultiplicatives2025` C. Kervazo, J. E. Cohen, "Unrolled Multiplicative Updates for Nonnegative Matrix Factorization applied to Hyperspectral Unmixing, submitted [pdf](https://hal.science/hal-05497702) 
 :::
 
 ## Data-driven NMF principles

@@ -11,3 +11,5 @@ The multiway product can be defined for three matrices $A$, $B$, $C$ multiplied 
 
 $$\left(A\times_1 B\times_2 C\times_3 G\right)[i,j,k] = \sum_{r_1,r_2,r_3}A[i,r_1]B[j,r_2]C[k,r_3]G[r_1,r_2,r_3].$$
 It can be implemented with tensor contractions, or with matrix-matrix products with unfoldings and reshapes involved.
+
+The [CP decomposition](../part1/lra.md) is represented using the Kruskal notation $\llbracket A,B,C\rrbracket$.

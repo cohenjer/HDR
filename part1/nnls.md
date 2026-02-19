@@ -28,7 +28,7 @@ where $f(y,z)$ is a positive, separable, convex (with respect to the second vari
 (subsec:nnls-kl)=
 ## Nonnegative Least Squares (NNLS)
 
-Nonnegative Least Squares is a classic quadratic optimization problem, maybe one of the simplest generalization of ordinary least squares. I am unsure of its origin, but the oldest mention of NNLS I am aware of is in the book of Lawson and Hanson on optimization methods for least-squares problems {cite}`lawsonSolvingLeastSquares1974`. Unlike ordinary least squares, however, NNLS does not have, in general, a closed-form solution.
+Nonnegative Least Squares is a classic quadratic optimization problem, maybe one of the simplest generalization of ordinary least squares. I am unsure of its origin, but the oldest mention of NNLS I am aware of is in the book of Lawson and Hanson on optimization methods for least-squares problems {cite:p}`lawsonSolvingLeastSquares1974`. Unlike ordinary least squares, however, NNLS does not have, in general, a closed-form solution.
 
 ### Problem description
 
@@ -63,7 +63,7 @@ These results can be formalized using the KKT conditions.
 (subsec:nnls-kkt)=
 ### KKT conditions and the night sky theorem
 
-Deriving the Karush-Kuhn-Tucker conditions (see e.g. {cite}`Boyd2004Convex`) for NNLS is not difficult, but very instructive. Denoting $\lambda\geq 0$ the dual variable for the nonnegativity constraint, the Lagrangian writes
+Deriving the Karush-Kuhn-Tucker conditions (see e.g. {cite:p}`Boyd2004Convex`) for NNLS is not difficult, but very instructive. Denoting $\lambda\geq 0$ the dual variable for the nonnegativity constraint, the Lagrangian writes
 
 $$
 \mathcal{L}(x, \lambda) = \|y - Wx\|_2^2 - \langle \lambda , x\rangle
@@ -99,12 +99,12 @@ If there is no group of $m$ columns of matrix $W$ that are linearly dependent, t
 
 Suppose $y\notin \cp{W}$ and $\text{spark}(W)>m$. Then the NNLS problem admits a unique solution which has at most $m-1$ nonzeros.
 ```
-The nice name for this result, which emphasises the sparsity of NNLS solutions, was suggested to me by Cédric Herzet and Clément Elvira. While I am unsure of the name's true origin, the result itself is proved in {cite}`byrne1981AppliedIterativeMethods`. The night sky theorem is useful to derive the [active set algorithm](#active-set) for NNLS.
+The nice name for this result, which emphasises the sparsity of NNLS solutions, was suggested to me by Cédric Herzet and Clément Elvira. While I am unsure of the name's true origin, the result itself is proved in {cite:p}`byrne1981AppliedIterativeMethods`. The night sky theorem is useful to derive the [active set algorithm](#active-set) for NNLS.
 
 (subsec:nnls-kl)=
 ## Nonnegative Kullback-Leibler regression (NNKL)
 ```{margin}
-There is no one-to-one correspondence between the maximum likelihood estimator and the statistical model. We cannot say, for instance, that using the KL-divergence implicitly implies the statistical model is necessarily Poissonian, see {cite}[Gribonval]. On the other hand, the statistical model dictates the definition of the statistical estimators.
+There is no one-to-one correspondence between the maximum likelihood estimator and the statistical model. We cannot say, for instance, that using the KL-divergence implicitly implies the statistical model is necessarily Poissonian, see {cite:p}[Gribonval]. On the other hand, the statistical model dictates the definition of the statistical estimators.
 ```
 
 Sometimes, using the Euclidean norm to measure the discrepancies between the measurement vector $y$ and the model $Wx$ is not desirable. There are at least two reasons why the Euclidean norm might be avoided:
@@ -137,9 +137,9 @@ Compared to NNLS, which is a quadratic program, NNKL is, in general, significant
 #### Smoothness issue
 
 ```{margin}
-The true definition of Lipschitz-smoothness and the descent lemma do not require the function $f$ to be twice-differentiable, see e.g. {cite}``[ref Beck].
+The true definition of Lipschitz-smoothness and the descent lemma do not require the function $f$ to be twice-differentiable, see e.g. {cite:p}`beck2017first`.
 ```
-Maybe the most commented on difficulty for NNKL is the lack of Lipschitz-smoothness of the KL-divergence at zero. Lipschitz-smoothness is a crucial property in numerical optimization, used to derive descent conditions for first-order algorithms. In a nutshell, a function $f$ which is twice differentiable over a convex set is l-Lipschitz-smooth if its Hessian can be bounded by $lI$. This implies, using the second-order Taylor expansion and majorizing the second-order terms and remainder {cite}``[ref Beck], that for any vector $x$ and local perturbation $z$ the following descent lemma holds: 
+Maybe the most commented on difficulty for NNKL is the lack of Lipschitz-smoothness of the KL-divergence at zero. Lipschitz-smoothness is a crucial property in numerical optimization, used to derive descent conditions for first-order algorithms. In a nutshell, a function $f$ which is twice differentiable over a convex set is l-Lipschitz-smooth if its Hessian can be bounded by $lI$. This implies, using the second-order Taylor expansion and majorizing the second-order terms and remainder {cite:p}`beck2017first`, that for any vector $x$ and local perturbation $z$ the following descent lemma holds: 
 
 $$
 f(x + z) \leq f(x) + \langle \nabla f(x), z \rangle + \frac{l}{2} \|x - z\|_2^2.
@@ -156,17 +156,11 @@ Lipschitz-smoothness, therefore, ensures that **globally**, the slope of the fun
 #### Convexity issue
 
 ```{margin}
-KL-divergence also does not satisfy the global Polyak-Lojasiewicz inequality, a more relaxed assumption than strong convexity {cite}`ref`[Gower]. It is unclear to me at the time of writing if KL-divergence satisfies the Kurdika-Lojiacewicz condition, a local variant of Polyak-Lojasiewicz useful for studying the convergence of first-order methods in non-convex problems {cite}`ref`[Gower ou Hattouch]. It should satisfy the growth condition from {cite}`ref`[http://bolte.perso.math.cnrs.fr/alter.pdf].
+KL-divergence also does not satisfy the global Polyak-Lojasiewicz inequality, a more relaxed assumption than strong convexity {cite:p}`karimiLinearConvergenceGradient2020`. It is unclear to me at the time of writing if KL-divergence satisfies the Kurdika-Lojiacewicz condition globally, a local variant of Polyak-Lojasiewicz useful for studying the convergence of first-order methods in non-convex problems {cite:p}`attouchConvergenceProximalAlgorithm2009,bolte2014proximal`. 
 ```
-Another important issue with KL-divergence is that, while it is a strictly convex function, it is not strongly convex. Indeed, KL-divergence is asymptotically linear when $z$ is much larger than $y$. This causes problems in particular when the data measurement $y$ is sparse or exhibits large dynamics. Strong convexity guarantees linear convergence rates for gradient descent; when the cost function is not strongly convex, first-order algorithms might converge sub-linearly {cite}`ref`[Beck]. In the extreme case where $y$ has many zeroes, a significant part of the cost is linear, and convex first-order optimization techniques are in general ill-suited for linear programming.
 
-%, but satifies the Kurdika-Lojasiewicz inequality which is a local variant of PL for critical points {cite}[Gower Garridos].
+Another important issue with KL-divergence is that, while it is a strictly convex function, it is not strongly convex. Indeed, KL-divergence is asymptotically linear when $z$ is much larger than $y$. This causes problems in particular when the data measurement $y$ is sparse or exhibits large dynamics. Strong convexity guarantees linear convergence rates for gradient descent; when the cost function is not strongly convex, first-order algorithms might converge sub-linearly {cite:p}`beck2017first`. In the extreme case where $y$ has many zeroes, a significant part of the cost is linear, and convex first-order optimization techniques are in general ill-suited for linear programming.
 
-%There exists a neighborhood $\Omega$ of vector $y$ such that for any $x\in\Omega$,
-%$$
-%\KL{y,z} - \KL{y,y} \leq \frac{1}{2\mu} \frac{\partial \KL(y,z)}{\partial x}^2
-%$$
-%since $\frac{\partial \KL(y,x)}{\partial x}^2 = \left(-\frac{y}{z} +1\right)^2$
 
 Smoothness and convexity issues combined imply that there might not exist a safe stepsize and linear convergence rate for gradient descent applied to NNKL. [In the following](#multiplicatives-updates), we explore preconditionned first-order algorithms that partially avoid these issues.
 
@@ -185,7 +179,7 @@ $$
 W[:,S]^T(\mathbb{1} - \frac{y}{W[:,S]x[S]^\ast}) = 0.
 $$
 
-Unlike for NNLS, the system is not linear and, to the best of my knowledge, cannot be solved in closed form in general. Interestingly, one may observe that the residual vector $r = \mathbb{1} - \frac{y}{Wx^\ast} $, uniquely defined because $Wx^\ast$ is unique {cite}`ref`[Tibshirani lasso], must be sparse. The argumentation is in fact similar to the proof of the night sky theorem: the residual $r$ belongs to the null space of $W[:,S]^T$; together with the spark condition on matrix $W$, this implies that $S$ is of size at most $m-1$.
+Unlike for NNLS, the system is not linear and, to the best of my knowledge, cannot be solved in closed form in general. Interestingly, one may observe that the residual vector $r = \mathbb{1} - \frac{y}{Wx^\ast} $, uniquely defined because $Wx^\ast$ is unique {cite:p}`tibshiraniLassoProblemUniqueness2013`, must be sparse. The argumentation is in fact similar to the proof of the night sky theorem: the residual $r$ belongs to the null space of $W[:,S]^T$; together with the spark condition on matrix $W$, this implies that $S$ is of size at most $m-1$.
 
 Another observation is that we can rewrite the Fermat rule on the solution support as
 
@@ -230,7 +224,7 @@ There exists a vast literature on optimization algorithms that aim to solve NNLS
 
 ## Active-set (NNLS only)
 
-A workhorse algorithm to solve NNLS is the Active-Set (AS) algorithm proposed by Lawson and Hanson in 1974 {cite}`lawsonSolvingLeastSquares1974`[add ref Bro]. It is based on the observation that, knowing the support of the solution $x^\ast$, the solution itself can be computed using the unconstrained least squares estimate restricted to this support. AS therefore iteratively searches for the support of the solution. It function similarly to the Orthogonal Matching Pursuit algorithm {cite}`ref`[OMP], where a candidate index is first added to the current estimation of the solution support, and the unconstrained least squares estimate restricted to the current support estimate is then computed. However, unlike greedy sparse approximation algorithms, AS includes a third step where the support is thinned out. Below is a pseudo-code for AS and a simple example. We then describe each step in more detail. We will see that any step taken by the AS algorithm has to decrease the cost function.
+A workhorse algorithm to solve NNLS is the Active-Set (AS) algorithm proposed by Lawson and Hanson in 1974 {cite:p}`lawsonSolvingLeastSquares1974,Bro1997fast`. It is based on the observation that, knowing the support of the solution $x^\ast$, the solution itself can be computed using the unconstrained least squares estimate restricted to this support. AS therefore iteratively searches for the support of the solution. It function similarly to the Orthogonal Matching Pursuit algorithm {cite:p}`Pati1993Orthogonal`, where a candidate index is first added to the current estimation of the solution support, and the unconstrained least squares estimate restricted to the current support estimate is then computed. However, unlike greedy sparse approximation algorithms, AS includes a third step where the support is thinned out. Below is a pseudo-code for AS and a simple example. We then describe each step in more detail. We will see that any step taken by the AS algorithm has to decrease the cost function.
 
 ```{code-cell}ipython3
 :tags: [hide-input]
@@ -369,7 +363,7 @@ $$
 \argmin{H\geq 0} \|Y - WH^T\|_F^2 = \argmin{H\geq 0} \sum_{i\leq n} \|Y[:,i] - WH^T[i,:]\|_2^2.
 $$
 
-Indeed, the AS algorithm would search for the optimal support of each column of the unknown matrix $H^T$. These supports can all be different. The costly operation in AS is solving the least-squares systems restricted to the current support estimate, and for matrix NNLS, these operations must be performed independently for each column. The fast active-set algorithm {cite}`ref`[ref Bro] improves on this issue by precomputing the grammians $W^TW$ and $W^TY$ in the case where $W$ is a tall matrix.
+Indeed, the AS algorithm would search for the optimal support of each column of the unknown matrix $H^T$. These supports can all be different. The costly operation in AS is solving the least-squares systems restricted to the current support estimate, and for matrix NNLS, these operations must be performed independently for each column. The fast active-set algorithm {cite:p}`Bro1997fast` improves on this issue by precomputing the grammians $W^TW$ and $W^TY$ in the case where $W$ is a tall matrix.
 
 For matrix NNLS, it is, however, useful to design an algorithm that can update all columns $H^T[:,i]$ simultaneously. This is the rationale behind the Hierarchical Alternating Least Squares (HALS) algorithm. HALS updates each row of matrix $H$ sequentially, and this update is known in closed form. Indeed, notice that for any nonzero vector $a\in\mathbb{R}^{m}$ and any matrix $Z\in\mathbb{R}^{m\times n}$,
 
@@ -387,7 +381,7 @@ for any column index $i\leq n$. The minimum of a scalar quadratic function under
 
 [TODO Figure]
 
-HALS uses this strategy over each row $j$ of matrix $H^T$, solving iteratively problem {eq}`eq:HALS_trick` with $Z = Y - W[:,-j]H^T[:,-j]$ and $w = W[:,j]$. Because each update is an exact minimization procedure, HALS is an instance of exact alternating optimization. As long as each block update is uniquely defined, which happens when $W$ has nonzero columns, the convergence towards the global minimizer is ensured, see [ref Bertsekas dans AO]. A simple implementation of HALS is provided below, and is also [available in tensorly](https://tensorly.org/dev/modules/generated/tensorly.solvers.nnls.hals_nnls.html#tensorly.solvers.nnls.hals_nnls). The input of the algorithm is the grammians $W^TW$ and $W^TY$ to utilize faster inner products for high-order tensors.
+HALS uses this strategy over each row $j$ of matrix $H^T$, solving iteratively problem {eq}`eq:HALS_trick` with $Z = Y - W[:,-j]H^T[:,-j]$ and $w = W[:,j]$. Because each update is an exact minimization procedure, HALS is an instance of exact alternating optimization. As long as each block update is uniquely defined, which happens when $W$ has nonzero columns, the convergence towards the global minimizer is ensured, see [](AlternatingOptimization.md). A simple implementation of HALS is provided below, and is also [available in tensorly](https://tensorly.org/dev/modules/generated/tensorly.solvers.nnls.hals_nnls.html#tensorly.solvers.nnls.hals_nnls). The input of the algorithm is the grammians $W^TW$ and $W^TY$ to utilize faster inner products for high-order tensors.
 
 TODO: change code for Ht
 
@@ -452,10 +446,10 @@ plt.show()
 
 ## Multiplicatives Updates
 
-One of the most well-known iterative solvers for general nonnegative least squares problems (both quadratic and KL although it is primarily used for the latter) is the Multiplicative Updates (MU) algorithm. The history of MU is complex. It has been proposed independently under various names in the literature; the oldest reference of MU that I am aware of is probably the so-called Richardson-Lucy iteration {cite}`ref`[todo], which is specialized for convolutive models and stems from the computational imaging community. MU is also sometimes refered to as the Maximum-Likelihood-Expectation-Maximization algorithm (ML-EM) {cite}`ref`[todo] as it can be formulated as a particular case of the generic EM framework {cite}`ref`[ref thibaut], see more details in [ref] below. MU was popularized in the source-separation community as an algorithm to solve NMF by Lee and Seung in several seminal papers {cite}`ref`[todo] and later generalized by Fevotte and Idier for a wider class of loss functions.
+One of the most well-known iterative solvers for general nonnegative least squares problems (both quadratic and KL although it is primarily used for the latter) is the Multiplicative Updates (MU) algorithm. The history of MU is complex. It has been proposed independently under various names in the literature; the oldest reference of MU that I am aware of is probably the so-called Richardson-Lucy iteration {cite:p}`LucyIterativeTechniqueRectification1974,richardsonBayesianBasedIterativeMethod1972`, which is specialized for convolutive models and stems from the computational imaging community. MU is also sometimes refered to as the Maximum-Likelihood-Expectation-Maximization algorithm (ML-EM) {cite:p}`dempsterMaximumLikelihoodIncomplete1977,fesslerSpacealternatingGeneralizedExpectationmaximization1994` as it can be formulated as a particular case of the generic EM framework. MU was popularized in the source-separation community as an algorithm to solve NMF by Lee and Seung in several seminal papers {cite:p}`Lee1999Learning` and later generalized by Fevotte and Idier for a wider class of loss functions {cite:p}`fevotte2011algorithms`.
 
 ```{margin}
-It is in fact interesting to note that the Richardson-Lucy/ ML-EM algorithm has known many developments and improvements over the years in parallel to the developements proposed in the source separation/numerical optimization literature. A few interesting reads are a constrained version of Richardson-Lucy called one-step late {cite}`ref`[todo] that amounts to MM with linearized regularizations, the general formulation of EM for likelihoods in the exponential family as an mirror gradient descent which allows to derive a generic linear convergence rate [todo] and the design of TV-regularized and Plug-and-Play variants with convergence guarantees {cite}`ref`[thibaut].
+It is in fact interesting to note that the Richardson-Lucy/ ML-EM algorithm has known many developments and improvements over the years in parallel to the developements proposed in the source separation/numerical optimization literature. A few interesting reads are a constrained version of Richardson-Lucy called one-step late {cite:p}`greenUseEmAlgorithm1990` that amounts to MM with linearized regularizations, the general formulation of EM for likelihoods in the exponential family as an mirror gradient descent which allows to derive a generic linear convergence rate {cite:p}`kunstnerHomeomorphicInvarianceEMNonAsymptotic2021` and the design of TV-regularized and Plug-and-Play variants with convergence guarantees (work under way in the team {cite:p}`modrzykConvergentPlugandPlayMajorizationMinimization`).
 ```
 
 The general equations for the MU are, for the NNLS problem,
@@ -470,7 +464,7 @@ $$
 x^{(k+1)} = x^{(k)} \frac{W^T\frac{y}{Wx^{(k)}}}{W1_n}.
 $$ (eq:MU-NNKL)
 
-These updates can be derived from several frameworks, as already underlined for the quadratic case in the book of Gillis on NMF {cite}`ref` [todo]. However, for NNKL, it is important to notice that MU is a special case of the EM algorithm; this fact is known to experts in NMF but not to practitioners in computational imaging, where EM for NNKL was derived originally. Below I therefore try to give a short explanation on how to obtain MU from these various frameworks and the implications of these derivations. 
+These updates can be derived from several frameworks, as already underlined for the quadratic case in the book of Gillis on NMF {cite:p}`gillisNonnegativeMatrixFactorization2020`. However, for NNKL, it is important to notice that MU is a special case of the EM algorithm; this fact is known to experts in NMF but not to practitioners in computational imaging, where EM for NNKL was derived originally. Below I therefore try to give a short explanation on how to obtain MU from these various frameworks and the implications of these derivations. 
 
 ### As a gradient ratio
 A simple way to obtain MU is by noting that the multiplicative term is exactly the ratio between the negative and positive parts of the gradient. The gradients are easily computed as 
@@ -489,7 +483,7 @@ $$
 x^{(k+1)} = x^{(k)}\frac{ \nabla_x^- f\left(y,x\right) }{\nabla_x^+ f\left(y,x\right)}.
 $$
 
-This interpretation of MU is, in my opinion, useful mostly to quickly remember the updates. While Gillis {cite}`ref`[todo] provides an interpretation of the gradient ratio related to the KKT conditions (namely, the ratio should get closer to one to satisfy the KKT conditions), deriving convergence results from this formulation is not straightforward. It is also unclear how this update rule will behave for regularized NNLS/NNKL problems, see [ref below TODO].
+This interpretation of MU is, in my opinion, useful mostly to quickly remember the updates. While Gillis {cite:p}`gillisNonnegativeMatrixFactorization2020` provides an interpretation of the gradient ratio related to the KKT conditions (namely, the ratio should get closer to one to satisfy the KKT conditions), deriving convergence results from this formulation is not straightforward. It is also unclear how this update rule will behave for regularized NNLS/NNKL problems.
 
 ### As a preconditioned gradient descent algorithm
 
@@ -506,7 +500,7 @@ $$
 
 ```
 
-The MU algorithm was introduced in the source separation and machine learning communities by Lee and Seung in 1999 {cite}`Lee1999Learning` as a majorization minimization algorithm. We follow in this paragraph the derivations of Fevotte and Idier {cite}`fevotte2011algorithms` that work for the more general class of $\beta$-divergences. For simplicity, we restrict the presentation to the case of a convex loss function for $\beta\in[1,2]$. We show in the next paragraph that for the particular case of KL-divergence, the MM derivations fall in the Expectation Maximization (EM) framework.
+The MU algorithm was introduced in the source separation and machine learning communities by Lee and Seung in 1999 {cite:p}`Lee1999Learning` as a majorization minimization algorithm. We follow in this paragraph the derivations of Fevotte and Idier {cite:p}`fevotte2011algorithms` that work for the more general class of $\beta$-divergences. For simplicity, we restrict the presentation to the case of a convex loss function for $\beta\in[1,2]$. We show in the next paragraph that for the particular case of KL-divergence, the MM derivations fall in the Expectation Maximization (EM) framework.
 
 ```{margin}
 MM is often introduced without the requirement that the tangent of the cost and the majorant are equal, see also [](./AlternatingOptimization.md).
@@ -547,7 +541,7 @@ $$
 
 both of which, when plugged into the stationary point equation {eq}`eq:stationary-point`, boil down to the MU updates {eq}`eq:MU-NNLS` and {eq}`eq:MU-NNKL`.
 
-The MM interpretation of MU is useful because it automatically guarantees that MU iterations always decrease the cost. Moreover, for NNLS with positive initialization, MU falls within the scope of the SUM framework described in sec[TODO], which guarantees convergence of the cost to a stationary point. However, additional hypotheses are required to guarantee that the limit point of the cost and the iterates are respectively stationary points are global minimizers of the cost function in the NNKL problem. These assumptions are summarized in {cite}`gillisNonnegativeMatrixFactorization2020`, and revolve around the fact that Lipschitz continuity of the cost is required to avoid arbitrarily small improvements of the iterates for a given cost decrease. 
+The MM interpretation of MU is useful because it automatically guarantees that MU iterations always decrease the cost. Moreover, for NNLS with positive initialization, MU falls within the scope of the [SUM framework](./AlternatingOptimization.md#successive-upper-bound-minimization), which guarantees convergence of the cost to a stationary point. However, additional hypotheses are required to guarantee that the limit point of the cost and the iterates are respectively stationary points are global minimizers of the cost function in the NNKL problem. These assumptions are summarized in {cite:p}`gillisNonnegativeMatrixFactorization2020`, and revolve around the fact that Lipschitz continuity of the cost is required to avoid arbitrarily small improvements of the iterates for a given cost decrease. 
 
 ```{margin}
 The zero-locking phenomenon is a numerical instability problem that occurs when values in the vector $x$ are numerically so close to zero that the computer stores actual zeros. Once a value in $x$ is zero, it can never increase again in MU due to the elementwise multiplications at each iteration. This can prevent convergence in practice and cause numerical instabilities caused by division by zero.
@@ -556,7 +550,7 @@ The zero-locking phenomenon is a numerical instability problem that occurs when 
 (block:pos_cstr)=
 ```{admonition} Positivity constraints
 
-A workaround for the NNKL problem, that also guarantees the positivity required for convergence in NNLS, is to impose positivity constraints by introducing $\epsilon>0$ such that $x\geq \epsilon$. Positivity avoids the non-Lipschitz smoothness of the KL-divergence at zero, and avoids the zero-locking phenomenon {cite}`ref`[Takahashi]. The MU iterates become
+A workaround for the NNKL problem, that also guarantees the positivity required for convergence in NNLS, is to impose positivity constraints by introducing $\epsilon>0$ such that $x\geq \epsilon$. Positivity avoids the non-Lipschitz smoothness of the KL-divergence at zero, and avoids the zero-locking phenomenon {cite:p}`takahashiGlobalConvergenceModified2014`. The MU iterates become
 
 $$ 
 x^{(k+1)} = \max\left( x^{(k)} \frac{W^Ty}{W^TWx^{(k)}}, \epsilon\right),
@@ -568,12 +562,12 @@ $$
 x^{(k+1)} = \max\left(x^{(k)} \frac{W^T\frac{y}{Wx^{(k)}}}{W^T1_n},\epsilon\right).
 $$
 
-for the NNKL problem, where the maximum is applied elementwise. The underlying algorithm here can be thought of as a generalized proximal gradient or preconditionned forward-backward algorithm, see for instance the Variable Metric forward-backward framework for more details {cite}`ref`[Repetti Chouzenoux].
+for the NNKL problem, where the maximum is applied elementwise. The underlying algorithm here can be thought of as a generalized proximal gradient or preconditionned forward-backward algorithm, see for instance the Variable Metric forward-backward framework for more details {cite:p}`chouzenouxVariableMetricForward2014,chouzenouxBlockCoordinateVariable2016`.
 
 ```
 
 ### As an EM algorithm
-In the MM description of MU, the particular choice for the parameters $\lambda_{i,j}$, which is crucial to obtain the updates, could seem somewhat arbitrary. It turns out that using the EM framework for the NNKL problem, one can make sense of this choice. Below, we derive MU from EM in a way that slightly differs from earlier references from computational tomography {cite}`ref`[todo] that I find personally hard to follow. 
+In the MM description of MU, the particular choice for the parameters $\lambda_{i,j}$, which is crucial to obtain the updates, could seem somewhat arbitrary. It turns out that using the EM framework for the NNKL problem, one can make sense of this choice. Below, we derive MU from EM in a way that slightly differs from earlier references from computational tomography {cite:p}`dempsterMaximumLikelihoodIncomplete1977` that I find personally hard to follow. 
 
 A statistical description of the NNKL problem is required to write the EM algorithm. We suppose that the data samples $y[i]$ are sampled independently from random variables $Y[i]$ following Poisson distributions conditionally to the knowledge of unknown parameters $x$, that is
 
@@ -597,7 +591,7 @@ Therefore, computing the ML estimator amounts to solving the NNKL problem.
 
 #### Basics of the EM algorithm
 
-EM is a particular case of a majorization-minimization algorithm that applies to the log-likelihood function. There are several ways to understand EM besides the usual textbook presentation (including MM, proximal point algorithms, alternating optimization), see for instance the discussion in {cite}`kunstnerHomeomorphicInvarianceEMNonAsymptotic2021`. The MM point of view connects EM with other optimization algorithms quite naturally, let us derive EM within the MM framework.
+EM is a particular case of a majorization-minimization algorithm that applies to the log-likelihood function. There are several ways to understand EM besides the usual textbook presentation (including MM, proximal point algorithms, alternating optimization), see for instance the discussion in {cite:p}`kunstnerHomeomorphicInvarianceEMNonAsymptotic2021`. The MM point of view connects EM with other optimization algorithms quite naturally, let us derive EM within the MM framework.
 
 ```{margin}
 The EM algorithm is presented here with discrete probabilities for simplicity, but the general formulation for continuous probability densities is obtained in the same fashion.
@@ -627,11 +621,11 @@ Thus far, the EM algorithm is rather high-level and abstract. One personnal diff
 
 ```{admonition} Relationship between EM, MU and mirror descent
 
-Bauschke, Bolte, and Teboulle have proposed to solve NNKL using (proximal) mirror descent {cite}`ref`[Bauschke Bolte]. They make use of a particular choice of potential, Burg's entropy $-\sum_i\log(x[i])$, and show that KL divergence is smooth relative to this choice with constant $\frac{1}{\|y\|_1}$. In other words, KL divergence can be upper-bounded using a first-order approximation and the Bregman divergence $\mathcal{D}_h$ obtained with Burg's entropy
+Bauschke, Bolte, and Teboulle have proposed to solve NNKL using (proximal) mirror descent {cite:p}`bauschkeDescentLemmaLipschitz2017`. They make use of a particular choice of potential, Burg's entropy $-\sum_i\log(x[i])$, and show that KL divergence is smooth relative to this choice with constant $\frac{1}{\|y\|_1}$. In other words, KL divergence can be upper-bounded using a first-order approximation and the Bregman divergence $\mathcal{D}_h$ obtained with Burg's entropy
 
 $ \KL{y,Wx} \leq \KL{y,Wx^{(k)}} + \langle \nabla_x\KL{y,Wx^{(k)}}, x - x^{(k)} \rangle + \frac{1}{2\|y\|_1}\mathcal{D}_{h}(x,x^{(k)}),$
 
-that yields, after simpler derivations found in {cite}`ref`[Bauschke]
+that yields, after simpler derivations found in {cite:p}`bauschkeDescentLemmaLipschitz2017`
 
 $ \KL{y,Wx} \leq \KL{y,Wx^{(k)}} - \langle W^T\frac{y}{Wx^{(k)}}, x - x^{(k)} \rangle + \frac{1}{2\|y\|_1} \sum_{j\leq n} \frac{x[j] - x^{(k)}[j]}{x^{(k)}[j]} - \log\frac{x[j]-x^{(k)}[j]}{x^{(k)}[j]}.$
 
@@ -639,15 +633,15 @@ Minimizing this upper bound leads to unusual multiplicative updates
 
 $ x = x \frac{1}{1+\frac{1}{\|y\|_1}x \odot \left(W^T1_n - W^T\frac{y}{Wx}\right)}. $
 
-Since these updates allow for using (Bregman) proximal operators while ensuring convergence, they have been used in regularized NNKL problems {cite}`ref`[Hurault]. However, it is unclear how these updates compare to the classical MU {eq}`eq:MU-NNKL` and its convergence rate is unknown.
+Since these updates allow for using (Bregman) proximal operators while ensuring convergence, they have been used in regularized NNKL problems {cite:p}`huraultConvergentBregmanPlugandPlay2023b`. However, it is unclear how these updates compare to the classical MU {eq}`eq:MU-NNKL` and its convergence rate is unknown.
 
-Recently, a formal link was established between the EM algorithm for the  exponential family [ref kunstner 2022] and mirror descent with Bregman divergences. It allows, in particular, to derive linear convergence rates for EM, and therefore for the usual MU in the NNKL problem. This also shows that other choices of potential other than Burg entropy lead to interesting updates rules for NNKL. This was brought to my attention by [Thibaut Modrzyk](https://github.com/Tmodrzyk), who is currently investigating this observation. The relationship between MU and mirror gradient descent was also partially discussed in [Hien]. Linear convergence for NNKL explains why the MU algorithm is an efficient algorithm to solve NNKL.
+Recently, a formal link was established between the EM algorithm for the  exponential family {cite:p}`kunstnerHomeomorphicInvarianceEMNonAsymptotic2021` and mirror descent with Bregman divergences. It allows, in particular, to derive linear convergence rates for EM, and therefore for the usual MU in the NNKL problem. This also shows that other choices of potential other than Burg entropy lead to interesting updates rules for NNKL. This was brought to my attention by [Thibaut Modrzyk](https://github.com/Tmodrzyk), who is currently investigating this observation. The relationship between MU and mirror gradient descent was also partially discussed in {cite:p}`hienAlgorithmsNonnegativeMatrix2021a` . Linear convergence for NNKL explains why the MU algorithm is an efficient algorithm to solve NNKL.
 
 ```
 
 #### MU is an instance of EM for NNKL
 
-To apply EM to NNKL, on top of introducing the Poisson distribution on the observed variables $Y[i]$, we introduce latent variables that will allow us to derive the EM algorithm efficiently. The literature {cite}`Dempster`[aussi Shepp Vardi] informs us to define independent latent variables
+To apply EM to NNKL, on top of introducing the Poisson distribution on the observed variables $Y[i]$, we introduce latent variables that will allow us to derive the EM algorithm efficiently. The literature {cite:p}`dempsterMaximumLikelihoodIncomplete1977,sheppMaximumlikelihoodreconstructionemissiontomography1982` informs us to define independent latent variables
 
 $$
 Z[i,j] \sim \mathcal{P}(W[i,j]x[j]),
@@ -682,11 +676,7 @@ $$
 
 The last term involving the factorial of the latent variables is constant with respect to the parameters $x$ and can be ignored. What remains to compute to obtain a simpler form for the majorant $\xi$ is the expected value of $Z[i,j]$ conditioned to the knowledge of the sum of other Poisson variables $\sum_j Z[i,j]$ and the parameter values $x^{k}$ of the Poisson laws, $\mathbb{E}_{Z[i,:] |y[i], x^{k}}\left[z[i,j]\right]$ with $y[i]=\sum_j Z[i,j]$. 
 
-The following Lemma allows us to conclude, its proof is simple and available for instance in {cite}``[Oosten14].
-
-%```{margin}
-%This Lemma also explains the Wiener filtering procedure in audio signal to reconstruct the phase when sources have been estimated using magnitude spectrogramms, see for instance {cite}`ref`[todo ???]. 
-%```
+The following Lemma allows us to conclude, its proof is simple {cite:p}`vanoostenEMalgorithmPoissonData2014`.
 
 ```{prf:lemma} Distribution of Poisson variables conditionned by their sum
 :label: lemma_sum_poisson
@@ -712,7 +702,7 @@ Therefore, the EM algorithm for NNKL is exactly MU.
 
 #### MU may not be an instance of EM for NNLS
 
-Importantly, while the EM algorithm can in principle be used to derive update rules for the NNLS problem given reasonable additional statistical assumptions on the variance of the variables $z[i]$, the update rules obtained with these assumptions on distributions do not match the MU updates {eq}`eq:MU-NNLS`. Instead, they are another particular case of diagonally preconditioned gradient descent, see for instance {cite}`ref`[Van Oosten 2014].
+Importantly, while the EM algorithm can in principle be used to derive update rules for the NNLS problem given reasonable additional statistical assumptions on the variance of the variables $z[i]$, the update rules obtained with these assumptions on distributions do not match the MU updates {eq}`eq:MU-NNLS`. Instead, they are another particular case of diagonally preconditioned gradient descent, see for instance {cite:p}`vanoostenEMalgorithmPoissonData2014`.
 
 
 ```{admonition} Equivalence of the MU formulations breaks with l1 and l2 regularizations
@@ -732,7 +722,7 @@ x^{(k+1)} =  x^{(k)} \frac{W^T\frac{y}{Wx^{(k)}}}{W1_n + \lambda_1 + \lambda_2 x
 $$
 
 
-However, using the MM framework, the impact of the regularizations on the update rules changes for NNLS and NNKL. Note that a more complete analysis is provided in {cite}`ref`[TODO valou]. The updates within the MM framework are given by solving
+However, using the MM framework, the impact of the regularizations on the update rules changes for NNLS and NNKL. Note that a more complete analysis is provided in {cite:p}`leplatMultiplicativeUpdatesNMF2021`. The updates within the MM framework are given by solving
 
 $$
 \forall j\leq n, \quad 0 = \sum_{i\leq m} W[i,j] \frac{\partial}{\partial x_2} f\left(y[i], \frac{x[j]}{x^{(k)}[j]}\hat{y}[i]\right) + \lambda_1 + \lambda_2 x[j].
@@ -788,7 +778,7 @@ h^\ast = \frac{\sum_{i=1}^{m}Y[i,:]}{\sqrt{\sum_{i,j}Y[i,j]}}, \\
 w^\ast = \frac{\sum_{j=1}^{n}Y[:,j]}{\sqrt{\sum_{i,j}Y[i,j]}}.
 $$
 
-In other words, the best nonnegative rank-one approximation in KL-divergence is known in closed form, and its computation is straightforward. This result has probably been known for a long time since it is related to the Sinkhorn algorithm {cite}`ref`[Sinkhorn], to the estimation of coupled probabilities [ref?] and to information geometry concepts {cite}`ref`[Kazu]. It has been introduced in the NMF community in {cite}`ref`[Huang NP-hard]. The analogy with the scaling problem and the Sinkhorn algorithm in particular can be seen by noticing that
+In other words, the best nonnegative rank-one approximation in KL-divergence is known in closed form, and its computation is straightforward. This result has probably been known for a long time since it is related to the Sinkhorn algorithm {cite:p}`sinkhornConcerningNonnegativeMatrices1967`, to the estimation of coupled probabilities and to information geometry concepts {cite:p}`ghalamkariNonnegativeTensorLowrank2025`. It has been introduced in the NMF community in {cite:p}`huangKullbackLeiblerPrincipalComponent2017a`. The analogy with the scaling problem and the Sinkhorn algorithm in particular can be seen by noticing that
 
 $$
 wh^T = \text{diag}(w) \mathbb{1}_{m\times n} \text{diag}(h)
@@ -810,7 +800,7 @@ $$
 \argmin{w\in\mathbb{R}_+^{m},\; h\in\mathbb{R}_+^{n}} \|Y -  wh^T\|_F^2
 $$
 
-in general is NP-hard {cite}`ref`[Nicolas book, older refs are also from Nicolas]. However, for nonnegative data $Y\in\mathbb{R}_+^{m\times n}$, the solution can be computed efficiently (in particular, in polynomial time) using a rank-one Singular Value Decomposition. Indeed, for positive matrices, the Perron-Frobenius theorem {cite}`ref`[Perron Frobenius] guarantees that the first singular vectors and the first singular value are always positive. If the data has zero entries, then the Perron-Frobenius theorem does not hold in general, but it has been shown that the solution is still obtained by using the absolute values of the first components. Indeed, following {cite}`gillisNonnegativeMatrixFactorization2020`:
+in general is NP-hard {cite:p}`gillisNonnegativeMatrixFactorization2020`. However, for nonnegative data $Y\in\mathbb{R}_+^{m\times n}$, the solution can be computed efficiently (in particular, in polynomial time) using a rank-one Singular Value Decomposition. Indeed, for positive matrices, the Perron-Frobenius theorem guarantees that the first singular vectors and the first singular value are always positive. If the data has zero entries, then the Perron-Frobenius theorem does not hold in general, but it has been shown that the solution is still obtained by using the absolute values of the first components. Indeed, following {cite:p}`gillisNonnegativeMatrixFactorization2020`:
 
 ```{margin}
 This relationship holds for any couple $(w,h)$ because the data matrix $X$ is elementwise nonnegative.

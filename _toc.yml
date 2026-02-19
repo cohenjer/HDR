@@ -12,7 +12,7 @@ parts:
       - file: introduction/acknowledgements
   - caption: About the manuscript
     chapters:
-      - file: Howtouse/scratchpad
+      - file: Howtouse/howtoread
       - file: Howtouse/terminology_list
       - file: Howtouse/notations
       - file: bibliography/biblio

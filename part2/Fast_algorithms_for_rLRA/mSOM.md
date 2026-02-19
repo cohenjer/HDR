@@ -13,13 +13,13 @@ kernelspec:
 # Median Second-Order-Majorant for faster NNLS
 
 :::{admonition} Reference
-{cite}`phamSecondOrderMajorantAlgorithm2025` TODO
+{cite:p}`phamSecondOrderMajorantAlgorithm2025` M-Q. Pham, J. E. Cohen, T. Chonavel, "A fast Multiplicative Updates algorithm for Nonnegative Matrix Factorization", under review at TMLR [arxiv](https://arxiv.org/pdf/2303.17992) [reviews](https://openreview.net/forum?id=lm16IQmimK)
 
 :::
 
 ## Separable quadratic majorization minimization
 
-In [](../../part1/nnls.md), various equivalent formulations of MU have been discussed. There is however one more equivalent procedure that leads to MU updates for both Frobenius loss and KL-divergence loss that we leverage in {cite}`phamSecondOrderMajorantAlgorithm2025` to derive more efficient algorithms for NMF (or nonnegative tensor decomposition). This procedure is not limited to matrix and tensor factorizations.
+In [](../../part1/nnls.md), various equivalent formulations of MU have been discussed. There is however one more equivalent procedure that leads to MU updates for both Frobenius loss and KL-divergence loss that we leverage in {cite:p}`phamSecondOrderMajorantAlgorithm2025` to derive more efficient algorithms for NMF (or nonnegative tensor decomposition). This procedure is not limited to matrix and tensor factorizations.
 
 Instead, let us consider the optimization problem
 
@@ -41,7 +41,7 @@ $$
 
 and $\phi_x(y) \approx f(x)$ when vectors $y$ and $x$ are close. 
 
-The traditionnal approach to second-order algorithm, and in particular the Newton method, is to minimize $\phi_{x^{(k)}}(y)$, denote $x^{(k+1)}$ the minimizer, and repeat this procedure. While the Newton algorithm features super-linear convergence near a stationary point of $f$ under some conditions, see for instance {cite}`ff` [TODO ref Newton], each iteration is computationally expensive. Moreover, Newton's method typically does not account for constraints, see {cite}`ff` [constrainted Newton]. Indeed, without constraints,
+The traditionnal approach to second-order algorithm, and in particular the Newton method, is to minimize $\phi_{x^{(k)}}(y)$, denote $x^{(k+1)}$ the minimizer, and repeat this procedure {cite:p}`Bertsekas1999Nonlinear`. While the Newton algorithm features super-linear convergence near a stationary point of $f$, each iteration is computationally expensive. Moreover, Newton's method typically does not account for non-smooth constraints. Indeed, without constraints,
 
 $$
  \argmin{y\in\mathbb{R}^m} \phi_x(y) = x - [\nabla^2f(x)]^{-1} \nabla f(x),
@@ -49,7 +49,11 @@ $$
 
 while with constraints, the miniminization of $\phi$ has no closed form expression. In the particular case where $\mathcal{C}$ is the nonnegative orthant, minimizing the second-order approximation $\phi$ amounts to solving a NNLS problem.
 
-Therefore, significant efforts have been made towards designing simpler algorithms than Newton's method that still utilise second-order information to some extent. Among others, Gauss-Newton, Levenberg-Marcquart and LBFGS are popular methods {cite}`ff` [TODO ref]. Maybe the simplest way to change the quadratic estimation of the cost function is to replace the Hessian matrix by a diagonal matrix $A(x)$,
+```{margin}
+More can be read about Newton and quasi-newton algorithms in {cite:p}`Bertsekas1999Nonlinear`.
+```
+
+Therefore, significant efforts have been made towards designing simpler algorithms than Newton's method that still utilise second-order information to some extent. Among others, Gauss-Newton, Levenberg-Marcquart and LBFGS are popular methods. Maybe the simplest way to change the quadratic estimation of the cost function is to replace the Hessian matrix by a diagonal matrix $A(x)$,
 
 $$
     \psi_x(y) = f(x) + \langle \nabla f(x), y-x \rangle + \frac{1}{2}\langle A(x) (y-x), y-x \rangle.
@@ -74,10 +78,10 @@ A_u(x) = \text{Diag}\left(\frac{\nabla^2 f(x) u}{u}\right)
 $$
 
 ```{margin}
-For quadratic loss function $f$ the SOM algorithm is guaranteed to converge since each iteration decrease the cost. However this form of convergence is very weak: we only know that the values of the cost function will stagnate assymptotically, but the estimated minimizer need not be the true minimizer. This result can be refined with the SUM framework {cite}`ff` under relaxed hypotheses [TODO detail ?].  Moreover, the convergence rate of SOM in the general case is unknown. In our work we prove linear convergence of the iterates for the specific problem of NMF with beta-divergence loss. 
+For quadratic loss function $f$ the SOM algorithm is guaranteed to converge since each iteration decrease the cost. However this form of convergence is very weak: we only know that the values of the cost function will stagnate assymptotically, but the estimated minimizer need not be the true minimizer. This result can be refined with the [SUM framework](../../part1/AlternatingOptimization.md) {cite:p}`razaviyaynUnifiedConvergenceAnalysis2013`. Moreover, the convergence rate of SOM in the general case is unknown. In our work we prove linear convergence of the iterates for the specific problem of NMF with beta-divergence loss. 
 ```
 
-is a majorant of the Hessian, namely $A_u(x) - \nabla^2 f$ is semi-definite positive. The proof is straightforward and can be found in {cite}`phamSecondOrderMajorantAlgorithm2025`. If matrix $A(x)$ is a majorant of the Hessian, we obtain a majorization minimization algorithm as long as $f$ is a quadratic function because the truncated second-order Taylor expansion is exact. When $f$ is not quadratic, the proposed procedure, which as far as we know has not been explored in the optimization literature (at least for computing NMF), is coined Second-Order Majorant (SOM), because we minimize a majorant of a separable second-order approximation of the cost function. 
+is a majorant of the Hessian, namely $A_u(x) - \nabla^2 f$ is semi-definite positive. The proof is straightforward and can be found in {cite:p}`phamSecondOrderMajorantAlgorithm2025`. If matrix $A(x)$ is a majorant of the Hessian, we obtain a majorization minimization algorithm as long as $f$ is a quadratic function because the truncated second-order Taylor expansion is exact. When $f$ is not quadratic, the proposed procedure, which as far as we know has not been explored in the optimization literature (at least for computing NMF), is coined Second-Order Majorant (SOM), because we minimize a majorant of a separable second-order approximation of the cost function. 
 
 ## MU algorithm as quadratic majorant minimization
 
@@ -87,7 +91,7 @@ $$
 A_x(x) = \text{Diag}\left(\frac{W^TWx}{x}\right).
 $$
 
-Recall from {ref}`subsec:nnls-kl` that this is exactly the diagonal preconditioner that MU utilizes, when understanding MU as a preconditioned gradient descent algorithm. Therefore setting $u=x$ yields the MU update with a projection operator
+Recall from [](../../part1/nnls.md#multiplicatives-updates) that this is exactly the diagonal preconditioner that MU utilizes, when understanding MU as a preconditioned gradient descent algorithm. Therefore setting $u=x$ yields the MU update with a projection operator
 
 $$
 x^{(k+1)} = \Pi_{\mathcal{C}}\left(x^{(k)}\frac{W^Ty}{W^TWx} \right).
@@ -101,7 +105,7 @@ Another interesting choice of criterion is the min-max over the diagonal element
 
 ```
 
-The core idea in the joint work with Mai Quyen Pham and Thierry Chonavel {cite}`todo` is to select a vector $u$ so that $A_u(x)$ is as small as possible. This amounts to choosing inverse of gradient stepsizes as small as possible. We discuss several possible metrics to measure the magnitude of $A_u(x)$, but one design choice that leads to a closed form expression is to minimize the median values in $A_u(x)$, namely
+The core idea in the joint work with Mai Quyen Pham and Thierry Chonavel {cite:p}`phamSecondOrderMajorantAlgorithm2025` is to select a vector $u$ so that $A_u(x)$ is as small as possible. This amounts to choosing inverse of gradient stepsizes as small as possible. We discuss several possible metrics to measure the magnitude of $A_u(x)$, but one design choice that leads to a closed form expression is to minimize the median values in $A_u(x)$, namely
 
 $$
     u_{mSOM} = \argmin{u>0}\| \frac{\nabla^2 f(x) u}{u} \|_1.
@@ -136,7 +140,7 @@ $$
 $$ (eq:mSOM)
 
 We call the algorithm with update rule {eq}`eq:mSOM` the median SOM algorithm (mSOM). One has to be mindful of a few properties of mSOM:
-- for non-quadratic loss functions, it is not guaranteed to decrease the cost function. In fact mSOM can diverge if initialized poorly. We prove in {cite}`phamSecondOrderMajorantAlgorithm2025` that for $f(x) = \KL{y, Wx}$ (or any $\beta$-divergence with $\beta\in[1,2[$) and in the noiseless case, linear convergence happens but is only local. In practice we observe convergence problems in the first few iterations, that can be avoided by using [a properly scaled initialization](block:scaling-NNKL), with a few iterations of another algorithm as initialization or by checking numerically that the costs decreases.
+- for non-quadratic loss functions, it is not guaranteed to decrease the cost function. In fact mSOM can diverge if initialized poorly. We prove in {cite:p}`phamSecondOrderMajorantAlgorithm2025` that for $f(x) = \KL{y, Wx}$ (or any $\beta$-divergence with $\beta\in[1,2[$) and in the noiseless case, linear convergence happens but is only local. In practice we observe convergence problems in the first few iterations, that can be avoided by using a [properly scaled initialization](../../part1/nnls.md#optimal-scaling), with a few iterations of another algorithm as initialization or by checking numerically that the costs decreases.
 - for quadratic loss, the mSOM algorithm is a proper MM algorithm and we show that it converges linearly globally for any $\gamma$ in $[0,2]$.
 
 We can visualize the different majorants of the cost (MU majorant, mSOM majorant and usual gradient descent with optimal stepsize) on a numerical example.

@@ -150,7 +150,7 @@ $$ A_c^{k+1} = \Pi_{U\cdot\geq 0}\left[ A_c - \eta \left( G_{[1]}\left(B_c \odot
 
 The cost of the gradient step is low because of Tucker compression, but conversely the cost of the projection on the positive cone of $U$ can be consequent if $U$ is a large matrix (which is exactly the setup we consider for Tucker compression). This projection is in fact exactly a collection of $n_1$ NNLS problem of dimensions $r$, with $n_1$ the dimension in the first mode of the original tensor. 
 
-In our work [ref, date], we proposed to use the Pro-ALS idea to avoid resorting to NNLS solvers entirely. This gave birth to the Proco-ALS algorithm detailed below. We first solve the least squares problem unconstrained, then project on the constraint set $UA_c\geq0$. As mentioned above, such a projection is also costly, therefore we use a heuristic approximate projection
+In our work {cite:p}`Cohen2015Fast` published in 2015, we proposed to use the Pro-ALS idea to avoid resorting to NNLS solvers entirely. This gave birth to the Proco-ALS algorithm detailed below. We first solve the least squares problem unconstrained, then project on the constraint set $UA_c\geq0$. As mentioned above, such a projection is also costly, therefore we use a heuristic approximate projection
 
 $$ \hat{\Pi}(y) = U^T\left[Ux\right]_+ $$
 

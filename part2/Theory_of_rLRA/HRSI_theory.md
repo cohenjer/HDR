@@ -14,7 +14,7 @@ kernelspec:
 
 :::{admonition} Reference
 :class: tip
-{cite}`cohenEfficientAlgorithmsRegularized2025` J. E. Cohen, V. Leplat, "Efficient Algorithms for Regularized Nonnegative Scale-invariant Low-rank Approximation Models", SIAM Journal of Mathematics on Data Science, 2025 [[arxiv]](https://arxiv.org/abs/2403.18517)
+{cite:p}`cohenEfficientAlgorithmsRegularized2025` J. E. Cohen, V. Leplat, "Efficient Algorithms for Regularized Nonnegative Scale-invariant Low-rank Approximation Models", SIAM Journal of Mathematics on Data Science, 2025 [[arxiv]](https://arxiv.org/abs/2403.18517)
 :::
 
 Consider the ridge Nonnegative Matrix Factorization problem with Frobenius loss:
@@ -33,9 +33,9 @@ This second formulation is insightful in many ways.
   - The regularization in the second, implicit formulation, takes the form of a group-sparse regularization of the rank-one terms in NMF. Without nonnegativity constraints, this constraint is exactly the nuclear norm of the low-rank matrix $X_1X_2^T$. The ridge penalty on each factor matrix therefore implied rank-minimization implicitly!
   - Tuning each parameter $\lambda_1$ and $\lambda_2$ individually yields counterintuitive results. For instance, the regularization on the first factor $X_1$ is not stronger than on the second factor $X_2$ in the case where $\lambda_1$ is much larger than $\lambda_2$. Only the product of the two regularization hyperparameters governs the regularization intensity.
 
-In the work conducted with Valentin Leplat {cite}`cohenEfficientAlgorithmsRegularized2025`, we generalize this observation for a large class of regularized LRA models, namely Homogeneous Regularized Scale-Invariant models (HRSI), that account for many LRA models regularized with homogeneous positive-definite regularizations such as any $\ell_p$ norm. The implicit rank-selection effect observed for ridge regularization is shown to be due to the scale-ambiguity of LRA models, and therefore pertains for most $\ell_p$ norms. We provide the [main theoretical result](sec:theory) below, and provide more examples, namely $\ell_1$-$\ell_1$ and $\ell_1$-$\ell_2$ regularizations.
+In the work conducted with Valentin Leplat {cite:p}`cohenEfficientAlgorithmsRegularized2025`, we generalize this observation for a large class of regularized LRA models, namely Homogeneous Regularized Scale-Invariant models (HRSI), that account for many LRA models regularized with homogeneous positive-definite regularizations such as any $\ell_p$ norm. The implicit rank-selection effect observed for ridge regularization is shown to be due to the scale-ambiguity of LRA models, and therefore pertains for most $\ell_p$ norms. We provide the [main theoretical result](sec:theory) below, and provide more examples, namely $\ell_1$-$\ell_1$ and $\ell_1$-$\ell_2$ regularizations.
 
-We show numerical simulations in the next section along with algorithm-oriented concerns, such as leveraging the scale-invariance to optimally balance the factors to minimize the regularization, which provably allows to escape the so-called "scaling swamp" {cite}`Papalexakis2013From`.
+We show numerical simulations in the next section along with algorithm-oriented concerns, such as leveraging the scale-invariance to optimally balance the factors to minimize the regularization, which provably allows to escape the so-called "scaling swamp" {cite:p}`Papalexakis2013From`.
 
 (sec:theory)=
 ## Scale invariance main result
@@ -80,7 +80,7 @@ HRSI is quite general and encompasses many instances of regularized LRA problems
 (sec:theorem-HRSI)=
 ### Solutions to HRSI also solve an implicit regularized problem, and are balanced
 
-We proved the following result in {cite}`cohenEfficientAlgorithmsRegularized2025`, relying an identity for the geometric mean.
+We proved the following result in {cite:p}`cohenEfficientAlgorithmsRegularized2025`, relying an identity for the geometric mean.
 ````{prf:theorem} HRSI solutions caracterisation and implicit equivalent formulation
 :label: HRSI
 If $\mu_i>0$ for all $i$, any solution $\{X_i^\ast\}_{i\leq n}$ to the HRSI problem {eq}`eq:hrsi-pb` satisfies $p_i\mu_ig_i(X_i^{\ast}[:,q]) = \beta_q$ for all $i\leq n$ and $q\leq r$, where 
@@ -299,6 +299,6 @@ It is still open to fully caracterize the link between the regularized formulati
 
 $$\argmin{X_1\geq 0, X_2\geq 0} \|M - X_1X_2\|_F^2 + \mu \|X_1\|_1  \text{ s.t. } \|X_2[:,q]\|_2 = 1 \; \forall q\leq r. $$
 
-Interestingly, Marmin, Goulard and Févotte show equivalence between the contrained formulation and the implicit HRSI formulation of sparse NMF, hinting towards the equivalence between the three formulations {cite}`marminMajorizationMinimizationSparseNonnegative2023`. 
+Interestingly, Marmin, Goulard and Févotte show equivalence between the contrained formulation and the implicit HRSI formulation of sparse NMF, hinting towards the equivalence between the three formulations {cite:p}`marminMajorizationMinimizationSparseNonnegative2023`. 
 
 ```

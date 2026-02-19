@@ -19,8 +19,7 @@ latex:
 
 # Add a bibtex file so that we can create citations
 bibtex_bibfiles:
-  - all_refs.bib #todo fuse with others
-  - HDR.bib
+  - all_refs.bib
 
 # Information about where the book exists on the web
 repository:
@@ -49,6 +48,7 @@ sphinx:
         \usepackage{stmaryrd}
     # Configure references
     bibtex_reference_style: author_year
+    #bibtex_reference_style: label
     mathjax3_config:
       tex:
         #packages: {'[+]': ['ams']}  # Load AMS extensions
