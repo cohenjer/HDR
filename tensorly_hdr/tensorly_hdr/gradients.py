@@ -12,6 +12,7 @@ def get_pseudo_inverse(cp_e, r, mode, T):
             )
     return pseudo_inverse
 
+
 def err_calc_simple(cp_e, mttkrp, norm_tensor):
     factors_norm = cp_norm(cp_e)
     iprod = tl.sum(tl.sum(mttkrp * tl.conj(cp_e[1][-1]), axis=0))

@@ -408,7 +408,7 @@ name: CNMF
 Illustration of the CNMF model compared to NMF.
 ```
 
-Computing CNMF is typically done in an alternating fashion. Here we do not really need the full update for the tensor $W$ in CNMF since we will only work with rank-one CNMF at training time, see [](#a-cnmf-dictionary-of-pure-notes-with-rank-one-cnmf). The update for $H$ provided in the original CNMF paper is a heuristic, but it was later refined using majorization-minimization techniques {cite:p}`fagotMajorizationminimizationAlgorithmsConvolutive2019b` similar to what we describe in [](../../part1/nnls.md). In terms of optimization, multiplicative update rules for CNMF are obtained essentially with the same majorization techniques as introduced in [](../../part1/nnls.md). Indeed, the MU algorithm relies on a majorization that removes the dependence of each variable with the others, and CNMF in that aspect has the same structure as NMF. The updates for tensor $W^{(k)}$ and matrix $H^{(k)}$ and iteration $k$ can be written in matrix format as follows (following the MM2 algorithm from {cite:p}`fagotMajorizationminimizationAlgorithmsConvolutive2019b`):
+Computing CNMF is typically done in an alternating fashion. Here we do not really need the full update for the tensor $W$ in CNMF since we will only work with [rank-one CNMF](#a-cnmf-dictionary-of-pure-notes-with-rank-one-cnmf) at training time. The update for $H$ provided in the original CNMF paper is a heuristic, but it was later refined using majorization-minimization techniques {cite:p}`fagotMajorizationminimizationAlgorithmsConvolutive2019b` similar to what we describe in [](../../part1/nnls.md). In terms of optimization, multiplicative update rules for CNMF are obtained essentially with the same majorization techniques as introduced in [](../../part1/nnls.md). Indeed, the MU algorithm relies on a majorization that removes the dependence of each variable with the others, and CNMF in that aspect has the same structure as NMF. The updates for tensor $W^{(k)}$ and matrix $H^{(k)}$ and iteration $k$ can be written in matrix format as follows (following the MM2 algorithm from {cite:p}`fagotMajorizationminimizationAlgorithmsConvolutive2019b`):
 
 $$ W^{(k+1)} = W^{(k)}\ast \frac{\frac{Y}{\hat{X}^{(k)}}{\tilde{H}^{(k)}}^T }{\mathbf{1}\otimes\sum_{t} \tilde{H}^{(k)}[:,t]} \text{ and }  H^{(k+1)}[:,t] = H^{(k)}[:,t] \ast \frac{  W^{(k)} \times_{1,2} \frac{Y}{\hat{Y}}[:,t:t+T]}{\sum_{f,\tau} W^{(k)}[f,\tau,:] \mathbf{1}_{t+\tau\leq n}},   $$
 
@@ -438,7 +438,10 @@ Sxx_abs = Sxx_abs / np.max(Sxx_abs)
 # Testing rank-1 CNMF
 T = 20
 from tensorly_hdr.cnmf import convolutive_nmf
-W_r1, H_r1, err_r1 = convolutive_nmf(Sxx_abs, rank=1, T=T, itmax=10, eps=1e-16, tol=0, print_it=1, n_iter_inner=10, init="separable", verbose=False)
+W_r1, H_r1, err_r1 = convolutive_nmf(
+    Sxx_abs, rank=1, T=T, itmax=10, eps=1e-16, tol=0,
+    print_it=1, n_iter_inner=10, init="separable", verbose=False
+    )
 W_cnmf=W_r1[:, :, 0]
 h_cnmf = H_r1[0, :]
 ```
@@ -485,7 +488,6 @@ plt.tight_layout()
 plt.show()
 
 ```
-[TODO: move spectrograms of rank1 notes here, c'est trop pour l'intro]
 
 Observe that the time activation profile is much sparse than with the best rank-one NMF approximation, which is expected since the template now contains short-time information. The template however has some issues. It captures correctly the attack spectrum with a comb-shaped spectrum and many harmonics, but the high-pitch harmonics should decrease in intensity. The content of the template after the attack above 4kHz is therefore not realistic.
 
@@ -493,7 +495,10 @@ Observe that the time activation profile is much sparse than with the best rank-
 This problem appears probably because the rank-one model is modeling echoes observed in the signal. To alleviate this issue, one can compute a rank-two CNMF with the second template initialized randomly. Observe how this second component captures noise and high-frequency decay spectra, effectively cleaning the first component. In particular the second component does not model the attack at all. For simplicity and computational speed reasons, we will work with rank-one CNMF approximations of single notes, as done in regular NMF.
 
 ```{code-cell} ipython3
-W_r2, H_r2, err_r2 = convolutive_nmf(Sxx_abs, rank=2, T=T, itmax=10, eps=1e-16, tol=0, print_it=1, n_iter_inner=10, init="separable", verbose=False)
+W_r2, H_r2, err_r2 = convolutive_nmf(
+    Sxx_abs, rank=2, T=T, itmax=10, eps=1e-16, tol=0,
+    print_it=1, n_iter_inner=10, init="separable", verbose=False
+    )
 ```
 
 ```{code-cell} ipython3

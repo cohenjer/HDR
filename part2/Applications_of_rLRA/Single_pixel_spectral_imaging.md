@@ -15,7 +15,10 @@ kernelspec:
 :::{admonition} Reference
 :class: tip
 {cite:p}`harigaJointReconstructionSpectral2024` S. Hariga, J. E. Cohen and N. Ducros, "Joint Reconstruction and Spectral Unmixing from Single-Pixel Acquisitions", EUPSICO 2024. [hal](https://hal.science/hal-04539349)
+
 {cite:p}`harigaApprochePlugandplayPour2025` S. Hariga, A. Repetti, N. Ducros, J. E. Cohen,  "Approche plug-and-play pour la reconstruction des cartes d’abondance en imagerie hyperspectrale mono-pixel" GRETSI 2025 [hal](https://hal.science/hal-05235066v1/document)
+
+{cite:p}`ducrosIntroductionSinglePixelImaging2024` N. Ducros, J. E. Cohen, L. Mahieu-Williame, "Freeform Hadamard imaging: Back to the roots of computational optics", under review, [hal](https://hal.science/hal-05337760v1)
 :::
 
 ## Single-pixel hyperspectral imaging principle
@@ -629,13 +632,10 @@ if rank>3:
             abundance_map_rgb[:,:,2] += A_est[5,:].reshape(n,n)
 # Clip values to [0,1]
 abundance_map_rgb = torch.clamp(abundance_map_rgb, 0, 1)
-plt.imshow(abundance_map_rgb.cpu().numpy())
+plt.imshow(np.rot90(abundance_map_rgb.cpu().numpy(), k=2))
 plt.title("Superimposed estimated abundance maps")
 # add color legends
 plt.legend(['Component 1 (Red)', 'Component 2 (Green)', 'Component 3 (Blue)', 'Component 4 (Yellow)', 'Component 5 (Magenta)', 'Component 6 (Cyan)'][:rank], loc='upper right')
 plt.axis('off')
 plt.show()
 ```
-
-### A primal-dual algorithm for joint reconstruction and unmixing
-Si j'ai la foi, sinon juste mentionner. --> Dans les pespectives.

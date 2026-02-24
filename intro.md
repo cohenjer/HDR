@@ -9,18 +9,16 @@ The book contains code snippets with barebone implementations of algorithms, num
 The scientific content of the book is summarized in the [](./intro/introduction.md). Here is the table of content for quick access.
 
 TODOlist:
-- Linearly coupled CP details (0.5d)
-- Ht
 - Figures design
     - Tikz si maths, main si principe, code python si simple
     - Geometrie NMF book Gillis, 20min max at figure time
+    - Figure inline integration with glue and environments
 - lower-semicontinuous pas impliqué par continuous sur l'interrieur du domaine, prendre 10min pour checker dans Beck
-- Calcul propre Hadamard inverse
-- Code rcp in implicit reg if not merged in tensorly main
-- Figure inline integration with glue and environments
+- Calcul propre Hadamard inverse ?
 - Relecture
+    - Relecture deja faite du rapport CNRS
     - Coherence between parts, intro, perspectives.
-    - Acronyms, vocabulary and math notations list
+    - Acronyms, vocabulary and math notations list (NNKL or NN-KL)
     - Broken links
 - Binder build
 - Precise Version and package dependence

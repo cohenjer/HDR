@@ -13,6 +13,7 @@ kernelspec:
 
 :::{admonition} Reference
 {cite:p}`kervazoDeepUnrollingMultiplicative2024` C. Kervazo, A. Chetoui and J. E. Cohen, "Deep unrolling of the multiplicative updates algorithm for blind source separation, with application to spectral unmixing", EUSIPCO 2024. [hal](https://hal.science/hal-04736884) 
+
 {cite:p}`kervazoMisesJourMultiplicatives2025` C. Kervazo, J. E. Cohen, "Unrolled Multiplicative Updates for Nonnegative Matrix Factorization applied to Hyperspectral Unmixing, submitted [pdf](https://hal.science/hal-05497702) 
 :::
 
@@ -22,24 +23,23 @@ kernelspec:
 
 Low-rank approximation models such as NMF are designed to perform unsupervised learning: given a data matrix $Y$, their goal is to compute two possibly constrained matrices $W,H$ such that $Y\approx WH^T$. In practical applications such as discussed in {ref}`part:applications` however, performing LRA is not the final goal. The estimated factor matrices are instead further processed for a downstream task. These post-processing operations include clustering of the components, thresholding activations or perfoming linear regression. Often, additional, side information is available on the expected outcome of these post-processing. In the language of machine learning, we could say that this additional information takes the form of training data stored in a matrix $M$.
 
-A simple way to make use of this additional data $M$ is to modify the LRA cost to incorporate these data. This procedure has been named "Supervised LRA" in the literature {cite}`lockSupervisedMultiwayFactorization2018`[TODO refs Eric Lock and refs therein for older things]. For instance, for a NMF model with a linear regression from matrix $W$ to additional data $M$, the "supervised" NMF problem formulation is given by
+A simple way to make use of this additional data $M$ is to modify the LRA cost to incorporate these data. This procedure has been named "Supervised LRA" in the literature, see {cite}`lockSupervisedMultiwayFactorization2018` and references therein. For NMF, linear regression from a matrix $W$ to additional data $M$ can for instance drive the supervision task. The "supervised" NMF problem formulation is then given by
 
 $$
-  \argmin{W\geq 0, H\geq 0, \theta} \mathcal{D}\left(Y, WH\right) + \lambda \|W - M\theta\|_F^2
+  \argmin{W\geq 0,\; H\geq 0,\; \theta} \mathcal{D}\left(Y, WH^T\right) + \lambda \|W - M\theta\|_F^2
 $$
 
-for a regularization hyperparameters $\lambda>0$, a data fitting term $\mathcal{D}$ such as the squared Frobenius norm $\|Y-WH\|_F^2$, and regression parameters $\theta$ trained jointly with the NMF factors.
+for a regularization hyperparameters $\lambda>0$, a data fitting term $\mathcal{D}$ such as the squared Frobenius norm $\|Y-WH^T\|_F^2$, and regression parameters $\theta$ trained jointly with the NMF factors.
 
-One could argue that this approach does not really leverage the training data to train the model in the way usually understood in supervised learning. In particular, matrix $M$ must be known at inference time, and regression parameters $\theta$ are learnt from strach for each pair of data matrices $(Y,M)$. 
+One could argue that this approach does not really leverage training data to train a model in the way usually understood in supervised learning. Regression parameters $\theta$ are learnt from scratch for each pair of data matrices $(Y,M)$. Matrix $M$ must also be known at inference time. 
 
 A modification of this supervised LRA framework can be thought of, where the parameters $\theta$ are shared across a number $p$ of LRA problems. In the above example of supervised NMF with linear regression, given a collection of data matrices $\{(Y_i,M_i)\}_{i\leq p}$, parameters $\theta$ are trained to reconstruct matrix $M_i$ from the jointly estimated matrix $W_i$:
 
 $$
-  \argmin{\forall i \leq p,~ W_i\geq 0, H_i\geq 0, \theta}\sum_{i=1}^{p} \mathcal{D}\left(Y_i, W_iH_i\right) + \lambda \|W_i - M_i\theta\|_F^2.
+  \argmin{\forall i \leq p,~ W_i\geq 0, H_i\geq 0, \theta}\sum_{i=1}^{p} \mathcal{D}\left(Y_i, W_iH_i^T\right) + \lambda \|W_i - M_i\theta\|_F^2.
 $$
 
-Parameters $\theta^\ast$, trained on the training dataset consisting of pairs $(Y_i,M_i)$, could then be used at inference time when only a single matrix $Y$ is known to estimate matrix $M:=W(\theta^\ast)^{\dagger}$ or by computing the minimizer
-
+Parameters $\theta^\ast$, trained on the training dataset consisting of pairs $(Y_i,M_i)$, could then be used at inference time when only a single matrix $Y$ is known to estimate matrix $M:=\theta^\ast W^{\dagger}$ after obtaining matrix $W$ with NMF, or by solving jointly the NMF and the regression problem
 
 $$
   \argmin{W\geq 0, H\geq 0, M} \mathcal{D}\left(Y, WH\right) + \lambda \|W - M\theta^\ast\|_F^2.
@@ -60,29 +60,28 @@ An immediate issue with this formulation is that it is unclear how to even defin
 On top of the issues discussed above, a fundamental problem with supervised LRA as defined in Equation {eq}`eq:supNMFvar` is also the choice of hyperparameter $\lambda$. Why should the user compromise between the quality of the forward pass of the model and the training of that model?
 
 Bilevel formulations fix the problem of compromise between model inference and parameter updates during the training phase. 
-There is not however a single canonical bilevel formulation for unrolling LRA. On the above example of supervised NMF, a naive formulation that separates the model computation (forward pass), *ie* computing the model, and the actual training of the model (backward pass), *ie* updating model parameters $\theta$ to reduce a training loss, writes
+There is not however a single canonical bilevel formulation for unrolling LRA. On the above example of supervised NMF, a naive formulation that separates the model computation (forward pass) and the actual training of the model (backward pass, *i.e.* updating model parameters $\theta$ to reduce a training loss), writes
 
 $$
-    \argmin{\theta} \sum_{i=1}^{p} \|M_i - W^\ast_i\theta\|_F^2 \quad \text{such that} \quad H_i^\ast, W_i^\ast = \argmin{W_i\geq 0, H_i\geq 0}\mathcal{D}(Y_i,W_iH_i^T).
+    \argmin{\theta,\; W} \sum_{i=1}^{p} \|M_i - W^\ast_i\theta\|_F^2 \quad \text{such that} \quad H_i^\ast, W_i^\ast = \argmin{W_i\geq 0, H_i\geq 0}\mathcal{D}(Y_i,W_iH_i^T).
 $$
 
-Such a bilevel optimization problem is not really interesting because the two optimization problems are essentially decoupled and can be solved in sequence. We are back to simply post-processing the estimated parameter matrices of NMF. Inspired from contribution to data-driven or task-driven dictionary learning [mairal], several authors [ref audio, d'autres?] have proposed to break the symmetry between matrices $W$ and $H$ and solve bilevel problems of the form
+Such a bilevel optimization problem is not really interesting because the two optimization problems are essentially decoupled and can be solved in sequence. We are back to simply post-processing the estimated parameter matrices of NMF. Following data-driven or task-driven dictionary learning {cite:p}`mairal2011task,sprechmannSupervisedNoneuclideanSparse2014a`, the symmetry between matrices $W$ and $H$ may be broken. We then solve a bilevel problem of the form
 
 $$
     \argmin{\theta} \sum_{i=1}^{p} \mathcal{L}(M_i, H_i^\ast(W), \theta) \quad \text{such that} \quad H_i^\ast(W) = \argmin{H_i\geq 0}\mathcal{D}(Y_i,WH_i^T).
 $$
 
-Hence the dictionary $W$ is now trained to reduce the training loss $\mathcal{L}$ while only the scores $H_i$ are computed at the inner level. Updating matrix $W$ means computing gradients through minimizers $H_i^\ast(W)$, which can prove intractable analytically depending on the choice of NMF model (loss $\mathcal{D}$, additional regularizations such as sparsity).
+Hence the dictionary $W$ is now trained to reduce the training loss $\mathcal{L}$ while only the scores $H_i$ are computed at the inner level. Updating matrix $W$ means computing gradients through minimizers $H_i^\ast(W)$, which is tractable analytically depending on the choice of the model, loss $\mathcal{D}$, and in the presence of regularizations such as sparsity {cite:p}`mairal2011task`. It is however not obvious how to form these gradients for NMF.
 
 The core idea of unrolling is to replace the inner optimization problem with a numerical algorithm that computes solutions to this problem:
 
 $$
-    \argmin{\theta} \sum_{i=1}^{p} \mathcal{L}(M_i, H_i^\ast(W), \theta) \quad \text{such that} \quad H_i^\ast(W,\theta) = \mathcal{A}(Y_i,W,\theta),
+    \argmin{\theta, \; W} \sum_{i=1}^{p} \mathcal{L}(M_i, H_i^\ast(W), \theta) \quad \text{such that} \quad H_i^\ast(W,\theta) = \mathcal{A}(Y_i,W,\theta),
 $$
+where $\mathcal{A}$ is a parametric algorithm to compute approximately a solution to NMF. Algorithm $\mathcal{A}$ is chosen to be a fixed number of iterations of a truncated iterative algorithm. Note that the forward model / unrolled algorithm $\mathcal{A}$ may depend on parameters $\theta$ for greater flexibility.
 
-with $\mathcal{A}$ a parametric algorithm to compute approximately a solution to NMF; $\mathcal{A}$ is chosen to be a fixed number of iterations of a truncated iterative algorithm. Note that the forward model / unrolled algorithm $\mathcal{A}$ explicitly depends on parameters $\theta$ so that it can be trained.
-
-One interesting property of unrolling is that even without training, the iterative algorithm that solves the problem, here NMF, typically works rather well for minimizing also the supervision loss. In many problem instances, earlier contributions have attacked the problems at hand fully unsupervised with only these algorithms. Therefore, on top of providing good forward models for computing $W$ and $H$, finding a good initialization of the algorithm parameters $\theta$ is often simple.
+One interesting property of unrolling is that even without training, the iterative algorithm that solves the problem, here NMF, typically works rather well for minimizing also the supervision loss. In many problem instances, earlier contributions have attacked the problems at hand fully unsupervised. Therefore finding a good initialization of the parameters $\theta$ and matrix $W$ is often simple.
 
 
 ### Unrolling the Multiplicative Updates algorithm 
@@ -119,7 +118,7 @@ where $A^{k}_W$ and $A^{k}_H$ are iteration-dependant trainable matrices. There 
   2. We can prove that when updating a single matrix, say $W$ with fixed $H$, and with shared weights $A^{k}_W$ across all iterations, the modified updates of NALMU can be obtained by a majorization minimization strategy using Jensen inequality, see {ref}`sec:nnls`, minimizing a modified cost function
 
 $$
-  \| Y - WH \|_F^2 + \langle (W\ast A_W)H^T, Y \rangle,
+  \| Y - WH^T \|_F^2 + \langle (W\ast A_W)H^T, Y \rangle,
 $$
 
 where the data is compared to a masked NMF with factors $W\ast A_W$ and $H$. The trained parameters therefore act as weights emphasizing the reconstruction towards certain entries of $W$.
@@ -132,9 +131,9 @@ $$
   \mathcal{L} = \sum_{i=1}^{p} \sum_{k=1}^{K} \nu_k \left(\ell_W(W_i^{k}(\theta), W_i^{gt}) + \ell_H(H_i^{k}(\theta), H_i^{gt})\right)
 $$
 
-where $W_i^{k}(\theta)$ and $H_i^{k}(\theta)$ ar the estimated factors from algorithm $\mathcal{A}$ after $k\leq K$ iterations. Functions $\ell_W$ and $\ell_H$ are user-defined loss functions for the factor matrices, typically $\ell_2$ norms or application-specific metrics such as the Spectral Angular Distance (SAD) used in remote sensing. Parameters $\nu_k$ control how much the estimated factor after $k$ iterations impact the supervision loss; for instance if only the final output of algorithm $\mathcal{A}$ should match the ground-truth, then $\nu_k = 0$ for any $k<K$. Setting nontrivial values for parameters $\nu_k$ avoids training issues such as vanishing gradients and is a common trick in the unrolling literature [ref?].
+where $W_i^{k}(\theta)$ and $H_i^{k}(\theta)$ ar the estimated factors from algorithm $\mathcal{A}$ after $k\leq K$ iterations. Functions $\ell_W$ and $\ell_H$ are user-defined loss functions for the factor matrices, typically $\ell_2$ norms or application-specific metrics such as the Spectral Angular Distance (SAD) used in remote sensing. Parameters $\nu_k$ control how much the estimated factor after $k$ iterations impact the supervision loss; for instance if only the final output of algorithm $\mathcal{A}$ should match the ground-truth, then $\nu_k = 0$ for any $k<K$. Setting nontrivial values for parameters $\nu_k$ avoids training issues such as vanishing gradients and is a common trick in the unrolling literature and more generally in deep learning.
 
-The initial weights $A_W$ and $A_H$ can be set to one to start the learning phase from the MU algorithm. The number of truncated iterations $K$ is in general set rather low compared to the maximum number of iteration used in MU, typically we choose $K=25$. The training algorithm can be any classic optimizer in the deep learning community with default parameters, for instance the AdamW optimizer [ref TODO] running for 1000 epochs, with a learning rate of $10^{-5}$.
+The initial weights $A_W$ and $A_H$ can be set to one to start the learning phase from the MU algorithm. The number of truncated iterations $K$ is in general set rather low compared to the maximum number of iteration used in MU, typically we choose $K=25$. The training algorithm can be any classic optimizer in the deep learning community with default parameters, for instance the AdamW optimizer running for 1000 epochs, with a learning rate of $10^{-5}$.
 
 An issue with unrolled NMF is the scaling ambiguity, which makes the training less consistent. A simple solution we propose is to normalize the columns of data matrices $Y_i$ when this is reasonable, and normalize the initial guesses for the factors accordingly. As a rule of thumb, normalisation in regularized and unrolled LRA can be tricky and should be designed depending on the application at hand.
 
@@ -267,5 +266,5 @@ plt.show()
 
 A few lessons to learn from this toy experiment:
 - The choice of the $\nu_k$ values greatly affect how far the weights $A_W$ are from one. With the proposed choice (logarithimically spaced values in $[10^{-7}, 1]$), the weights in the last layers are barely updated. Try setting all $\nu_k$ to zero except the last one: the result is reversed, and the overall perforance of NALMU decreases!
-- Tied weights (when $A_W$ does not depend on the iteration index) do not perform well in this example. This can be checked by changing the definition of $A_W$ and modifying the update rule of NALMU accordingly. In particular, NALMU with tied weights has trouble decreasing the NMF loss $\|Y-WH\|^2$ across iterations.
+- Tied weights (when $A_W$ does not depend on the iteration index) do not perform well in this example. This can be checked by changing the definition of $A_W$ and modifying the update rule of NALMU accordingly. In particular, NALMU with tied weights has trouble decreasing the NMF loss $\|Y-WH^T\|^2$ across iterations.
 - Unrolling algorithms is tricky in practice, and one needs to toy with the various hyperparameters and design choices.

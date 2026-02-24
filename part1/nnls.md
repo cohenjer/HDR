@@ -383,35 +383,35 @@ for any column index $i\leq n$. The minimum of a scalar quadratic function under
 
 HALS uses this strategy over each row $j$ of matrix $H^T$, solving iteratively problem {eq}`eq:HALS_trick` with $Z = Y - W[:,-j]H^T[:,-j]$ and $w = W[:,j]$. Because each update is an exact minimization procedure, HALS is an instance of exact alternating optimization. As long as each block update is uniquely defined, which happens when $W$ has nonzero columns, the convergence towards the global minimizer is ensured, see [](AlternatingOptimization.md). A simple implementation of HALS is provided below, and is also [available in tensorly](https://tensorly.org/dev/modules/generated/tensorly.solvers.nnls.hals_nnls.html#tensorly.solvers.nnls.hals_nnls). The input of the algorithm is the grammians $W^TW$ and $W^TY$ to utilize faster inner products for high-order tensors.
 
-TODO: change code for Ht
 
 ```{code-cell}ipython
 
 import tensorly as tl
 import matplotlib.pyplot as plt
 
+# Note that HT in the code stands for H^T
 
-def hals_nnls(WtY, WtW, H=None, n_iter_max=500, tol=1e-8, epsilon=0.0, callback=None):
+def hals_nnls(WtY, WtW, HT=None, n_iter_max=500, tol=1e-8, epsilon=0.0, callback=None):
    rank, _ = tl.shape(WtY)
-   if H is None:
-      H = tl.solve(WtW, WtY)
-      H = tl.clip(H, a_min=0, a_max=None)
+   if HT is None:
+      HT = tl.solve(WtW, WtY)
+      HT = tl.clip(HT, a_min=0, a_max=None)
 
    # For error computation, since W and Y are not known directly
    if callback is not None:
-      callback(H)
+      callback(HT)
 
    for iteration in range(n_iter_max):
       for k in range(rank):
          if WtW[k, k]:
-            num = WtY[k, :] - tl.dot(WtW[k, :], H) + WtW[k, k] * H[k, :]
+            num = WtY[k, :] - tl.dot(WtW[k, :], HT) + WtW[k, k] * HT[k, :]
             den = WtW[k, k]
-            H[k,:] = tl.clip(num / den, a_min=epsilon)
+            HT[k,:] = tl.clip(num / den, a_min=epsilon)
 
       if callback is not None:
-         callback(H)
+         callback(HT)
 
-   return H
+   return HT
 
 ```
 
@@ -423,16 +423,16 @@ m=10
 r = 6
 n=20
 W = np.random.rand(m,r)
-Htrue = np.random.randn(r,n)
-Htrue[Htrue<0] = 0  # sparsify true H
-Y = W@Htrue + 0.01*np.random.randn(m, n)
+HTtrue = np.random.randn(r,n) # H^T
+HTtrue[HTtrue<0] = 0  # sparsify true H
+Y = W@HTtrue + 0.01*np.random.randn(m, n)
 errs = []
-def callback_err(H):
-   errs.append(np.linalg.norm(Y - W@H)/np.linalg.norm(Y))
+def callback_err(HT):
+   errs.append(np.linalg.norm(Y - W@HT)/np.linalg.norm(Y))
    return True
-Hest = hals_nnls(W.T@Y, W.T@W, n_iter_max=100, tol=1e-6, callback=callback_err)
-print(f"Relative Reconstruction error: {np.linalg.norm(Y - W@Hest)/np.linalg.norm(Y)}")
-print(f"Root mean squared error on H: {np.linalg.norm(Htrue - Hest)/np.sqrt(r*n)}")
+HTest = hals_nnls(W.T@Y, W.T@W, n_iter_max=100, tol=1e-6, callback=callback_err)
+print(f"Relative Reconstruction error: {np.linalg.norm(Y - W@HTest)/np.linalg.norm(Y)}")
+print(f"Root mean squared error on H: {np.linalg.norm(HTtrue - HTest)/np.sqrt(r*n)}")
 
 plt.figure(figsize=(6,6))
 plt.semilogy(errs)

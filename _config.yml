@@ -14,6 +14,15 @@ execute:
 
 # Define the name of the latex output file for PDF builds
 latex:
+  preamble: |
+    \newcommand{\argmin}[1]{\underset{#1}{\text{argmin}}~}
+    \newcommand{\argmax}[1]{\underset{#1}{\text{argmax}}~}
+    \newcommand{\amin}[1]{\underset{#1}{\text{min}}~}
+    \newcommand{\R}[1]{\mathbb{R}^{#1}}
+    \newcommand{\vec}[1]{\text{vec}\left(#1\right)}
+    \newcommand{\KL}[1]{\mathcal{D}_{\text{KL}}\left(#1\right)}
+    \newcommand{\cp}[1]{\text{col}_{+}\left(#1\right)}
+    \newcommand{\rank}[1]{\text{rank}\left(#1\right)}
   latex_documents:
     targetname: book.tex
 

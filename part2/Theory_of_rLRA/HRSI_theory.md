@@ -283,7 +283,7 @@ Observe in particular that the sparsity level of the components does not evolve 
 
 The explicit $\ell_1$-$\ell_2$ sparse NMF model writes
 
-$$\argmin{X_1\geq 0, X_2\geq 0} \|M - X_1X_2\|_F^2 + \mu \left( \|X_1\|_1 + \|X_2\|^2_2 \right). $$
+$$\argmin{X_1\geq 0, X_2\geq 0} \|M - X_1X_2^T\|_F^2 + \mu \left( \|X_1\|_1 + \|X_2\|^2_2 \right). $$
 
 The implicit HRSI formulation of sparse NMF can be easily derived:
 
@@ -297,8 +297,6 @@ for any vectors $x$ and $y$. One may observe that the implicit regularization ac
 
 It is still open to fully caracterize the link between the regularized formulation and the constrained formulation
 
-$$\argmin{X_1\geq 0, X_2\geq 0} \|M - X_1X_2\|_F^2 + \mu \|X_1\|_1  \text{ s.t. } \|X_2[:,q]\|_2 = 1 \; \forall q\leq r. $$
+$$\argmin{X_1\geq 0, X_2\geq 0} \|M - X_1X_2^T\|_F^2 + \mu \|X_1\|_1  \text{ s.t. } \|X_2[:,q]\|_2 = 1 \; \forall q\leq r. $$
 
 Interestingly, Marmin, Goulard and Févotte show equivalence between the contrained formulation and the implicit HRSI formulation of sparse NMF, hinting towards the equivalence between the three formulations {cite:p}`marminMajorizationMinimizationSparseNonnegative2023`. 
-
-```

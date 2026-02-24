@@ -16,12 +16,18 @@ kernelspec:
 :class: tip
 {cite:p}`cabralfariasExploringMultimodalData2016` R. Cabral Farias, J. E. Cohen, and P. Comon, "Exploring multimodal data fusion through
 joint decompositions with flexible couplings," IEEE Transactions on Signal Processing, vol. 64, pp. 4830-4844, September 2016. [pdf](https://jeremy-e-cohen.jimdofree.com/publications/%20https:/hal.archives-ouvertes.fr/hal-01158082)
+
 {cite:p}`cohenNonnegativePARAFAC2Flexible2018` J. E. Cohen, R. Bro, "Nonnegative PARAFAC2, a flexible coupling approach", LVA/ICA 2018, [arXiv:1802.05035](https://arxiv.org/abs/1802.05035)
+
 {cite:p}`schenkerOptimizationFrameworkRegularized2021` C. Schenker, J. E. Cohen, E. Acar, "An optimization framework for regularized linearly
 coupled matrix-tensor factorization", EUSIPCO2020, 2021 [pdf](https://www.eurasip.org/Proceedings/Eusipco/Eusipco2020/pdfs/0000985.pdf)
+
 {cite:p}`schenkerFlexibleOptimizationFramework2021` C. Schenker, J. E. Cohen, E. Acar, ``A Flexible Optimization Framework for Regularized Matrix-Tensor Factorizations with Linear Couplings'', IEEE Journal on Selected Topics in Signal Processing, 2020. [arxiv](https://arxiv.org/pdf/2007.09605.pdf) [IEEE Xplore](https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=9298877) [Supplementary Materials](https://github.com/AOADMM-DataFusionFramework/Supplementary-Materials) [Matlab code](https://github.com/AOADMM-DataFusionFramework/Matlab-Code)
+
 {cite:p}`roaldPARAFAC2AOADMMConstraints2021` M. Roald, C. Schenker, J. E. Cohen, E. Acar, "PARAFAC2 AO-ADMM: Constraints in all modes", EUSIPCO2021, [arxiv](https://arxiv.org/pdf/2102.02087.pdf)
+
 {cite:p}`roaldAOADMMApproachConstraining2022a` M. Roald, C. Schenker, V. D. Calhoun, T. Adali, R. Bro, J. E. Cohen, E. Acar, "An AO-ADMM approach to constraining PARAFAC2 on all modes", SIAM Journal of Mathematics on Data Science, 2022. [arxiv](https://arxiv.org/abs/2110.01278) [code](https://github.com/MarieRoald/PARAFAC2-AOADMM-SIMODS) [SIMODS](https://epubs.siam.org/doi/10.1137/21M1450033)
+
 {cite:p}`chatzisDCMFLearningInterpretable2025` C. Chatzis, C. Schenker, J. E. Cohen, E. Acar, "DCMF: Leaning Interpretable Evolving Patterns from Temporal Multiway Data" EUSIPCO 2025. [arxiv](https://arxiv.org/abs/2502.19367) 
 :::
 
@@ -30,10 +36,9 @@ coupled matrix-tensor factorization", EUSIPCO2020, 2021 [pdf](https://www.eurasi
 ## Background on joint factorization models
 
 [Figures for each model in tikz ?]
-[TODO improve text]
 
 Joint factorization models are collections of matrix or tensor factorization problems where some of the variables are related explicitly. There are at least two motivations for considering this family of problems.
-- **Multimodal acquisitions:** Several dataset are acquired on the same phenomenon but with different modalities, e.g. EEG+FMRI, NMR+LCMS, occulometry+EEG {cite:p}`rivetModelingTimeWarping2016`. Joint factorization techniques allow to extract the latent information from each dataset while making use of the shared information between all dataset to reduce estimation error and enhance uniqueness {cite:p}`Sorensen2015Coupleda` and therefore intepretability.
+- **Multimodal acquisitions:** Several dataset are acquired informing on the same phenomenon but with different modalities, e.g. EEG+FMRI, NMR+LCMS {cite:p}`Acar2009Unsupervised`, occulometry+EEG {cite:p}`rivetModelingTimeWarping2016`. Joint factorization techniques allow to extract the latent information from each dataset while making use of the shared information between all dataset to reduce estimation error and enhance uniqueness {cite:p}`Sorensen2015Coupleda` and therefore intepretability.
 - **Alternative formulations of tensor decompositions:** Joint factorization models are useful for rewriting the classical tensor models [such as CP decomposition](subsec:joint-diagonalisation) and proposing new extended models such as PARAFAC2 {cite:p}`Harshman1972PARAFAC2` {cite:p}`Kiers1999PARAFAC2`, Shift/Conv NMF/CP, PARATUCK2 {cite:p}`usevichApprocheAlgebriquePour2025` and so on. These formulations are also useful for identifiability proofs since they relate tensor decompositions with matrix low-rank approximation problems.
 
 Let us describe a few important joint factorization models, namely [CPD](subsec:joint-diagonalisation), [CMTF](subsec:cmtf-direct-coupling) and [PARAFAC2](subsec:parafac2-and-variants).
@@ -41,26 +46,25 @@ Let us describe a few important joint factorization models, namely [CPD](subsec:
 (subsec:joint-diagonalisation)=
 ### Joint diagonalisation
 
-CP decomposition is a particular case of coupled matrix factorization. Indeed, if a tensor $T\in\mathbb{R}^{n_1\times n_2\times n_3}$ follows a rank $r$ CP decomposition with factors $A,B,C$, then for each slice index $k\leq n_3$
+[CP decomposition](../../part1/lra.md#cp-decomposition) is a particular case of coupled matrix factorization. Indeed, if a tensor $T\in\mathbb{R}^{n_1\times n_2\times n_3}$ follows a rank $r$ CP decomposition with factors $A,B,C$, then for each slice index $k\leq n_3$
 
 $$
 T[:,:,k] = A\text{Diag}(C[:,k])B^T.
 $$
 
-All the slice $T[:,:,k]$ are therefore jointly diagonalized with left and right bases $A$ and $B$. However orthogonality is not imposed. There is therefore a strong connection between CP decomposition and joint diagonalisation methods such as GSVD, SOBI {cite:p}`belouchraniBlindSourceSeparation1997`, JBSS {cite:p}`Lahat2018New`.
+All the slices $T[:,:,k]$ are therefore jointly diagonalized with left and right bases $A$ and $B$. There is therefore a strong connection between CP decomposition and joint diagonalisation methods such as GSVD, SOBI {cite:p}`belouchraniBlindSourceSeparation1997`, JBSS {cite:p}`Lahat2018New`.
 
 (subsec:cmtf-direct-coupling)=
 ### CMTF (direct coupling)
 
-One of the most well known examples of joint decompositions is coined Coupled Matrix and Tensor Factorization (CMTF) {cite:p}`acarUnderstandingDataFusion2013`. For the particular case of a coupled matrix and tensor on a single mode, where the matrix is low-rank and the tensor has low CP-rank, CMTF may be formulated as the optimization problem
+One of the most well known examples of joint decompositions is coined Coupled Matrix and Tensor Factorization (CMTF) {cite:p}`acarUnderstandingDataFusion2013`. CMTF couples a matrix and a tensor on a single mode, where the matrix $Y$ is low-rank and the tensor $T$ has low CP-rank. CMTF may be formulated as the optimization problem
 
 $$
-\argmin{A,B,C,D} \|T - I_r \times_1 A \times_2 B \times_3 C \|_F^2 + \|M-AD^T\|_F^2.
+\argmin{A,B,C,D} \|T - I_r \times_1 A \times_2 B \times_3 C \|_F^2 + \|Y-AD^T\|_F^2.
 $$
+The first factor of the low-rank approximations of the tensor and the matrix are the same. This means that the same underlying patterns are sought in both dataset along the first mode. The two terms in the cost function should be balanced in practice, based on the SNR of each dataset {cite:p}`cohenJointTensorCompression2016`.
 
-- The first factor of the low-rank approximations of the tensor and the matrix are the same. This means that the same underlying patterns are sought in both dataset along the first mode.
-- This formulation does not allow for sharing only a subset of components, but variants of CMTF can handle this case in practice {cite:p}`Acar2017ACMTF`.
-- The two terms in the cost function should be balanced in practice, based on the SNR of each dataset {cite:p}`cohenJointTensorCompression2016`.
+CMTF assumes that the parameter matrix $A$ is shared entirely between each measurement modality. Therefore CMTF lacks of flexibility In many applications such as genomics and chemometrics, some components cannot be observed by some modalities for physical reasons. It is then necessary to modify the CMTF model to share only a subset of components. This variant of CMTF is coined ACMTF {cite:p}`Acar2017ACMTF`. Another extension of CMTF assumes that the two modalities share a parameter matrix through a known linear relationship. This allows modeling possible variations in the sampling rates by linear interpolation {cite:p}`cabralfariasExploringMultimodalData2016`, or coupling only the derivatives of the components {cite:p}`rivetMultimodalApproachEstimate2015`. This work is [discussed below](#general-formulation-linearly-coupled-constrained-cmtf) .
 
 (subsec:parafac2-and-variants)=
 ### Parafac2 and variants
@@ -76,10 +80,10 @@ where each slice $T[:,:,k]$ has a different factor matrix $B_k\in\mathbb{R}^{n_{
 $$
 \left[T[:,:,1], \ldots, T[:,:,n_3] \right] 
     &= A \left[\text{Diag}(C[1,:])B_1^T, \ldots, \text{Diag}(C[n_3,:])B_{n_3}^T \right], \\
-  T_{[1]}  &= A \tilde{B}.
+  T_{[1]}  &= A \tilde{B}^T.
 $$
 
-The factor matrix $\tilde{B}$ is virtually unconstrained as any matrix can be written as a stacked matrix of products. This observation means that to obtain a multiway decomposition that does not reduce to unconstrained low-rank matrix approximation, further constraints must be applied on the factor matrices $B_k$. There are several ways to do so, for instance imposing some shift-invariance with respect to the slice index (Shift-Parafac), or imposing further low-rank structure on the factors (PARATUCK2). A popular extension of CPD based on this construction is the PARAFAC2 model, obtained by imposing that the cross product of the $B_k$ matrices is constant,
+The factor matrix $\tilde{B}$ is virtually unconstrained as any matrix can be written as a stacked matrix of products. This observation means that to obtain a multiway decomposition that does not reduce to unconstrained low-rank matrix approximation, further constraints must be applied on the parameter matrices $B_k$. There are several ways to do so, for instance imposing some shift-invariance with respect to the slice index (Shift-Parafac) {cite:p}`harshmanShiftedFactorAnalysis2003`, or imposing further low-rank structure on the factors (PARATUCK2) {cite:p}`usevichApprocheAlgebriquePour2025`. A popular extension of CPD based on this construction is the PARAFAC2 model, obtained by imposing that the cross product of the $B_k$ matrices is constant,
 
 $$
 \forall k\leq n_3, \;B_k^TB_k = \Delta^T\Delta
@@ -92,27 +96,21 @@ $$
 B_k = P_k \Delta
 $$
 
-with $P_k$ a left-orthogonal matrix. Therefore, all the slices have the same rank $r$ factor matrix, transformed from slice to slice by a rotation matrix. This kind of orthogonal linear coupling between slices allows for several simple transformations across slices like shifts or diffeomorphisms {cite:p}`cohenCurveRegisteredCoupled2018`. The PARAFAC2 model has therefore been used extensively in chemometrics applications where such transformations occur, in particular LCMS and GCMS data {cite:p}`cohenNonnegativePARAFAC2Flexible2018` .
+with $P_k$ a left-orthogonal matrix. Therefore, all the slices have the same rank $r$ factor matrix, transformed from slice to slice by a rotation matrix. Orthogonal linear coupling between slices models many linear transformations such as circular shifts or diffeomorphisms {cite:p}`cohenCurveRegisteredCoupled2018`. The PARAFAC2 model has therefore been used extensively in chemometrics applications where such transformations occur, in particular LCMS and GCMS data {cite:p}`cohenNonnegativePARAFAC2Flexible2018`. The computation of PARAFAC2 with nonnegativity constraints is a topic I have worked on, detailed in [](./NNParafac2.ipynb).
 
 ## General formulation: Linearly-Coupled Constrained CMTF
 
-My main contribution on joint factorization models was to consider a generalization of CMTF that allows for more complicated coupled relationships. If CMTF supposes that the same factor matrix can be extracted from several dataset, Linearly-Coupled CMTF assumes rather than the shared components are linked through a linear relationship. For the particular case of a joint matrix and tensor decomposition, LC-CMTF can be formalized as the optimization problem
+My earliest contribution on joint factorization models was to consider a generalization of CMTF that allows for more complicated coupled relationships {cite:p}`cabralfariasExploringMultimodalData2016`. If CMTF supposes that the same factor matrix can be extracted from several dataset, Linearly-Coupled CMTF (LC-CMTF) assumes rather than the shared components are linked through a linear relationship. For the particular case of a joint matrix and tensor decomposition, LC-CMTF can be formalized as the optimization problem
 
 $$
 \argmin{A_1, B, C, A_2, D, A} \|T - I_r \times_1 A_1 \times_2 B \times_3 C \|_F^2 + \|M-A_2D^T\|_F^2. \\
 \text{s.t.}~ \vec{A_1} = H_1 \vec{A} \text{ and } \vec{A_2} = H_2 \vec{A}
 $$
-
 for known linear coupling matrices $H_1$ and $H_2$ and a shared, unknown latent factor matrix $A$ which size may differ from $A_1$ and $A_2$.
 
-This model is flexible enough to express several interesting coupling scenarios: [TODO explain more]
-- Partially shared components [Eqs et Figures Carla]
-- PARAFAC2 with known rotation matrices
-- unaligned data
+This model is flexible enough to express several realistic scenarios, such as partially shared components and unaligned data. Two particular linear couplings often encoutered are $[A_2; A_2] = [H_1; H_2]A$ (allows for resampling on a common grid) and $[A_1, A_2] = A[H_1,H_2]$. The latent variable $A$ is introduced so that the model easily extends to more than two coupled tensors. In general, a necessary condition for identifiability of $\vec{A}$ is that the matrix $[H_1; H_2]$ is invertible.
 
-Necessary condition for identifiability of $\vec{A}$: $[H_1; H_2]$ invertible.
-
-The section discuss the design of algorithms for [regularized PARAFAC2](./NNParafac2.ipynb). 
+In collaboration with Carla Schenker and Evrim Acar {cite:p}`schenkerFlexibleOptimizationFramework2021`, we formalized more clearly the linear couplings more clearly, and proposed an algorithm based on [Alternating Optimization](../../part1/AlternatingOptimization.md), where each subproblem is solved by the ADMM algorithms {cite:p}`huangFlexibleEfficientAlgorithmic2016`. ADMM is chosen for its flexibility, as we can also impose constraints on the parameter matrices, including the coupled ones. It is also possible to use other loss functions that the Frobenius norm. A matlab implementation is available [here](https://github.com/AOADMM-DataFusionFramework/Matlab-Code). Sadly, there are no available Python implementation, therefore I cannot show examples of the AO-ADMM algorithm in action in this manuscript.
 
 ### Other related works
 
