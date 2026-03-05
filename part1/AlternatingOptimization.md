@@ -13,8 +13,6 @@ kernelspec:
 
 # Alternating Optimization
 
-TODO lower-semicontinuous pas impliqué par continuous sur l'interrieur du domaine, prendre 10min pour checker dans Beck
-
 Many estimation problems considered in the manuscript rely on solving an optimization problem that involve $d$ different blocks, of the form
 
 $$ \argmin{x_1\in\mathcal{X}_1,~\ldots~,x_d\in\mathcal{X}_d} f(x_1,x_2,\ldots,x_d) $$
@@ -37,11 +35,13 @@ This section collects useful assumptions for the convergence results of AO and B
 
 Here is a list of the assumptions required for proving convergence of AO and BCD:
 ```{margin}
- Block Lischitz-smoothness does not imply global Lipschitz-smoothness for nonconvex functions.
+A few remarks on these assumptions:
+ - Block Lischitz-smoothness (A9) does not imply global Lipschitz-smoothness (A8) for nonconvex functions.
+ - Boundness of the level sets of the cost is implied for instance by coercivity. This property is not trivially satisfies for LRA models, see [](#about-compact-sets-and-lra).
+ - Continuity over the definition domain (A5) implies lower-semicontinuity only when the domain is closed.
 ```
 ```{margin}
 
- Boundness of the level sets of the cost is implied for instance by coercivity. This property is not trivially satisfies for LRA models, see [](#about-compact-sets-and-lra).
 ```
 
 - (A0): $f$ can be splitted as $ f(x) = f_0(x) + \sum_{k=1}^{d} r_k(x_k)$. 
@@ -49,7 +49,7 @@ Here is a list of the assumptions required for proving convergence of AO and BCD
 - (A2): $f$ has bounded level sets $I_f(z)=\{x | f(x) \leq z\}$.
 - (A3): $f$ is proper, lower semi-continuous.
 - (A4): $f$ is convex.
-- (A5): $f$ is continuous on its domain.
+- (A5): $f$ is continuous over its domain, that is, continuous strictly in the interior of the definition domain.
 - (A6): $f$ is differentiable in the interior of its domain.
 - (A7): $f$ is continuously differentiable.
 - (A8): $f$ is globally Lipschitz-smooth.
@@ -110,7 +110,7 @@ Another immediate issue with AO is that without additional assumptions, it may o
 
 $$ f(x_1,\ldots, x_d) = f_0(x_1,\ldots,x_d) + \sum_{k=1}^{d} r_k(x_k) $$
 
-where $f_0$ is proper, continuously differentiable, potentally non-convex, and functions $r_k$ are proper, convex, lower-semicontinuous. A typical example where the constraints are non-smooth and non-separable are linear couplings constraints between variables; AO for these problems is bound to get stuck in a coordinate-wise minimum which can be irrelevant for the global optimization problem.
+where $f_0$ is proper, lower-semicontinuous and continuously differentiable over its domain (it can be non-convex), and functions $r_k$ are proper, convex, lower-semicontinuous. A typical example where the constraints are non-smooth and non-separable are linear couplings constraints between variables; AO for these problems is bound to get stuck in a coordinate-wise minimum which can be irrelevant for the global optimization problem.
 
 ### Different flavours of convergence of AO iterates
 
@@ -123,7 +123,7 @@ Probably the most well-known result on the convergence of AO is due to Dimitry B
 
 ```{prf:theorem} Convergence of AO, non-convex non-smooth
 :label: th:AO
-Assume that the function $f$ is proper and continuous over its domain. Assume that each block update {eq}`eq:AOupdate` has a unique solution. Assume also that the level sets of function $f$ are bounded. Then the sequence of AO iterates is bounded, and any limit point is a coordinate-wise minimum.
+Assume that the function $f$ is proper, lower-semicontinuous and continuous over its domain. Assume that each block update {eq}`eq:AOupdate` has a unique solution. Assume also that the level sets of function $f$ are bounded. Then the sequence of AO iterates is bounded, and any limit point is a coordinate-wise minimum.
 
 
 From {cite}`Bertsekas1999Nonlinear,beck2017first`
@@ -133,9 +133,9 @@ As discussed above, the convergence to coordinate-wise minima is of little use f
 
 ```{prf:theorem} Convergence of AO, non-convex smooth + separable convex non-smooth
 :label: th:AO2
-Assume that the function $f$ is proper and continuous over its domain. Assume that each block update {eq}`eq:AOupdate` has a unique solution. Assume also that the level sets of function $f$ are bounded.
+Assume that the function $f$ is proper, lower-semicontinuous and continuous over its domain. Assume that each block update {eq}`eq:AOupdate` has a unique solution. Assume also that the level sets of function $f$ are bounded.
 
-If moreover function $f$ decomposes as $f(x) = f_0(x) + \sum_{k\leq d} r_k(x_k)$ with $r_i$ proper, continuous over its domain and convex, and $f_0$ is a differentiable function on the interior of a Cartesian product of closed convex sets, then any limit point of the AO iterates is a stationary point. 
+If moreover function $f$ decomposes as $f(x) = f_0(x) + \sum_{k\leq d} r_k(x_k)$ with $r_k$ proper, lower-semicontious, continuous over its domain and convex, and $f_0$ lower-semicontinuous, differentiable on the interior of a Cartesian product of closed convex sets, then any limit point of the AO iterates is a stationary point. 
 
 From {cite}`beck2017first`
 ```
@@ -146,7 +146,7 @@ There are two further versions of this result. First, one may want to relax the 
 :label: th:AO3
 Assume that the function $f$ is proper and continuous over its domain. Assume also that the level sets of function $f$ are bounded.
 
-If moreover function $f$ decomposes as $f(x) = f_0(x) + \sum_{k\leq d} r_k(x_k)$ with $r_k$ proper, lower semi-continuous [TODO check continous ?] and convex, and $f_0$ is a continuously differentiable **convex** function, then any limit point of the AO iterates is a stationary point. 
+If moreover function $f$ decomposes as $f(x) = f_0(x) + \sum_{k\leq d} r_k(x_k)$ with $r_k$ proper, lower-semicontinuous, continuous over its domain and convex, and $f_0$ continuously differentiable and **convex**, then any limit point of the AO iterates is a stationary point. 
 
 From {cite}`beck2017first`
 ```
@@ -155,7 +155,7 @@ A second version that applies in the non-convex case discards the splitting and 
 
 ```{prf:theorem} Convergence of AO, non-convex smooth 
 :label: th:AO4
-Assume that the function $f$ is proper and continuously differentiable over its domain, which is a Cartesian product of closed convex sets. Assume that each block update {eq}`eq:AOupdate` has a unique solution. 
+Assume that the function $f$ is proper, lower-semicontinuous and continuously differentiable over its domain, which is a Cartesian product of closed convex sets. Assume that each block update {eq}`eq:AOupdate` has a unique solution. 
 
 Assume futher that the cost is non-increasing in the interval 
 
@@ -262,7 +262,7 @@ The original work of Razaviyayn state that the level sets must of compact, but t
 ```{prf:theorem} Convergence of BSUM, non-convex non-smooth
 :label: th:bsum2
 
-Assume that the cost function $f$ admits directional derivatives at all points, and that (Axx) the sets $\mathcal{X}_k$ are closed and convex. Further assume that the majorants $u$ in BSUM satisfies the majoration conditions for all blocks, namely the majorants are tight, tangent in all directions and upper-bound the cost at all points. Additionally, assume that the level set $I_f(x^{0})$ is bounded, and that the block updates have unique solutions for at least $d-1$ blocks.
+Assume that the cost function $f$ admits directional derivatives at all points, and that the sets $\mathcal{X}_k$ are closed and convex. Further assume that the majorants $u$ in BSUM satisfies the majoration conditions for all blocks, namely the majorants are tight, tangent in all directions and upper-bound the cost at all points. Additionally, assume that the level set $I_f(x^{0})$ is bounded, and that the block updates have unique solutions for at least $d-1$ blocks.
 Further, assume that the cost is regular at all the stationary points. 
 
 Then the BSUM iterates converge to the set of stationary points.
@@ -355,7 +355,7 @@ Hinit = np.random.rand(shape[1], rank)
 results = {}
 
 for n_inner in [1, 2, 3, 5, 10, 20, 100]:
-    West, Hest, loss, time_ = BCD_hals(Y, Winit=Winit, Hinit=Hinit, n_inner=n_inner, n_outer=10) #todo 300
+    West, Hest, loss, time_ = BCD_hals(Y, Winit=Winit, Hinit=Hinit, n_inner=n_inner, n_outer=100)
     results[n_inner] = (loss, time_)
 
 ```

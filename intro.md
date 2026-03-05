@@ -13,8 +13,6 @@ TODOlist:
     - Tikz si maths, main si principe, code python si simple
     - Geometrie NMF book Gillis, 20min max at figure time
     - Figure inline integration with glue and environments
-- lower-semicontinuous pas impliqué par continuous sur l'interrieur du domaine, prendre 10min pour checker dans Beck
-- Calcul propre Hadamard inverse ?
 - Relecture
     - Relecture deja faite du rapport CNRS
     - Coherence between parts, intro, perspectives.

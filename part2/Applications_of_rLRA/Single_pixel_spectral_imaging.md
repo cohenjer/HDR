@@ -100,7 +100,23 @@ where $H$ here denotes a Hadamard matrix, and $[x]^- \geq 0$ is the negative par
 
 In short, we suppose that measurements $Y$ are a stored in a matrix of size $m\times p$ are acquired, and assume the model $Y\sim \mathcal{P}\left(\alpha AX\right)$ with $A$ of size $m\times n$ a matrix with entries in $\{0,1\}$.
 
-Hadamard matrices have both a simple form for the pseudo-inverse and a cheap matrix-vector product {cite:p}`magoarouChasingButterfliesSearch2015`. It is natural to question wether one can apply and invert the split operator $A$ at a similar cost. Both questions have a positive answer. The product $A^{\dagger}y$ can be performed efficiently using the fast Hadamard transform. [Rework, we dont invert H-] Indeed, $[H]^{\pm} = \frac{1}{2} \left[H \pm 1\right]$. The pseudo-inverse also admits a closed-form expression although this is less immediate [TODO ref Sloane 1978 cf article demander à Nicolas]. Matrix $[H]^+$ is left-invertible, and by noticing that
+Hadamard matrices have both a simple form for the pseudo-inverse and a cheap matrix-vector product {cite:p}`magoarouChasingButterfliesSearch2015`. It is natural to question wether one can apply, and invert, the split operator $A$ at a similar cost, and we show here that both operations can be performed efficiently when $A$ is the split Hadamard matrix.
+
+First, the product $A^Ty$ can be obtained using the fast Hadamard transform. Indeed, $[H]^{\pm} = \frac{1}{2} \left[H \pm 1\right]$. Second, the pseudo-inverse $A^{\dagger}$ admits a closed-form expression, [TODO ref Sloane 1978 cf article demander à Nicolas]
+
+$$ A^\dagger = \frac{2}{n} \left( I_n - \frac{1}{n+1} \mathbb{1}_{n\times n} \right) A^T $$
+
+where $\mathbb{1}_{n,n}$ is a matrix of ones, and its contraction is implemented as a summation. This is obtained by noting that
+
+$$ A^TA = \frac{n}{2} \left( I_n +\mathbb{1}_{n\times n} \right) $$
+
+and that $ \left( I_n - \frac{1}{n+1}\mathbb{1}_{n\times n} \right)\left( I_n +\mathbb{1}_{n\times n} \right)  = I_n $.
+
+```{note} Inversion of the positive Hadamard matrix
+
+Most matrices obtained from the Hadamard matrix admit fast inversion algorithms. The methodology, examplified on matrix $[H]^+$, is as follows.
+
+Matrix $[H]^+$ is left-invertible, and by noticing that
 
 $$ \frac{1}{n}H^T[H]^+ = \frac{1}{2}I + \frac{1}{2} e_1 \mathbb{1}^T,\; e_1 = [1,0,\ldots,0]^T  $$
 
@@ -116,7 +132,9 @@ We see that the pseudo-inverse of $[H]^+$ is computed as
 
 $$ \frac{1}{n} \left(2I_n - e_1 \mathbb{1}^T\right)H^T = \frac{1}{n} \left( 2H^T - e_1e_1^T\right) $$
 
-which can be efficiently contracted with any vector $x$ given a fast Hadamard transform algorithm. The derivations for the left pseudo-inverse of matrix $A$ are similar. [TODO cf cahier]
+which can be efficiently contracted with any vector $x$ given a fast Hadamard transform algorithm.
+
+```
 
 We can simulate the acquisition easily, with the help of the python package spyrit, developped in CREATIS.
 
