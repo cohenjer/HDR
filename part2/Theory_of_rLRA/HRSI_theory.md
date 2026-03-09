@@ -23,26 +23,26 @@ Consider the ridge Nonnegative Matrix Factorization problem with Frobenius loss:
 $$ \argmin{X_1\geq 0, X_2\geq 0} \|M - X_1X_2^T\|_F^2 + \lambda_1 \|X_1\|_F^2 + \lambda_2 \|X_2\|_F^2. $$
 with $M\in\mathbb{R}_{+}^{m_1\times m_2}$ and the nonnegative rank is $r$.
 
-Such a ridge-regularized model could be preferred by a user on the basis of ridge-regression: avoiding overfitting (in the case of NMF, this would translate as chosing a particular solution with low variance) or improving the numerical stability of the optimization algorithm (the optimization problem is strictly bi-convex when $\lambda_i>0$). 
+Such a ridge-regularized model could be preferred by a user on the basis of ridge-regression: avoiding overfitting (in the case of NMF, this would translate as choosing a particular solution with low variance) or improving the numerical stability of the optimization algorithm (the optimization problem is strictly bi-convex when $\lambda_i>0$). 
 
 It turns out that, maybe surprisingly at first, the ridge-regularized NMF problem is equivalent (in the sense that the minimizers are related by a trivial mapping) to a variant of the nuclear-norm low-rank sensing problem with nonnegativity constraints,
 
 $$ \argmin{X_1\geq 0, X_2\geq 0} \|M -  X_1X_2^T\|_F^2 + \frac{\sqrt{\lambda_1\lambda_2}}{2} \sum_{q=1}^{r} \|X_1[:,q]\otimes X_2[:,q]\|_F $$
 
 This second formulation is insightful in many ways.
-  - The regularization in the second, implicit formulation, takes the form of a group-sparse regularization of the rank-one terms in NMF. Without nonnegativity constraints, this constraint is exactly the nuclear norm of the low-rank matrix $X_1X_2^T$. The ridge penalty on each factor matrix therefore implied rank-minimization implicitly!
+  - The regularization in the second, implicit formulation, takes the form of a group-sparse regularization of the rank-one terms in NMF. Without nonnegativity constraints, this constraint is exactly the nuclear norm of the low-rank matrix $X_1X_2^T$. The ridge penalty on each factor matrix, therefore, implied rank-minimization implicitly!
   - Tuning each parameter $\lambda_1$ and $\lambda_2$ individually yields counterintuitive results. For instance, the regularization on the first factor $X_1$ is not stronger than on the second factor $X_2$ in the case where $\lambda_1$ is much larger than $\lambda_2$. Only the product of the two regularization hyperparameters governs the regularization intensity.
 
-In the work conducted with Valentin Leplat {cite:p}`cohenEfficientAlgorithmsRegularized2025`, we generalize this observation for a large class of regularized LRA models, namely Homogeneous Regularized Scale-Invariant models (HRSI), that account for many LRA models regularized with homogeneous positive-definite regularizations such as any $\ell_p$ norm. The implicit rank-selection effect observed for ridge regularization is shown to be due to the scale-ambiguity of LRA models, and therefore pertains for most $\ell_p$ norms. We provide the [main theoretical result](sec:theory) below, and provide more examples, namely $\ell_1$-$\ell_1$ and $\ell_1$-$\ell_2$ regularizations.
+In the work conducted with Valentin Leplat {cite:p}`cohenEfficientAlgorithmsRegularized2025`, we generalize this observation for a large class of regularized LRA models, namely Homogeneous Regularized Scale-Invariant models (HRSI), that account for many LRA models regularized with homogeneous positive-definite regularizations such as any $\ell_p$ norm. The implicit rank-selection effect observed for ridge regularization is shown to be due to the scale-ambiguity of LRA models, and therefore pertains to most $\ell_p$ norms. We provide the [main theoretical result](sec:theory) below, and provide more examples, namely $\ell_1$-$\ell_1$ and $\ell_1$-$\ell_2$ regularizations.
 
-We show numerical simulations in the next section along with algorithm-oriented concerns, such as leveraging the scale-invariance to optimally balance the factors to minimize the regularization, which provably allows to escape the so-called "scaling swamp" {cite:p}`Papalexakis2013From`.
+We present numerical simulations in the next section, along with algorithm-oriented concerns, such as leveraging scale-invariance to optimally balance the factors to minimize regularization, which provably allows one to escape the so-called "scaling swamp" {cite:p}`Papalexakis2013From`.
 
 (sec:theory)=
 ## Scale invariance main result
 
-While the scale of the factors matrices leaves the low-rank approximation intact, namely $X_1X_2^T$ and $X_1\Lambda \Lambda^{-1}X_2^T$ are equivalent low-rank representations for any nonzero diagonal matrix $\Lambda$, implicit regularization in LRA essentially occurs because the regularization are not invariant with respect to such a balancing of columns and rows of the factor matrices. Solving for the optimal scales in rLRA modifies the penalization. Further, the optimal scales are determined by the homogeneity degree of the regularizations and the value of the regularization hyperparameters, and essentially balance the rank-one components.
+While the scale of the factor matrices leaves the low-rank approximation intact, namely $X_1X_2^T$ and $X_1\Lambda \Lambda^{-1}X_2^T$ are equivalent low-rank representations for any nonzero diagonal matrix $\Lambda$, implicit regularization in LRA essentially occurs because the regularizations are not invariant with respect to such a balancing of columns and rows of the factor matrices. Solving for the optimal scales in rLRA modifies the penalization. Further, the optimal scales are determined by the homogeneity degree of the regularizations and the value of the regularization hyperparameters, and essentially balance the rank-one components.
 
-In what follows we first introduce the general framework of HRSI, and then derive the main result that relates scale-invariance with implicit regularization.
+In what follows, we first introduce the general framework of HRSI, and then derive the main result that relates scale-invariance with implicit regularization.
 
 ### Homogeneous Regularized Scale-Invariant models
 Consider the following optimization problem
@@ -69,19 +69,19 @@ $$        g_i(\lambda x) = \lambda^{p_i} g_i(x). $$
 
 This property holds in particular for any $\ell_p^p$ norm in the ambient vector space.
 ```{margin}
-Assumption **A3** limits the framework's applicability, excluding positive homogeneous regularizations like Total Variation.
+Assumption **A3** limits the framework's applicability by excluding positive homogeneous regularizations such as Total Variation.
 ```
 - **A3**: Each function $g_i$ is positive-definite, meaning that for any $i\leq n$, $g_i(x)=0$ if and only if $x$ is null.
  
-We refer to the optimization problem {eq}`eq:hrsi-pb` with assumptions **A1**, **A2** and **A3** the Homogeneous Regularized Scale-Invariant problem (HRSI). 
+We refer to the optimization problem {eq}`eq:hrsi-pb` with assumptions **A1**, **A2**, and **A3**, the Homogeneous Regularized Scale-Invariant problem (HRSI). 
 
 HRSI is quite general and encompasses many instances of regularized LRA problems. Specifically, [ridge NMF](eq:ridge-NMF) is an HRSI problem with $f(\{X_i\}_{i\leq n})= \|M - X_1X_2^T\|_F^2$, $g_1(x) = \|x\|^2_2 + \eta_{\mathbb{R}_+^{m_1}}(x)$ and $g_2(x) = \|x\|^2_2 + \eta_{\mathbb{R}_+^{m_2}}(x)$.
 
 (sec:theorem-HRSI)=
 ### Solutions to HRSI also solve an implicit regularized problem, and are balanced
 
-We proved the following result in {cite:p}`cohenEfficientAlgorithmsRegularized2025`, relying an identity for the geometric mean.
-````{prf:theorem} HRSI solutions caracterisation and implicit equivalent formulation
+We proved the following result in {cite:p}`cohenEfficientAlgorithmsRegularized2025`, relying on an identity for the geometric mean.
+````{prf:theorem} HRSI solutions characterization and implicit equivalent formulation
 :label: HRSI
 If $\mu_i>0$ for all $i$, any solution $\{X_i^\ast\}_{i\leq n}$ to the HRSI problem {eq}`eq:hrsi-pb` satisfies $p_i\mu_ig_i(X_i^{\ast}[:,q]) = \beta_q$ for all $i\leq n$ and $q\leq r$, where 
 
@@ -98,7 +98,7 @@ where $\tilde{\mu} = \left(\prod_{i=1}^{n}(p_i\mu_i)^{\frac{1}{p_i}}
 From this theorem, we observe that
 - Only the product of regularization hyperparameters impacts the regularity of the solution.
 - The sum of columnwise regularization on the factor matrices in the explicit formulation becomes a product of regularizations in the implicit formulation, yielding group-sparsity on the rank-one components.
-- At optimality, the scales of the components must satisfy the balancing condition $p_i\mu_ig_i(X_i^{\ast}[:,q])=\beta_q$. This means in particular that the regularized LRA model does not suffer from scale ambiguity.
+- At optimality, the scales of the components must satisfy the balancing condition $p_i\mu_ig_i(X_i^{\ast}[:,q])=\beta_q$. This means, in particular, that the regularized LRA model does not suffer from scale ambiguity.
 
 
 ## Special cases with $\ell_1$ and $\ell_2$ regularizations
@@ -107,7 +107,7 @@ To make our main result {prf:ref}`HRSI` more explicit, let us instantiate the im
 
 ### Ridge-regularized nonnegative CPD
 
-Define formally the ridge nCPD as the optimization problem
+Define the ridge nCPD formally as the optimization problem
 
 $$ \argmin{X_i\geq 0}  \| \mathcal{T} - \mathcal{I}_r \times_1 X_1 \times_2 X_2 \times_3 X_3 \|^2_F +  \mu \left(\|X_1\|_F^2 + \|X_2\|_F^2 + \|X_3\|_F^2\right). $$
 
@@ -115,23 +115,23 @@ The implicit HRSI problem shows again that ridge-regularization yields a compone
 
 $$ \argmin{\{\mathcal{L}_q\}_{q\leq r},~\text{rank}(\mathcal{L}_q)\leq 1}  \|\mathcal{T} -\sum_{q=1}^{r} \mathcal{L}_q \|_F^2 + 3\mu \sum_{q=1}^{r} \|\mathcal{L}_q\|_F^{\frac{2}{3}} $$
 
-where tensors $\mathcal{L}_q$ are rank-one tensors built from the outer products $X_1[:,q]\otimes X_2[:,q] \otimes X_3[:,q]$. We validate experimentally in [](./HRSI_algorithm.ipynb) that tuning the values of the regularization hyperparameter $\mu$ indeed allows to select the rank of the nCPD factorization. Moreover, the optimal solution of ridge nCPD verify the balancing equation
+where tensors $\mathcal{L}_q$ are rank-one tensors built from the outer products $X_1[:,q]\otimes X_2[:,q] \otimes X_3[:,q]$. We experimentally validate in [](./HRSI_algorithm.ipynb) that tuning the regularization hyperparameter $\mu$ indeed allows us to select the rank of the nCPD factorization. Moreover, the optimal solution of ridge nCPD verifies the balancing equation
 
 $$ 1 = \sqrt{2} \|X_i[:,q]\|_2^{-\frac{1}{3}}\prod_{j\neq i}\|X_j[:,q]\|_2^{\frac{2}{3}}  .$$
 
-This balancing identity will be used in [](./HRSI_algorithm.ipynb) to refine the iterates of an iterative optimization algorithm to solve ridge nCPD.
+This balancing identity will be used in [](./HRSI_algorithm.ipynb) to refine the iterations of an iterative optimization algorithm to solve ridge nCPD.
 
 ### Sparse NMF L1-L1
 
-Another interesting case of implicit regularization effect concerns the (double) sparse NMF model
+Another interesting case of an implicit regularization effect concerns the (double) sparse NMF model
 
 $$\argmin{X_1\geq 0, X_2\geq 0} \|M - X_1X_2^T\|_F^2 + \mu \left( \|X_1\|_1 + \|X_2\|_1 \right). $$
 
-Intuitively, a practionner using sparse NMF with $\ell_1$ penalizations on both factors would be expecting sparse entries in both matrices, leveraging the behavior of the $\ell_1$ norm in regression problems. The implicit formulation shows that, while both factors are indeed penalized to be sparse, there is another group-sparse effect that prunes entire components,
+Intuitively, a practitioner using sparse NMF with $\ell_1$ penalizations on both factors would expect sparse entries in both matrices, leveraging the behavior of the $\ell_1$ norm in regression problems. The implicit formulation shows that, while both factors are indeed penalized to be sparse, there is another group-sparse effect that prunes entire components,
 
 $$ \argmin{L_q\in\mathbb{R}_+^{m_1\times m_2},\; \text{rank}(L_q)\leq 1} \|M - \sum_{q=1}^{r}L_q\|_F^2 + 2\sqrt{\mu_1\mu_2}\sum_{q=1}^{r} \sqrt{\|L_q\|_1}.$$
 
-The problem with this formulation is that both effect (element-wise sparsity and component-wise sparsity) are not controlled individually but rather by the same regularization hyperparameter. This yields unexpected component pruning as shown in the simulation below with mixtures of Gaussians. It is also unclear from the implicit formulation if indeed both factors will be sparse element-wise.
+The problem with this formulation is that both effects (element-wise sparsity and component-wise sparsity) are not controlled individually but rather by the same regularization hyperparameter. This yields unexpected component pruning as shown in the simulation below with mixtures of Gaussians. It is also unclear from the implicit formulation whether both factors will be sparse element-wise.
 
 
 
@@ -293,10 +293,10 @@ where the mixed matrix norm is defined as $\|L_q\|_{1,2} = \sqrt{\sum_{j} \left(
 
 $$ \|x\otimes y\|_{1,2} = \|x\|_1\|y\|_2 $$ 
 
-for any vectors $x$ and $y$. One may observe that the implicit regularization acts as a group-lasso norm  on the rows of the rank-one components, effectively enforcing sparsity elementwise in the factor matrix $X_1$. The group-lasso effect on the rank-one components still appears however in the implicit regularization and similarly to the $\ell_1$-$\ell_1$ case, the two effects may occur simultaneously.
+for any vectors $x$ and $y$. One may observe that the implicit regularization acts as a group-lasso norm  on the rows of the rank-one components, effectively enforcing sparsity elementwise in the factor matrix $X_1$. The group-lasso effect on the rank-one components still appears, however, in the implicit regularization, and similarly to the $\ell_1$-$\ell_1$ case, the two effects may occur simultaneously.
 
-It is still open to fully caracterize the link between the regularized formulation and the constrained formulation
+It is still open to fully characterize the link between the regularized formulation and the constrained formulation
 
 $$\argmin{X_1\geq 0, X_2\geq 0} \|M - X_1X_2^T\|_F^2 + \mu \|X_1\|_1  \text{ s.t. } \|X_2[:,q]\|_2 = 1 \; \forall q\leq r. $$
 
-Interestingly, Marmin, Goulard and Févotte show equivalence between the contrained formulation and the implicit HRSI formulation of sparse NMF, hinting towards the equivalence between the three formulations {cite:p}`marminMajorizationMinimizationSparseNonnegative2023`. 
+Interestingly, Marmin, Goulard, and Févotte show equivalence between the constrained formulation and the implicit HRSI formulation of sparse NMF, hinting towards the equivalence between the three formulations {cite:p}`marminMajorizationMinimizationSparseNonnegative2023`. 
