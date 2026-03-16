@@ -9,13 +9,14 @@ The book contains code snippets with barebone implementations of algorithms, num
 The scientific content of the book is summarized in the [](./intro/introduction.md). Here is the table of content for quick access.
 
 TODOlist:
-- Finir relecture en passant les .ipynb en .md
+- ajout refs dans les .ipynb
 - Figures design
     - Tikz si maths, main si principe, code python si simple
     - Geometrie NMF book Gillis, 20min max at figure time
     - Figure inline integration with glue and environments
 - Relecture
     - Relecture deja faite du rapport CNRS
+    - Cohérence style (we, I, forme passive...)
     - Coherence between parts, intro, perspectives.
     - Acronyms, vocabulary and math notations list (NNKL or NN-KL)
     - Broken links
