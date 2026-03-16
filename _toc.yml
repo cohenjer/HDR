@@ -28,8 +28,6 @@ parts:
         sections:
         - file: part2/Theory_of_rLRA/HRSI_algorithm
       - file: part2/Theory_of_rLRA/DL_identifiability
-        sections:
-        - file: part2/Theory_of_rLRA/DL_identifiability_code
       - file: part2/Theory_of_rLRA/DLRA  
         sections:
         - file: part2/Theory_of_rLRA/onesparseDLRA

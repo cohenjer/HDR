@@ -9,6 +9,7 @@ kernelspec:
   language: python
   name: python3
 ---
+
 # Identifiability of complete Dictionary Learning
 
 :::{admonition} Reference
@@ -87,3 +88,114 @@ Our result complements the existing literature in several ways:
 - It is fully deterministic, therefore it holds with slightly more generality than many existing results based on a Bayesian description of the model, see for instance {cite}`gribonvalSparseSpuriousDictionary2015` for an overview.
 
 In the next section, we compute cDL using Tensorly!
+
+
+## Computation of complete Dictionary Learning with Tensorly
+
+It is possible to compute a cDL with Tensorly using the constrained CP decomposition function. Indeed, one may compute a solution to the cDL problem by solving the optimization problem
+
+$$ \min_{D,B} \|M - DB\|_F^2 + \eta_{\|B[:,i]\|_0\leq k} $$
+
+Tensorly implements an alternating optimization algorithm (AO, also called inexact block-coordinate descent) where each block (here the dictionary $D$ and the coefficients $X$ respectively) are updated using a few iterations of Alternating Descent Method of Multipliers. This algorithm was proposed as a flexible optimization framework for constrained matrix and tensor problems by Huang, Sidiropoulos and Liavas {cite}`huangFlexibleEfficientAlgorithmic2016` and implemented in Tensorly in collaboration with Caglayan Tuna in [PR#284](https://github.com/tensorly/tensorly/pull/284).
+
+This algorithm is demonstrated below on a simulated example. Convergence speed and runtime can be improved by using more dedicated software and algorithms.
+
+```{code-cell} ipython3
+:tags: []
+
+import numpy as np
+import tensorly as tl
+from tensorly.decomposition._constrained_cp import constrained_parafac
+from tensorly.cp_tensor import cp_permute_factors
+
+# ------------- Parameters ---------------
+k = 3 # true number of nonzeros in columns of X
+kest = 3 # number of nonzeros in the computed solution Xe
+noise = 0 # how much noise in the data
+rank = 8 # rank of the factorization (number of atoms)
+sig = 0.02 # how far from the solution we initialize
+oversampling = 2.0 # oversampling factor, <1. has lots of chances to fail
+
+# Getting dimensions from Theorem 1 bound
+bound_theorem1 = (np.floor(rank*(rank-2)/(rank-k))+1)*(rank/(rank-k))
+print(f"Theorem 1 ensures identifiability with more than {bound_theorem1} data samples")
+dims = [rank, int(np.floor(oversampling*bound_theorem1))]
+print(f"There are {dims[1]} data samples used in this experiment")
+
+# ------------ Data generation -----------
+D = np.random.randn(dims[0],rank)
+D = D/tl.norm(D,axis=0)
+X = np.random.randn(rank,dims[1])
+# sparsify X, Bernouilli Gaussian model
+for i in range(X.shape[1]):
+    X[:-k,i] = 0
+    np.random.shuffle(X[:,i])
+
+M = D@X
+Mnoise = M + noise*np.random.randn(*M.shape)
+
+# Init close to solution
+D0 = D+sig*np.random.randn(*D.shape)
+X0 = X+sig*np.random.randn(*X.shape)
+init = (None,[D0,X0.T])
+
+# ------- Decomposition with Tensorly -----
+out, err = constrained_parafac(Mnoise, rank, hard_sparsity_rowwise={1:kest}, verbose=False, init=init, n_iter_max=500, return_errors=True, tol_outer=0)
+print(f"Initial cost was {err[0]}, Final cost is {err[-1]}, {len(err)} iterations were used")
+# postprocess estimate by permuting the components optimally
+try:
+    out, _ = cp_permute_factors((None,[D,X.T]), out)
+except:
+    print("no permutation can be computed because a zero component is present in the true or estimated coefficients")
+Xe = out[1][1].T
+De = out[1][0]
+
+# ----------- Error metrics --------------
+# Computing True False Positives, True False Negatives
+tp = tl.sum((X!=0) & (Xe!=0))
+fp = tl.sum((X==0) & (Xe!=0))
+fn = tl.sum((X!=0) & (Xe==0)) # always equal to fp if k is chosen optimally
+tn = tl.sum((X==0) & (Xe==0))
+# Precision, Recall, Accuracy, Fmetric
+precision = tp/(tp+fp)
+recall = tp/(tp+fn)
+accuracy = (tp+tn)/(tp+tn+fn+fp)
+fmet = 2*precision*recall/(precision+recall)
+print(f"Support estimation: Precision {precision:.2f}, Recall {recall:.2f}, F metric {fmet:.2f}, Accuracy {accuracy:.2f}")
+
+# Estimation of D and X
+Denorms = tl.norm(De, axis=0)
+De = De/Denorms
+Xe = (Denorms*Xe.T).T
+rmse_D = tl.norm(D-De)/tl.sqrt(tl.prod(D.shape))
+rmse_X = tl.norm(X-Xe)/tl.sqrt(tl.prod(X.shape))
+print(f"Relative error on the dictionary: {rmse_D}, on the sparse factor: {rmse_X}")
+```
+
+Feel free to play with the parameters. One may observe for instance that as soon as the initial factors are chosen too far from the true solution, most of the time of support is poorly estimated. Similarly, the true support is only recovered in small noise regimes. These two properties, respectively local convergence and robustness, have been studied in the literature, see for instance {cite}`liangSimpleAlternatingMinimization2022` and {cite}`gribonvalSparseSpuriousDictionary2015` and references therein. However the bounds on the initial error and noise levels are in general hard to compute explicitly.
+
+We can illustrate the previously presented result on identifiability with this simulation. The data points are located uniformly on each facet with sparsity exactly $k$. Each facets requires $\lfloor \frac{r(r-2)}{ r-k }\rfloor +1$ points at least and there are $r-k$ facets. Each point lives in k facets. Therefore we need more than $(\lfloor \frac{r(r-2)}{ r-k } \rfloor+1)\frac{r}{r-k}$ data points to satisfy Theorem1 (todo cross ref).
+
+In the above simulation, setting the noise level to zero, if there are fewer points than the bound of {prf:ref}`thm_identif_cDL`, the dictionary and the sparse factors are never recovered because of a lack of identifiability. This is more visible when starting midly far from the true solution. Indeed when the model is not identifiable, the true solution is still a minimizer of the problem, but there are generally infinitely many solutions which may be obtained instead. Try running the simulation several times with the following parameter set:
+
+```python
+
+    k = 3 # true number of nonzeros in columns of X
+    kest = 3 # number of nonzeros in the computed solution Xe
+    noise = 0 # how much noise in the data
+    rank = 8 # rank of the factorization (number of atoms)
+    sig = 0.03 # how far from the solution we initialize
+    oversampling = .8 # oversampling factor, <1. has lots of chances to fail
+```
+
+and observe that the RMSE are generally not small, even when perfect support estimation occurs.
+
+When more samples are drawn, because of the stochastic nature of the repartition of samples on the facets, it is possible that the model is still not identifiable, but as the number of points grows this becomes less likely. The algorithm still falls in local minimizers, but sometimes it finds a solution very close to the true, global solution. Try running the simulation with the same parameters but more samples:
+
+```python
+
+    oversampling = 2.
+
+```
+
+and notice how the RMSE on the dictionary and factor are often smaller then in the undersampled regime, and sometimes close to machine precision.
