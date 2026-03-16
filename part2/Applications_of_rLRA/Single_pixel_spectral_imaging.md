@@ -44,7 +44,7 @@ The reconstruction of the hypercube $X$, knowing the measurements $Y$ and the ac
 ### Hadamard patterns
 
 Before considering a baseline reconstruction method, it is necessary to discuss more about the choice of the acquisition matrix $A$. There are both practical and theoretical constraints that guide the choice of $A$. 
-- Practically, the patterns are applied to the image by leveraging a micromirror matrix (DMD). The image is focalized on the DMD, which has small mirrors corresponding to pixels that can point in two different directions. All the mirrors that point towards the lens that targets the spectrometer reflect light from the observed object and contribute to the measured spectrum. The other mirror effectively blocks all the incoming light. Therefore, we may assume that the observation matrix is binary. Contrary to other imaging modalities, such as magnetic resonance imaging, the patterns can be changed at will for each acquisition.
+- Practically, the patterns are applied to the image by leveraging a micromirror matrix (DMD). The image is focused on the DMD, which has small mirrors corresponding to pixels that can point in two different directions. All the mirrors that point towards the lens that targets the spectrometer reflect light from the observed object and contribute to the measured spectrum. The other mirror effectively blocks all the incoming light. Therefore, we may assume that the observation matrix is binary. Contrary to other imaging modalities, such as magnetic resonance imaging, the patterns can be changed at will for each acquisition.
 - Theoretically, if the patterns could be negative in $[-1, 1]$, the "optimal" acquisition patterns are known to be Hadamard matrices {cite:p}`nelsonHadamardSpectroscopy1970c`. Optimality here is meant in the sense of statistical minimal linear reconstruction error, *i.e.* minimal estimation variance. In particular, Hadamard patterns are shown to outperform raster scan, which observes each pixel individually and therefore does not perform spatial multiplexing. The theoretical gain of Hadamard matrices versus raster scan is known as the Felgett advantage.
 
 :::{admonition} Why are Hadamard patterns "optimal"
@@ -75,7 +75,7 @@ For raster scan the rows of matrix $B^2$ sum to one, while for Hadamard patterns
 
 $$ F_i =: F = \sqrt{n}.$$
 
-A reasonable question is whether there exist better choices than Hadamard matrices for maximizing this ratio. Interestingly, Nelson and Fredman show that the ratio $F$ is bounded by $\sqrt{n}$. Indeed, by Causchy-Schwartz inequality,
+A reasonable question is whether there exist better choices than Hadamard matrices for maximizing this ratio. Interestingly, Nelson and Fredman show that the ratio $F$ is bounded by $\sqrt{n}$. Indeed, by the Cauchy-Schwarz inequality,
 
 $$ 1 = \sum_{j} B[i,j]A[i,j] \leq  \underbrace{\|B[i,:]\|_2}_{F_i^{-1}} \|A[i,:]\|_2. $$
 
@@ -114,7 +114,7 @@ and that $ \left( I_n - \frac{1}{n+1}\mathbb{1}_{n\times n} \right)\left( I_n +\
 
 ```{note} Inversion of the positive Hadamard matrix
 
-Most matrices obtained from the Hadamard matrix admit fast inversion algorithms. The methodology, examplified on matrix $[H]^+$, is as follows.
+Most matrices obtained from the Hadamard matrix admit fast inversion algorithms. The methodology, exemplified on matrix $[H]^+$, is as follows.
 
 Matrix $[H]^+$ is left-invertible, and by noticing that
 
@@ -322,7 +322,7 @@ while the regularized least-squares estimator is obtained by minimizing
 
 $$ \|Y - AX\|_F^2 + \lambda g(X). $$
 
-We can illustrate the reconstruction by right pseudo-inverse and the effect of the nonnegativity prior easily using an NNLS solver, in which case $g(X)$ is the characteristic function of the nonnegative orthant.
+We can illustrate the reconstruction by right pseudo-inverse and the effect of the nonnegativity prior with an NNLS solver, in which case $g(X)$ is the characteristic function of the nonnegative orthant.
 
 ```{code-cell}ipython
 # NNLS with subsampling
@@ -465,9 +465,9 @@ plt.show()
 
 #### Real data reconstruction and unmixing
 
-An acquisition was performed in the laboratory, with a cat image layered with two color filters, red and green. There is a thin spatial overlap between the two filters, which induces subtractive mixing; therefore, the hyperspectral image will be rank-two plus nonlinear mixing terms plus noise. However, the abundance maps are mostly disjoint, and the spectral bands where the green and red filter are intense also mostly do not overlap. Therefore the separation problem is rather simple and ammenable to separable NMF algorithms.
+An acquisition was performed in the laboratory, with a cat image layered with two color filters, red and green. There is a thin spatial overlap between the two filters, which induces subtractive mixing; therefore, the hyperspectral image will be rank-two plus nonlinear mixing terms plus noise. However, the abundance maps are mostly disjoint, and the spectral bands where the green and red filters are intense also mostly do not overlap. Therefore, the separation problem is rather simple and amenable to separable NMF algorithms.
 
-We first load the data and the metadata and process them to permute the acquisitions correctly. Then we remove the dark current, which is essentially the mean of the Gaussian noise in the Poisson-Gaussian mixture. We chose to ignore the Gaussian noise, and assume that the only source of measurement variation is the Poisson distribution. However, Gaussian noise is not zero-centered and the induced biais must be corrected. It can be estimated from the measurement acquired with the first row of the negative patterns $H^{-}$, filled with zeroes. The data is then clipped and normalized to lie in the interval $[0,1]$.
+We first load the data and the metadata and process them to permute the acquisitions correctly. Then we remove the dark current, which is essentially the mean of the Gaussian noise in the Poisson-Gaussian mixture. We chose to ignore the Gaussian noise and assume that the only source of measurement variation is the Poisson distribution. However, Gaussian noise is not zero-centered, and the induced bias must be corrected. It can be estimated from the measurement acquired with the first row of the negative patterns $H^{-}$, filled with zeroes. The data is then clipped and normalized to lie in the interval $[0,1]$.
 
 ```{code-cell}ipython3
 # Loading
@@ -504,7 +504,7 @@ Ymeas = samp.reorder(Ymeas, Perm_acq, Perm_rec)
 Y = torch.tensor(Ymeas, dtype=torch.float32).T
 del Ymeas
 
-# Unbiais by removing the dark current, estimated as the min value of marginals of Y (better?)
+# Unbiased by removing the dark current, estimated as the minimum value of marginals of Y (better?)
 dc = tl.sum(Y[:,1])/Y.shape[0] # average of dc over all wavelengths
 print(f"Estimated dark current to remove: {dc}")
 Y = Y - dc
@@ -521,14 +521,14 @@ plt.colorbar()
 plt.show()
 ```
 
-We then follow the reconstruction procedure described earlier. We remove some elements in the data matrix: the measurement with the row of zeroes, which, appart for the dark current estimation, is uniformative, and some spectral bands that acquired no signal, here the first sixteen bands. The remaining spectral bands are binned together by groups of $8$ to reduce the dimension of the problem, for runtime issues. We first show here the pseudo-inverse reconstruction.
+We then follow the reconstruction procedure described earlier. We remove some elements from the data matrix: the measurement with the row of zeros, which, apart from the dark current estimation, is uninformative, and some spectral bands that acquired no signal; here, the first 16 bands. The remaining spectral bands are binned into groups of $8$ to reduce the dimension of the problem due to runtime issues. We first show here the pseudo-inverse reconstruction.
 
 ```{code-cell}ipython3
 # Reconstruction with pseudo-inverse
 from spyrit.core.meas import HadamSplit2d
 import spyrit.misc.sampling as samp
 
-# PAtterns are acquired in order Acq, compared to order nat
+# Patterns are acquired in order Acq, compared to order nat
 # Patterns are stored in order Rec in spyrit
 acq_size = img_size
 meas_op = HadamSplit2d(img_size)
@@ -556,7 +556,7 @@ Ynz = Ynz_binned
 wavelengths_nz = wavelengths_binned
 print(f"Binned measurements shape: {Ynz.shape}")
 
-# define custom foward and adjoint forward functions
+# define custom forward and adjoint forward functions
 def forward(x):
     # x@Anz.T or Anz@x
     # x is of shape (B, N**2)  # batch first
@@ -582,7 +582,7 @@ plt.axis('off')
 plt.show()
 ```
 
-We now perform the pure-pixel selection, and reconstruct/unmixing jointly with an alternating MU algorithm. Observe how the abundance map are well estimated with both methods, but the spectra are slightly smoother with the alternating MU algorithm. The third component (and in fact, most other components if the rank is increased) model the border of the overlap zone between the filters, which is intense because at the center of the image, and is not well modeled by linear combination of the two filter spectra.
+We now perform the pure-pixel selection and reconstruct/unmix jointly with an alternating MU algorithm. Observe how the abundance maps are well estimated with both methods, but the spectra are slightly smoother with the alternating MU algorithm. The third component (and in fact, most other components if the rank is increased) models the border of the overlap zone between the filters, which is intense because at the center of the image, and is not well modeled by a linear combination of the two filter spectra.
 
 ```{code-cell}ipython3
 
@@ -599,7 +599,7 @@ print("Computation done")
 
 ```{code-cell}ipython3
 :tags: [hide-input]
-# PLot the initial and estimated spectra
+# Plot the initial and estimated spectra
 Anorms = [torch.max(A_est[i,:]) for i in range(rank)]
 A0norms = [torch.max(A0[i,:]) for i in range(rank)]
 
