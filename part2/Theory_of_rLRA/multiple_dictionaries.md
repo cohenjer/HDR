@@ -101,7 +101,7 @@ This quadratic cost can be turned into a linear cost since the dictionaries are 
 
 $$ \underset{\mathcal{K}_i\subset[1,\#S_i]\;\forall i\leq p}{\text{argmax}} \langle A , \left[D_1[:, \mathcal{K}_1], \ldots, D_p[:, \mathcal{K}_p]\right]\rangle $$
 
-where $\langle A,D\rangle = \text{Tr}(A^TD)$ is the usual scalar product for matrices. It turns out that we can view this linear but combinatorial problem as a linear sum assignment problem, for which efficient solvers are known [ref]. First, we may assume that all $d_i$ are equal to one, since we can always duplicate any dictionary $D_i$ to handle $d_i>1$. When $d_i=1$ for all $i\leq p$, for each dictionary $D_i$, only one atom can be selected. It is therefore natural to define a distance between a column $j$ of matrix $A$ and the whole dictionary $D_i$, here stored in a matrix $C\in\mathbb{R}^{p\times r}$
+where $\langle A,D\rangle = \text{Tr}(A^TD)$ is the usual scalar product for matrices. It turns out that we can view this linear but combinatorial problem as a linear sum assignment problem, for which efficient solvers are known {cite:p}`Kuhn1955Hungarian`. First, we may assume that all $d_i$ are equal to one, since we can always duplicate any dictionary $D_i$ to handle $d_i>1$. When $d_i=1$ for all $i\leq p$, for each dictionary $D_i$, only one atom can be selected. It is therefore natural to define a distance between a column $j$ of matrix $A$ and the whole dictionary $D_i$, here stored in a matrix $C\in\mathbb{R}^{p\times r}$
 
 ```{margin}
 We used here the fact that minimization over all $\mathcal{K}_i$ can be decomposed in two steps: minimization over $\mathcal{K}_i$ for a single $i$ and each column of $A$, yielding the $i$th row of cost matrix $C$, then minimization over all $i\leq p$ and all columns of $A$, which is done by the linear sum assignement solver (typically dedicated linear program solvers such as the Hungarian algorithm).
@@ -116,7 +116,7 @@ $$ \underset{\Pi\in\mathcal{P}(p,r)}{\text{argmax}} \langle A, C\Pi \rangle $$
 where $\mathcal{P}(p,r)$ is the set of surjective permutations from $[1,p]$ to $[1,r]$. This is a classical formulation of the linear sum assignment problem (with $p$ possibly larger than $r$).
 
 ```{note}
-Building on top of the above derivation, we may in fact use any reasonable distance between atoms in dictionaries $D_{i}$ and columns of $A$ to compute a cost matrix $C$, such as the Spectral Angular Mapper [TODO ref]. The MC-ALS is a heuristic; in particular, the choice of this distance need not be driven by the noise model for the data $Y$.
+Building on top of the above derivation, we may in fact use any reasonable distance between atoms in dictionaries $D_{i}$ and columns of $A$ to compute a cost matrix $C$, such as the Spectral Angular Mapper {cite:p}`boardman1993spectral,kruseSpectralImageProcessing1993`. The MC-ALS is a heuristic; in particular, the choice of this distance need not be driven by the noise model for the data $Y$.
 ```
 
 We may implement the resulting Multiple dictionaries MC-ALS (M2C-ALS) similarly to MC-ALS. Below is the algorithm for estimating the pure pixels. We will assume nonnegativity is always satisfied by the data and estimated parameters.
@@ -232,7 +232,7 @@ B0 = np.eye(*B.shape)
 ABest, errs, Ke = M2C_ALS(image, D, B0, d)
 ```
 
-It may be noted that very few iterations are performed in practice; the algorithm gets stuck in a local minimum because of the discrete-continuous nature of the optimization problem. This problem is inherited from the MC-ALS algorithm. Nevertheless, the residuals are rather small, and we have found good candidates for pure pixels within each dictionary $D_i$. Below, we plot the obtained spectra and abundances, along with their positions within the entire image. We compare with a classical separable NMF approach, SNPA {cite}[ref].
+It may be noted that very few iterations are performed in practice; the algorithm gets stuck in a local minimum because of the discrete-continuous nature of the optimization problem. This problem is inherited from the MC-ALS algorithm. Nevertheless, the residuals are rather small, and we have found good candidates for pure pixels within each dictionary $D_i$. Below, we plot the obtained spectra and abundances, along with their positions within the entire image. We compare with a classical separable NMF approach, SNPA {cite:p}`gillisFastRobustRecursive2014`.
 
 ```{code-cell} ipython3
 :tags: []

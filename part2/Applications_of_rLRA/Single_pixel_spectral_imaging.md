@@ -25,7 +25,7 @@ kernelspec:
 
 Spectral cameras are invaluable tools for acquiring detailed spectral information. They function by spatially spreading an incoming light flux across its constituent wavelengths. This spectral-spatial (Fourier) transformation implies that, by design, it is difficult to acquire spectral images with high spatial and spectral resolution. This is particularly true if the imaging device must remain affordable and lightweight.
 
-Although the idea of compressive acquisitions in computational optics precedes the development of compressive sensing {cite:p}`nelsonHadamardSpectroscopy1970c`, Duarte and co-authors proposed the single-pixel camera, which uses spatial multiplexing to feed focalized masked images into a high-resolution point spectrometer {cite:p}`duarteSinglepixelImagingCompressive2008, Duarte2012Kronecker`. In the setup available at CREATIS, the compressed light flux is the input of a spectrometer. The hyperspectral cube containing both the spatial information (images) and the spectral information (spectra) is then reconstructed by solving an inverse problem, following a long tradition of reconstruction imaging techniques in the computational imaging community {cite:p}`ducrosIntroductionSinglePixelImaging2024` (todo ask Nicolas better ref). 
+Although the idea of compressive acquisitions in computational optics precedes the development of compressive sensing {cite:p}`nelsonHadamardSpectroscopy1970c`, Duarte and co-authors proposed the single-pixel camera, which uses spatial multiplexing to feed focalized masked images into a high-resolution point spectrometer {cite:p}`duarteSinglepixelImagingCompressive2008, Duarte2012Kronecker`. In the setup available at CREATIS, the compressed light flux is the input of a spectrometer. The hyperspectral cube containing both the spatial information (images) and the spectral information (spectra) is then reconstructed by solving an inverse problem, following a long tradition of reconstruction imaging techniques in the computational imaging community {cite:p}`BenetiMartins_2023`.
 
 [Figure explicative]
 
@@ -82,7 +82,7 @@ $$ 1 = \sum_{j} B[i,j]A[i,j] \leq  \underbrace{\|B[i,:]\|_2}_{F_i^{-1}} \|A[i,:]
 Therefore, it holds that $F_i\leq \|A[i,:]\|_2 \leq \sqrt{n}$ where the last inequality assumes that the measurement operator $A$ has all values between $-1$ and $1$. Hadamard matrices are thus MSE-optimal.
 
 The optimality of the Hadamard patterns, however, is meant under many unrealistic assumptions:
-- The measurement operator $A$ has values in $[-1,1]$. The bound on the magnitude is reasonable for single-pixel imaging, but a DMD can only implement nonnegative entries. Neslon and Fredman already discussed this issue and introduced binary $S$-matrices [ref Sloane], which have a Felgett advantage of $\frac{n+1}{2\sqrt{n}}$, therefore quasi-optimal.
+- The measurement operator $A$ has values in $[-1,1]$. The bound on the magnitude is reasonable for single-pixel imaging, but a DMD can only implement nonnegative entries. Neslon and Fredman discussed this issue and introduced binary $S$-matrices, which have a Felgett advantage of $\frac{n+1}{2\sqrt{n}}$, therefore quasi-optimal.
 - The noise is additive. In single-pixel imaging, the noise model is Poisson-Gaussian, so additivity is not a valid assumption.
 - The reconstruction is linear. Most state-of-the-art reconstruction algorithms employ more sophisticated reconstruction strategies.
 - The error is measured with the RMSE, which is not a robust or statistically meaningful error metric for Poisson-Gaussian noise.
@@ -102,7 +102,7 @@ In short, we suppose that measurements $Y$ are stored in a matrix of size $m\tim
 
 Hadamard matrices have both a simple form for the pseudo-inverse and a cheap matrix-vector product {cite:p}`magoarouChasingButterfliesSearch2015`. It is natural to question whether one can apply, and invert, the split operator $A$ at a similar cost, and we show here that both operations can be performed efficiently when $A$ is the split Hadamard matrix.
 
-First, the product $A^Ty$ can be obtained using the fast Hadamard transform. Indeed, $[H]^{\pm} = \frac{1}{2} \left[H \pm 1\right]$. Second, the pseudo-inverse $A^{\dagger}$ admits a closed-form expression, [TODO ref Sloane 1978 cf article demander à Nicolas]
+First, the product $A^Ty$ can be obtained using the fast Hadamard transform. Indeed, $[H]^{\pm} = \frac{1}{2} \left[H \pm 1\right]$. Second, the pseudo-inverse $A^{\dagger}$ admits a closed-form expression, see section 3.5.4 in {cite:p}`Harwit_1979`.
 
 $$ A^\dagger = \frac{2}{n} \left( I_n - \frac{1}{n+1} \mathbb{1}_{n\times n} \right) A^T $$
 
@@ -136,7 +136,7 @@ which can be efficiently contracted with any vector $x$ given a fast Hadamard tr
 
 ```
 
-We can easily simulate the acquisition with the help of the Python package spyrit, developed at CREATIS.
+We can easily simulate the acquisition with the help of the Python package spyrit, developed at CREATIS {cite:p}`Abascal_2025`.
 
 ```{code-cell}ipython3
 import torch, torchvision

@@ -10,6 +10,8 @@ The scientific content of the book is summarized in the [](./intro/introduction.
 
 TODOlist:
 - ajout refs dans les .ipynb, il reste aussi des TODOs pas vu au 1er tour car ipynb
+- Figures list:
+  - 
 - Figures design
     - Tikz si maths, main si principe, code python si simple
     - Geometrie NMF book Gillis, 20min max at figure time

@@ -26,7 +26,7 @@ $$
     y_{k+1} &= x_{k+1} + \beta_k (x_{k+1} - x_k)
 $$
 
-where $y_{k}$ and $x_{k}$ are the auxiliary and principal sequences of iterations at iteration $k$, $\mathcal{\Pi}_{\mathcal{C}}$ is the projection on convex set $\mathcal{C}$ and $\alpha_k$ is an extrapolation parameter dependent on the iteration index. Various formulations have been proposed for the choice of $\alpha_k$. The convergence of such a scheme was proved first by Nesterov {cite:p}`Nesterov1983method`, but later analyzed more generally as discretized second-order differential equations {cite:p}`Attouch2013Convergence` [TODO check ref]. Interestingly, the cost function may increase with Nesterov gradient descent. O’Donoghue and Candès have proposed a restart strategy to further speed up convergence {cite:p}`o2015adaptive`. Restart consists in resetting the value of $\beta_k$ to ensure that the cost decreases.
+where $y_{k}$ and $x_{k}$ are the auxiliary and principal sequences of iterations at iteration $k$, $\mathcal{\Pi}_{\mathcal{C}}$ is the projection on convex set $\mathcal{C}$ and $\alpha_k$ is an extrapolation parameter dependent on the iteration index. Various formulations have been proposed for the choice of $\alpha_k$. The convergence of such a scheme was proved first by Nesterov {cite:p}`Nesterov1983method`, but later analyzed more generally as discretized second-order differential equations {cite:p}`attouchRateConvergenceNesterov2016`. Interestingly, the cost function may increase with Nesterov gradient descent. O’Donoghue and Candès have proposed a restart strategy to further speed up convergence {cite:p}`o2015adaptive`. Restart consists in resetting the value of $\beta_k$ to ensure that the cost decreases.
 
 ## Extrapolated block-coordinate algorithms for LRA
 
