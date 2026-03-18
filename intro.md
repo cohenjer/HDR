@@ -52,6 +52,7 @@ TODOlist:
     - Coherence between parts, intro, perspectives.
     - Acronyms, vocabulary and math notations list (NNKL or NN-KL)
     - Broken links
+- Fix code dependencies again
 - Binder build
 - Precise Version and package dependence
 - Latex build fork ?
