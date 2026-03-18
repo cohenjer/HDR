@@ -86,7 +86,7 @@ One interesting property of unrolling is that even without training, the iterati
 
 ### Unrolling the Multiplicative Updates algorithm 
 
-Existing unrolled NMF algorithms break the symmetry between matrices $W$ and $H$. Therefore, they are not well-suited to make use of training data in the form of pairs $(Y_i, (W^{gt}_i,H^{gt}_i))$, where $W^{gt}_i$ and $H^{gt}_i$ are ground-truth factors. A typical use case is source separation in remote sensing, where spectra and abundance maps may be provided alongside hyperspectral images; see (crossref) TODO. 
+Existing unrolled NMF algorithms break the symmetry between matrices $W$ and $H$. Therefore, they are not well-suited to make use of training data in the form of pairs $(Y_i, (W^{gt}_i,H^{gt}_i))$, where $W^{gt}_i$ and $H^{gt}_i$ are ground-truth factors. A typical use case is source separation in remote sensing, where spectra and abundance maps may be provided alongside hyperspectral images. 
 It is also possible to generate a synthetic training dataset in which one can produce both ground-truth matrices $W$ and $H$.
 
 We therefore propose to formulate data-driven NMF where both matrices $W$ and $H$ are outputs of the parametric algorithm, solving

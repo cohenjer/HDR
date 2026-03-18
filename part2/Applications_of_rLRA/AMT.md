@@ -729,5 +729,5 @@ plt.show()
 
 The song is now well transcribed. In particular, the last two chords have the right five notes, played simultaneously. The chord activations are still imperfect, but this is expected because of the non-linear mixing artifacts and the frequency similarity between octaves. We also see that all components slightly activate on each attack. This might be due to the hammer-action sound, which is the same across all notes and has not been taken into account separately.
 
-The full model, weakly supervised on all piano notes, has performance close to that of fully supervised networks but is not robust to distribution shift (*e.g.*, changing the piano or the recording conditions) {cite:p}`wuSemiSupervisedConvolutiveNMF2022`. Improving these aspects and the training procedure is part of my research project [TODO link].
+The full model, weakly supervised on all piano notes, has performance close to that of fully supervised networks but is not robust to distribution shift (*e.g.*, changing the piano or the recording conditions) {cite:p}`wuSemiSupervisedConvolutiveNMF2022`. Improving these aspects and the training procedure is part of my [research project](../../part3/KarpCoi.md).
 
