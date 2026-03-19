@@ -50,7 +50,14 @@ $$
 
 which is exactly the orthogonal projection on $\cp{W}$. 
 
-[TODO FIGURE]
+```{figure} ../Figures/Nnlsproj2.png
+---
+width: 600px
+align: center
+name: nnlsproj
+---
+A graphical illustration of the projection of data vector $y$ on the cone $\cp{W}$ collecting all the positive combinations of columns of matrix $W$. The NNLS problem is equivalent to computing the coefficients of the projected data vector in the cone; note that when the data vector $y$ is outside $\cp{W}$, as illustrated here, the solution is sparse since the projection is located on a facet of the cone.
+```
 
 Depending on the matrix $W$, the cone $\cp{W}$ can either be the whole search space $\mathbb{R}^m$, or a pointed cone. The latter is the commonly encountered case in nonnegative LRA problems, in particular when the matrix $W$ is elementwise nonnegative. Below is an illustration in dimensions $m=n=3$.
 

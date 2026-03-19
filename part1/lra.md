@@ -30,9 +30,19 @@ $$ \exists U\in\mathbb{R}^{n_1\times r},~V\in\mathbb{R}^{n_2\times r} \text{ suc
 
 Matrix $U$ encodes a basis of the low-dimensional subspace spanning the columns of matrix $M$, and $V^T[:,j]$ is the vector of coordinates of each column $M[:,j]$ in this basis. If the subspace dimension $r$ is minimal, that is, there is no smaller subspace containing the $n_2$ columns of $M$, then the dimension $r$ is called the rank of matrix $M$ and is denoted $\rank{M}$. Notice that if $n_1\geq n_2$, then one may always reduce the dimension of the data by projecting on the column space spanned by the $n_2$ columns. Therefore, this linear dimensionality-reduction interpretation is perhaps more meaningful when $n_1 < n_2$. However, formally, the low-rank model reduces the dimension of the data whenever $r\leq \min(n_1,n_2)$. 
 
-[figure ACP]
-
 The computation of matrix $U$ and coefficients $V$ from the data matrix $M$ can be performed using Singular Value Decomposition (SVD). Algorithms for the SVD rely on either QR decomposition or related tools from linear algebra; see the excellent book of Golub and Van Loan {cite:p}`Golub1989Matrix`, and are implemented in the widely distributed LAPACK software {cite:p}`anderson1999lapack`.
+
+When the data matrix $M$ is centered, the (truncated) SVD returns a particular low-rank factorization (approximation) of the data matrix, known as the Principal Component Analysis (PCA). PCA is a cornerstone of unsupervised machine learning, used not only for dimensionality reduction but also for mining information from high dimensional dataset; see [todo] for an illustration, and [](#low-rank-approximations) for a discussion on low-rank approximations.
+
+```{figure} ../Figures/Pca.png
+---
+width: 700px
+align: center
+name: fig:pca
+---
+Illustration of Principal Component Analysis. The centered data matrix $M$ lies in a low-dimensional subspace $col(U)$. If the orthogonal matrix $U$ is computed from the data matrix $M$, then the columns of $U$ are the (unscaled) principal components. A low-rank approximation is obtained by projecting the data points on a subset of the principal components, here on the first component.
+```
+
 
 **As a factorization into a sum of rank-one matrices**
 
@@ -121,6 +131,15 @@ The algorithmic development for LRA is only briefly described in this section. T
 
 ### Nonnegative Matrix Factorization
 
+```{figure} ../Figures/nmfmatrix.png
+---
+width: 700px
+align: center
+name: fig:nmfmatrix
+---
+Nonnegative Matrix Factorization (NMF) writes an elementwise nonnegative matrix $M$ as the product of two elementwise nonnegative matrices $W$ and $H$ with respectively fewer columns and rows than $M$.
+```
+
 One possible route to make LRA parameters identifiable is to impose constraints on them. A constraint that is physically meaningful in many applications is nonnegativity. It applies naturally when factor matrices represent relative concentrations, spectral templates, images, probabilities, user ratings, energy, and other nonnegative physical quantities. The exact NMF model can be formulated as
 
 ```{margin}
@@ -143,21 +162,44 @@ Another difficulty with NMF, compared to unconstrained LRA, is determining the a
 In this section, we discuss the case of exact NMF, where the equality $M=WH$ holds exactly. The noisy case can be analysed similarly, although one should be cautious of normalization for low-amplitude columns of $M$.
 ```
 
-NMF can be interpreted geometrically as a linear dimensionality reduction technique, with ingredients similar to those in the geometric interpretation of [NNLS](./nnls.md). The columns of the data matrix $M$ live in the cone spanned by the columns of the matrix $W$, which are located in the nonnegative orthant, see Figure [TODO].
+NMF can be interpreted geometrically as a linear dimensionality reduction technique, with ingredients similar to those in the geometric interpretation of [NNLS](./nnls.md). The columns of the data matrix $M$ live in the cone $\cp{W}$ spanned by the columns of the matrix $W$, which are located in the nonnegative orthant, see {numref}`fig:nmfr3d3`.
 
-TODO figure NMF cone dim 3.
+```{figure} ../Figures/Nmfr3d3.png
+---
+width: 700px
+align: center
+name: fig:nmfr3d3
+---
+A graphical illustration of the projection of one possible NMF of data matrix $M$. The cone $\cp{W}$ collecting all the positive combinations of columns of matrix $W$, and must contain all the columns of matrix $M$.
+```
 
-With this interpretation, it is simple to deduce the non-uniqueness, in general, of NMF. Consider the dimension two and rank-two case, $n_1=r=2$, in Figure [TODO]. As soon as $M[0,:]$ or $M[1,:]$ is elementwise positive, the purple [TODO] areas are non-trivial and there are infinitely many solutions. The only way NMF can be unique when $n_1$ equals the rank is if $W=I$ is the only solution, since $M = IM$ is always a valid NMF in that case.
+With this interpretation, it is simple to deduce the non-uniqueness, in general, of NMF. Consider the dimension two and rank-two case, $n_1=r=2$, in {numref}`fig:nmfr2`. As soon as $M[:,0]$ or $M[:,1]$ is elementwise positive, the purple areas are non-trivial and there are infinitely many solutions. The only way NMF can be unique when $n_1$ equals the rank is if $W=I$ is the only solution (up to scaling and permutation and its columns), since $M = IM$ is always a valid NMF in that case.
 
-[Figure non-uniqueness dim2]
+```{figure} ../Figures/Nmfr2.png
+---
+width: 700px
+align: center
+name: fig:nmfr2
+---
+todo
+```
+
 
 ```{margin}
 Projection of the data matrix $M$ onto the data simplex implies that both matrices $W$ and $H$ have columns that sum to one; see {cite:p}`gillisNonnegativeMatrixFactorization2020`.
 ```
 
-A slightly more involved geometric representation of exact NMF can be obtained by projecting the data and model onto the unit simplex. The data then lives in the intersection of the nonnegative orthant and the unit simplex, which is a polytope. [TODO complete help book Nicolas, maybe at figure time, maybe no need].
+A slightly more involved geometric representation of exact NMF can be obtained by projecting the data and model onto the unit simplex. The data then lives in the intersection of the nonnegative orthant and the unit simplex, which is a polytope. 
+%[TODO complete help book Nicolas, maybe at figure time, maybe no need].
 
-[TODO Figure rank 2 dim 3 projected, case 1 not unique, case 2 unique]
+```{figure} ../Figures/Nmfsimplex.png
+---
+width: 700px
+align: center
+name: fig:nmfsimplex
+---
+Exact NMF in dimension 3 and rank 2. The data, after $\ell_1$ normalization, lies on the simplex $\mathcal{S}_2$. This embedding allows to visualize NMF in dimension three in the 2D plane. The right-hand side show two possible scenarios, where NMF is either unique if the data points touch the border of the simplex, or not unique if the data are located on a segment strictly contained in the simplex.
+```
 
 This geometric view allows for a finer description of identifiability in low-dimensional settings. Consider the case $n_1=3$ and $r=2$. We see that identifiability can be achieved without further regularization only if the data points touch the boundary of the simplex.
 
@@ -174,9 +216,16 @@ Given the above observations, it is reasonable to assume in practice that NMF ma
 There exist at least three main choices for regularizing NMF. First, one may assume that the columns of $W$ are contained in the columns of the data $M$. The resulting model, called separable NMF, writes
 
 $$M = M[:,\mathcal{K}]H^T$$
-where $\mathcal{K}$ is a subset of $r$ indices in $[1,n_2]$. Separable NMF allows for restricting the set of NMF solutions drastically, since there is only a combinatorial number of column combinations. Separable NMF is interesting both for interpretability and algorithm design. A typical example is separable exact NMF in the rank-two case, which is solved in closed form using a simple algorithm that picks the largest vector in the data and then the vector farthest from that first component; see the figure [TODO]. Exact separable NMF in general can be solved in polynomial time with a variant of the QR with pivoting algorithm {cite:p}`gillisSuccessiveNonnegativeProjection2014,gillisFastRobustRecursive2014`. Separable NMF is incredibly useful in practice for initializing any NMF algorithm, since it is fast to compute. Because the templates $W$ are extracted directly from the data, separable NMF often yields interpretable results that summarize key patterns in the data. Separable NMF, however, fails when the dataset contains no pure data points, which may occur when all data points are the result of non-trivial mixtures of several components.
+where $\mathcal{K}$ is a subset of $r$ indices in $[1,n_2]$. Separable NMF allows for restricting the set of NMF solutions drastically, since there is only a combinatorial number of column combinations. Separable NMF is interesting both for interpretability and algorithm design. A typical example is separable exact NMF in the rank-two case, which is solved in closed form using a simple algorithm that picks the largest vector in the data and then the vector farthest from that first component; see {numref}`fig:sepnmf`. Exact separable NMF in general can be solved in polynomial time with a variant of the QR with pivoting algorithm {cite:p}`gillisSuccessiveNonnegativeProjection2014,gillisFastRobustRecursive2014`. Separable NMF is incredibly useful in practice for initializing any NMF algorithm, since it is fast to compute. Because the templates $W$ are extracted directly from the data, separable NMF often yields interpretable results that summarize key patterns in the data. Separable NMF, however, fails when the dataset contains no pure data points, which may occur when all data points are the result of non-trivial mixtures of several components.
 
-[figure rank 2 separable ? reprendre au dessus]
+```{figure} ../Figures/Sepnmf.png
+---
+width: 700px
+align: center
+name: fig:sepnmf
+---
+Separable NMF finds the matrix $W$ in the columns of the data matrix $M$. In the particular case of rank 2 separable NMF (on the right), the solution can be obtained by picking for the first columns of matrix $W$ the data point with largest $\ell_2$ norm after $\ell_1$ normalization, and then choosing the furthest data point as the second column. When the rank is larger, algorithms exist that can compute exactly separable NMF in polynomial time, such as SNPA {cite}`gillisSuccessiveNonnegativeProjection2014`; the underlying idea behind SNPA is similar to that of orthogonal matching pursuit.
+```
 
 A second variant of NMF is sparse NMF, in which the entries of the matrices $W$ and/or $H$ are pushed towards zero. A typical formulation of sparse NMF with $\ell_1$ regularization writes
 
@@ -363,7 +412,14 @@ Let us now discuss the tensor CP decomposition for real multiway arrays, with th
 $$ T[i,j,k] = \sum_{q=1}^{r} A[i,q]B[j,q]C[k,q] $$
 where matrices $A$, $B$, and $C$ are sometimes called the factor matrices of the CP decomposition, and the rank $r$ is as small as possible.
 
-[TODO CP figure]
+```{figure} ../Figures/Cpd.png
+---
+width: 700px
+align: center
+name: fig:cpd
+---
+Canonical Polyadic Decomposition (CPD) of rank $r$ of a data tensor $T$. The CPD can be viewed as a multilinear diagonalization technique, with bases $A$, $B$ and $C$ respectively spanning the columns, rows and fibers of the tensor, or as an atomic decomposition into a sum of $r$ rank-one tensors.
+```
 
 The key property of the CP decomposition is that there is typically a unique set of rank-one tensors $A[:,q]\otimes B[:,q] \otimes C[:,q]$ that decomposes a given tensor $T$. If these factors can be computed numerically with guaranteed stability {cite:p}`Vannieuwenhoven2017condition` and if the CP decomposition matches a physically meaningful model, then the estimated factor matrices can be interpreted without the need for further regularization. This nice property can be contrasted with the matrix case, where regularizations, such as nonnegativity for NMF, are required to hope for identifiability. The most well-known identifiability conditions for the CP decomposition are probably the Kruskal condition; see, for instance, the accessible proof provided by  Stegeman and Sidiropoulos {cite:p}`stegemanKruskalUniquenessCondition2007`.
 
@@ -433,14 +489,21 @@ In the context of CP decomposition, regularizations therefore not only help impr
 ### Tucker decomposition
 In the CP decomposition, the factor matrices $A$, $B$, and $C$ can be seen as linear operators that map a diagonal tensor to the data tensor $T$. In fact, using the linear operator tensor space point of view, the map $A\otimes B\otimes C$ is a rank one linear operator acting on tensors. The idea of Tucker decomposition is to generalize this observation by using rank-one linear operators to map large tensors to smaller tensors, thereby performing multilinear dimensionality reduction.
 
+```{figure} ../Figures/Tucker.png
+---
+width: 700px
+align: center
+name: fig:tucker
+---
+Tucker decomposition of a data tensor $T$, with multilinear ranks $r_1$, $r_2$ and $r_3$. The Tucker decomposition can be viewed as a multilinear dimensionality reduction technique, with orthogonal bases $U$, $V$ and $W$ respectively spanning the columns, rows and fibers of the tensor. Tensor $G$ stores the coefficients into a tensor of size $r_1\times r_2\times r_3$.
+```
+
 For a data tensor $T\in\R{n_1\times n_2\times n_3}$, the Tucker decomposition finds three matrices $U\in\R{n_1\times r_1}$, $V\in\R{n_2\times r_2}$, $W\in\R{n_3\times r_3}$ and a smaller core tensor $G\in \R{r_1\times r_2\times r_3}$ with $r_i\leq n_i$ such that
 
 $$ T = \left( U\otimes V\otimes W\right) G =  U\times_1 V\times_2 W\times_3 G.$$
 with $\times_i$ the multiway product [defined above](./lra.md#cp-decomposition). Matrices $U$, $V$, and $W$ as well as the core tensor $G$ are the parameters of the model, which involves $n_1r_1 + n_2r_2+ n_3r_3 + r_1r_2r_3$ parameters. This is significantly smaller than the number of entries in the tensor $T$ when the so-called multilinear ranks $r_i$ are smaller than the tensor dimensions. A tensor following an exact Tucker decomposition is written as 
 
 $$ \llbracket U, V, W; G\rrbracket.$$
-
-[TODO figure Tucker]
 
 The Tucker decomposition is more similar to matrix LRA than the CP decomposition in terms of algorithmic development and uniqueness properties. Tucker decomposition has rotation ambiguities in each mode, since $U\times_1 G = (UQ\times_1) (Q^T\times_1G)$ and is therefore never unique without further regularizations. Orthogonality is typically employed on each mode {cite:p}`Lathauwer2000Multilinear`, although nonnegativity is also a popular choice {cite:p}`morup2008algorithms,cohenTheoryNonnegativeTucker2017` that I have worked with, see [](../introduction/summary.md). The identifiability of Nonnegative Tucker decomposition is a longstanding problem that has seen some recent progress {cite:p}`sahaIdentifiabilityNonnegativeTucker2025`.
 

@@ -28,7 +28,14 @@ I write this "Habilitation à Diriger des Recherches" manuscript with the hope o
 
 Low-rank approximations are workhorse methods in several unsupervised machine learning tasks such as dimensionality reduction {cite:p}`Tucker1966Some, Golub1989Matrix, hotelling1992relations` and blind source separation {cite:p}`harshman1970foundations, Paatero1997weighted, Lee1999Learning`. The most prominent LRA method in machine learning is probably Principal Component Analysis, which numerically boils down to computing a singular value decomposition, and is therefore efficiently computed.
 
-[Illustration of PCA?]
+```{figure} ../Figures/Pca.png
+---
+width: 700px
+align: center
+name: fig:pca
+---
+Illustration of Principal Component Analysis. The centered data matrix $M$ lies in a low-dimensional subspace $col(U)$. If the orthogonal matrix $U$ is computed from the data matrix $M$, then the columns of $U$ are the (unscaled) principal components. A low-rank approximation is obtained by projecting the data points on a subset of the principal components, here on the first component.
+```
 
 Formally, for matrix data, a (real) low-rank approximation problem is an optimization problem of the form
 
@@ -56,18 +63,39 @@ Essential uniqueness is the uniqueness up to permutations and scaling ambiguitie
 
 PCA is a constrained LRA model: factors are imposed to be orthogonal matrices. This allows us to obtain a model with essentially unique factors (under the mild condition that singular values must be distinct {cite:p}`Golub1989Matrix`), but orthogonality may not be satisfied by the ground-truth factors $U^*$ and $V^*$. On the other hand, Nonnegative Matrix Factorization (NMF), obtained by setting $g_U$ and $g_V$ to characteristic functions of the nonnegative orthant, can also be unique {cite:p}`gillisNonnegativeMatrixFactorization2020`. In many applications, such as spectral unmixing, elementwise nonnegativity is a natural assumption, which makes NMF particularly suited as a source separation/pattern mining model. A typical example of NMF usage is in spectral unmixing for remote sensing, as illustrated in Figure [TODO below]
 
-[Example of NMF HSI]
+```{figure} ../Figures/Hsi_nmf.png
+---
+width: 700px
+align: center
+name: fig:HSI_nmf
+---
+Nonnegative Matrix Factorization performs spectral unmixing on hyperspectral images, identifying essential spectra that are present in the scene, as well as their proportion in each pixel stored in abundance maps. The images are vectorized in the data matrix and the abundance maps.
+```
 
 A natural extension of matrix LRA is tensor LRA, which applies to input data with more than two dimensions. Tensor LRA has several interesting properties, including, in the case of the Canonical Polyadic Decomposition (CPD), identifiability without regularization {cite:p}`Kruskal1977Three`. In practice, however, regularization, and in particular nonnegativity, is often useful to improve the interpretability of the estimated parameters from tensor LRA. Chapter [](../part1/lra.md) describes known results on matrix and tensor LRA in more detail.
 
-[CPD figure]
+```{figure} ../Figures/Cpd_simple.png
+---
+width: 700px
+align: center
+name: fig:cpd_simple
+---
+Canonical Polyadic Decomposition (CPD) of rank $r$ of a data tensor $T$. The CPD can be viewed as a multilinear diagonalization technique, with bases $A$, $B$ and $C$ respectively spanning the columns, rows and fibers of the tensor.
+```
 
 Once an LRA model has been chosen for a particular application, as in most machine learning problems, the model parameters need to be estimated so that the model fits the data. Optimization problems encountered in regularized LRA problems are often continuous but non-smooth, for instance, due to the nonnegativity constraint, and non-convex due to the presence of the product of variables in LRA. Convexity, however, often holds when the cost function is considered only with respect to one of the parameter matrices. Consider the NNLS problem with Frobenius data fitting
 
 $$ \min_{U\in \mathbb{R}_+^{m\times r}} \|Y -  UV^T\|_F^2, $$
 which is essentially NMF, where the matrix $V$ is fixed; the cost with respect to $U$ is convex. Therefore, for the applied mathematician working on regularized LRA, it is important to be familiar with both non-smooth constrained optimization and multi-convex optimization problems, often solved with alternating optimization strategies. The specific case of nonnegatively-constrained regressions is of critical importance to this manuscript and is covered in depth in [](../part1/nnls.md), while a summary of known results regarding alternating optimization strategies is provided in [](../part1/AlternatingOptimization.md).
 
-[NMF figure if not above]
+```{figure} ../Figures/nnlsU.png
+---
+width: 700px
+align: center
+name: fig:nnlsU
+---
+Graphical representation of the Nonnegative Least Squares (NNLS) problem. NNLS consists in the orthogonal projection of the data vector $y$ on the cone $\cp{U}$ spanned by the nonnegative linear combinations of the columns of matrix $U$.
+```
 
 There is a significant body of literature on regularized LRA (rLRA) with a myriad of applications, for instance in chemometrics {cite:p}`Bro1996Multiway`, neuroscience {cite:p}`cichockiTensorDecompositionsNew`, statistical inference {cite:p}`Anandkumar2015When`, spectral unmixing for remote sensing {cite:p}`Bioucas-Dias2012Hyperspectral` or microscopy imaging {cite:p}`harigaJointReconstructionSpectral2024`, music information retrieval {cite:p}`smaragdis2003non`, telecommunications {cite:p}`Sidiropoulos2000Parallel`, psychometry {cite:p}`Harshman1972PARAFAC2` and more. There is no dedicated section to reviewing all these applications in this manuscript. Datasets from hyperspectral imaging and music information retrieval are used to illustrate the various contributions, and my contributions to these applications are detailed in [a separate chapter](../part2/Applications_of_rLRA/intro.md).
 
