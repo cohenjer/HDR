@@ -12,7 +12,7 @@ TODOlist:
 - ajout refs dans les .ipynb, il reste aussi des TODOs pas vu au 1er tour car ipynb
 - Figures list: (main / inkscape, peut aussi être excalidraw ? faire un test pour genre projection NNLS avec les 2/3 sols)
   - --> export from notebook boox en vector pdf max resolution; import avec Cairo !! Color, scale Aetc. Save as svg, export as png. Move files to HDR, modify subsequently from there, remove from filetransfer.
-  - NMF en HSI [summary.md] --> main ou inkscape ? voir aussi LMM
+  - DONE NMF en HSI [summary.md] --> main ou inkscape ? voir aussi LMM
   - DONE CPD [summary.md] 
   - DONE ACP [lra.md] --> main ou inkscape
   - DONE CPD [summary.md] [lra.md] --> main ?
@@ -23,11 +23,11 @@ TODOlist:
   - DONE NMF rang 2 dim 3 vue projective, unique (1) et nonunique (2) [lra.md]
   - DONE NMF rank 2 et 3 separable special case [lra.md]
   - DONE Tucker [lra.md] --> main
-  - Fonction global Lipschitz / stepsize etc [nnls.md] --> main
-  - MM principle [nnls.md] --> main
+  - DONE Fonction global Lipschitz / stepsize etc [nnls.md] --> main
+  - DONE MM principle [nnls.md] --> main
   - steps of active set [nnls.md] --> main/inkscape
-  - HALS ? [nnls.md] --> main
-  - second order >0 solution [nnls.md] --> main
+  - DONE HALS ? [nnls.md] --> main
+  - DONE second order >0 solution [nnls.md] --> main
   - Linear mixing model [parts2/applis/intro.md] --> inkscape
   - Patterns Hadamard [single_pixel_spectral_imaging.md] --> python, cf aussi papier freeform
   - Branch and Bound illustration with graph pruning (gif?) [sparse_nnls.md] --> main et inkscape pour les maths
@@ -43,7 +43,7 @@ TODOlist:
   - HOSVD compression [proco-als.md] --> main
   - projection cone dual [proco-als.md] (utile?) --> main
   - Borgen plot illustration [others.md] --> inkscape inspiration site web
-  - Acquisition principle for dataset hyperspectral microscopy [others.md] --> main ou inkscape
+  - Acquisition principle for unmixing dataset hyperspectral microscopy [others.md] --> main ou inkscape
 - Figure inline integration with glue and environments
 - Relecture
     - Relecture deja faite du rapport CNRS

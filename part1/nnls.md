@@ -52,7 +52,7 @@ which is exactly the orthogonal projection on $\cp{W}$.
 
 ```{figure} ../Figures/Nnlsproj2.png
 ---
-width: 600px
+width: 650px
 align: center
 name: nnlsproj
 ---
@@ -149,16 +149,25 @@ The true definition of Lipschitz-smoothness and the descent lemma do not require
 Maybe the most commented-on difficulty for NNKL is the lack of Lipschitz-smoothness of the KL-divergence at zero. Lipschitz-smoothness is a crucial property in numerical optimization, used to derive descent conditions for first-order algorithms. In a nutshell, a function $f$ which is twice differentiable over a convex set is l-Lipschitz-smooth if its Hessian can be bounded by $lI$. This implies, using the second-order Taylor expansion and majorizing the second-order terms and remainder {cite:p}`beck2017first`, that for any vector $x$ and local perturbation $z$ the following descent lemma holds: 
 
 $$
-f(x + z) \leq f(x) + \langle \nabla f(x), z \rangle + \frac{l}{2} \|x - z\|_2^2.
+f(x + z) \leq f(x) + \langle \nabla f(x), z \rangle + \frac{l}{2} \|z\|_2^2.
 $$
 
 ```{margin}
 Lipschitz-smoothness allows us to majorize the cost function $f$ by an isotropic quadratic, while strong convexity lower bounds $f$ with another isotropic quadratic. Both arguments together imply that $f$ essentially behaves like an isotropic quadratic, allowing global linear convergence of gradient descent for stepsizes smaller than the inverse of the Lipschitz constant $l$.
 ```
 
-[TODO petite figure avec global Lipschitz ?]
+Lipschitz-smoothness, therefore, ensures that **globally**, the slope of the function $f$ does not change too fast. Combined with strong convexity arguments, Lipschitz continuity is the key ingredient for proving the convergence of gradient descent with fixed stepsize. However, the second-order derivative of KL-divergence is $ \frac{\partial^2\KL{y,z}}{\partial z^2} = \frac{y}{z^2} $, which is unbounded near zero. Therefore, solving NNKL with first-order algorithms is challenging because no stepsize selection rule guarantees convergence. In practice, for sparse measurement vectors $y$, the lack of Lipschitz-smoothness makes many out-of-the-box solvers inefficient for NNKL. {numref}`fig:lipschitz` provides additional intuition.
 
-Lipschitz-smoothness, therefore, ensures that **globally**, the slope of the function $f$ does not change too fast. Combined with strong convexity arguments, Lipschitz continuity is the key ingredient for proving the convergence of gradient descent. However, the second-order derivative of KL-divergence is $ \frac{\partial^2\KL{y,z}}{\partial z^2} = \frac{y}{z^2} $, which is unbounded near zero. Therefore, solving NNKL with first-order algorithms is challenging because no stepsize selection rule guarantees convergence. In practice, for sparse measurement vectors $y$, the lack of Lipschitz-smoothness makes many out-of-the-box solvers inefficient for NNKL.
+
+```{figure} ../Figures/Lipschitz.png
+---
+width: 650px
+align: center
+name: fig:lipschitz
+---
+A globally Lipschitz-smooth function can be bounded globally by a local quadratic approximation at any point with a fixed curvature $l$. In this illustration, the curvature $\rho(x)$ of the cost function $f$ varies from flat (on the right) to steep (on the left). To ensure that a quadratic majorant can be defined everywhere with the same curvature $l$, this curvature must be chosen arbitrarily small. This is therefore an example of a function which is not Lipschitz-smooth. A direct consequence of this lack of smoothness is that it is impossible to define a constant stepsize for a gradient descent algorithm which guarantees that the cost decreases at each iteration. The gradient step, that computes the minimum of a quadratic majorant at each iteration, may reach a value below zero if initialized too far on the right (where the local curvature allows large stepsizes), while it will lead to exploding behavior near zero since the gradient of the cost is arbitrarily large. Gradient descent for KL-divergence is therefore typically employed with tiny stepsizes and strict positivity constraints that yield slow convergence.
+```
+
 
 #### Convexity issue
 
@@ -384,11 +393,27 @@ $$
 \min_{x\geq 0} \|Z[:,i]\|_2^2 - w^TZ[:,i] x + \|w\|_2^2 x^2
 $$
 
-for any column index $i\leq n$. The minimum of a scalar quadratic function under nonnegativity constraints is either the global minimum of the quadratic $h[i] = \frac{w^TZ[:,i]}{\|w\|_2^2}$, or, if the global minimiser is negative, zero, see figure [ref].
+for any column index $i\leq n$. The minimum of a scalar quadratic function under nonnegativity constraints is either the global minimum of the quadratic $h[i] = \frac{w^TZ[:,i]}{\|w\|_2^2}$, or, if the global minimiser is negative, zero, see {numref}`fig:nnls1d`.
 
-[TODO Figure]
+```{figure} ../Figures/nnls1d.png
+---
+width: 550px
+align: center
+name: fig:nnls1d
+---
+Solutions to nonnegative least squares in 1d with positive terms. 
+```
 
 HALS uses this strategy over each row $j$ of matrix $H^T$, solving iteratively problem {eq}`eq:HALS_trick` with $Z = Y - W[:,-j]H^T[:,-j]$ and $w = W[:,j]$. Because each update is an exact minimization procedure, HALS is an instance of exact alternating optimization. As long as each block update is uniquely defined, which happens when $W$ has nonzero columns, convergence to the global minimizer is ensured; see [](AlternatingOptimization.md). A simple implementation of HALS is provided below, and is also [available in tensorly](https://tensorly.org/dev/modules/generated/tensorly.solvers.nnls.hals_nnls.html#tensorly.solvers.nnls.hals_nnls). The input of the algorithm is the grammians $W^TW$ and $W^TY$ to utilize faster inner products for high-order tensors.
+
+```{figure} ../Figures/hals.png
+---
+width: 650px
+align: center
+name: fig:hals
+---
+HALS algorithm principle.
+```
 
 
 ```{code-cell}ipython
@@ -514,7 +539,16 @@ MM is often introduced without requiring that the tangent of the cost and the ma
 ```
 
 The main idea of MM is to fix a current iterate $x^{(k)}$, build a global majorant of the cost $\xi(x,x^{(k)})\leq f\left(y,x\right)$ tight and tangent to the cost at $x^{(k)}$, and then minimize this cost.
-[insert figure]
+
+```{figure} ../Figures/Mmprinciple.png
+---
+width: 650px
+align: center
+name: fig:mm
+---
+Majorization Minimization is an algorithmic framework that succesively majorizes a cost function $f$ globally, and then minimizes the majorant. In this figure, the majorant $\xi(x,x^{(k)})$, in red, is tight and tangent at the point $x^{(k)}$. Its minimum is attained at $x^{(k+1)}$, in purple.
+```
+
 To obtain the MU algorithm, one may use the convexity inequality for the loss function, also called the Jensen inequality in this context:
 
 $$
