@@ -203,6 +203,10 @@ for i in range(X.shape[0]):
         q = np.array([X[i, j], Y[i, j]])
         p = np.array([ref_x, ref_y])
         Z[i, j] = kl_divergence(p, q)
+```
+
+```{code-cell}ipython3
+:tags: [hide-input]
 
 # Create 3D plot
 p = figure(
@@ -217,11 +221,6 @@ p = figure(
 color_mapper = LogColorMapper(palette="Sunset10", low=1e-3, high=8*1e0, high_color="white")
 source = ColumnDataSource(data=dict(image=[Z]))
 p.image(image='image', x=0, y=0, dw=xmax, dh=ymax, source=source, color_mapper=color_mapper)
-
-```
-
-```{code-cell}ipython3
-:tags: [hide-input]
 
 # Sliders for reference distribution
 slider_ref_x = Slider(start=0.01, end=xmax, value=2.5, step=0.1, title="Reference X")
@@ -446,6 +445,15 @@ print(f"Optimality criterion on true support: {np.linalg.norm(W[:,support].T@(y-
 ### Initialization of AS
 Contrary to what is sometimes assumed, e.g., on the [Wikipedia page on NNLS](https://en.wikipedia.org/wiki/Non-negative_least_squares), the AS algorithm can be initialized with any nonnegative vector $x$. If the initial guess is dense, the first step is skipped on the first iteration.
 
+```{figure} ../Figures/active_set.png
+---
+width: 700px
+align: center
+name: fig:active_set
+---
+An illustrated example of active set solving a three-dimensional NNLS problem.
+```
+
 ### First step: selection
 Assuming the current support of $x$ is not $[1,..,n]$, the selection step finds a "reasonable" index of an entry of $x$ to add to the current estimation of the optimal support. A locally optimal choice is to select the index of the column of $W$ most correlated with the residual $r = y-Wx$ at the current iteration,
 
@@ -476,8 +484,6 @@ $$
 $$
 
 By updating $x$ as $x+t^\ast(z-x)$, at least one zero (and often, exactly one zero) is added in the current estimate $x$. The cost has strictly decreased (unless $t=0$, which can be shown to only happen at optimality), and the updated $x$ is still admissible. The support needs, however, to be updated by removing all indices at which the interpolation reaches the cone boundary.
-
-[TODO figure]
 
 Then the algorithm loops back to step 2. An important remark is that for each support visited by AS, either the unconstrained least squares solution is admissible, and the current cost decreases, or the solution is not admissible and the support is updated. Therefore, the same support can never be visited twice unless the algorithm has reached the global optimum. This shows that the AS algorithm terminates in a non-polynomial but finite number of steps: it can at most visit all the possible supports. When initialized close to the solution, AS can therefore be a very effective algorithm for solving NNLS.
 

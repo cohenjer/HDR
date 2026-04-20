@@ -22,7 +22,7 @@ Throughout this manuscript, the reader encounters many instances of the Nonnegat
 $$ \underset{V\in\mathbb{R}_+^{r\times n}}{\min} \|Y - UV^T\|_F^2 $$
 with $Y\in\mathbb{R}^{m\times n}$ the input data matrix, and $U\in\mathbb{R}^{m\times r}$ the mixing matrix, which may both in principle have positive and negative entries. The reader may refer to the [dedicated section regarding NNLS](../../part1/nnls.md) in the first part of this manuscript.
 
-An important variant of NNLS is the sparse NNLS problem (sNNLS), in which the coefficients are constrained to have only a few nonzero entries. In the following, we assume this sparsity is enforced columnwise on matrix $V^T$, although we have also worked on a sparsity constraint applied on all entries of $V^T$ {cite:p}`nadisic_matrixwise_2022`, not discussed in this manuscript. Columnwise sparsity on the coefficient matrix $V^T$ is frequently encountered in applications of rLRA related to source separation. For instance, the matrix $V^T$ may denote source activations in a mixture; it is often reasonable to assume that not all sources are activated at all times or positions. We give examples below in remote sensing spectral unmixing and audio automatic transcription [TODO check]. The (matrix) sNNLS problem can be formulated as
+An important variant of NNLS is the sparse NNLS problem (sNNLS), in which the coefficients are constrained to have only a few nonzero entries. In the following, we assume this sparsity is enforced columnwise on matrix $V^T$, although we have also worked on a sparsity constraint applied on all entries of $V^T$ {cite:p}`nadisic_matrixwise_2022`, not discussed in this manuscript. Columnwise sparsity on the coefficient matrix $V^T$ is frequently encountered in applications of rLRA related to source separation. For instance, the matrix $V^T$ may denote source activations in a mixture; it is often reasonable to assume that not all sources are activated at all times or positions. An example is provided below in [spectral unmixing](../Applications_of_rLRA/intro.md#spectral-mixing-and-unmixing). The (matrix) sNNLS problem can be formulated as
 
 
 $$ \underset{V\in\mathbb{R}_+^{n\times r}}{\min} \|Y - UV^T\|_2^2 \;\; \text{such that } \;\; \forall q\leq n,\; \|V[q,:]\|_0\leq k $$
@@ -35,7 +35,7 @@ with $y$ a column of input matrix $Y$ and $v$ a column of matrix $V^T$.
 
 Geometrically, sNNLS is the projection of a data vector $y$ on the facets of the cone spanned by columns of $U$.
 
-[illustration with r=3 and k=2 ? in 3d, with $U$ positive ?]
+%[illustration with r=3 and k=2 ? in 3d, with $U$ positive ?]
 
 
 ## sNNLS is NP-hard, but the rank is typically small
@@ -60,7 +60,15 @@ $$ \underset{v\geq 0}{\min} \|y - U[:, S_1]v\|_2^2 \geq \underset{v\geq 0}{\min}
 
 In other words, the optimal cost necessarily increases as the constraint set grows. This observation suggests a Branch-and-Bound (BaB) algorithm for searching the combinatorial space of supports. We may first compute a guess for the optimal sNNLS solution using a heuristic algorithm, such as Nonnegative Orthogonal Matching Pursuit {cite:p}`Pati1993Orthogonal`. The cost function value at this solution $v_{\text{UB}}$ is an upper bound UB of the actual minimal cost of $k$-sparse sNNLS. Second, we may compute all NNLS problems with one zero element. For illustration purposes, consider the problem where the first element in $v$ is set to zero, and denote the optimal cost for this problem $s^\ast$. Because of the previous observation regarding monotonicity of the costs with increasing constraints, cost $s^\ast$ is a lower bound LB on the optimal costs of all subsequent sNNLS problems, including the constraint that the first element is zero. This fact applies to any set of constraints (any node in the tree of possible supports, see illustration below). The BaB algorithm allows us to save computation time when we encounter the case $UB<LB$, in which case we know that the current proposed solution $v_{\text{UB}}$ will always be better than all possible solutions, including the constraints of the node at LB. We say that BaB then prunes the node and its children, where $LB$ was computed. Importantly, when a new solution for an $r$-sparse NNLS problem is computed, if its loss is lower than the current UB, we have obtained a new tighter UB, and update $v_{\text{UB}}$ and UB accordingly. This procedure is perhaps better understood using a tree visualisation, see below.
 
-[TODO figure gif with graph pruning, r=4, k=2]
+
+```{figure} ../../Figures/BaB.png
+---
+width: 700px
+align: center
+name: fig:BaB
+---
+A tree representation of the Branch and Bound algorithm for solving sNNLS with $r=2$ and $k=4$. The deeper the node the sparser the solution, and the higher the cost. The leafs are the $k$ choose $n$ solutions. OMP is a heuristic that selects one particular leaf, which loss is larger than the loss at the optimal sNNLS solution, while any node in the tree has a loss lower than all its children.
+```
 
 We named the proposed BaB algorithm for solving sNNLS `arborescent`.
 

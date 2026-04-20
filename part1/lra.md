@@ -32,7 +32,7 @@ Matrix $U$ encodes a basis of the low-dimensional subspace spanning the columns 
 
 The computation of matrix $U$ and coefficients $V$ from the data matrix $M$ can be performed using Singular Value Decomposition (SVD). Algorithms for the SVD rely on either QR decomposition or related tools from linear algebra; see the excellent book of Golub and Van Loan {cite:p}`Golub1989Matrix`, and are implemented in the widely distributed LAPACK software {cite:p}`anderson1999lapack`.
 
-When the data matrix $M$ is centered, the (truncated) SVD returns a particular low-rank factorization (approximation) of the data matrix, known as the Principal Component Analysis (PCA). PCA is a cornerstone of unsupervised machine learning, used not only for dimensionality reduction but also for mining information from high dimensional dataset; see [todo] for an illustration, and [](#low-rank-approximations) for a discussion on low-rank approximations.
+When the data matrix $M$ is centered, the (truncated) SVD returns a particular low-rank factorization (approximation) of the data matrix, known as the Principal Component Analysis (PCA). PCA is a cornerstone of unsupervised machine learning, used not only for dimensionality reduction but also for mining information from high dimensional dataset; see {numref}`fig:pca` for an illustration, and [](#low-rank-approximations) for a discussion on low-rank approximations.
 
 ```{figure} ../Figures/Pca.png
 ---
@@ -181,7 +181,7 @@ width: 700px
 align: center
 name: fig:nmfr2
 ---
-todo
+A simple graphical explanation of why NMF without further regularization is generally non-unique. As long the purple areas around the cone spanned by the data points are sufficiently large, there may be infinetly many positive cones that contain the data. The situation is more complex in higher dimensions.
 ```
 
 

@@ -45,7 +45,7 @@ image_bunch = data_imports.load_indian_pines()
 image_t = image_bunch.tensor # x by y by wavelength
 image_t = image_t/tl.max(image_t) # maximum value set to 1
 
-# Define zones with pure pixels (TODO manual on image ??)
+# Define zones with pure pixels
 # Indian Pines is 145 by 145 (pixels) by 200 (bands)
 n1, n2, n3 = tl.shape(image_t)
 rank = 5
@@ -271,15 +271,8 @@ glue("fig_spectra", fig, display=False)
 plt.close()
 ```
 
-```{glue:figure} fig_spectra
-:name: "fig-spectra"
-:align: center
-
-Legend TODO
-```
-
 ```{code-cell} ipython3
-:tags: []
+:tags: [hide-input]
 
 Kx, Ky = convert_to_pixel_from_patches(Ke, zx, zy)
 
@@ -308,5 +301,11 @@ plt.close()
 :name: "fig-pure_pix_rect"
 :align: center
 
-Legend TODO
+Selected pure pixels from separable NMF (right) and multiple dictionaries (left). Notice that the pure pixels are located in the user-defined areas with the multiple dictionaries model.
+```
+```{glue:figure} fig_spectra
+:name: "fig-spectra"
+:align: center
+
+Estimated spectra and abundance maps from separable NMF (right) and multiple dictionaries M2C-ALS (left) 
 ```

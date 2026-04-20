@@ -35,7 +35,7 @@ $$M[:,i] = \sum_{q\leq k} D[:,S[q]]B[S[q],i].$$
 
 Since $B$ is unknown, so is the support $S_i$ but we still know that $M[:,i]$ must live in one of the subspaces spanned by any $k$ columns of $D$, therefore for any $i\leq n$, $M[:,i]\in\cup_{|S|\leq k} \text{span}\left(D[:,S]\right)$.
 
-Informally, our theorem states the following. Suppose there exists a cDL factorisation $M=DB$. Then the dictionary atoms define $r-1$-dimensional subspaces, called facets, $F_i = \text{span}(D[:,-i])$, that contain the data points. These facets can be used to uniquely recover the atoms in dictionary $D$ up to scalings (TODO def $[-i]$) using 
+Informally, our theorem states the following. Suppose there exists a cDL factorisation $M=DB$. Then the dictionary atoms define $r-1$-dimensional subspaces, called facets, $F_i = \text{span}(D[:,-i])$, that contain the data points. These facets can be used to uniquely recover the atoms in dictionary $D$ up to scalings using 
 
 $$D[:,i] = \cap_{j\leq i}F_i .$$
 

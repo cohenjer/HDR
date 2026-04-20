@@ -61,7 +61,7 @@ Regularizations typically apply to each factor $U$ and $V$ independently. Indeed
 Essential uniqueness is the uniqueness up to permutations and scaling ambiguities inherent to LRA models.
 ```
 
-PCA is a constrained LRA model: factors are imposed to be orthogonal matrices. This allows us to obtain a model with essentially unique factors (under the mild condition that singular values must be distinct {cite:p}`Golub1989Matrix`), but orthogonality may not be satisfied by the ground-truth factors $U^*$ and $V^*$. On the other hand, Nonnegative Matrix Factorization (NMF), obtained by setting $g_U$ and $g_V$ to characteristic functions of the nonnegative orthant, can also be unique {cite:p}`gillisNonnegativeMatrixFactorization2020`. In many applications, such as spectral unmixing, elementwise nonnegativity is a natural assumption, which makes NMF particularly suited as a source separation/pattern mining model. A typical example of NMF usage is in spectral unmixing for remote sensing, as illustrated in Figure [TODO below]
+PCA is a constrained LRA model: factors are imposed to be orthogonal matrices. This allows us to obtain a model with essentially unique factors (under the mild condition that singular values must be distinct {cite:p}`Golub1989Matrix`), but orthogonality may not be satisfied by the ground-truth factors $U^*$ and $V^*$. On the other hand, Nonnegative Matrix Factorization (NMF), obtained by setting $g_U$ and $g_V$ to characteristic functions of the nonnegative orthant, can also be unique {cite:p}`gillisNonnegativeMatrixFactorization2020`. In many applications, such as spectral unmixing, elementwise nonnegativity is a natural assumption, which makes NMF particularly suited as a source separation/pattern mining model. A typical example of NMF usage is in spectral unmixing for remote sensing, as illustrated in {numref}`fig:HSI_nmf`.
 
 ```{figure} ../Figures/Hsi_nmf.png
 ---
@@ -181,7 +181,55 @@ where $\KL{y,z} = \sum_{i} y[i]\log(\frac{y[i]}{x[i]}) + x[i] - y[i] $ is the Ku
 - The cost function is not Lipschitz-smooth at zero. Lipschitz-continuity is a key property of cost functions in most convergence proofs of first-order methods. In practice, choosing a step-size for first-order methods can be challenging.
 - When $y[i]$ is significantly smaller than $x[i]$, the loss is almost linear (the logarithmic term vanishes). This means that the cost function is not strongly convex, another important property that guarantees the practical speed of first-order methods.
 
-[Figure KL taken from NNLS]
+```{code-cell}ipython3
+:tags: [hide-input]
+import numpy as np
+from numpy import size
+import matplotlib.pyplot as plt
+import numpy as np
+import bokeh
+from bokeh.layouts import column, row
+from bokeh.plotting import figure, show, output_notebook
+from bokeh.models import Slider, ColumnDataSource, CustomJS, LogColorMapper
+from bokeh.palettes import Category10
+output_notebook()
+```
+
+```{code-cell}ipython3
+:tags: [hide-input]
+# Showing plots for 1d Kullback Leibler with slider for data position
+x = np.linspace(1e-5, 10, 300)
+
+def kl_divergence(p, q):
+    """Calculate the KL divergence between two distributions."""
+    return np.sum(p * np.log(p / q) + q - p)
+
+y = np.zeros_like(x)
+p = 2.5  # Initial reference distribution parameter
+for i, q in enumerate(x):
+    y[i] = kl_divergence(p, q) 
+```
+
+```{code-cell}ipython3
+:tags: [hide-input]
+# Add interactive sliders for the reference distribution
+slider = Slider(start=0.1, end=5, value=2.5, step=0.1, title="Reference Distribution (p)")
+source = ColumnDataSource(data=dict(x=x, y=y))
+plot = figure(title="KL Divergence", x_axis_label='q', y_axis_label='KL(p, q)', width=600,
+    height=400)
+plot.line('x', 'y', source=source, line_width=2, color=Category10[10][0])
+callback = CustomJS(args=dict(source=source, slider=slider), code="""
+    const data = source.data;
+    const p = slider.value;
+    for (let i = 0; i < data['x'].length; i++) {
+        const q = data['x'][i];
+        data['y'][i] = p * Math.log(p / q) + q - p;  // KL divergence formula
+    }
+    source.change.emit();
+""")
+slider.js_on_change('value', callback)
+show(column(slider, plot))
+```
 
 The optimization community has dedicated significant effort to proposing dedicated algorithms to solve problems such as NNKL. [Multiplicatives Updates](../part1/nnls.md#multiplicatives-updates) is such an algorithm that works well in practice. However, few methods can solve constrained variants of NNKL. In the current state of signal processing, where data-driven methods such as plug-and-play and unrolling algorithms yield significant performance gains, there is a need for algorithms that solve such non-smooth, non-Lipschitz-smooth, non-convex problems. I also plan to work on improving the state-of-the-art for solving NNKL and related problems, as I believe that within the frameworks of majorization-minimization and second-order approximation, significant gains can be made. We have already started to propose [better approximations of the cost](../part2/Fast_algorithms_for_rLRA/mSOM.md), but more work is required in this direction to find faster algorithms, robust to data and parameter sparsity, that can scale to large datasets. 
 
