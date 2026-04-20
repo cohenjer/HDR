@@ -40,9 +40,6 @@ A few remarks on these assumptions:
  - Boundness of the level sets of the cost is implied, for instance, by coercivity. This property is not trivially satisfied for LRA models, see [](#about-compact-sets-and-lra).
  - Continuity over the definition domain (A5) implies lower-semicontinuity only when the domain is closed.
 ```
-```{margin}
-
-```
 
 - (A0): $f$ can be splitted as $ f(x) = f_0(x) + \sum_{k=1}^{d} r_k(x_k)$. 
 - (A1): $\mathcal{X}_k$ are closed convex sets.

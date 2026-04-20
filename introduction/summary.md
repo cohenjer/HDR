@@ -132,7 +132,14 @@ Several of my works are not discussed in this manuscript because they would othe
 
 Maybe the most impactful work that I chose not to discuss in this manuscript is related to the PhD thesis of Axel Marmoret {cite:p}`marmoret2020uncovering,marmoretNonnegativeTuckerDecomposition2022, marmoretUnsupervisedMachineLearning2022`. Low-dimensional models such as Tucker decomposition and auto-encoders are used to compress information from a recording of a full song {cite:p}`smithNonnegativeTensorFactorization2018`. This compression highlights the similarities and dissimilarities between bars in the song, which then helps a dedicated dynamic program solver to perform an automatic segmentation of the song. Despite the method being unsupervised (a supervised beat-tracking algorithm is still used to cut the song into bars), the results are very encouraging if the parameters of the compressed models can be chosen optimally. This choice is difficult in practice, which limits the method's performance.
 
-[Figure déjà prête]
+```{figure} ../Figures/NNTucker_Music.png
+---
+width: 700px
+align: center
+name: fig:NNTucker_music
+---
+Nonnegative Tucker decomposition can be used to extract meaningful patterns from a Time-Frequency-Bar tensor, obtained from an audio recording of a song by slicing the audio barwise and applying individual short-time Fourier transforms. The bar activation patterns are then used as low-dimensional features to perform automatic segmentation on an auto-similarity matrix, revealing the hidden structure of the song.
+```
 
 This work was rather visible in the music information retrieval community when released. It has launched the academic career of Axel Marmoret, who is today working, among other areas, on LRA in conjunction with deep learning, with applications to music information retrieval. His PhD manuscript describes our contributions in detail.
 

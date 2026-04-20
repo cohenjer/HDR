@@ -27,7 +27,16 @@ Spectral cameras are invaluable tools for acquiring detailed spectral informatio
 
 Although the idea of compressive acquisitions in computational optics precedes the development of compressive sensing {cite:p}`nelsonHadamardSpectroscopy1970c`, Duarte and co-authors proposed the single-pixel camera, which uses spatial multiplexing to feed focalized masked images into a high-resolution point spectrometer {cite:p}`duarteSinglepixelImagingCompressive2008, Duarte2012Kronecker`. In the setup available at CREATIS, the compressed light flux is the input of a spectrometer. The hyperspectral cube containing both the spatial information (images) and the spectral information (spectra) is then reconstructed by solving an inverse problem, following a long tradition of reconstruction imaging techniques in the computational imaging community {cite:p}`BenetiMartins_2023`.
 
-[Figure explicative]
+```{figure} ../../Figures/schema_spc.png
+---
+width: 650px
+align: center
+name: singlepixel_camera
+---
+Representation of the single pixel camera [credits: Séréna Hariga].
+```
+
+
 
 Let us formalize the problem. Let $Y\in\mathbb{R}_+^{m\times p}$ be the acquired matrix, with $m$ the number of measurements or patterns, and $p$ the number of spectral bands measured by the spectrometer. Each acquisition, say the $k$-th, is obtained by summing the pixels of a masked image $a_k \ast_{1,2} X_t$ where $a_k\in\{0,1\}^{n_1\times n_2}$ is a binary mask and $X_t\in\mathbb{R}_+^{n_1\times n_2\times p}$ is the unknown hypespectral cube to reconstruct, with $n_1\times n_2$ pixels. The elementwise product $\ast_{1,2}$ indicates that the mask is applied on each slice $X_t[:,:,i]$ of the hypercube. It can be convenient to vectorize the spatial dimension and consider the vector patterns $A[k,:]\in\{0,1\}^{n_1n_2}$ as well as the unknown matrix $X\in\mathbb{R}_+^{n_1n_2\times p}$. The noiseless acquisition is therefore modeled linearly as $Y = AX$. 
 
@@ -37,9 +46,9 @@ $$ Y \sim \mathcal{P}(\alpha AX) $$
 
 where $\alpha$ is the average photon count that can be interpreted as the signal strength. The signal to noise ratio can be shown to be proportional $\sqrt{\alpha}$: the higher $\alpha$ the less noisy the acquisition. We consider that the hypercube $X$ has normalized intensities in $[0,1]$.
 
-The reconstruction of the hypercube $X$, knowing the measurements $Y$ and the acquisition matrix $A$, is an inverse problem. It is ill-posed in the sense that infinitely many measurements are required to obtain a perfect reconstruction, because of Poisson noise. Furthermore, if the number of patterns is strictly smaller than the number of pixels $n:=n_1n_2$, the linear system $Y=AX$ has infinitely many solutions. For both these reasons, regularization is essential in single-pixel image reconstruction. The [classical approach](#reconstruction-wavelength-by-wavelength-existing) is to reconstruct each slice of the hypercube separately, wavelength by wavelength, using state-of-the-art image reconstruction algorithms and priors. In the PhD thesis of Serena Hariga, co-supervised with Nicolas Ducros, we have studied the [joint reconstruction and unmixing](#joint-reconstruction-and-unmixing-eusipco) of the hypercube, using spectral regularization, as well as [spectral unmixing directly from the measurements](#unmixing-with-known-spectra-gretsi) with spatial priors.
+The reconstruction of the hypercube $X$, knowing the measurements $Y$ and the acquisition matrix $A$, is an inverse problem. It is ill-posed in the sense that infinitely many measurements are required to obtain a perfect reconstruction, because of Poisson noise. Furthermore, if the number of patterns is strictly smaller than the number of pixels $n:=n_1n_2$, the linear system $Y=AX$ has infinitely many solutions. For both these reasons, regularization is essential in single-pixel image reconstruction. The [classical approach](#reconstruction-wavelength-by-wavelength-existing-work) is to reconstruct each slice of the hypercube separately, wavelength by wavelength, using state-of-the-art image reconstruction algorithms and priors. In the PhD thesis of Serena Hariga, co-supervised with Nicolas Ducros, we have studied the [joint reconstruction and unmixing](#joint-reconstruction-and-unmixing-eusipco) of the hypercube, using spectral regularization, as well as [spectral unmixing directly from the measurements](#unmixing-with-known-spectra-gretsi) with spatial priors.
 
-## Reconstruction wavelength by wavelength (existing)
+## Reconstruction wavelength by wavelength (existing work)
 
 ### Hadamard patterns
 
@@ -96,7 +105,15 @@ $$ A = \left[ \begin{array}{c} [H]^+ \\ [H]^- \end{array}\right] $$
 
 where $H$ here denotes a Hadamard matrix, and $[x]^- \geq 0$ is the negative part of a vector or matrix $x$. Matrix $[H]^-$ contains a row of zeroes that is usually removed. 
 
-[TODO Figure Patterns de A ?]
+
+```{figure} ../../Figures/hadamard.gif
+---
+width: 350px
+align: center
+name: hadamard
+---
+Examples of Hadamard patterns stored in the rows of matrix $H$. Ones are shown in white, and minus ones (zeroes in practice) in black. The patterns are orthogonal and have the same number of black and white pixels, except the first two (all white, all black).
+```
 
 In short, we suppose that measurements $Y$ are stored in a matrix of size $m\times p$, and assume the model $Y\sim \mathcal{P}\left(\alpha AX\right)$ with $A$ of size $m\times n$ a matrix with entries in $\{0,1\}$.
 

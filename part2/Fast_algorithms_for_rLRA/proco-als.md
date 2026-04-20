@@ -194,7 +194,14 @@ plt.show()
 
 The true interest of Pro-ALS lies in its use in conjunction with Tucker compression. The idea of Tucker compression is to first compute an orthogonal, approximate Tucker decomposition with small inner dimensions using, *e.g.*, HOSVD, then work on the resulting smaller core tensor to compute the CP decomposition.
 
-[insert figure]
+```{figure} ../../Figures/CANDELINC.png
+---
+width: 650px
+align: center
+name: fig:CANDELINC
+---
+Illustration of Tucker compression used before the computation of the CP decomposition. The core tensor $G$ is significantly smaller than the original tensor $T$, and therefore the CP decomposition of tensor $G$ is obtained faster than for $T$. If the Tucker decomposition is accurate and computed efficiently, Tucker compression before CP decomposition can lead to a significant speed-up of the CP decomposition of tensor $T$.
+```
 
 Mathematically, this makes sense because of the associativity of the multiway tensor product:
 
@@ -319,6 +326,8 @@ $$ \min_{z\geq 0} \frac{1}{2} \|U^Tz + \hat{x}\|_2^2 . $$
 This equivalence also has a geometric interpretation: we either project $-\hat{x}$ on the dual cone of $U$ (second problem) or find the closest element to $\hat{x}$ in the intersection of half planes (first problem). 
 
 [insert figure]
+
+
 
 The Lagrangian for the projection problem writes $L(x,\mu) = \frac{1}{2}\|x - \hat{x} \|_2^2  - \mu^TUx$
 which when minimized w.r.t. $x$ yields $x^\ast = \hat{x} + U^T\mu^\ast$.

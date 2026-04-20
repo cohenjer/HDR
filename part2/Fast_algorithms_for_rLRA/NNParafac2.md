@@ -10,7 +10,7 @@ kernelspec:
   name: python3
 ---
 
-# Nonnegative Parafac 2
+# Nonnegative PARAFAC2
 
 :::{admonition} Reference
 :class: tip

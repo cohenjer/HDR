@@ -25,25 +25,23 @@ TODOlist:
   - DONE Tucker [lra.md] --> main
   - DONE Fonction global Lipschitz / stepsize etc [nnls.md] --> main
   - DONE MM principle [nnls.md] --> main
-  - steps of active set [nnls.md] --> main/inkscape
   - DONE HALS ? [nnls.md] --> main
   - DONE second order >0 solution [nnls.md] --> main
-  - Linear mixing model [parts2/applis/intro.md] --> inkscape
-  - Patterns Hadamard [single_pixel_spectral_imaging.md] --> python, cf aussi papier freeform
+  - DONE Linear mixing model [parts2/applis/intro.md] --> inkscape
+  - DONE Spectre visible vs RBG [part2/applis/intro.md] --> inkscape
+  - DONE Wavelength, visible range... [part2/applis.intro.md] ?
+  - DONE Borgen plot illustration [others.md] --> inkscape inspiration site web
+  - DONE Acquisition principle for unmixing dataset hyperspectral microscopy [others.md] --> main ou inkscape
+  - DONE Figure projet de recherche [KarpCoi.md] --> inkscape
+  - DONE Music segmentation avec AS barwise [summary.md] --> main ou inkscape ?
+  - DONE HOSVD compression [proco-als.md] --> main
+  - DONE KL cost in 1d and 2d  [nnls.md ?, summary.md] --> python ?
+  - DONE Patterns Hadamard [single_pixel_spectral_imaging.md] --> python, cf aussi papier freeform
+  - DONE Explication principe [single_pixel_spectral_imaging.md] --> inkscape reprendre Séréna ou Nicolas
+  - steps of active set [nnls.md] --> main/inkscape
   - Branch and Bound illustration with graph pruning (gif?) [sparse_nnls.md] --> main et inkscape pour les maths
   - illustration smooth basis [DLRA.md] (code ?) --> python
-  - Figure projet de recherche [KarpCoi.md] --> inkscape
-  - Music segmentation avec AS barwise [summary.md] --> main ou inkscape ?
-  - KL cost [nnls.md ?, summary.md] --> python ?
   - AO vs BCD en terme de majoration du coût, en 3d [AO.md] --> python ?
-  - Spectre visible vs RBG [part2/applis/intro.md] --> inkscape
-  - Wavelength, visible range... [part2/applis.intro.md] ?
-  - Explication principe [single_pixel_spectral_imaging.md] --> inkscape reprendre Séréna ou Nicolas
-  - CMTF models [CMTF.md] --> main
-  - HOSVD compression [proco-als.md] --> main
-  - projection cone dual [proco-als.md] (utile?) --> main
-  - Borgen plot illustration [others.md] --> inkscape inspiration site web
-  - Acquisition principle for unmixing dataset hyperspectral microscopy [others.md] --> main ou inkscape
 - Figure inline integration with glue and environments
 - Relecture
     - Relecture deja faite du rapport CNRS
@@ -56,6 +54,12 @@ TODOlist:
 - Precise Version and package dependence
 - Latex build fork ?
 - How to use (0.25d)
+
+- Maybe later:
+  - Figures
+    - CMTF models [CMTF.md] --> main
+    - PARAFAC2 projections
+    - projection cone dual [proco-als.md] (utile?) --> main
 
 
 ```{tableofcontents}

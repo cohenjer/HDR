@@ -136,6 +136,115 @@ $$
 
 where we have set $ f\left(y,W[i,:]x\right) = \sum_i \KL{y[i],W[i,:]x}$.
 
+```{code-cell}ipython3
+:tags: [hide-input]
+import numpy as np
+from numpy import size
+import matplotlib.pyplot as plt
+import numpy as np
+import bokeh
+from bokeh.layouts import column, row
+from bokeh.plotting import figure, show, output_notebook
+from bokeh.models import Slider, ColumnDataSource, CustomJS, LogColorMapper
+from bokeh.palettes import Category10
+output_notebook()
+```
+
+```{code-cell}ipython3
+# Showing plots for 1d Kullback Leibler with slider for data position
+x = np.linspace(1e-5, 10, 300)
+
+def kl_divergence(p, q):
+    """Calculate the KL divergence between two distributions."""
+    return np.sum(p * np.log(p / q) + q - p)
+
+y = np.zeros_like(x)
+p = 2.5  # Initial reference distribution parameter
+for i, q in enumerate(x):
+    y[i] = kl_divergence(p, q) 
+```
+
+```{code-cell}ipython3
+:tags: [hide-input]
+# Add interactive sliders for the reference distribution
+slider = Slider(start=0.1, end=5, value=2.5, step=0.1, title="Reference Distribution (p)")
+source = ColumnDataSource(data=dict(x=x, y=y))
+plot = figure(title="KL Divergence", x_axis_label='q', y_axis_label='KL(p, q)', width=600,
+    height=400)
+plot.line('x', 'y', source=source, line_width=2, color=Category10[10][0])
+callback = CustomJS(args=dict(source=source, slider=slider), code="""
+    const data = source.data;
+    const p = slider.value;
+    for (let i = 0; i < data['x'].length; i++) {
+        const q = data['x'][i];
+        data['y'][i] = p * Math.log(p / q) + q - p;  // KL divergence formula
+    }
+    source.change.emit();
+""")
+slider.js_on_change('value', callback)
+show(column(slider, plot))
+```
+
+```{code-cell}ipython3
+#output_notebook()
+
+# Data grid
+xmax=10
+ymax=10
+x = np.linspace(1e-5, xmax, 400)
+y = np.linspace(1e-5, ymax, 400)
+X, Y = np.meshgrid(x, y)
+
+# Initialize Z
+Z = np.zeros_like(X)
+ref_x, ref_y = 2.5, 2.5
+for i in range(X.shape[0]):
+    for j in range(X.shape[1]):
+        q = np.array([X[i, j], Y[i, j]])
+        p = np.array([ref_x, ref_y])
+        Z[i, j] = kl_divergence(p, q)
+
+# Create 3D plot
+p = figure(
+    title="KL Divergence (3D)",
+    x_axis_label='X',
+    y_axis_label='Y',
+    width=800,
+    height=600,
+    tools='pan,wheel_zoom,box_zoom,reset'
+)
+# contour plot of KL divergence
+color_mapper = LogColorMapper(palette="Sunset10", low=1e-3, high=8*1e0, high_color="white")
+source = ColumnDataSource(data=dict(image=[Z]))
+p.image(image='image', x=0, y=0, dw=xmax, dh=ymax, source=source, color_mapper=color_mapper)
+
+```
+
+```{code-cell}ipython3
+:tags: [hide-input]
+
+# Sliders for reference distribution
+slider_ref_x = Slider(start=0.01, end=xmax, value=2.5, step=0.1, title="Reference X")
+slider_ref_y = Slider(start=0.01, end=ymax, value=2.5, step=0.1, title="Reference Y")
+# CustomJS callback to update Z and plot
+callback = CustomJS(args=dict(source=source, x=x, y=y, slider_ref_x=slider_ref_x, slider_ref_y=slider_ref_y), code="""
+    const ref_x = slider_ref_x.value;
+    const ref_y = slider_ref_y.value;
+    for (let i = 0; i < x.length; i++) {
+        for (let j = 0; j < y.length; j++) {
+            const p = [ref_x, ref_y];
+            const q = [x[i], y[j]];
+            const z = p[0] * Math.log(p[0] / q[0]) + q[0] - p[0] + p[1] * Math.log(p[1] / q[1]) + q[1] - p[1];
+            source.data.image[0][x.length*j+i] = z;
+        }
+    }
+    source.change.emit();
+""")
+slider_ref_x.js_on_change('value', callback)
+slider_ref_y.js_on_change('value', callback)
+# show sliders and plot
+show(column(p, row(slider_ref_x, slider_ref_y)))
+```
 
 ### Difficulties
 
@@ -146,6 +255,7 @@ Compared to NNLS, which is a quadratic program, NNKL is, in general, significant
 ```{margin}
 The true definition of Lipschitz-smoothness and the descent lemma do not require the function $f$ to be twice-differentiable, see e.g. {cite:p}`beck2017first`.
 ```
+
 Maybe the most commented-on difficulty for NNKL is the lack of Lipschitz-smoothness of the KL-divergence at zero. Lipschitz-smoothness is a crucial property in numerical optimization, used to derive descent conditions for first-order algorithms. In a nutshell, a function $f$ which is twice differentiable over a convex set is l-Lipschitz-smooth if its Hessian can be bounded by $lI$. This implies, using the second-order Taylor expansion and majorizing the second-order terms and remainder {cite:p}`beck2017first`, that for any vector $x$ and local perturbation $z$ the following descent lemma holds: 
 
 $$

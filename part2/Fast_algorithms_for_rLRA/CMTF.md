@@ -35,8 +35,6 @@ coupled matrix-tensor factorization", EUSIPCO2020, 2021 [pdf](https://www.eurasi
 
 ## Background on joint factorization models
 
-[Figures for each model in tikz ?]
-
 Joint factorization models are collections of matrix or tensor factorization problems in which some of the variables are explicitly related. There are at least two motivations for considering this family of problems.
 - **Multimodal acquisitions:** Several datasets are acquired informing on the same phenomenon but with different modalities, e.g., EEG+FMRI, NMR+LCMS {cite:p}`Acar2009Unsupervised`, occulometry+EEG {cite:p}`rivetModelingTimeWarping2016`. Joint factorization techniques allow the extraction of latent information from each dataset while leveraging the shared information across datasets to reduce estimation error and enhance uniqueness {cite:p}`Sorensen2015Coupleda`, thereby improving interpretability.
 - **Alternative formulations of tensor decompositions:** Joint factorization models are useful for rewriting the classical tensor models [such as CP decomposition](subsec:joint-diagonalisation) and proposing new extended models such as PARAFAC2 {cite:p}`Harshman1972PARAFAC2` {cite:p}`Kiers1999PARAFAC2`, Shift/Conv NMF/CP, PARATUCK2 {cite:p}`usevichApprocheAlgebriquePour2025` and so on. These formulations are also useful for identifiability proofs, as they relate tensor decompositions to matrix low-rank approximation problems.
@@ -67,7 +65,7 @@ The first factor of the low-rank approximations of the tensor and the matrix is 
 CMTF assumes that the parameter matrix $A$ is shared across measurement modalities. Therefore, CMTF lacks flexibility in many applications, such as genomics and chemometrics, where some components cannot be observed by certain modalities due to physical constraints. It is then necessary to modify the CMTF model to share only a subset of components. This variant of CMTF is referred to as ACMTF {cite:p}`Acar2017ACMTF`. Another extension of CMTF assumes that the two modalities share a parameter matrix through a known linear relationship. This allows modeling possible variations in the sampling rates by linear interpolation {cite:p}`cabralfariasExploringMultimodalData2016`, or coupling only the derivatives of the components {cite:p}`rivetMultimodalApproachEstimate2015`. This work is [discussed below](#general-formulation-linearly-coupled-constrained-cmtf).
 
 (subsec:parafac2-and-variants)=
-### Parafac2 and variants
+### PARAFAC2 and variants
 
 Starting from the joint diagonalization formulation of the CPD, one may observe that CPD imposes the coupled slices/matrices $T[:,:,k]$ to have the same row and column factors. In some applications, it could be interesting to relax this assumption and suppose that, rather than only a single mode, say the first one, has a shared factor. Then the coupled factorization model becomes
 
@@ -83,7 +81,7 @@ $$
   T_{[1]}  &= A \tilde{B}^T.
 $$
 
-The factor matrix $\tilde{B}$ is virtually unconstrained, as any matrix can be written as a stacked matrix of products. This observation means that to obtain a multiway decomposition that does not reduce to unconstrained low-rank matrix approximation, further constraints must be applied on the parameter matrices $B_k$. There are several ways to do so, for instance, imposing some shift-invariance with respect to the slice index (Shift-Parafac) {cite:p}`harshmanShiftedFactorAnalysis2003`, or imposing further low-rank structure on the factors (PARATUCK2) {cite:p}`usevichApprocheAlgebriquePour2025`. A popular extension of CPD based on this construction is the PARAFAC2 model, obtained by imposing that the cross product of the $B_k$ matrices is constant,
+The factor matrix $\tilde{B}$ is virtually unconstrained, as any matrix can be written as a stacked matrix of products. This observation means that to obtain a multiway decomposition that does not reduce to unconstrained low-rank matrix approximation, further constraints must be applied on the parameter matrices $B_k$. There are several ways to do so, for instance, imposing some shift-invariance with respect to the slice index (Shift-PARAFAC) {cite:p}`harshmanShiftedFactorAnalysis2003`, or imposing further low-rank structure on the factors (PARATUCK2) {cite:p}`usevichApprocheAlgebriquePour2025`. A popular extension of CPD based on this construction is the PARAFAC2 model, obtained by imposing that the cross product of the $B_k$ matrices is constant,
 
 $$
 \forall k\leq n_3, \;B_k^TB_k = \Delta^T\Delta
@@ -96,7 +94,7 @@ $$
 B_k = P_k \Delta
 $$
 
-with $P_k$ a left-orthogonal matrix. Therefore, all the slices have the same rank $r$ factor matrix, transformed from slice to slice by a rotation matrix. Orthogonal linear coupling between slices models many linear transformations, such as circular shifts or diffeomorphisms {cite:p}`cohenCurveRegisteredCoupled2018`. The PARAFAC2 model has therefore been used extensively in chemometrics applications where such transformations occur, in particular LCMS and GCMS data {cite:p}`cohenNonnegativePARAFAC2Flexible2018`. The computation of PARAFAC2 with nonnegativity constraints is a topic I have worked on, detailed in [](./NNParafac2.ipynb).
+with $P_k$ a left-orthogonal matrix. Therefore, all the slices have the same rank $r$ factor matrix, transformed from slice to slice by a rotation matrix. Orthogonal linear coupling between slices models many linear transformations, such as circular shifts or diffeomorphisms {cite:p}`cohenCurveRegisteredCoupled2018`. The PARAFAC2 model has therefore been used extensively in chemometrics applications where such transformations occur, in particular LCMS and GCMS data {cite:p}`cohenNonnegativePARAFAC2Flexible2018`. The computation of PARAFAC2 with nonnegativity constraints is a topic I have worked on, detailed in [](./NNParafac2.md).
 
 ## General formulation: Linearly-Coupled Constrained CMTF
 

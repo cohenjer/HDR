@@ -29,13 +29,27 @@ In everyday life, color helps distinguish different objects and materials in spa
 
 From a mathematical and informatics point of view, defining color formally is, maybe surprisingly, a large and complex research domain. For simplicity, let us assume that colors can be represented in three-dimensional space using the basis vectors red, blue, and green. Any two-dimensional $m$ by $n$ color image is, in this simplistic model, a tensor of size $m\times n \times 3$. 
 
-From a physical perspective, color is not a physical property of matter. It relates to human perception (and therefore varies for each individual) of a physical property called wavelength, which characterizes the distance an electromagnetic wave travels in a single cycle. More precisely, any wave can be decomposed in the spectral domain as the sum of sinusoidal waves with a fixed wavelength. This is exactly the Fourier transform ubiquitous in signal processing. Any light emitted or reflected by a source of interest has a specific spectrum that represents the amplitude of the individual additive sine waves, and which contains information about the source, just like color. In fact, color, as described in the simplified RGB format, is a compressed representation of the full light spectrum, in which spectral coefficients are grouped into three blobs, respectively named red, green, and blue [figure]. This is mostly due to human perception: while human ears excel at identifying the Fourier coefficients (the amplitude of each additive sinusoidal wave), the human eye is much less sensitive; cones in the human eye that are sensitive to color naturally perform this dimensionality reduction. 
+From a physical perspective, color is not a physical property of matter. It relates to human perception (and therefore varies for each individual) of a physical property called wavelength, which characterizes the distance an electromagnetic wave travels in a single cycle. More precisely, any wave can be decomposed in the spectral domain as the sum of sinusoidal waves with a fixed wavelength. This is exactly the Fourier transform ubiquitous in signal processing. Any light emitted or reflected by a source of interest has a specific spectrum that represents the amplitude of the individual additive sine waves, and which contains information about the source, just like color. In fact, color, as described in the simplified RGB format, is a compressed representation of the full light spectrum, in which spectral coefficients are grouped into three blobs, respectively named red, green, and blue, see {numref}`fig:eye_rgb`. This is mostly due to human perception: while human ears excel at identifying the Fourier coefficients (the amplitude of each additive sinusoidal wave) of air pressure wave, the human eye is much less sensitive; cones in the human eye that are sensitive to color naturally perform this dimensionality reduction. 
+
+```{figure} ../../Figures/eye_rgb.png
+---
+width: 650px
+align: center
+name: fig:eye_rgb
+---
+[From hyperphysics.phy-astr.gsu.edu] *"There are three types of color-sensitive cones in the retina of the human eye, corresponding roughly to red, green, and blue sensitive detectors. Painstaking experiments have yielded response curves for three different kind of cones in the retina of the human eye. The "green" and "red" cones are mostly packed into the fovea centralis. By population, about 64% of the cones are red-sensitive, about 32% green sensitive, and about 2% are blue sensitive. The "blue" cones have the highest sensitivity and are mostly found outside the fovea. The shapes of the curves are obtained by measurement of the absorption by the cones, but the relative heights for the three types are set equal for lack of detailed data. There are fewer blue cones, but the blue sensitivity is comparable to the others, so there must be some boosting mechanism. In the final visual perception, the three types seem to be comparable, but the detailed process of achieving this is not known. When light strikes a cone, it interacts with a visual pigment which consists of a protein called opsin and a small molecule called a chromophore which in humans is a derivative of vitamin A. Three different kinds of opsins respond to short, medium and long wavelengths of light and lead to the three response curves shown above. For a person to see an object in color, at least two kinds of cones must be triggered, and the perceived color is based on the relative level of excitation of the different cones."*
+```
 
 This fact has a few interesting consequences. First, the human eye is blind to wavelengths outside the visible range, limiting our ability to detect spectral information in the infrared or ultraviolet. Second, two objects of the same color can have very different spectra. Therefore, the human eye is a poor spectral sensor. Hopefully, it is possible to accurately measure the light spectra of a single light flux using prisms that have the property to spread light beams spatially depending on the wavelength. In other words, prisms perform, in some way, a Fourier transform of an incoming light wave and output the individual sinusoidal light waves with pure wavelengths separated spatially. It is then possible to measure the spectrum by essentially taking a black-and-white picture of the prism output. Devices that measure light spectra, using prisms or other separation means, are called spectrometers.
 
-[figure wavelength] 
-
-[figure with visible range and full spectrum]
+```{figure} ../../Figures/Light_dispersion_prism.gif
+---
+width: 650px
+align: center
+name: fig:light_dispersion_prism
+---
+[From Wikipedia, credits Lucas Vieira] An illustration of the dispersion property of a prism. Incomming white light is decomposed as a sum of monochromatic light beams with increasing wavelength.
+```
 
 ### Spectral mixing and unmixing
 
@@ -44,7 +58,16 @@ We are taught in high school that colors obey two sets of rules for mixing: addi
 
 A way to explain additive and subtractive mixtures, which I find useful, is to relate them to the physical process underlying the mixture and to the full spectral description of color. An additive mixture is a matter of perception. Various light beams with different spectra hit the human eye and are seen as a single light source by the lens, which focuses the input light onto the cones, integrating the contributions of each light source. In the case of a spectrometer, an optical lens can be used to produce a similar additive acquisition. Addition synthesis is therefore not a physical modification of the wavelengths of a light wave, but rather the superposition, typically spatial, of different light waves. In contrast, a subtractive mixture is a direct modification of the spectrum of a light wave that removes a part of that spectrum. A key concept to understand a subtractive mixture is filtering: when a light wave hits an object, it is partially absorbed and partially reflected. The intensity of reflected light depends on the wavelength. The reflected light has a different spectrum than the input light, filtered by the object's spectral response. What we usually call the color of an object is, in fact, the projection in RGB space of the resulting spectrum of "white" light after it has been reflected by the item. The absorption spectrum of an object is the spectral filter by which the incoming light is multiplied to obtain the reflected light spectrum. A subtractive mixture is simply the sequential filtering of a light source by several items, where spectral filters are combined multiplicatively. When mixing paints, the chemical compounds in each paint are intimately mixed, and the paint after mixture essentially filters light jointly for all paints.
 
-[Figure si j'ai la foi]
+```{figure} ../../Figures/RGB_CMY.png
+---
+width: 650px
+align: center
+name: fig:RGB_CMY
+---
+[From intranet.mcad.edu] An illustration of additive and substractive mixtures. Additive mixture is essentially a property of light, and allows to generate a large range of pure wavelengths in the visible range. Substractive mixture is obtained by spectral filtering and is less expressive in general than RBG.
+```
+
+
 
 In scientific imaging, both additive and subtractive mixtures are usually encountered. The important point is that an additive mixture is usually well-suited to linear models, whereas a subtractive mixture leads to non-linear models. Two examples of additive mixture help illustrate this fact.
 
@@ -54,11 +77,20 @@ $$ Y = WH^T $$
 
 where $W$ is a matrix containing the spectra of each individual fluorophore in the chemical mixture, and $H$ contains the amplitude of each fluorophore response to the excitation wavelength. Applying NMF to the data matrix $Y$, or nonnegative tensor factorization to several such measurement matrices, can in principle recover the individual fluorescence spectra, essentially performing spectral unmixing.
 
-b. The linear mixing model in remote sensing makes the hypothesis that materials on an observed scene are spatially distributed and non-overlapping. The scene is cut into pixels by the camera, and each pixel may therefore contain several materials [see figure TODO] with proportions given by the portion of the pixel covered by each material. The spectral acquisition is then the additive mixture of the reflectance spectra (the ambient-light spectrum, essentially white, filtered by each material). For a single pixel $Y[:,i]$ of the acquired spectral image $Y$ with $m$ spectral wavelengths (or spectral bands if spectra are acquired in a compressed spectral representation) and $n$ pixels, the additive mixture of $K$ materials simply translates into a linear model
+b. The linear mixing model in remote sensing makes the hypothesis that materials on an observed scene are spatially distributed and non-overlapping. The scene is cut into pixels by the camera, and each pixel may therefore contain several materials with proportions given by the portion of the pixel covered by each material. The spectral acquisition is then the additive mixture of the reflectance spectra (the ambient-light spectrum, essentially white, filtered by each material). For a single pixel $Y[:,i]$ of the acquired spectral image $Y$ with $m$ spectral wavelengths (or spectral bands if spectra are acquired in a compressed spectral representation) and $n$ pixels, the additive mixture of $K$ materials simply translates into a linear model
 
 $$ Y[:,i] = \sum_{k=1}^{K} W[i,k] H^T[:,k];\; Y=WH^T $$
 
 where $W$ contains columnwise the spectra of each material in the scene (supposing they are consistent over the whole image), and H contains the proportions of each material in each pixel columnwise, also called abundances. Interestingly, extensions of the linear mixing model that account for multiple reflections typically involve products of the matrix $W$ with itself; this is consistent with the subtractive mixture model, where the ambient light is filtered consecutively by several materials {cite:p}`kervazoProvablyRobustBlind2021`.
+
+```{figure} ../../Figures/linear-mixing-model_WH.png
+---
+width: 650px
+align: center
+name: fig:linear-mixing-model_WH
+---
+An illustration of the linear mixing model. Each pixels (squares in the top left grid) have different abundances of each material. This translates into an additive mixture of the spectra contained in matrix $W$, weighted by these abundances pixel-wise.
+```
 
 To conclude this introduction to spectral unmixing, we can now answer the question above: Is it possible to mix paints additively to produce white? The answer is nuanced. It is impossible to mix paint to produce pure white. Mixing paints intimately will result in a filtering effect that attenuates the ambient light spectrum across all wavelengths, leading to black. However, we can produce grey by juxtaposing paints on a surface and looking from afar. Spatial juxtaposition will result in additive filtering of the filtered white light, as in the linear mixing model. If three paints red, blue, and green are used in equal proportions, the resulting spectrum is the sum of blue, red, and green light but with reduced intensity, and the object will appear gray. Screens can produce white because they can emit red, blue, and green spectra at full intensity, which is not possible with reflectance spectra.
 
