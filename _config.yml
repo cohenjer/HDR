@@ -3,7 +3,7 @@
 
 title: Regularized matrix and tensor decompositions. Models, algorithms and implementation.
 author: Jeremy E. Cohen
-logo: cube_on_dico_page.png
+logo: Figures/cube_on_dico_page.png
 
 # Force re-execution of notebooks on each build.
 # See https://jupyterbook.org/content/execute.html
