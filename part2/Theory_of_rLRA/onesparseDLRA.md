@@ -131,7 +131,7 @@ This formula assumes that the dictionary has l2-norm normalized columns.
 
 ```{note}
 
-Using the largest absolute scalar product between the atoms and the estimated factor matrix $\hat{A}$ may lead to selecting the same atom twice, e.g., if two columns of $\hat{A}$ are similar. This problem can be alleviated by rather selecting indices $\mathcal{K}$ as the optimal linear assignement of atoms in the dictionary $D$ to columns of matrix $\hat{A}$:
+Using the largest absolute scalar product between the atoms and the estimated factor matrix $\hat{A}$ may lead to selecting the same atom twice, *e.g.*, if two columns of $\hat{A}$ are similar. This problem can be alleviated by rather selecting indices $\mathcal{K}$ as the optimal linear assignement of atoms in the dictionary $D$ to columns of matrix $\hat{A}$:
 
 $$ \mathcal{K} = \text{argmin}_{\mathcal{K}} \text{Tr}(|D[:,\mathcal{K}]^TA|) $$
 

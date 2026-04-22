@@ -23,9 +23,9 @@ $$ \argmin{X_1\in \mathbb{R}_+^{n_1\times r},~X_2\in \mathbb{R}_+^{n_2\times r}}
 
 for a known data matrix $Y\in\mathbb{R}^{n_1\times n_2}$. In this example, and in fact in most problems involving LRA, the cost has interesting blockwise properties. Here, the cost is not convex because of the product of variables, but it is block-convex, and often blockwise strongly convex in practice. This observation hints at the design of a class of convergent algorithms for computing solutions to LRA problems that update each block sequentially.
 
-This section provides a brief overview of existing results on methods that update the blocks of variables in an alternative manner. These methods are clustered in two groups: Alternating Optimizations methods (AO) where the cost is exactly minimized with respect to each block alternatively, and Block Coordinate Descent methods (BCD) where the cost decreases with respect to each block alternatively. BCD methods considered here are all, in fact, particular cases of Alternating Maximization Minimization algorithms. The literature on both AO and BCD is both old and vast; I present mostly recent results of practical interest to the rest of the manuscript, but an interested reader should find in these recent references many acknowledgments of previous works. AO was especially intensively studied in the 1970s. This section is also similar to, and heavily inspired by, chapters 11 and 14 from the book of Amir Beck {cite}`beck2017first`, and to Section 8.1.3 in the book of Nicolas Gillis {cite}`gillisNonnegativeMatrixFactorization2020`. The book of Beck also constitutes a great introduction to convex optimization in general, which can be completed by the book of Dimitri Bertsekas {cite}`Bertsekas1999Nonlinear`.
+This section provides a brief overview of existing results on methods that update the blocks of variables in an alternative manner. These methods are clustered in two groups: Alternating Optimizations methods (AO) where the cost is exactly minimized with respect to each block alternatively, and Block Coordinate Descent methods (BCD) where the cost decreases with respect to each block alternatively. BCD methods considered here are all, in fact, particular cases of Alternating Maximization Minimization algorithms. The literature on both AO and BCD is old and vast; I present mostly recent results of practical interest to the rest of the manuscript, but an interested reader should find in these recent references many acknowledgments of previous works. AO was especially intensively studied in the 1970s. This section is also similar to, and heavily inspired by, chapters 11 and 14 from the book of Amir Beck {cite}`beck2017first`, and to Section 8.1.3 in the book of Nicolas Gillis {cite}`gillisNonnegativeMatrixFactorization2020`. The book of Beck also constitutes a great introduction to convex optimization in general, which can be completed by the book of Dimitri Bertsekas {cite}`Bertsekas1999Nonlinear`.
 
-We build the rest of this section as such. First, common assumptions are quickly recalled. Then AO and BCD are introduced sequentially, moving from the more general to the more specific results.
+We build the rest of this section as follows. First, common assumptions are quickly recalled. Then AO and BCD are introduced sequentially, moving from the more general to the more specific results.
 
   
 ## Summary of assumptions and convergence results
@@ -57,7 +57,7 @@ A few remarks on these assumptions:
 - (A13): $f$ is non-increasing on the update path.
 - (A14): $f$ is regular at the limit points of the algorithm sequence.
 
-We use the notation (A9)($f$) to denote, for instance, assumption (A9) applied on the maps $f$. (A0) and (A4,A7)($f_0$) mean that $f$ can be split as $f_0$ and separable maps $r_k$, and that $f_0$ is convex and differentiable on the interior of its domain. When an assumption, *e.g.* convexity, applies on a majorant $u$ of $f$, the notation (A4)($u$) is used. Table {ref}`tab:convAO` summarizes the various convergence results for AO and BCD with their assumptions.
+We use the notation (A9)($f$) to denote, for instance, assumption (A9) applied on the maps $f$. (A0) and (A4,A7)($f_0$) mean that $f$ can be split as $f_0$ and separable maps $r_k$, and that $f_0$ is convex and differentiable on the interior of its domain. When an assumption, *e.g.*, convexity, applies on a majorant $u$ of $f$, the notation (A4)($u$) is used. Table {ref}`tab:convAO` summarizes the various convergence results for AO and BCD with their assumptions.
 
 ```{table} List of convergence results
 :name: tab:convAO
@@ -126,8 +126,10 @@ The book has been edited three times, in 1995, 1999, and 2016.
 Probably the most well-known result on the convergence of AO is due to Dimitry Bertsekas and was published in his book Nonlinear Programming in 1995 {cite}`Bertsekas1999Nonlinear`. There have been several iterations of his result, in particular to distinguish between convergence to coordinate-wise minima and stationary points. Below is a summary of Bertsekas's result and its variations.
 
 
-```{prf:theorem} Convergence of AO, non-convex non-smooth
+```{prf:theorem} Convergence of AO, non-convex non-smooth 
 :label: th:AO
+*Assumptions (A2,A3,A5,A11)($f$)*
+
 Assume that the function $f$ is proper, lower-semicontinuous, and continuous over its domain. Assume that each block update {eq}`eq:AOupdate` has a unique solution. Assume also that the level sets of the function $f$ are bounded. Then the sequence of AO iterates is bounded, and any limit point is a coordinate-wise minimum.
 
 
@@ -136,8 +138,10 @@ From {cite}`Bertsekas1999Nonlinear,beck2017first`
 
 As discussed above, the convergence to coordinate-wise minima is of little use for non-smooth functions, since they are not necessarily stationary points. Therefore, while this first result does not require differentiability, in practice it should be used with caution in a non-differentiable setup; hence the splitting of smooth and non-smooth terms in this second theorem.
 
-```{prf:theorem} Convergence of AO, non-convex smooth + separable convex non-smooth
+```{prf:theorem} Convergence of AO, non-convex smooth + separable convex non-smooth 
 :label: th:AO2
+*Assumptions (A1) (A0,A2,A3,A5,A11)($f$) (A6)($f_0$) (A3,A4)($r_k$)*
+
 Assume that the function $f$ is proper, lower-semicontinuous, and continuous over its domain. Assume that each block update {eq}`eq:AOupdate` has a unique solution. Assume also that the level sets of the function $f$ are bounded.
 
 If moreover function $f$ decomposes as $f(x) = f_0(x) + \sum_{k\leq d} r_k(x_k)$ with $r_k$ proper, lower-semicontious, continuous over its domain and convex, and $f_0$ lower-semicontinuous, differentiable on the interior of a Cartesian product of closed convex sets, then any limit point of the AO iterates is a stationary point. 
@@ -147,8 +151,10 @@ From {cite}`beck2017first`
 
 There are two further versions of this result. First, one may want to relax the assumption that the block updates have unique solutions; this assumption can indeed be too strong in practical cases where convergence is yet observed. This assumption can be easily relaxed if the cost $f$ is convex.
 
-```{prf:theorem} Convergence of AO, convex smooth + separable convex non-smooth
+```{prf:theorem} Convergence of AO, convex smooth + separable convex non-smooth  
 :label: th:AO3
+*Assumptions (A0,A2,A3,A5)($f$) (A4,A6)($f_0$) (A3,A4)($r_k$)*
+
 Assume that the function $f$ is proper and continuous over its domain. Assume also that the level sets of the function $f$ are bounded.
 
 If moreover function $f$ decomposes as $f(x) = f_0(x) + \sum_{k\leq d} r_k(x_k)$ with $r_k$ proper, lower-semicontinuous, continuous over its domain and convex, and $f_0$ continuously differentiable and **convex**, then any limit point of the AO iterates is a stationary point. 
@@ -160,6 +166,8 @@ A second version that applies in the non-convex case discards the splitting and 
 
 ```{prf:theorem} Convergence of AO, non-convex smooth 
 :label: th:AO4
+*Assumptions (A1) (A3,A6,A11,A13)($f$)*
+
 Assume that the function $f$ is proper, lower-semicontinuous, and continuously differentiable over its domain, which is a Cartesian product of closed convex sets. Assume that each block update {eq}`eq:AOupdate` has a unique solution. 
 
 Assume further that the cost is non-increasing in the interval 
@@ -180,13 +188,15 @@ It is important to note that the order of the AO block updates is not important 
 The convergence rate of the AO algorithm with arbitrarily many blocks is found in the book of Amir Beck {cite}`beck2017first`. AO converges sublinearly in the convex, Lipschitz-smooth plus separable convex non-smooth case; in fact, AO has the same asymptotic convergence speed as first-order methods. Moreover, the convergence rate depends linearly on the Lipschitz constant $L_{f_0}$ of the function $f_0$, and therefore on the worst Lipschitz constant over all blocks. In practice, however, AO can be faster than BCD. An example of this phenomenon for gradient descent performed over $\mathcal{X}_1 \times \ldots \times \mathcal{X}_d$ is discussed in {ref}`sec:practical_issues_AO`.
 ```
 
-### AO with $d=2$ blocks
+#### AO with $d=2$ blocks
 
 An important special case is AO with two blocks. The convergence of AO with two blocks has been studied in the seminal paper of Grippo and Scriandrone {cite}`Grippo2000convergence`. 
 
 ```{prf:theorem} Convergence of AO, $d=2$, non-convex smooth
 :label: th:AO5
-Assume that the function $f$ is continuously differentiable, and assume that the sets $\mathcal{X}_k$ are closed convex sets. Then the limit points of the AO iterates are stationary points.
+*Assumptions (A1) (A3,A5)($f$)*
+
+Assume that the function $f$ is continuously differentiable, and assume that the sets $\mathcal{X}_1$ and $\mathcal{X}_2$ are closed and convex sets. Then the limit points of the AO iterates are stationary points.
 
 ```
 
@@ -197,10 +207,14 @@ Notice how the assumptions for the two-block case are milder than in the general
 The convergence rate of AO with two blocks is still sublinear under convexity and separable non-smoothness assumptions, but the constant is now proportional to the **smallest** Lipschitz constant of $f_0$ for the two blocks, a sharp improvement with respect to the $d>2$ blocks case {cite}`beck2017first`. Moreover, the function $f_0$ need not be Lipschitz-smooth and may be differentiable only on an open set.
 ```
 
+#### Extension of the two-blocks case
+
 Grippo and Scriandrone also provide a convergence result for $d>2$ blocks based on blockwise strict quasiconvexity of the cost for $d-2$ blocks and continuous differentiability of the cost. 
 
 ```{prf:theorem} Convergence of AO, block strictly quasiconvex, smooth
 :label: th:AO6
+*Assumptions (A1) (A3,A5,A12(d-2))($f$)*
+
 Assume that the function $f$ is continuously differentiable, and that the sets $\mathcal{X}_k$ are closed and convex. Further assume that the function $f$ is blockwise strictly quasiconvex with respect to $d-2$ blocks. Then the limit points of the AO iterates are stationary points.
 ```
 This result requires both blockwise strict quasiconvexity and the differentiability of the cost, and is weaker in that sense than the variants introduced above. Yet because it does not require the uniqueness of the block updates and does not require convexity with respect to all blocks, it can sometimes be applied in contexts where {prf:ref}`th:AO2` cannot.  
@@ -226,6 +240,7 @@ The convergence of SUM is simple to prove under mild assumptions.
 
 ```{prf:theorem} Convergence of SUM, non-convex non-smooth
 :label: th:sum
+*Assumptions (A1) (A2,A3,A10)($f$)*
 
 Assume that the function $f$ admits directional derivatives at all points, and that the set $\mathcal{X}$ is closed and convex. Further assume that the majorant $u$ in SUM satisfies the majoration conditions, namely it is tight, tangent in all directions, and upper-bounds the cost at all points. Then every limit point of the SUM iterates is a stationary point. If, further, the level set $\{x| f(x)\leq f(x^{(0)}) \}$ is bounded, then the iterates converge to the set of stationary points.
 
@@ -248,6 +263,7 @@ Regular in this context means that the Fermat rule implies stationarity.
 
 ```{prf:theorem} Convergence of BSUM, quasiconvex non-smooth
 :label: th:bsum1
+*Assumptions (A1) (A3,A10,A14)($f$) (A11,A12(d))($u$)*
 
 Assume that the function $f$ admits directional derivatives at all points, and that the sets $\mathcal{X}_k$ are closed and convex. Further assume that the majorants $u$ in BSUM satisfy the majoration conditions for all blocks, namely the majorants are tight, tangent in all directions, and upper-bound the cost at all points. Additionally, assume that the marjorants for each block are quasiconvex, and that the block updates have unique solutions.
 
@@ -266,6 +282,7 @@ The original work of Razaviyayn states that the level sets must be compact, but 
 
 ```{prf:theorem} Convergence of BSUM, non-convex non-smooth
 :label: th:bsum2
+*Assumptions (A1) (A2,A3,A10,A14)($f$) (A11)($u$)*
 
 Assume that the cost function $f$ admits directional derivatives at all points, and that the sets $\mathcal{X}_k$ are closed and convex. Further assume that the majorants $u$ in BSUM satisfy the majoration conditions for all blocks, namely the majorants are tight, tangent in all directions, and upper-bound the cost at all points. Additionally, assume that the level set $I_f(x^{0})$ is bounded, and that the block updates have unique solutions for at least $d-1$ blocks.
 Further, assume that the cost is regular at all the stationary points. 
@@ -310,9 +327,9 @@ An important research direction to accelerate BCD algorithms is to leverage extr
 (sec:practical_issues_AO)=
 ## Practical issues
 
-From the convergence properties summarized above, it is far from obvious whether AO or BCD should be preferred in practice. What's more, BCD and AO are optimization frameworks, but their implementations can significantly affect performance. For BCD in particular, the order in which the blocks are visited and the number of times each block is updated before switching to a different block are important topics.
+From the convergence properties summarized above, it is far from obvious whether AO or BCD should be preferred in practice. What's more, AO and BCD are optimization frameworks, but their implementations can significantly affect performance. For BCD in particular, the order in which the blocks are visited and the number of times each block is updated before switching to a different block are important topics.
 
-### BCD vs AO vs approximate AO
+### AO vs BCD vs approximate AO
 
 Let us discuss a concrete example of NMF with the Frobenius loss; see [](./lra.md) and [](./nnls.md) for details on the NMF model and classical solvers. The solver we consider is [HALS](./nnls.md#hals-nnls-only). Denoting $W$ and $H$ the two factors of the NMF $Y\approx WH^T$, HALS can be seen as a BCD algorithm where the blocks are the columns of matrices $W$ and $H$. Each block update is computed in closed form. 
 

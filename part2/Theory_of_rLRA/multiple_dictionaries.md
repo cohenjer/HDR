@@ -18,14 +18,12 @@ kernelspec:
 :::
 
 
-## Note to self about figures:
-On peut cacher le print avec plt.close(). Sinon pour le dev, utiliser remove-output dans les tags de la cellule de code; glue permet de garder en mémoire des variables, on peut alors cacher les cellules où on fait ca. [TODO remove]
 
 In the [one-sparse DLRA section](./onesparseDLRA.ipynb), we have seen that in the context of spectral unmixing, we may use the whole hyperspectral image $Y$ as a dictionary. Then computing one-sparse DLRA means identifying pure pixels in the image $Y$ whose spectra correspond to a single material.
 
 While this approach can, in principle, detect pure pixels, the optimisation problem is in fact difficult to solve: the dictionary contains as many atoms as there are pixels, and these atoms are highly correlated. A potential workaround, proposed in {cite:p}`cohenSpectralUnmixingMultiple2018`, is to consider a subset of the image. The user might select regions on a projected view of $Y$, typically in an RGB visualization, believing they contain pure pixels. 
 
-In fact we may go further, and assume that the user selects $p$ regions $D_i:=Y_n[:, \mathcal{S}_i]$ in the image where $\mathcal{S}_i$ collects the indices of the pixel in the $k$th zone from the columnwise $\ell_2$ normalized image $Y_n$, and that the user guesses how many pure pixels $d_k$ are to be found in each zone. Estimating the pure pixels in each zone and the corresponding abundances can then be formalized as follows:
+In fact we may go further, and assume that the user selects $p$ regions $D_i:=Y_n[:, S_i]$ in the image where $S_i$ collects the indices of the pixel in the $k$th zone from the columnwise $\ell_2$ normalized image $Y_n$, and that the user guesses how many pure pixels $d_k$ are to be found in each zone. Estimating the pure pixels in each zone and the corresponding abundances can then be formalized as follows:
 
 $$ \min_{\mathcal{K}_i\subset [1,\#S_i], B\in\mathbb{R}_+^{n\times r}} \|Y - \left[D_1[:, \mathcal{K}_1], \ldots, D_p[:, \mathcal{K}_p]\right]B^T \|_F^2 \;\; \text{s.t.} \;\; \#\mathcal{K}_i\leq d_i, \; \sum_{i=1}^{p} \#\mathcal{K}_i = r $$
 

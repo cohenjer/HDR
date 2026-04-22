@@ -14,7 +14,7 @@ kernelspec:
 # Nonnegative Regressions: NNLS and NNKL
 
 ```{Note}
-This section is based partly on a doctoral course I taught at ITWIST 2020, and partly on more recent works around the Multiplicative Updates algorithm. It is quite dense and long; however, nonnegative optimization problems are a crucial tool to understand the rest of this manuscript.
+This section is based partly on a doctoral course I taught at the doctoral school of [ITWIST 2020](https://itwist20.ls2n.fr/doctoral-school/), and partly on more recent works around the Multiplicative Updates algorithm. It is quite dense and long; however, nonnegative optimization problems are crucial tools to understand the rest of this manuscript.
 ```
 
 Nonnegative regression problems are central in nonnegative low-rank approximations. Many LRA algorithms are based on [alternating optimization](./AlternatingOptimization.md), and other methods are often heavily inspired by algorithms designed for nonnegative regression. Nonnegative regression is a class of optimization problems defined as
@@ -32,7 +32,7 @@ Nonnegative Least Squares is a classic quadratic optimization problem, maybe one
 
 ### Problem description
 
-NNLS can be formulated as the following optimization problem, with $ f\left(y,W[i,:]x\right)= \|y - Wx\|_2^2$:
+NNLS can be formulated as the following optimization problem, with $ f\left(y,Wx\right)= \|y - Wx\|_2^2$:
 
 $$ \text{Find}\; x^\ast\in\argmin{x\geq 0} \|y - Wx\|_2^2.$$
 
@@ -42,7 +42,7 @@ The cost function of NNLS is coercive and continuous, which ensures the existenc
 
 ### Geometric interpretation
 
-When $W$ has desirable properties, NNLS is equivalent to the orthogonal projection of the input vector $y$ on a pointed cone. Indeed, defining $\cp{W} = \{Wx, x\geq 0\}$, we see that $\cp{W}$ is always a cone. Let $Wx_1,Wx_2\in \cp{W}$, clearly for any nonnegative weights $\lambda_1$ and $\lambda_2$, it holds that  $\lambda_1 Wx_1 + \lambda_2Wx_2 = W (\lambda_1 x_1 + \lambda_2 x_2)$ is in $\cp{W}$. NNLS finds the closed vector $z$ to the input $y$ in $\cp{W}$,
+When $W$ has desirable properties, NNLS is equivalent to the orthogonal projection of the input vector $y$ on a pointed cone. Indeed, defining $\cp{W} = \{Wx, x\geq 0\}$, we see that $\cp{W}$ is always a cone. Let $Wx_1,Wx_2\in \cp{W}$, for any nonnegative weights $\lambda_1$ and $\lambda_2$, it holds that  $\lambda_1 Wx_1 + \lambda_2Wx_2 = W (\lambda_1 x_1 + \lambda_2 x_2)$ is in $\cp{W}$. NNLS finds the closest vector $z$ to the input $y$ in $\cp{W}$,
 
 $$
 \argmin{z=Wx,\; x\geq 0} \|y - z\|_2^2
@@ -62,7 +62,7 @@ A graphical illustration of the projection of data vector $y$ on the cone $\cp{W
 Depending on the matrix $W$, the cone $\cp{W}$ can either be the whole search space $\mathbb{R}^m$, or a pointed cone. The latter is the commonly encountered case in nonnegative LRA problems, in particular when the matrix $W$ is elementwise nonnegative. Below is an illustration in dimensions $m=n=3$.
 
 From this geometric interpretation, we can deduce a few results:
-- If the measurement vector $y$ lies in the cone $\cp{W}$, then an exact reconstruction is possible. We show with the [KKT conditions] that the NNLS solution is exactly the least squares estimate $W^{\dagger}y$.
+- If the measurement vector $y$ lies in the cone $\cp{W}$, then an exact reconstruction is possible. We show with the [KKT conditions](#kkt-conditions-and-the-night-sky-theorem) that the NNLS solution is exactly the least squares estimate $W^{\dagger}y$.
 - If matrix $W$ has more columns than rows, but these columns are in general position, and vector $y$ lies outside $\cp{W}$, then in general the NNLS solution is unique.
 - When vector $y$ lies outside the cone $\cp{W}$, the projection solution $z^\ast = Wx^\ast$ is located on a facet of the cone. In fact, it is the orthogonal projection of $y$ on this facet. Hence, $x^\ast$ may be sparse.
 These results can be formalized using the KKT conditions.
@@ -70,7 +70,7 @@ These results can be formalized using the KKT conditions.
 (subsec:nnls-kkt)=
 ### KKT conditions and the night sky theorem
 
-Deriving the Karush-Kuhn-Tucker conditions (see e.g. {cite:p}`Boyd2004Convex`) for NNLS is not difficult, but very instructive. Denoting $\lambda\geq 0$ the dual variable for the nonnegativity constraint, the Lagrangian writes
+Deriving the Karush-Kuhn-Tucker conditions (see, *e.g.*, {cite:p}`Boyd2004Convex`) for NNLS is not difficult, but very instructive. Denoting $\lambda\geq 0$ the dual variable for the nonnegativity constraint, the Lagrangian writes
 
 $$
 \mathcal{L}(x, \lambda) = \|y - Wx\|_2^2 - \langle \lambda , x\rangle
@@ -91,14 +91,14 @@ Even if multiple solutions to the NNLS exist, the residual $y-Wx^\ast$ must alwa
 $$
 W[:,S^\ast]^T(W[:,S^\ast]x[S^\ast] - y) = -W[:,S^\ast]^Tr^\ast = 0,
 $$
-with $r = y - W[:,S^\ast]x[S^\ast]$ the residual of the projection of $y$ on the cone $\cp{W}$. When $y$ is in the cone $\cp{W}$, the residual $r$ is null, and little can be said about the matrix $W[:,S^\ast]$. However, when $y\notin\cp{W}$, it must hold that $r\neq 0$. Then any column $W[:,i]$ of matrix $W$ where $i\in S^\ast$ is in the hyperplan $r^⟂$ of dimension $m-1$. 
+with $r = y - W[:,S^\ast]x[S^\ast]$ the residual of the projection of $y$ on the cone $\cp{W}$. When $y$ is in the cone $\cp{W}$, the residual $r$ is null, and little can be said about the matrix $W[:,S^\ast]$. However, when $y\notin\cp{W}$, it must hold that $r\neq 0$. Then any column $W[:,i]$ of matrix $W$ where $i\in S^\ast$ is in the hyperplane $r^⟂$ of dimension $m-1$. 
 
 
 ```{margin}
 The spark of a matrix $W$ indicates the smallest number of columns from $W$ that are linearly dependent. If the spark of a matrix is larger than $n$, then any $n$-sparse solution to linear systems involving $W$ is obtained by the well-defined pseudo-inverse of $W$ restricted to the support of that solution.
 ```
 
-If there is no group of $m$ columns of matrix $W$ that are linearly dependent, that is, if $\text{spark}(W)>m-1$, then there can be only a single subset of at most $m-1$ linearly independent columns of matrix $W$ in $r^⟂$. This can happen even if matrix $W$ has more columns than rows; we only require here that no subset of $m$ columns is linearly dependent (and in particular cannot belong to $r^\perp$). With this observation, we can conclude that $S$ has size at most $m-1$, *i.e.* NNLS solutions, under some conditions, are generally sparse. Moreover, the Fermat rule gives $x^\ast[S^\ast] = W[:, S^\ast]^\dagger y$: knowing the support of the solution is enough to find the solution itself (up to solving a linear system).
+If there is no group of $m$ columns of matrix $W$ that are linearly dependent, that is, if $\text{spark}(W)>m-1$, then there can be only a single subset of at most $m-1$ linearly independent columns of matrix $W$ in $r^⟂$. This can happen even if matrix $W$ has more columns than rows; we only require here that no subset of $m$ columns is linearly dependent (and in particular cannot belong to $r^\perp$). With this observation, we can conclude that $S$ has size at most $m-1$, *i.e.*, NNLS solutions, under some conditions, are generally sparse. Moreover, the Fermat rule gives $x^\ast[S^\ast] = W[:, S^\ast]^\dagger y$: knowing the support of the solution is enough to find the solution itself (up to solving a linear system).
 
 
 ```{prf:theorem} Night sky theorem [Byrne 1981]
@@ -106,7 +106,7 @@ If there is no group of $m$ columns of matrix $W$ that are linearly dependent, t
 
 Suppose $y\notin \cp{W}$ and $\text{spark}(W)>m$. Then the NNLS problem admits a unique solution which has at most $m-1$ nonzeros.
 ```
-The nice name for this result, which emphasises the sparsity of NNLS solutions, was suggested to me by Cédric Herzet and Clément Elvira. While I am unsure of the name's true origin, the result itself is proved in {cite:p}`byrne1981AppliedIterativeMethods`. The night sky theorem is useful to derive the [active set algorithm](#active-set) for NNLS.
+The nice name for this result, which emphasizes the sparsity of NNLS solutions, was suggested to me by Cédric Herzet and Clément Elvira. While I am unsure of the name's true origin, the result itself is proved in {cite:p}`byrne1981AppliedIterativeMethods`. The night sky theorem is useful to derive the [active set algorithm](#active-set) for NNLS.
 
 (subsec:nnls-kl)=
 ## Nonnegative Kullback-Leibler regression (NNKL)
@@ -115,10 +115,16 @@ There is no one-to-one correspondence between the maximum likelihood estimator a
 ```
 
 Sometimes, using the Euclidean norm to measure discrepancies between the measurement vector $y$ and the model $Wx$ is undesirable. There are at least two reasons why the Euclidean norm might be avoided:
-- Euclidean norm is sensitive to outliers. More generally, it ``favours'' large errors over small errors. In applications such as [music information retrieval](../part2/Applications_of_rLRA/AMT.md), the data exhibit wide dynamic ranges, and small measurement values are as important as large ones.
-- From a statistical estimation point of view, the solution of NNLS is the maximum likelihood estimator of variable $x$ when the noise model is Gaussian. For other noise models such as Poisson, $y \sim \mathcal{P}\left(Wx\right)$, the maximum likelihood estimator is obtained by the minimization of another cost function.
+- Euclidean norm is sensitive to outliers. More generally, it penalizes large errors more than small errors. In applications such as [music information retrieval](../part2/Applications_of_rLRA/AMT.md), the data exhibit wide dynamic ranges, and small measurement values are as important as large ones.
+- From a statistical estimation point of view, the solution of NNLS is the maximum likelihood estimator of variable $x$ when the noise model is Gaussian. For other noise models such as Poisson, 
+  
+  $$
+  y \sim \mathcal{P}\left(Wx\right),
+  $$
+  
+  the maximum likelihood estimator is obtained by the minimization of another cost function.
 
-These two observations are connected: under the Poisson distribution, the larger the expected observation $Wx$, the larger the noise, but the variance also grows with $Wx$. This means that small data values are more likely to be accurate than large values (in absolute value, not in relative error). 
+These two observations are connected: under the Poisson distribution, the larger the expected observation $Wx,$ the larger the noise, but the variance also grows with $Wx$. This means that small data values are more likely to be accurate than large values (in absolute value, not in relative error). 
 
 (subsec:Dkldef)=
 ### NNKL problem definition
@@ -137,7 +143,7 @@ $$
 where we have set $ f\left(y,W[i,:]x\right) = \sum_i \KL{y[i],W[i,:]x}$.
 
 ```{code-cell}ipython3
-:tags: [hide-input]
+:tags: [hide-input, hide-output]
 import numpy as np
 from numpy import size
 import matplotlib.pyplot as plt
@@ -186,8 +192,6 @@ show(column(slider, plot))
 ```
 
 ```{code-cell}ipython3
-#output_notebook()
-
 # Data grid
 xmax=10
 ymax=10
@@ -252,20 +256,20 @@ Compared to NNLS, which is a quadratic program, NNKL is, in general, significant
 #### Smoothness issue
 
 ```{margin}
-The true definition of Lipschitz-smoothness and the descent lemma do not require the function $f$ to be twice-differentiable, see e.g. {cite:p}`beck2017first`.
+The true definition of Lipschitz-smoothness and the descent lemma do not require the function $f$ to be twice-differentiable, see, *e.g.*, {cite:p}`beck2017first`.
 ```
 
-Maybe the most commented-on difficulty for NNKL is the lack of Lipschitz-smoothness of the KL-divergence at zero. Lipschitz-smoothness is a crucial property in numerical optimization, used to derive descent conditions for first-order algorithms. In a nutshell, a function $f$ which is twice differentiable over a convex set is l-Lipschitz-smooth if its Hessian can be bounded by $lI$. This implies, using the second-order Taylor expansion and majorizing the second-order terms and remainder {cite:p}`beck2017first`, that for any vector $x$ and local perturbation $z$ the following descent lemma holds: 
+Maybe the most commented-on difficulty for NNKL is the lack of Lipschitz-smoothness of the KL-divergence at zero. Lipschitz-smoothness is a crucial property in numerical optimization, used to derive descent conditions for first-order algorithms. In a nutshell, a function $f$ which is twice differentiable over a convex set is $l$-Lipschitz-smooth if its Hessian can be bounded by $lI$. This implies, using the second-order Taylor expansion and majorizing the second-order terms and remainder {cite:p}`beck2017first`, that for any vector $x$ and local perturbation $z$ the following descent lemma holds: 
 
 $$
 f(x + z) \leq f(x) + \langle \nabla f(x), z \rangle + \frac{l}{2} \|z\|_2^2.
 $$
 
 ```{margin}
-Lipschitz-smoothness allows us to majorize the cost function $f$ by an isotropic quadratic, while strong convexity lower bounds $f$ with another isotropic quadratic. Both arguments together imply that $f$ essentially behaves like an isotropic quadratic, allowing global linear convergence of gradient descent for stepsizes smaller than the inverse of the Lipschitz constant $l$.
+Lipschitz-smoothness allows us to majorize the cost function $f$ by an isotropic quadratic, while strong convexity lower bounds $f$ with another isotropic quadratic. Both arguments together imply that $f$ essentially behaves like an isotropic quadratic, allowing global linear convergence of the gradient descent algorithm for stepsizes smaller than the inverse of the Lipschitz constant $l$.
 ```
 
-Lipschitz-smoothness, therefore, ensures that **globally**, the slope of the function $f$ does not change too fast. Combined with strong convexity arguments, Lipschitz continuity is the key ingredient for proving the convergence of gradient descent with fixed stepsize. However, the second-order derivative of KL-divergence is $ \frac{\partial^2\KL{y,z}}{\partial z^2} = \frac{y}{z^2} $, which is unbounded near zero. Therefore, solving NNKL with first-order algorithms is challenging because no stepsize selection rule guarantees convergence. In practice, for sparse measurement vectors $y$, the lack of Lipschitz-smoothness makes many out-of-the-box solvers inefficient for NNKL. {numref}`fig:lipschitz` provides additional intuition.
+Lipschitz-smoothness, therefore, ensures that **globally**, the slope of the function $f$ does not change too fast. Combined with strong convexity arguments, Lipschitz continuity is the key ingredient for proving the convergence of the gradient descent algorithm with fixed stepsize. However, the second-order derivative of KL-divergence is $ \frac{\partial^2\KL{y,z}}{\partial z^2} = \frac{y}{z^2} $, which is unbounded near zero. Therefore, solving NNKL with first-order algorithms is challenging because no stepsize selection rule guarantees convergence. In practice, for sparse measurement vectors $y$, the lack of Lipschitz-smoothness makes many out-of-the-box solvers inefficient for NNKL. {numref}`fig:lipschitz` provides additional intuition.
 
 
 ```{figure} ../Figures/Lipschitz.png
@@ -349,7 +353,7 @@ There is a vast literature on optimization algorithms for solving NNLS, NNKL, or
 
 ## Active-set (NNLS only)
 
-A workhorse algorithm to solve NNLS is the Active-Set (AS) algorithm proposed by Lawson and Hanson in 1974 {cite:p}`lawsonSolvingLeastSquares1974,Bro1997fast`. It is based on the observation that, knowing the support of the solution $x^\ast$, the solution itself can be computed using the unconstrained least squares estimate restricted to this support. AS therefore iteratively searches for the support of the solution. It functions similarly to the Orthogonal Matching Pursuit algorithm {cite:p}`Pati1993Orthogonal`, where a candidate index is first added to the current estimation of the solution support, and the unconstrained least squares estimate restricted to the current support estimate is then computed. However, unlike greedy sparse approximation algorithms, AS includes a third step that thins the support. Below is a pseudo-code for AS and a simple example. We then describe each step in more detail. We will see that any step taken by the AS algorithm has to decrease the cost function.
+A workhorse algorithm to solve NNLS is the Active-Set (AS) algorithm proposed by Lawson and Hanson in 1974 {cite:p}`lawsonSolvingLeastSquares1974,Bro1997fast`. It is based on the observation that, knowing the support of the solution $x^\ast$, the solution itself can be computed using the unconstrained least squares estimate restricted to this support. AS therefore iteratively searches for the support of the solution. It works similarly to the Orthogonal Matching Pursuit algorithm {cite:p}`Pati1993Orthogonal`, where a candidate index is first added to the current estimation of the solution support, and the unconstrained least squares estimate restricted to the current support estimate is then computed. However, unlike greedy sparse approximation algorithms, AS includes a third step that thins the support. Below is a pseudo-code for AS and a simple example. We then describe each step in more detail. We will see that any step taken by the AS algorithm has to decrease the cost function.
 
 ```{code-cell}ipython3
 :tags: [hide-input]
@@ -443,7 +447,7 @@ print(f"Optimality criterion on true support: {np.linalg.norm(W[:,support].T@(y-
 ```
 
 ### Initialization of AS
-Contrary to what is sometimes assumed, e.g., on the [Wikipedia page on NNLS](https://en.wikipedia.org/wiki/Non-negative_least_squares), the AS algorithm can be initialized with any nonnegative vector $x$. If the initial guess is dense, the first step is skipped on the first iteration.
+Contrary to what is sometimes assumed, *e.g.*, on the [Wikipedia page on NNLS](https://en.wikipedia.org/wiki/Non-negative_least_squares), the AS algorithm can be initialized with any nonnegative vector $x$. If the initial guess is dense, the first step is skipped on the first iteration.
 
 ```{figure} ../Figures/active_set.png
 ---
@@ -506,7 +510,7 @@ $$ (eq:HALS_trick)
 Indeed, this loss function is separable into $n$ scalar problems
 
 $$
-\min_{x\geq 0} \|Z[:,i]\|_2^2 - w^TZ[:,i] x + \|w\|_2^2 x^2
+\min_{x\geq 0} \|Z[:,i]\|_2^2 - 2w^TZ[:,i] x + \|w\|_2^2 x^2
 $$
 
 for any column index $i\leq n$. The minimum of a scalar quadratic function under nonnegativity constraints is either the global minimum of the quadratic $h[i] = \frac{w^TZ[:,i]}{\|w\|_2^2}$, or, if the global minimiser is negative, zero, see {numref}`fig:nnls1d`.
@@ -621,7 +625,7 @@ $$
 \nabla_x f\left(y,Wx\right) = 
 \begin{cases}
    2 W^TWx -  2W^Ty & \text{ for NNLS }  \\
-   W^T\frac{y}{Wx} -  W^T1_n & \text{ for NNKL }  .
+   W^T1_n - W^T\frac{y}{Wx}  & \text{ for NNKL }  .
 \end{cases}
 $$
 
@@ -693,7 +697,7 @@ For the Euclidean loss and the KL-divergence, respectively,
 
 $$
  \frac{\partial}{\partial x_2} f\left(y[i], \frac{x[j]}{x^{(k)}[j]}\hat{y}[i]\right) =   \frac{x[j]}{x^{(k)}[j]}\hat{y}[i] - y[i], \\
- \frac{\partial}{\partial x_2} f\left(y[i], \frac{x[j]}{x^{(k)}[j]}\hat{y}[i]\right) = \frac{y[i]x^{(k)}[j]}{\hat{y}[i]x[j]} - 1,
+ \frac{\partial}{\partial x_2} f\left(y[i], \frac{x[j]}{x^{(k)}[j]}\hat{y}[i]\right) = 1 - \frac{y[i]x^{(k)}[j]}{\hat{y}[i]x[j]},
 $$ 
 
 both of which, when plugged into the stationary point equation {eq}`eq:stationary-point`, boil down to the MU updates {eq}`eq:MU-NNLS` and {eq}`eq:MU-NNKL`.
@@ -741,7 +745,7 @@ $$
 where the summation over $i$ is due to the independence of the random variables in $Y$. For the Poisson distribution, one may observe that the log-likelihood is the KL divergence up to constant terms with respect to $x$:
 
 $$
-\log p(Y[i] = y[i] | x[i]) =  y[i]\log\sum_{j\leq n}W[i,j]x[j] - \sum_{j\leq n}W[i,j]x[j] - \log y[i]!.
+\log p(Y[i] = y[i] | x[i]) =  y[i]\log\sum_{j\leq n}W[i,j]x[j] - \sum_{j\leq n}W[i,j]x[j] - \log(y[i]!)~.
 $$
 
 Therefore, computing the ML estimator amounts to solving the NNKL problem.
@@ -782,7 +786,7 @@ Bauschke, Bolte, and Teboulle have proposed to solve NNKL using (proximal) mirro
 
 $ \KL{y,Wx} \leq \KL{y,Wx^{(k)}} + \langle \nabla_x\KL{y,Wx^{(k)}}, x - x^{(k)} \rangle + \frac{1}{2\|y\|_1}\mathcal{D}_{h}(x,x^{(k)}),$
 
-that yields, after simpler derivations found in {cite:p}`bauschkeDescentLemmaLipschitz2017`
+that yields, after simple derivations found in {cite:p}`bauschkeDescentLemmaLipschitz2017`
 
 $ \KL{y,Wx} \leq \KL{y,Wx^{(k)}} - \langle W^T\frac{y}{Wx^{(k)}}, x - x^{(k)} \rangle + \frac{1}{2\|y\|_1} \sum_{j\leq n} \frac{x[j] - x^{(k)}[j]}{x^{(k)}[j]} - \log\frac{x[j]-x^{(k)}[j]}{x^{(k)}[j]}.$
 
@@ -837,7 +841,7 @@ The following Lemma allows us to conclude, its proof is simple {cite:p}`vanooste
 
 ```{prf:lemma} Distribution of Poisson variables conditionned by their sum
 :label: lemma_sum_poisson
-Let $Z_1, Z_2$ be two random variables distributed respectively as $\mathcal{P}(\lambda_1)$ and $\mathcal{P}(\lambda_2)$. Then the conditionned random variable $Z_1 | Z_1+Z_2, \lambda_1,\lambda_2$ follows a Binomial distribution $\text{Bin}(Z_1+Z_2,\frac{\lambda_1}{\lambda_1+\lambda_2})$.
+Let $Z_1, Z_2$ be two random variables distributed respectively as $\mathcal{P}(\lambda_1)$ and $\mathcal{P}(\lambda_2)$. Then the conditionned random variable $Z_1 | Z_1+Z_2$ follows a Binomial distribution $\text{Bin}(Z_1+Z_2,\frac{\lambda_1}{\lambda_1+\lambda_2})$.
 ```
 
 Applying {prf:ref}`lemma_sum_poisson` with $Z_1 = Z[i,j]$ and $Z_2 = y[i] - Z[i,j]$ yields
@@ -848,7 +852,7 @@ $$
 
 Notice that we recover the weights of the MM formulation of MU, $y[i]\lambda_{i,j} = \mathbb{E}_{Z[i,:] | y[i], x^{k}}\left[z[i,j]\right]$, which provides a nice interpretation of the ad-hoc choice for these parameters in the MM framework for NNKL.
 
-We now observe that the majorant $xi$ is equal up to constant terms to the majorant obtained with the MM framework, and the gradients of the two convex separable majorants match:
+We now observe that the majorant $\xi$ is equal up to constant terms to the majorant obtained with the MM framework, and the gradients of the two convex separable majorants match:
 
 $$
 \xi(x, x^{(k)}) &= \sum_{i\leq m, j\leq n} W[i,j]x[j] - y[i]\frac{W[i,j]x^{(k)}[j]}{\hat{y}[i]}. \log x[j] + \text{cst(x)}, \\
@@ -928,7 +932,7 @@ $$
  w^\ast[i]\sum_{j=1}^{n}h^\ast[j] = \sum_{j=1}^{n}Y[i,j]\;\; \forall i\leq m.
 $$
 
-We immediately deduce that solutions $h^\ast$ and $w^\ast$ are proportional to the marginals of the observation matrix $Y$. If we further assume that both vectors have the same scales, we may write
+We immediately deduce that solutions $h^\ast$ and $w^\ast$ are proportional to the marginals of the observation matrix $Y$. If we further assume that both vectors have the same scales, the closed-form solution writes
 
 $$
 h^\ast = \frac{\sum_{i=1}^{m}Y[i,:]}{\sqrt{\sum_{i,j}Y[i,j]}}, \\

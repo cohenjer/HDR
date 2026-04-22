@@ -12,13 +12,13 @@ kernelspec:
   name: python3
 ---
 
-# Low-rank models: survival kit
+# Low-rank models: Survival kit
 
 Low-rank models are important tools in both unsupervised and supervised machine learning, signal processing, and more generally in applied mathematics. They are also the main mathematical object studied in this manuscript. This section briefly introduces matrix and tensor, low-rank models. A solid background in linear algebra is required. Some of the material presented in the following sections has been covered in more detail in the book chapter I wrote with Pierre Comon and Rasmus Bro {cite:p}`cohenTensorDecompositionsPrinciples2023`. The book of Golub and Van Loan provides a complete description of matrix low-rank models {cite:p}`Golub1989Matrix`. The recent book of Grey Ballard and Tammy Kolda provides a deeper introduction to tensor decompositions, with a focus on computational aspects {cite:p}`ballardTensorDecompositionsData2025`.
 
 ## Matrix low-rank factorizations and approximations
 
-Let $M$ a matrix in $\mathbb{R}^{n_1\times n_2}$ with real-valued entries. There are at least two important ways in which a low-rank factorization of matrix $M$ can be understood.
+There are at least two important ways in which a low-rank factorization of an $n_1$ by $n_2$ real-valued matrix $M$ can be understood.
 
 **As a linear dimensionality reduction technique**
 
@@ -56,7 +56,7 @@ $$ \mathcal{M}_1(n_1,n_2) = \{ ab^T ~|~ a\in\mathbb{R}^{n_1},~b\in\mathbb{R}^{n_
 
 The rank of matrix $M$ is the smallest number of terms $r$ such that the decomposition into rank-one terms exists. The two definitions of the rank above are equivalent. If $M=UV^T$, then, equivalently, $M[i,j] = \sum_{q=1}^{r} U[i,q]V[j,q]$. 
 
-[figure rank-one sum type tensor, avec les matrices rank one pleines et leur representation]
+%[figure rank-one sum type tensor, avec les matrices rank one pleines et leur representation]
 
 ```{margin}
 An atomic decomposition in this context can be understood simply as combining simple elements, the atoms, from a given set, the dictionary.
@@ -88,7 +88,7 @@ Note that the exact low-rank factorization problem may also be written with a si
 
 $$ \text{Find } U\in\mathbb{R}^{n_1\times r},\;V\in\mathbb{R}^{n_2\times r} \text{ such that } M = UV^T. $$
 
-The Frobenius norm is the most widely used distance metric for LRA, as it yields a closed-form solution. Indeed, let $M = ASB^T$ be the SVD of the matrix $ M$. Then the following result can be shown {cite:p}`eckartApproximationOneMatrix1936`.
+The Frobenius norm is the most widely used distance metric for LRA, as it yields a closed-form solution. Indeed, let $M = ASB^T$ be the SVD of the matrix $ M$. Then the following result {cite:p}`eckartApproximationOneMatrix1936` shows that $U=A$ and $V^T = SB^T$ is optimal in the least-squares sense.
 
 ```{margin}
 Uniqueness is meant here in the sense that matrix $N$ is the only best rank-$r$ approximation of the data. This is compatible with the lack of identifiability of factor matrices $U$ and $V$.
@@ -108,12 +108,18 @@ The Eckart-Young theorem is a remarkable and incredibly useful result in linear 
 After many years of research in signal processing and machine learning, I have observed an intriguing yet recurring phenomenon: data matrices encountered in various applications are often approximately low-rank. While there is probably no general explanation for this phenomenon, here are a few (non-orthogonal) reasons why this can happen.
 
 1. "Nice" latent variable models are of low-rank {cite:p}`udellWhyAreBig2019`, meaning that for a large catalogue of generative models, the resulting data matrix can be well approximated (in entry-wise error) by a low-rank matrix.
-2. The entries of a rank-one matrix are samples of a separable map in two variables, $f(x,y) = f_1(x)f_2(y)$. Separable maps are ubiquitous in physics since they allow for simple descriptions of multivariate functions.
+2. The entries of a rank-one matrix are samples of a separable map in two variables, 
+   
+   $$
+   f(x,y) = f_1(x)f_2(y).
+   $$
+   
+   Separable maps are ubiquitous in physics since they allow for simple descriptions of multivariate functions.
 3. Low-rank models $M=UV^T$ can be seen as linear source separation models. The rank of the LRA is then the number of underlying sources. Matrix $U$ contains columnwise the templates for the sources, and matrix $V$ contains the mixing coefficients for these sources in the data. Nonlinearities, measurement noise, and missing data corrupt the low-rank data matrix. Many physical processes can be described this way, see examples in audio and hyperspectral image processing in [](../part2/Applications_of_rLRA/intro.md).
 
 
-This second explanation also implies that in many applications, the factor matrices bear physical meaning. Consequently, LRA for source separation should return good approximations of the underlying true factor matrices $U$ and $V$. There are two important questions to answer regarding the estimation of the factor matrices:
-1. Is the model essentially identifiable, *i.e.* does equality of two low-rank models $M= U_1V_1^T = U_2V_2^T$ implies equality of the factors up to trivial ambiguities ?
+The second explanation also implies that in many applications, the factor matrices bear physical meaning. Consequently, LRA for source separation should return good approximations of the underlying true factor matrices $U$ and $V$. There are two important questions to answer regarding the estimation of the factor matrices:
+1. Is the model essentially identifiable, *i.e.*, does equality of two low-rank models $M= U_1V_1^T = U_2V_2^T$ implies equality of the factors up to trivial ambiguities ?
 2. Is the estimation of factor matrices robust in the presence of noise?
 
 ```{note}
@@ -121,12 +127,13 @@ Trivial ambiguities in LRA are the scaling ambiguity, $ab^T=\frac{1}{\lambda}a\l
 Essential uniqueness, meaning uniqueness up to permutations and scalings, is therefore considered.
 ```
 
-The answer to the second question is well understood in the context of matrix low-rank approximations in the Frobenius norm: the robustness of LRA is directly related to the conditioning number of the data matrix. 
 
 The answer to the first question is negative: if $U_1V_1^T = U_2V_2^T$ with the same rank for both models, then one may only assume that the two bases describe the same subspace, and are therefore related by an invertible transformation $Q\in\mathbb{R}^{r\times r}$ such that $U_1 = U_2Q$. This poses a fundamental problem for applications of LRA in source separation, as essential identifiability (or at least guarantees on the set of LRA solutions) is required to interpret the output of LRA algorithms as approximations to the ground-truth factor matrices. The rest of this section is therefore devoted to introducing further matrix and tensor decomposition models that enjoy identifiability conditions.
 
+The answer to the second question is well understood in the context of matrix low-rank approximations in the Frobenius norm: the robustness of LRA is directly related to the conditioning number of the data matrix. 
+
 ```{note}
-The algorithmic development for LRA is only briefly described in this section. Two other chapters in the manuscript are dedicated to numerical optimization: [nonnegative regression problems](./nnls.md) and [multiblock, alternating optimization problems](./AlternatingOptimization.md).
+The algorithmic development for LRA is only briefly described in this section. Two other sections in the manuscript are dedicated to numerical optimization: [nonnegative regression problems](./nnls.md) and [multiblock, alternating optimization problems](./AlternatingOptimization.md).
 ```
 
 ### Nonnegative Matrix Factorization
@@ -173,7 +180,7 @@ name: fig:nmfr3d3
 A graphical illustration of the projection of one possible NMF of data matrix $M$. The cone $\cp{W}$ collecting all the positive combinations of columns of matrix $W$, and must contain all the columns of matrix $M$.
 ```
 
-With this interpretation, it is simple to deduce the non-uniqueness, in general, of NMF. Consider the dimension two and rank-two case, $n_1=r=2$, in {numref}`fig:nmfr2`. As soon as $M[:,0]$ or $M[:,1]$ is elementwise positive, the purple areas are non-trivial and there are infinitely many solutions. The only way NMF can be unique when $n_1$ equals the rank is if $W=I$ is the only solution (up to scaling and permutation and its columns), since $M = IM$ is always a valid NMF in that case.
+With this interpretation, it is simple to deduce the non-uniqueness, in general, of NMF. Consider the dimension two and rank-two case, $n_1=r=2$, in {numref}`fig:nmfr2`. As soon as $M[:,1]$ or $M[:,2]$ is elementwise positive, the purple areas are non-trivial and there are infinitely many solutions. The only way NMF can be unique when $n_1$ equals the rank is if $W=I$ is the only solution (up to scaling and permutation and its columns), since $M = IM$ is always a valid NMF in that case.
 
 ```{figure} ../Figures/Nmfr2.png
 ---
@@ -206,7 +213,7 @@ This geometric view allows for a finer description of identifiability in low-dim
 %Other interpretations of NMF include the nested polytopes problem, ..., see the book of Gillis for more details {cite:p}`gillisNonnegativeMatrixFactorization2020`.
 
 ```{admonition} A key concept for NMF identifiability: sufficiently scattered
-One of the many interesting results regarding NMF identifiability states that NMF is identifiable when both columns of $H^T$ and $W^T$ are sufficiently scattered inside the simplex. The book by Gillis describes this technical condition in great detail. Intuitively, the sufficiently scattered condition for matrix $H^T$ states that the columns of the data matrix $X$, when looked from the inside of the cone spanned by matrix $W$, touch the border of that cone and are sufficiently close to the extreme rays. A different interpretation is that the volume of the convex hull of columns of $H^T$ is large enough to contain the largest sphere contained in the simplex (in fact, a little more is required). This explains the intuition behind sparse NMF and minimum- and maximum-volume NMF, discussed shortly below.
+One of the many interesting results regarding NMF identifiability states that NMF is identifiable when both columns of $H^T$ and $W^T$ are sufficiently scattered inside the simplex. The book written by Gillis {cite:p}`gillisNonnegativeMatrixFactorization2020` describes this technical condition in great detail. Intuitively, the sufficiently scattered condition for matrix $H^T$ states that the columns of the data matrix $X$, when looked from the inside of the cone spanned by matrix $W$, touch the border of that cone and are sufficiently close to the extreme rays. A different interpretation is that the volume of the convex hull of columns of $H^T$ is large enough to contain the largest sphere contained in the simplex (in fact, a little more is required). This explains the intuition behind sparse NMF and minimum- and maximum-volume NMF, discussed shortly below.
 ```
 
 #### Regularized NMF
@@ -327,7 +334,7 @@ Note that in the [rank-two case](#geometric-interpretation-and-identifiability-o
 
 ## Tensor decompositions
 
-Tensors are often loosely defined as multiway arrays, that is, extensions of matrices with more than two dimensions. In reality, there are several definitions of tensors in the world of applied mathematics that coincide.
+Tensors are often loosely defined as multiway arrays, that is, extensions of matrices with more than two dimensions. In reality, there are several definitions of tensors in the world of applied mathematics that coincide:
 - Tensors can be seen as multiway arrays.
 - Tensors can be seen as representations of multilinear forms (like matrices represent bilinear forms).
 - Tensors can be seen as representations of multilinear maps (like matrices encode linear operators). The notion of covariant/contravariant spaces is defined in this context.
@@ -352,7 +359,7 @@ where $u$ is a multilinear map acting on the couple $(x,y)$. The core idea of te
 $$ u(x,y) = w_u(\otimes(x,y)) = w_u(x\otimes y).$$
 The tensor product is, therefore, a canonical multilinear map that can be used to make all multilinear maps linear. An important mathematical result, proved for instance in {cite:p}`Schwartz1975` and called the universality theorem, is that this canonical multilinear map $\otimes$ always exists and that for any multilinear map $u$ and fixed tensor product $\otimes$, there is a **unique** linear map $w_u$ such that $u(x,y) = w_u(x\otimes y)$. The set $E\otimes F:=\{x\otimes y, (x,y)\in E\times F\}$ is a vector space, coined the tensor product space. Its dimension is $\text{dim}(E)\text{dim}(F)$ and it is generated by basis elements $e_i\otimes f_j$ for two bases $\{e_i\}_i$ and $\{f_j\}_j$ of respectively vector spaces E and F.
 
-The tensor product itself is not unique. However, it can be shown that any two tensor products are related through an isomorphism. This fact is very well known to all data scientists. Take the outer product $xy^T$, and the Kronecker product $x\boxtimes y$. It turns out both are tensor products, related through a trivial isomorphism: row-first vectorization.
+The tensor product itself is not unique. However, it can be shown that any two tensor products are related through an isomorphism. This fact is very well known to all data scientists. Take the outer product $xy^T$, and the Kronecker product $x\otimes_K y$. It turns out both are tensor products, related through a trivial isomorphism: row-first vectorization.
 
 For most practical use cases, **one may identify vector spaces $E$ and $F$ with $\mathbb{R}^{n_1}$ and $\R{n_2}$, and the tensor product with the outer product** 
 
@@ -363,7 +370,7 @@ $$\langle x, y \rangle = \text{Tr}(xy^T).$$
 One interesting piece of multilinear algebra theory, however, is that, in finite dimensions, the vector space of linear maps acting on a tensor space is also a tensor space, of the form $\mathcal{L}(E) \otimes \mathcal{L}(F)$ {cite:p}`Hackbusch2012Tensor`. The natural tensor product in linear operator spaces for matrix representation is the Kronecker product, and this can be used to generalize tensor decompositions to linear operators quite naturally, as done in the PhD thesis of Cassio Fraga Dantas {cite:p}`dantasAcceleratingSparseInverse2019`. When considering linear operators acting on tensors, for instance $A$ acting on $x$ and $B$ acting on $y$, we simply write them in the form $(A\otimes B)(x\otimes y):= Ax\otimes By$.
 
 ```{important}
-This discussion holds not only for two vector spaces $E$ and $F$, but for any number of vector spaces $E_i$, with $i\leq d$. A tensor is any element of the tensor space $E_1\otimes \ldots \otimes E_d$; we call the integer $d$ the order of the tensor, or the number of modes of the tensor. Mode $i$, or dimension $i$, denotes the particular vector space $E_i$.
+This discussion holds not only for two vector spaces $E$ and $F$, but for any number of vector spaces $E_i$, with $i\leq d$. A tensor is any element of the tensor space $E_1\otimes \cdots \otimes E_d$; we call the integer $d$ the order of the tensor, or the number of modes of the tensor. Mode $i$, or dimension $i$, denotes the particular vector space $E_i$.
 ```
 
 #### Rank-one tensors are generators of the full tensor space
@@ -425,7 +432,7 @@ The key property of the CP decomposition is that there is typically a unique set
 
 
 ```{margin}
-The proof, as reported by Harshman from Jenrich, is wrong as it assumes the uniqueness of the decomposition to prove the uniqueness of the decomposition itself. Jenrich's algorithm, however, provides a constructive proof of the uniqueness of CP decomposition when the factor matrices are of full rank. Jenrich was a collaborator of Harshman, who credited him with the Jenrich algorithm and the proof of uniqueness, but Jenrich did not co-sign Harshman's seminal work.
+The "proof", as reported by Harshman from Jenrich, is wrong as it assumes the uniqueness of the decomposition to prove the uniqueness of the decomposition itself. Jenrich's algorithm, however, provides a constructive proof of the uniqueness of CP decomposition when the factor matrices are of full rank. Jenrich was a collaborator of Harshman, who credited him with the Jenrich algorithm and the proof of uniqueness, but Jenrich did not co-sign Harshman's seminal work.
 ```
 
 ```{admonition} Why is CP decomposition identifiable while matrix LRA is not
@@ -439,8 +446,8 @@ In other words, the CP decomposition is the joint diagonalization of each slice 
 
 To explain further why joint diagonalization fixes rotation ambiguities, let us assume that there are only two slices in the tensor, $n_3=2$, and assume these two slices admit an exact CP decomposition with full rank matrices $A$ and $B$ and nonzero entries in one of the two columns of matrix $C$. It is possible to estimate $A$ and $B$ directly from $T$ using Jenrich's algorithm. Observe that 
 
-$$ X[:,:,1]X[:,:,2]^{\dagger} = A \text{Diag}(\frac{C[:,1]}{C[:,2]}) A^{\dagger}, $$
-which is exactly the nonzero part of the eigenvalue decomposition of the rank-deficient symmetric matrix $X[:,:,1]X[:,:,2]^{\dagger}$. It is unique up to scaling and permutations, provided the singular values are distinct. Similarly, matrix $B$ can be obtained from the eigenvalue decomposition of $X[:,:,1]^{\dagger}X[:,:,2]$. The estimation of matrix $C$ can be performed by solving an overdetermined linear system, with a unique solution since matrices $A$ and $B$ are full column rank.
+$$ T[:,:,1]T[:,:,2]^{\dagger} = A \text{Diag}(\frac{C[:,1]}{C[:,2]}) A^{\dagger}, $$
+which is exactly the nonzero part of the eigenvalue decomposition of the rank-deficient symmetric matrix $T[:,:,1]T[:,:,2]^{\dagger}$. It is unique up to scaling and permutations, provided the singular values are distinct. Similarly, matrix $B$ can be obtained from the eigenvalue decomposition of $T[:,:,1]^{\dagger}T[:,:,2]$. The estimation of matrix $C$ can be performed by solving an overdetermined linear system, with a unique solution since matrices $A$ and $B$ are full column rank.
 
 Jenrinch's algorithm shows that in many practical applications, the CP decomposition is essentially unique, even with two slices; while a low-rank factorization of each slice has infinitely many solutions, the intersection of these solution sets is singular, up to permutations and scaling ambiguities.
 ```
@@ -471,19 +478,24 @@ $$ \argmin{A\in\R{n_1},\; B\in\R{n_2},\; C\in\R{n_3}} \| T - \llbracket A,B,C \r
 Like most LRA-related optimization problems, this is a non-convex, multiblock optimization problem that can be addressed in practice by [alternating optimization](./AlternatingOptimization.md). The workhorse algorithm for fitting approximate CP decomposition is the Alternating Least Squares (ALS) algorithm. It updates each matrix $A$, $B$, and $C$ in sequence, which, in general, can be done in closed form since the cost is quadratic in each parameter matrix. For instance, the update for the parameter matrix $A$ is obtained by solving the linear system
 
 ```{margin}
-Many cumbersome notations, such as unfoldings and the Khatri-Rao product, are used to describe optimization algorithms. I will make as little use as possible of these notations and therefore avoid defining them in this chapter. It is not important to understand them to follow the overall discussion; informal definitions are provided in the [notations](/Howtouse/notations.md) section. In fact, in Tensorly, these operations are not actually performed, and tensor contractions are preferred for performance reasons.
+Many cumbersome notations, such as unfoldings and the Khatri-Rao product, are used to describe optimization algorithms. I will make as little use as possible of these notations and therefore avoid defining them in this section. It is not important to understand them to follow the overall discussion; informal definitions are provided in the [notation](/Howtouse/notation.md) section. In fact, in Tensorly, these operations are not actually performed, and tensor contractions are preferred for performance reasons.
 ```
 
 $$  T_{[1]}(B\odot C) = A (B^TB \ast C^TC), $$
-where $\odot$ is the Khatri-Rao product (columwise Kronecker products stacked horizontally), and $\ast$ is the elementwise product. Matrix $T_{[1]}$ is an unfolding of the tensor, namely, stacked slices of the tensor along the first mode. This formula can be obtained by computing the gradient of the cost with respect to the matrix $A$ and then setting it to zero. ALS is a simple algorithm to describe at a high level, but, as is often the case in tensor computations, its efficient implementation requires advanced tools from numerical linear algebra and high-performance computing. There exist **many** other algorithms to compute approximate CP decomposition based on gradient descent (alternating or not), preconditioning, acceleration, algebraic methods, or second-order optimization {cite:p}`Lathauwer2004computation, rajihEnhancedLineSearch2008, Acar2011ScalableA, xu2013block` (this list could be significantly longer; surveying this extensive literature is beyond the scope of this chapter).
+where $\odot$ is the Khatri-Rao product (columwise Kronecker products stacked horizontally), and $\ast$ is the elementwise product. Matrix $T_{[1]}$ is an unfolding of the tensor, namely, stacked slices of the tensor along the first mode. This formula can be obtained by computing the gradient of the cost with respect to the matrix $A$ and then setting it to zero. ALS is a simple algorithm to describe at a high level, but, as is often the case in tensor computations, its efficient implementation requires advanced tools from numerical linear algebra and high-performance computing. There exist **many** other algorithms to compute approximate CP decomposition based on gradient descent (alternating or not), preconditioning, acceleration, algebraic methods, or second-order optimization {cite:p}`Lathauwer2004computation, rajihEnhancedLineSearch2008, Acar2011ScalableA, xu2013block` (this list could be significantly longer; surveying this extensive literature is beyond the scope here).
 
-```{warning}
+```{admonition} Ill-posed approximation and nonnegative CP decomposition
 
 Approximate CP decomposition is an ill-posed problem. The set of rank $r$ tensors is not closed, therefore it may happen in theory that there exists no best rank $r$ approximation {cite:p}`hillar:2013:tensor.problems.nphard`. This causes practical issues that are difficult to predict and handle, such as slow convergence of ALS (so-called swamps) or even diverging components that cancel at infinity.
 
-Since this manuscript is mostly concerned with regularized LRA, this problem is often avoided entirely. What is required to obtain the existence of a minimum in the approximation problem is coercivity of the cost on the domain definition. This is achieved when any coercive regularization is added, such as $\ell_2$ regularization. This is also achieved with nonnegativity constraints, since the components cannot cancel out, and the cost function increases toward infinity as the components grow. The continuity of the cost, alongside coercivity, ensures that there exists a compact subset of the definition domain that contains the solution, which is therefore reached.
+Since this manuscript is mostly concerned with regularized LRA, this problem is often avoided entirely. What is required to obtain the existence of a minimum in the approximation problem is coercivity of the cost on the domain definition. This is achieved when any coercive regularization is added, such as $\ell_2$ regularization.  The continuity of the cost, alongside coercivity, ensures that there exists a compact subset of the definition domain that contains the solution, which is therefore reached. In the context of CP decomposition, regularizations therefore not only help improve the interpretability of the parameters (although CP decomposition can be interpretable without such constraints, they often help in practice), but also make the approximation problem well-posed and easier to solve in terms of the optimization landscape.
 
-In the context of CP decomposition, regularizations therefore not only help improve the interpretability of the parameters (although CP decomposition can be interpretable without such constraints, they often help in practice), but also make the approximation problem well-posed and easier to solve in terms of the optimization landscape.
+A classic example of regularized CP decomposition is approximate nonnegative CP Decomposition (nCPD), defined as the solution to the optimization problem
+
+$$ \argmin{A\in\R_+{n_1},\; B\in\R_+{n_2},\; C\in\R_+{n_3}} \| T - \llbracket A,B,C \rrbracket \|_2^2. $$
+
+Notice that the matrices have nonnegative entries. Algorithms to compute nCPD are similar to algorithms for solving NMF, and rely on NNLS solvers described extensively in [](./nnls.md). Notice also that coercivity is achieved with nonnegativity constraints, since the components cannot cancel out, and the cost function increases toward infinity as the components grow. Therefore, the best nonnegative low-rank approximation of a tensor always exists.
+
 ```
 
 ### Tucker decomposition

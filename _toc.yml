@@ -14,7 +14,7 @@ parts:
     chapters:
       - file: Howtouse/howtoread
       - file: Howtouse/terminology_list
-      - file: Howtouse/notations
+      - file: Howtouse/notation
       - file: bibliography/biblio
   - caption: Introduction to rLRA
     chapters:

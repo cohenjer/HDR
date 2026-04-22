@@ -40,27 +40,27 @@ Representation of the single pixel camera [credits: Séréna Hariga].
 
 Let us formalize the problem. Let $Y\in\mathbb{R}_+^{m\times p}$ be the acquired matrix, with $m$ the number of measurements or patterns, and $p$ the number of spectral bands measured by the spectrometer. Each acquisition, say the $k$-th, is obtained by summing the pixels of a masked image $a_k \ast_{1,2} X_t$ where $a_k\in\{0,1\}^{n_1\times n_2}$ is a binary mask and $X_t\in\mathbb{R}_+^{n_1\times n_2\times p}$ is the unknown hypespectral cube to reconstruct, with $n_1\times n_2$ pixels. The elementwise product $\ast_{1,2}$ indicates that the mask is applied on each slice $X_t[:,:,i]$ of the hypercube. It can be convenient to vectorize the spatial dimension and consider the vector patterns $A[k,:]\in\{0,1\}^{n_1n_2}$ as well as the unknown matrix $X\in\mathbb{R}_+^{n_1n_2\times p}$. The noiseless acquisition is therefore modeled linearly as $Y = AX$. 
 
-The noise model for single-pixel imagers is standardized as a Poisson-Gaussian mixture. For the sake of simplicity, and since Gaussian noise is typically weak in these acquisitions, we consider the noise to be pure Poisson. Poisson noise arises because the spectrometer counts photons hitting its electronic sensors, and counting errors/fluctuations are well modeled by the Poisson distribution. The model then writes
+The noise model for single-pixel imagers is standardized as a Poisson-Gaussian mixture, see the [EMVA Standard 1288](https://www.emva.org/wp-content/uploads/EMVA1288Linear_4.0Release.pdf). For the sake of simplicity, and since Gaussian noise is typically weak in these acquisitions, we consider the noise to be pure Poisson. Poisson noise arises because the spectrometer counts photons hitting its electronic sensors, and counting errors/fluctuations are well modeled by the Poisson distribution. The model then writes
 
 $$ Y \sim \mathcal{P}(\alpha AX) $$
 
 where $\alpha$ is the average photon count that can be interpreted as the signal strength. The signal to noise ratio can be shown to be proportional $\sqrt{\alpha}$: the higher $\alpha$ the less noisy the acquisition. We consider that the hypercube $X$ has normalized intensities in $[0,1]$.
 
-The reconstruction of the hypercube $X$, knowing the measurements $Y$ and the acquisition matrix $A$, is an inverse problem. It is ill-posed in the sense that infinitely many measurements are required to obtain a perfect reconstruction, because of Poisson noise. Furthermore, if the number of patterns is strictly smaller than the number of pixels $n:=n_1n_2$, the linear system $Y=AX$ has infinitely many solutions. For both these reasons, regularization is essential in single-pixel image reconstruction. The [classical approach](#reconstruction-wavelength-by-wavelength-existing-work) is to reconstruct each slice of the hypercube separately, wavelength by wavelength, using state-of-the-art image reconstruction algorithms and priors. In the PhD thesis of Serena Hariga, co-supervised with Nicolas Ducros, we have studied the [joint reconstruction and unmixing](#joint-reconstruction-and-unmixing-eusipco) of the hypercube, using spectral regularization, as well as [spectral unmixing directly from the measurements](#unmixing-with-known-spectra-gretsi) with spatial priors.
+The reconstruction of the hypercube $X$, knowing the measurements $Y$ and the acquisition matrix $A$, is an inverse problem. It is ill-posed in the sense that infinitely many measurements are required to obtain a perfect reconstruction, because of Poisson noise. Furthermore, if the number of patterns is strictly smaller than the number of pixels $n:=n_1n_2$, the linear system $Y=AX$ has infinitely many solutions. For both these reasons, regularization is essential in single-pixel image reconstruction. The [classical approach](#reconstruction-wavelength-by-wavelength-existing-work) is to reconstruct each slice of the hypercube separately, wavelength by wavelength, using state-of-the-art image reconstruction algorithms and priors. In the PhD thesis of Serena Hariga, co-supervised with Nicolas Ducros, we have studied the joint reconstruction and unmixing of the hypercube using spectral regularization {cite:p}`harigaJointReconstructionSpectral2024`, as well as spectral unmixing directly from the measurements with spatial priors {cite:p}`harigaApprochePlugandplayPour2025`.
 
 ## Reconstruction wavelength by wavelength (existing work)
 
 ### Hadamard patterns
 
 Before considering a baseline reconstruction method, it is necessary to discuss more about the choice of the acquisition matrix $A$. There are both practical and theoretical constraints that guide the choice of $A$. 
-- Practically, the patterns are applied to the image by leveraging a micromirror matrix (DMD). The image is focused on the DMD, which has small mirrors corresponding to pixels that can point in two different directions. All the mirrors that point towards the lens that targets the spectrometer reflect light from the observed object and contribute to the measured spectrum. The other mirror effectively blocks all the incoming light. Therefore, we may assume that the observation matrix is binary. Contrary to other imaging modalities, such as magnetic resonance imaging, the patterns can be changed at will for each acquisition.
-- Theoretically, if the patterns could be negative in $[-1, 1]$, the "optimal" acquisition patterns are known to be Hadamard matrices {cite:p}`nelsonHadamardSpectroscopy1970c`. Optimality here is meant in the sense of statistical minimal linear reconstruction error, *i.e.* minimal estimation variance. In particular, Hadamard patterns are shown to outperform raster scan, which observes each pixel individually and therefore does not perform spatial multiplexing. The theoretical gain of Hadamard matrices versus raster scan is known as the Felgett advantage.
+- Practically, the patterns are applied to the image by leveraging a micromirror matrix (DMD). The image is focused on the DMD, which has small mirrors corresponding to pixels that can point in two different directions. All the mirrors that point towards the lens that targets the spectrometer reflect light from the observed object and contribute to the measured spectrum. The mirrors pointing in the opposite direction effectively block the incoming light. Therefore, we may assume that the observation matrix is binary. Contrary to other imaging modalities, such as magnetic resonance imaging, the patterns can be changed at will for each acquisition.
+- Theoretically, if the patterns could be negative in $[-1, 1]$, the "optimal" acquisition patterns are known to be Hadamard matrices {cite:p}`nelsonHadamardSpectroscopy1970c`. Optimality here is meant in the sense of statistical minimal linear reconstruction error, *i.e.*, minimal estimation variance. In particular, Hadamard patterns are shown to outperform raster scan, which observes each pixel individually and therefore does not perform spatial multiplexing. The theoretical gain of Hadamard matrices versus raster scan is known as the Felgett advantage.
 
 :::{admonition} Why are Hadamard patterns "optimal"
 
 In 1970, Nelson and Fredman introduced the concept of Hadamard spectrocopy {cite:p}`nelsonHadamardSpectroscopy1970c`. In their seminal work, they prove that Hadamard patterns are an "optimal" choice for the acquisition basis. Let us clarify in what sense this optimality is meant, and under which assumptions.
 
-Nelson and Fredman are concerned with linear reconstructions of acquisitions $y=Ax + e$, where matrix $A$ is either the identity matrix (raster scan) or a complete Hadamard basis. The noise $e$ is supposed to be additive, i.i.d. with finite variance $\sigma$, but the distribution of $n$ is not necessarily Gaussian. 
+Nelson and Fredman are concerned with linear reconstructions of acquisitions $y=Ax + e$, where matrix $A$ is either the identity matrix (raster scan) or a complete Hadamard basis. The noise $e$ is supposed to be additive, i.i.d. with finite variance $\sigma$, but the distribution of $e$ is not necessarily Gaussian. 
 
 Linear reconstructions are of the form $\hat{x} = By$ with matrix $B$ defined as the pseudo-inverse of matrix $A$. This choice for the reconstruction corresponds to the least-squares estimation of the unknown $x$; it is the maximum-likelihood estimator under Gaussian noise. If the noise is not Gaussian, its statistical meaning is more ambiguous.
 
@@ -68,19 +68,19 @@ The quantity that Nelson and Fredman consider for measuring the quality of the r
 
 $$ \mathbb{E}\left[ \| x - \hat{x} \|^2 \right]. $$
 
-RMSE is exactly the average estimation error in $\ell_2$ norm, and therefore is a reasonable error metric for Gaussian noise. Because the noise $e$ is i.i.d., the RMSE is easily derived as
+RMSE is exactly the average estimation error in $\ell_2$ norm, and therefore is a reasonable error metric for Gaussian noise. Because matrix $B$ is the pseudo-inverse of the acquisition operator $A$, we see that the residual $x - \hat{x}$ amounts to exactly $Be$, a centered noise with covariance $B^TB$. The RMSE is thus easily derived as
 
-$$ \text{RMSE}(B) = \sigma\text{Diag}(\sqrt{B^2\mathbb{1}_n}), $$
+$$ \text{RMSE}(B) = \sigma\sqrt{\text{Tr}\left(BB^T\right)}, $$
 
 or for the $i$-th measurement only, 
 
-$$ \text{RMSE}_i(B) = \sigma\sqrt{\sum_{j} B[i,j]^2}. $$
+$$ \text{RMSE}_i(B) = \mathbb{E}\left[ \left(x[i] - \hat{x}[i] \right)^2 \right] = \sigma\sqrt{\sum_{j} B[i,j]^2}. $$
 
 The Felgett advantage is obtained when comparing the RMSE of Hadamard patterns and raster scan. The ratio of the $\text{RMSE}_i$ values, denoted by $F_i$, is simply 
 
-$$F_i = \sqrt{\sum_{j} B[i,j]^2} = \|B[i,:]\|_2.$$
+$$F_i = \frac{\text{RMSE}_i(B)}{\text{RMSE}_i(I_n)} = \frac{\sigma\sqrt{\sum_{j} B[i,j]^2}}{\sigma} = \|B[i,:]\|_2.$$
 
-For raster scan the rows of matrix $B^2$ sum to one, while for Hadamard patterns $B=\frac{1}{N}A^T$, which leads to 
+For raster scan the rows of matrix $B^2$ sum to one, while for Hadamard patterns $B=\frac{1}{n}A^T$, which leads to 
 
 $$ F_i =: F = \sqrt{n}.$$
 
@@ -263,10 +263,10 @@ plt.title("Error map for pseudo-inverse")
 plt.show()
 ```
 
-This can be explained by the fact that entries of $\alpha Ax$ are large and concentrated around the same value $\frac{1}{2}\alpha \sum_{i\leq n}x[i]$ because, except for the first row of $A$ and the row of zero, all rows have exactly half their values set to 1, and the other half to zero. The measurements are therefore essentially bootstraped mean evaluations of the image. This has two consequences:
-- The Poisson distrubtions for each $y_i$ are well approximated by Gaussian distributions of mean $\alpha A[i,:]x$ and variance $\alpha A[i,:]x$.
+This can be explained by the fact that entries of $\alpha Ax$ are large and concentrated around the same value $\frac{1}{2}\alpha \sum_{i\leq n}x[i]$. Indeed, except for the first row of $A$ and the row of zeroes, all rows have exactly half their values set to 1, and the other half to zero. The measurements are therefore essentially bootstraped mean evaluations of the image. This has two consequences:
+- The empirical measurements $y_i$ are large enough to obtain a faithful approximation of the elementwise Poisson distribution by Gaussian distributions of mean $\alpha A[i,:]x$ and variance $\alpha A[i,:]x$.
 - The variance is essentially the same for all measurements, except $y[0]$ (corresponding to the row of ones) and $y[1]$ (corresponding to the row of zeroes, and that could be ignored). We denote $\sigma=\frac{1}{2}\alpha \sum_{i\leq n}x[i]$ the empirical variance estimation.
-If we consider the model $y \sim \mathcal{N}(\alpha Ax, \sigma)$, which, as discussed above, should correctly approximate the true Poisson distribution, in particular for large $\alpha$, then the pseudo-inverse is the maximum-likelihood estimator of the image. For Gaussian problems, it is known that the residuals are uncorrelated with the image.
+If we consider the model $y \sim \mathcal{N}(\alpha Ax, \sigma)$, which according to the previous point, should correctly approximate the Poisson distribution, then the pseudo-inverse is a reasonable approximation of the maximum-likelihood estimator of the image. For Gaussian problems, it is known that the residuals are uncorrelated with the image, this can be observed numerically on the previous example.
 
 ```{code-cell}ipython3
 :tags: [hide-input]
@@ -284,7 +284,7 @@ The Maximum-Likelihood (ML) estimator for Poisson noise is given by the minimize
 
 $$ \hat{X} = \argmin{X\geq 0} \KL{\frac{1}{\alpha} Y, AX}, $$
 
-which can be approximately computed using *e.g.* the [MU algorithm](../../part1/nnls.md#multiplicatives-updates). Below is an example of ML reconstruction.
+which can be approximately computed using, *e.g.*, the [MU algorithm](../../part1/nnls.md#multiplicatives-updates). Below is an example of ML reconstruction.
 
 ```{code-cell}ipython3
 # Reco avec MU
@@ -407,6 +407,8 @@ In {cite:p}`harigaJointReconstructionSpectral2024`, a simple strategy to jointly
 $$
  U^{(k+1)} = U^{(k)} \ast \frac{A^T\frac{Y}{AUV^T}V}{A^T\mathbb{1}_{m,p}V}.
 $$
+
+where the product $\ast$ stands for elementwise multiplication.
 
 The code for the algorithm is slightly too complex to show here and is available in the tensorly_hdr package. A $\ell_1$ regularization is added on both factors, which adds a constant term in the denominator of the update and helps control the dynamics of the factors, see [](../Theory_of_rLRA/HRSI_theory.md).
 

@@ -81,7 +81,7 @@ $$
 For a quadratic loss function $f$, the SOM algorithm is guaranteed to converge since each iteration decreases the cost. However, this form of convergence is very weak: we only know that the values of the cost function will stagnate asymptotically, but the estimated minimizer need not be the true minimizer. This result can be refined with the [SUM framework](../../part1/AlternatingOptimization.md) {cite:p}`razaviyaynUnifiedConvergenceAnalysis2013`. Moreover, the convergence rate of SOM in the general case is unknown. In our work, we prove linear convergence of the iterates for the specific problem of NMF with beta-divergence loss. 
 ```
 
-is a majorant of the Hessian, namely $A_u(x) - \nabla^2 f$ is semi-definite positive. The proof is straightforward and can be found in {cite:p}`phamSecondOrderMajorantAlgorithm2025`. If matrix $A(x)$ is a majorant of the Hessian, we obtain a majorization minimization algorithm as long as $f$ is a quadratic function, because the truncated second-order Taylor expansion is exact. When $f$ is not quadratic, the proposed procedure, which, as far as we know, has not been explored in the optimization literature (at least for computing NMF), is coined Second-Order Majorant (SOM), because we minimize a majorant of a separable second-order approximation of the cost function. 
+is a majorant of the Hessian, namely $A_u(x) - \nabla^2 f$ is positive semi-definite. The proof is straightforward and can be found in {cite:p}`phamSecondOrderMajorantAlgorithm2025`. If matrix $A(x)$ is a majorant of the Hessian, we obtain a majorization minimization algorithm as long as $f$ is a quadratic function, because the truncated second-order Taylor expansion is exact. When $f$ is not quadratic, the proposed procedure, which, as far as we know, has not been explored in the optimization literature (at least for computing NMF), is coined Second-Order Majorant (SOM), because we minimize a majorant of a separable second-order approximation of the cost function. 
 
 ## MU algorithm as quadratic majorant minimization
 
@@ -112,7 +112,7 @@ $$
 $$
 
 ```{margin}
-Nonnegativity of the Hessian of the cost at any point is a strong assumption in general, but is satisfied in problems of interest to this manuscript, *e.g.* for NMF with beta-divergence loss. 
+Nonnegativity of the Hessian of the cost at any point is a strong assumption in general, but is satisfied in problems of interest to this manuscript, *e.g.*, for NMF with beta-divergence loss. 
 ```
 
 It can be shown that when $\nabla^2 f(x)$ is nonnegative, the solution is in fact trivial:
@@ -140,8 +140,8 @@ $$
 $$ (eq:mSOM)
 
 We call the algorithm with update rule {eq}`eq:mSOM` the median SOM algorithm (mSOM). One has to be mindful of a few properties of mSOM:
-- for non-quadratic loss functions, it is not guaranteed to decrease the cost function. In fact, mSOM can diverge if initialized poorly. We prove in {cite:p}`phamSecondOrderMajorantAlgorithm2025` that for $f(x) = \KL{y, Wx}$ (or any $\beta$-divergence with $\beta\in[1,2[$) and in the noiseless case, linear convergence happens but is only local. In practice, we observe convergence problems in the first few iterations that can be avoided by using a [properly scaled initialization](../../part1/nnls.md#optimal-scaling), either by using a few iterations of another algorithm as initialization or by checking numerically that the costs decrease.
-- for quadratic loss, the mSOM algorithm is a proper MM algorithm, and we show that it converges linearly globally for any $\gamma$ in $[0,2]$.
+- For non-quadratic loss functions, it is not guaranteed to decrease the cost function. In fact, mSOM can diverge if initialized poorly. We prove in {cite:p}`phamSecondOrderMajorantAlgorithm2025` that for $f(x) = \KL{y, Wx}$ (or any $\beta$-divergence with $\beta\in[1,2[$) and in the noiseless case, linear convergence happens but is only local. In practice, we observe convergence problems in the first few iterations that can be avoided by using a [properly scaled initialization](../../part1/nnls.md#optimal-scaling), either by using a few iterations of another algorithm as initialization or by checking numerically that the costs decrease.
+- For quadratic loss, the mSOM algorithm is a proper MM algorithm, and we show that it converges linearly globally for any $\gamma$ in $[0,2]$.
 
 We can visualize the different majorants of the cost (MU majorant, mSOM majorant, and usual gradient descent with optimal stepsize) on a numerical example.
 

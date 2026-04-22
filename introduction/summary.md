@@ -16,7 +16,7 @@ kernelspec:
 
 ## Some personal context
 
-When I was six years old and starting to learn to play the piano, I had fun guessing the notes my tutor was playing while turning my back to the piano. This was a pleasant but easy game as I discovered that I could hear the pitch class of individual notes as they were played. I thought everyone else could also hear these names and, therefore, transcribe music easily. It was only a few years later, when joining my first music school, that I discovered I was mistaken and that music transcription is actually really hard. For everyone, in fact, as even with perfect pitch, transcribing polyphonic instruments becomes a compromise between instantaneous recognition and pattern matching with template harmonies stored in one's memory.
+When I was six years old and starting to learn to play the piano, I had fun guessing the notes my tutor was playing while turning my back to the piano. This was a pleasant but easy game as I discovered that I could hear, litteraly, the pitch class of individual notes as they were played. I thought everyone else could also hear them and, therefore, transcribe music easily. It was only a few years later, when joining my first music school, that I discovered I was mistaken and that music transcription is actually really hard. For everyone, in fact, as even with perfect pitch, transcribing polyphonic instruments becomes a compromise between instantaneous recognition and pattern matching with template harmonies stored in one's memory.
 
 As I grew older, I began to enjoy the broader concepts of sound and music processing, the Fourier transform, and their connections to how humans perceive sound, as well as the symbolic and theoretical description of music. It was with great interest that I realized, by the end of my PhD thesis, that many questions in the field of music information retrieval, which encompasses most of these concepts, could be addressed at least partially using a core concept I had been working on: low-rank approximations of matrices and tensors. In particular, the design of regularizations and constraints was key to achieving reasonable performance, and I felt that, with my skill set, I could improve on the existing state of the art in that domain, particularly in automatic music transcription.
 
@@ -72,7 +72,7 @@ name: fig:HSI_nmf
 Nonnegative Matrix Factorization performs spectral unmixing on hyperspectral images, identifying essential spectra that are present in the scene, as well as their proportion in each pixel stored in abundance maps. The images are vectorized in the data matrix and the abundance maps.
 ```
 
-A natural extension of matrix LRA is tensor LRA, which applies to input data with more than two dimensions. Tensor LRA has several interesting properties, including, in the case of the Canonical Polyadic Decomposition (CPD), identifiability without regularization {cite:p}`Kruskal1977Three`. In practice, however, regularization, and in particular nonnegativity, is often useful to improve the interpretability of the estimated parameters from tensor LRA. Chapter [](../part1/lra.md) describes known results on matrix and tensor LRA in more detail.
+A natural extension of matrix LRA is tensor LRA, which applies to input data with more than two dimensions. Tensor LRA has several interesting properties, including, in the case of the Canonical Polyadic Decomposition (CPD), identifiability without regularization {cite:p}`Kruskal1977Three`. In practice, however, regularization, and in particular nonnegativity, is often useful to improve the interpretability of the estimated parameters from tensor LRA. Section [](../part1/lra.md) describes known results on matrix and tensor LRA in more detail.
 
 ```{figure} ../Figures/Cpd_simple.png
 ---
@@ -110,13 +110,13 @@ Despite the large body of existing work on rLRA, its use by practitioners is oft
 - **Side information** is often available alongside the matrix or tensor data, which transforms the unsupervised rLRA learning problem into a semi-supervised or fully supervised problem. This information can take diverse forms: a known library of templates for the unknown sources, a downstream task with available training data, deep priors for the unknown sources, such as denoisers, sparsity in well-known bases, sparsity level of the sources, among others. Accounting for this side information in rLRA is often not straightforward, both from a modeling and from a training perspective.
 - **Multimodality** has emerged as an important topic in source separation, where the same phenomenon is observed through different sensing devices. A typical example would be acquiring brain activity through EEG and fMRI jointly. The joint processing of the acquired dataset can be performed by several rLRA. The research questions on joint rLRA typically revolve around the coupling model for the various datasets, and the design of flexible algorithms that allow solving a wide range of multimodal source separation problems, in particular when the datasets have different dynamics, noise levels, and even different fields (such as floats vs count vs categorical data).
 - The rLRA models themselves still have elusive properties. An important example is nonnegative Tucker decomposition, for which **identifiability** is unclear in many cases, despite recent advances on the topic {cite:p}`sahaIdentifiabilityNonnegativeTucker2025`. Generally, a user needs guarantees about the nature of rLRA solutions, and such theoretical guarantees are, in general, very challenging to obtain, especially when the hypotheses must be verifiable in practice.
-- The **scientific software ecosystem** is a dimension often overlooked but critical in practice. Available software for tensor decomposition is largely bloated; see this survey, which lists over 70 tensor packages scattered across the internet {cite:p}`psarrasLandscapeSoftwareTensor2022`. However, software packages dedicated to, or capable of handling at least partially, rLRA are scarce. For tensor decompositions, many packages focus on the decomposition itself but do not make use of efficient large-scale contractions on CPU or GPU that are crucial for up-scaling {cite:p}`smithTensormatrixProductsCompressed2015,liInputadaptiveInplaceApproach2015,g.a.smithOptEinsumPython2018`. Another critical issue is the actual implementation of rLRA algorithms, that requires non-trivial caching of expensive operations and speed-momery trade-offs that are research topics by themselves {cite:p}`kayaHighPerformanceParallel2016`.
+- The **scientific software ecosystem** is a dimension often overlooked but critical in practice. Available software for tensor decomposition is largely bloated; see the survey by Psarras _et. al._ from 2022, which lists over 70 tensor packages scattered across the internet {cite:p}`psarrasLandscapeSoftwareTensor2022`. However, software packages dedicated to, or capable of handling at least partially, rLRA are scarce. For tensor decompositions, many packages focus on the decomposition itself but do not make use of efficient large-scale contractions on CPU or GPU that are crucial for up-scaling {cite:p}`smithTensormatrixProductsCompressed2015,liInputadaptiveInplaceApproach2015,g.a.smithOptEinsumPython2018`. Another critical issue is the actual implementation of rLRA algorithms, that requires non-trivial caching of expensive operations and speed-memory trade-offs that are research topics by themselves {cite:p}`kayaHighPerformanceParallel2016`.
 
 ### Improving on theory, algorithms, and applications
 
 My work has been dedicated to proposing (partial) solutions to these issues. I have grouped my contributions into three parts: theoretical contributions, application-oriented contributions, and algorithmic-focused contributions. However, in most of these works, all three aspects (theory, algorithms, applications) are intertwined, so this is not a strict segmentation of my work.
 
-There is no dedicated chapter in this manuscript to software development. Instead, simple implementations of the methods under scrutiny are either provided inline, imported from Tensorly, which I have co-developed since 2019, or imported from a local set of methods developed specifically for this manuscript. Software development is an important part of scientific contributions in rLRA and, more generally, in applied mathematics. In my opinion, it is important to show the exact code being run for experiments and demos so that readers can be more convinced of the results' exactitude.
+There is no section in this manuscript dedicated to software development. Instead, simple implementations of the methods under scrutiny are either provided inline, imported from Tensorly, which I have co-developed since 2019, or imported from a local set of methods developed specifically for this manuscript. Software development is an important part of scientific contributions in rLRA and, more generally, in applied mathematics. In my opinion, it is important to show the exact code being run for experiments and demos so that readers can be more convinced of the results' exactitude.
 
 The three main sections of this manuscript are
 - [Theory of rLRA contributions](../part2/Theory_of_rLRA/intro.md), where I summarize my contributions to the analysis of several sparse models: [Dictionary-based LRA](../part2/Theory_of_rLRA/DL_identifiability.md), [sparse nonnegative least-squares](../part2/Theory_of_rLRA/sparse_nnls.ipynb). I also study [the impact of scaling ambiguity on rLRA solutions](../part2/Theory_of_rLRA/HRSI_theory.md), which can induce unexpected group-sparsity at the component level.
@@ -172,14 +172,14 @@ Joris Claude is now pursuing a PhD in biomechanical systems.
 
 % Can be used for ANR summary
 
-There have been at least two sources of frustration in my research work so far. First, I have always been very interested in the applied mathematics aspects of signal processing, and many of my current contributions are based on heuristics or lack a clean theoretical motivation. Second, numerical optimization is the bread and butter of rLRA. There is a large body of literature on numerical optimization that I am still unfamiliar with. I have the impression that contributions to numerical optimization, with the practical challenges of rLRA and its applications in mind, are both within reach and potentially impactful for the rest of the community. Therefore, in the coming years, my main objective is to dedicate more research time to understanding the intricacies of numerical optimization and to propose theoretically motivated algorithms both for convex and non-convex problems.
+There have been at least two sources of frustration in my research work so far. First, I have always been very interested in the applied mathematics aspects of signal processing, and many of my current contributions are based on heuristics or lack a clean theoretical motivation. Second, numerical optimization is the bread and butter of rLRA. There is a large body of literature on numerical optimization that I am still unfamiliar with. I have the impression that contributions to numerical optimization, with the practical challenges of rLRA and its applications in mind, are within reach and can be impactful. Therefore, in the coming years, my main objective is to dedicate more research time to understanding the intricacies of numerical optimization and to propose theoretically motivated algorithms both for convex and non-convex problems.
 
 An optimization problem that I believe is particularly interesting is the so-called NNKL problem described in [](../part1/nnls.md), namely, solving linear regressions under the Kullback-Leibler divergence loss. For an input nonnegative data vector $y\in\mathbb{R}_+^{m}$ and a linear observation matrix $A\in\mathbb{R}_+^{m\times n}$, NNKL can be formulated as
 
 $$ \argmin{x\geq 0} \KL{y, Wx},$$
-where $\KL{y,z} = \sum_{i} y[i]\log(\frac{y[i]}{x[i]}) + x[i] - y[i] $ is the Kullback-Leibler divergence. This optimization problem is quite challenging for at least two reasons:
+where $\KL{y,z} = \sum_{i} y[i]\log(\frac{y[i]}{z[i]}) + z[i] - y[i] $ is the Kullback-Leibler divergence. This optimization problem is quite challenging for at least two reasons:
 - The cost function is not Lipschitz-smooth at zero. Lipschitz-continuity is a key property of cost functions in most convergence proofs of first-order methods. In practice, choosing a step-size for first-order methods can be challenging.
-- When $y[i]$ is significantly smaller than $x[i]$, the loss is almost linear (the logarithmic term vanishes). This means that the cost function is not strongly convex, another important property that guarantees the practical speed of first-order methods.
+- When $y[i]$ is significantly smaller than $z[i]$, the loss is almost linear (the logarithmic term vanishes). This means that the cost function is not strongly convex, another important property that guarantees the practical speed of first-order methods.
 
 ```{code-cell}ipython3
 :tags: [hide-input]
@@ -201,11 +201,11 @@ output_notebook()
 x = np.linspace(1e-5, 10, 300)
 
 def kl_divergence(p, q):
-    """Calculate the KL divergence between two distributions."""
+    """Calculate the scaled KL divergence between two positive vectors."""
     return np.sum(p * np.log(p / q) + q - p)
 
 y = np.zeros_like(x)
-p = 2.5  # Initial reference distribution parameter
+p = 2.5  # Initial data
 for i, q in enumerate(x):
     y[i] = kl_divergence(p, q) 
 ```
@@ -213,9 +213,9 @@ for i, q in enumerate(x):
 ```{code-cell}ipython3
 :tags: [hide-input]
 # Add interactive sliders for the reference distribution
-slider = Slider(start=0.1, end=5, value=2.5, step=0.1, title="Reference Distribution (p)")
+slider = Slider(start=0.1, end=5, value=2.5, step=0.1, title="Data y (first argument)")
 source = ColumnDataSource(data=dict(x=x, y=y))
-plot = figure(title="KL Divergence", x_axis_label='q', y_axis_label='KL(p, q)', width=600,
+plot = figure(title="KL Divergence", x_axis_label='z', y_axis_label='KL(y, z)', width=600,
     height=400)
 plot.line('x', 'y', source=source, line_width=2, color=Category10[10][0])
 callback = CustomJS(args=dict(source=source, slider=slider), code="""
@@ -238,9 +238,9 @@ Finally, there is a dire need for a community-oriented optimization benchmark in
 The perspectives of my research on NNKL, and more generally Poison-distributed problems, are further detailed in [](../part3/KarpCoi.md).
 
 A related, important line of work for the future focuses on single-pixel imaging. Perspectives on this topic include
-- a joint reconstruction and unmixing of single pixel images with deep priors (such as plug-and-play and unrolling). This is the topic of the end of Serena Hariga's PhD thesis.
-- better algorithms for Poisson noise problems, as discussed above.
-- a deeper understanding of Poisson-Gaussian equivalences, and estimation under Poisson-Gaussian noise. Anna Jezierska and co-authors have already worked on this problem in the context of inverse problems {cite:p}`chouzenouxConvexApproachImage2015`, but I believe there could be additional discoveries to be made. In particular, known results about Poisson-Gaussian equivalences in high-count settings, although standard in the optics and statistics community {cite:p}`curtisSimpleFormulaDistortions1975,seifertMaximumlikelihoodEstimationPtychography2023`, are not easily summarized or put in use in a numerical optimization context. This work could be performed in collaboration with Valentin Debarnot, recently recruited to CREATIS.
+- A joint reconstruction and unmixing of single pixel images with deep priors (such as plug-and-play and unrolling). This is the topic of the end of Serena Hariga's PhD thesis.
+- Better algorithms for Poisson noise problems, as discussed above.
+- A deeper understanding of Poisson-Gaussian equivalences, and estimation under Poisson-Gaussian noise. Anna Jezierska and co-authors have already worked on this problem in the context of inverse problems {cite:p}`chouzenouxConvexApproachImage2015`, but I believe there could be additional discoveries to be made. In particular, known results about Poisson-Gaussian equivalences in high-count settings, although standard in the optics and statistics community {cite:p}`curtisSimpleFormulaDistortions1975,seifertMaximumlikelihoodEstimationPtychography2023`, are not easily summarized or put in use in a numerical optimization context. This work could be performed in collaboration with Valentin Debarnot, recently recruited to CREATIS.
 
 These topics are also discussed in [](../part3/KarpCoi.md). Other interesting topics regarding single pixel imaging are discussed in [](../part3/others.md). A first topic of interest is the [design of the acquisition operator](../part3/others#single-pixel-imaging-and-compressive-acquisition), putting the theory of compressive sensing to the test. A second topic is the derivation of [separable NMF heuristics for inverse problems](../part3/others.md#inverse-problems-and-separable-nmf). The low-rank data matrix is not observed directly, therefore one may not simply pick columns from it as traditionally done in separable NMF. Finally, a last topic of interest is Borgen plots {cite:p}`neymeyrSetSolutionsNonnegative2018`, and more generally, algorithmic tools for studying uniqueness of solutions in inverse problems. Borgen plots show all possible solutions of NMF graphically for rank three, but their generalization to higher dimensions and ranks, as well as to other inverse problems {cite:p}`munierMLEReliableSource2025,sawallCalculationLowerUpper2022`, remains an open problem.
 

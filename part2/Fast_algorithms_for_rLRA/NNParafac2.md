@@ -172,7 +172,7 @@ This problem can be handled by AO-ADMM with splitting, provided we can project o
 
 ## Projection on the PARAFAC2 constraint
 
-A full understanding of the projection under the PARAFAC2 constraint has yet to be reached, and it remains an active research topic. It connects with Riemannian geometry and optimization, but has not been studied in this literature as such, to the best of my knowledge.
+A full understanding of the projection under the PARAFAC2 constraint has yet to be reached, and it remains an active research topic. It connects with Riemmanian geometry and optimization, but has not been studied in this literature as such, to the best of my knowledge.
 
 In the work conducted with Marie Roald and co-authors, we used an empirical approach to this projection, relying on a few mathematical observations. First, notice that if a set $\{ B_k\}_{k\leq K}$ satisfies the PARAFAC2 constraint, it can be represented as points on the orbit 
 

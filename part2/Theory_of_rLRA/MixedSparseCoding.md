@@ -61,8 +61,8 @@ where $ \sigma_{\min}(B) $ is the smallest nonzero singular value of matrix $ B 
 
 Under these hypotheses, supposing that $ X $ and $ X' $ are exactly columnwise $ k $-sparse, if
 
-$$    \min_{j\leq r}\sqrt{\min_{i\in \text{Supp}(X_j)} {X_{ij}}^2 + \min_{ i'\in \text{Supp}(X_j')} {X'_{i'j}}^2} >  \frac{1}{\sigma^{(2k)}_{\min}(D)}\sqrt{\delta+\frac{\epsilon}{\sigma^2_{\min}(B)}},$$
-then matrices $X$ and $X'$ have the same support, $\text{Supp}(X) = \text{Supp}(X')$.
+$$    \min_{j\leq r}\sqrt{\min_{i\in S(X_j)} {X_{ij}}^2 + \min_{ i'\in S(X_j')} {X'_{i'j}}^2} >  \frac{1}{\sigma^{(2k)}_{\min}(D)}\sqrt{\delta+\frac{\epsilon}{\sigma^2_{\min}(B)}},$$
+then matrices $X$ and $X'$ have the same support, $S(X) = S(X')$.
 
 See {cite:p}`cohenDictionaryBasedLowRankApproximations2022` for the proof.
 ```
@@ -72,7 +72,7 @@ This result shows that Trick-OMP is theoretically robust; in practice, it perfor
 ### Another greedy approach: Hierarchical OMP
 
 Another algorithm we proposed is Hierarchical Orthogonal Matching Pursuit (HOMP). It is a direct adaptation of OMP for MSC. It is indeed possible to show that MSC
-can be solved column by column as a sparse coding problem, e.g., using OMP. 
+can be solved column by column as a sparse coding problem, *e.g.*, using OMP. 
 Both Trick-OMP and HOMP are implemented in the library [dlra](https://github.com/cohenjer/dlra) available online. The implementation of these algorithms is too complex to detail here.
 
 ### A tightest convex relaxation approach

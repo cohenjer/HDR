@@ -1,15 +1,16 @@
 # Summary
 
-Despite their widespread use in the signal processing and machine learning communities, regularized LRA models remain rather poorly understood to this day. In particular, there are two kinds of questions in the literature for which there are no clear answers.
+Despite their widespread use in the signal processing and machine learning communities, rLRA models remain rather poorly understood to this day. In particular, there are two kinds of questions in the literature for which there are no clear answers.
 
-- **Identifiability**: given an exact factorization model, e.g. $M=X_1X_2$, and a set of constraints $\mathcal{C}_i$ such that $X_i\in\mathcal{C}_i$, are solutions to the factorization problem under these constraints essentially unique?
+- **Identifiability**: given an exact factorization model, *e.g.*, $M=X_1X_2$, and a set of constraints $\mathcal{C}_i$ such that $X_i\in\mathcal{C}_i$, are solutions to the factorization problem under these constraints essentially unique?
 
-- **Solution characterization**: given a constrained or regularized optimization problem, for instance
-
-$$
+- **Solution characterization**: given a constrained or regularized optimization problem, for instance 
+  
+    $$
     \argmin{X_1,X_2} \|M - X_1X_2^T\|_F^2 + g_1(X_1) + g_2(X_2)
-$$ 
-for some regularization functions $g_1$ and $g_2$, what are the properties satisfied by the solutions of this problem? 
+    $$ 
+
+    for some regularization functions $g_1$ and $g_2$, what are the properties satisfied by the solutions of this problem? 
 
 These two questions are related at first glance but differ fundamentally. The identifiability of rLRA models is a cornerstone of source separation techniques, as it allows one to give a physical meaning to the estimated factor matrices. Characterizing the solutions to an optimization problem amounts to ensuring that certain properties hold for the estimated factor matrices, regardless of whether the solution is unique. For instance, in some cases, the user cares only about the sparsity level of the factor matrices or their orthogonality.
 

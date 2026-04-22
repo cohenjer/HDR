@@ -60,7 +60,7 @@ An immediate issue with this formulation is that it is unclear how to even defin
 On top of the issues discussed above, a fundamental problem with supervised LRA as defined in Equation {eq}`eq:supNMFvar` is also the choice of hyperparameter $\lambda$. Why should the user compromise between the quality of the forward pass of the model and the training of that model?
 
 Bilevel formulations address the trade-off between model inference and parameter updates during training. 
-There is, however, not a single canonical bilevel formulation for unrolling LRA. On the above example of supervised NMF, a naive formulation that separates the model computation (forward pass) and the actual training of the model (backward pass, *i.e.* updating model parameters $\theta$ to reduce a training loss) writes
+There is, however, not a single canonical bilevel formulation for unrolling LRA. On the above example of supervised NMF, a naive formulation that separates the model computation (forward pass) and the actual training of the model (backward pass, *i.e.*, updating model parameters $\theta$ to reduce a training loss) writes
 
 $$
     \argmin{\theta,\; W} \sum_{i=1}^{p} \|M_i - W^\ast_i\theta\|_F^2 \quad \text{such that} \quad H_i^\ast, W_i^\ast = \argmin{W_i\geq 0, H_i\geq 0}\mathcal{D}(Y_i,W_iH_i^T).
@@ -105,7 +105,7 @@ $$
   W \leftarrow W \ast  \frac{YH}{WH^TH}.
 $$
 
-Unrolling strategies typically train a stepsize or a linear operator in the log-prior (*e.g.* the finite difference operator). Strategies to unroll MU previously proposed by Nasser [ref Eldar] replace both matrix $H$ and the cross product $H^TH$ with trainable matrices. However, this strategy is not suited for an alternating procedure since the dependence on $H$ is lost. 
+Unrolling strategies typically train a stepsize or a linear operator in the log-prior (*e.g.*, the finite difference operator). Strategies to unroll MU previously proposed by Nasser [ref Eldar] replace both matrix $H$ and the cross product $H^TH$ with trainable matrices. However, this strategy is not suited for an alternating procedure since the dependence on $H$ is lost. 
 
 We proposed introducing trainable parameters that are multiplied elementwise with the updates. At iteration $k$, the proposed Non-Adaptive Linearize MU (NALMU) is given by  
 

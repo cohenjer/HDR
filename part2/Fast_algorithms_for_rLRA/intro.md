@@ -1,15 +1,19 @@
 # Summary
 
 ## Optimization challenges in rLRA
-Once a Regularized LRA model has been designed for a targeted application, the computation of the rLRA parameters, often called training, parameter estimation, or model fitting, boils down to solving an optimization of the form
+Once a rLRA model has been designed for a targeted application, the computation of the rLRA parameters, often called training, parameter estimation, or model fitting, boils down to solving an optimization of the form
 
 $$ \argmin{\forall q\leq d,\;x_q\in\mathbb{R}^{n_q}} f(x_1,x_2,\ldots,x_d) + \sum_q g_q(x_q)$$
 with function $f$ a data-fitting term, and $g_q$ mode-wise regularization.
 
 This particular family of problems lies at the intersection of two separate research fields in numerical optimization:
-- Multiblock optimization, which is concerned with problems of the form
-$  \argmin{\forall q\leq d,\;x_q\in\mathbb{R}^{n_q}} f(x_1,x_2,\ldots,x_d).$
- Alternating optimization and Block-Coordinate Descent algorithms are frameworks usually employed to solve these problems, when the cost function $f$ has "nice" block-wise properties (convexity, smoothness, closed-form expression...). The current state-of-the-art on alternating optimization and block-coordinate descent is summarized in [](../../part1/AlternatingOptimization.md). Algorithms that update all the parameters simultaneously can also be efficient, but are not explored in this manuscript {cite:p}`Acar2011Scalable,marminJointMajorizationMinimizationNonnegative2023a, takahashiMajorizationMinimizationBregmanProximal2025`.
+- Multiblock optimization, which is concerned with problems of the form 
+  
+  $$
+    \argmin{\forall q\leq d,\;x_q\in\mathbb{R}^{n_q}} f(x_1,x_2,\ldots,x_d).
+  $$
+
+  Alternating optimization and Block-Coordinate Descent algorithms are frameworks usually employed to solve these problems, when the cost function $f$ has "nice" block-wise properties (convexity, smoothness, closed-form expression...). The current state-of-the-art on alternating optimization and block-coordinate descent is summarized in [](../../part1/AlternatingOptimization.md). Algorithms that update all the parameters simultaneously can also be efficient, but are not explored in this manuscript {cite:p}`Acar2011Scalable,marminJointMajorizationMinimizationNonnegative2023a, takahashiMajorizationMinimizationBregmanProximal2025`.
 - Non-smooth optimization, encountered when regularizations $g_q$ are non-smooth. Typical examples in signal processing and machine learning are the $\ell_1$ norm, the $\ell_0$ norm, or nonnegativity constraints. 
 
 Non-smooth optimization has received a lot of attention in the signal processing optimization community over the last twenty years, as sparse approximations have become more prominent and have required better optimization tools. Among the most significant mathematical tools for non-smooth first-order optimization is the proximity operator, a generalization of projections onto convex sets. The proximity operator is defined for a convex, proper, closed (lower-semi-continuous) function $g$ as 

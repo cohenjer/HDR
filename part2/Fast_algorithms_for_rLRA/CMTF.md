@@ -36,7 +36,7 @@ coupled matrix-tensor factorization", EUSIPCO2020, 2021 [pdf](https://www.eurasi
 ## Background on joint factorization models
 
 Joint factorization models are collections of matrix or tensor factorization problems in which some of the variables are explicitly related. There are at least two motivations for considering this family of problems.
-- **Multimodal acquisitions:** Several datasets are acquired informing on the same phenomenon but with different modalities, e.g., EEG+FMRI, NMR+LCMS {cite:p}`Acar2009Unsupervised`, occulometry+EEG {cite:p}`rivetModelingTimeWarping2016`. Joint factorization techniques allow the extraction of latent information from each dataset while leveraging the shared information across datasets to reduce estimation error and enhance uniqueness {cite:p}`Sorensen2015Coupleda`, thereby improving interpretability.
+- **Multimodal acquisitions:** Several datasets are acquired informing on the same phenomenon but with different modalities, *e.g.*, EEG+FMRI, NMR+LCMS {cite:p}`Acar2009Unsupervised`, occulometry+EEG {cite:p}`rivetModelingTimeWarping2016`. Joint factorization techniques allow the extraction of latent information from each dataset while leveraging the shared information across datasets to reduce estimation error and enhance uniqueness {cite:p}`Sorensen2015Coupleda`, thereby improving interpretability.
 - **Alternative formulations of tensor decompositions:** Joint factorization models are useful for rewriting the classical tensor models [such as CP decomposition](subsec:joint-diagonalisation) and proposing new extended models such as PARAFAC2 {cite:p}`Harshman1972PARAFAC2` {cite:p}`Kiers1999PARAFAC2`, Shift/Conv NMF/CP, PARATUCK2 {cite:p}`usevichApprocheAlgebriquePour2025` and so on. These formulations are also useful for identifiability proofs, as they relate tensor decompositions to matrix low-rank approximation problems.
 
 Let us describe a few important joint factorization models, namely [CPD](subsec:joint-diagonalisation), [CMTF](subsec:cmtf-direct-coupling), and [PARAFAC2](subsec:parafac2-and-variants).
@@ -119,7 +119,7 @@ There are a couple of related published works of mine that are worth mentioning 
 An extension of the [regularized PARAFAC2 work](../Fast_algorithms_for_rLRA/NNParafac2.ipynb) includes modeling temporal dynamics. A simple way to model the evolution over time of a multivariate vector is through a linear dynamical system, which essentially acts as a linear coupling across slices of a tensor of data. In collaboration with Christos Chatzis, we have studied the results of the time-varying CMTF model and proposed an algorithm to estimate its parameters when the linear dynamical system is known.
 
 
-#### EEG artifact removal using okular measurements
+#### EEG artifact removal using ocular measurements
 
 In a collaboration with Bertrand Rivet and Rodrigo Cabral-Farias, we used eye-movement signals recorded with an oculometer to remove artifacts in EEG signals {cite:p}`cohenCurveRegisteredCoupled2018`. The signals were acquired by Emmanuelle Kristensen. The goal was to detect eye movements and remove EEG peaks synchronized with them. To identify eye saccades, the data need to be aligned in the temporal domain. The problem may be formulated as a coupled matrix factorization problem, where the sacades are identified by low-rank factorization, and the coupled sacades are related by a time warping.
 
