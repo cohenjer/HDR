@@ -13,7 +13,7 @@ kernelspec:
 # Median Second-Order-Majorant for faster NNLS
 
 :::{admonition} Reference
-{cite:p}`phamSecondOrderMajorantAlgorithm2025` M-Q. Pham, J. E. Cohen, T. Chonavel, "A fast Multiplicative Updates algorithm for Nonnegative Matrix Factorization", under review at TMLR [arxiv](https://arxiv.org/pdf/2303.17992) [reviews](https://openreview.net/forum?id=lm16IQmimK)
+{cite:p}`phamSecondOrderMajorantAlgorithm2025` M-Q. Pham, J. E. Cohen, T. Chonavel, "A fast Multiplicative Updates algorithm for Nonnegative Matrix Factorization", accepted at TMLR, 2026 [arxiv](https://arxiv.org/pdf/2303.17992) [reviews](https://openreview.net/forum?id=lm16IQmimK)
 
 :::
 

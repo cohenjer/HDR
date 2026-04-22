@@ -17,8 +17,6 @@ The scientific content of the book is summarized in the [](./introduction/summar
 TODOlist:
 - Figure inline integration with glue and environments
 - Relecture
-    - Relecture deja faite du rapport CNRS
-    - Relecture collègues
     - Acronyms, vocabulary and math notations list (NNKL or NN-KL)
     - Broken links
     - Cohérence style (we, I (only where relevant), forme passive...)

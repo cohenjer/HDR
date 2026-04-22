@@ -1,6 +1,6 @@
 # Summary
 
-Despite their widespread use in the signal processing and machine learning communities, rLRA models remain rather poorly understood to this day. In particular, there are two kinds of questions in the literature for which there are no clear answers.
+Despite their widespread use in the signal processing and machine learning communities, rLRA models remain rather poorly understood to this day. There are two kinds of theoretical questions in the literature for which there are no clear answers.
 
 - **Identifiability**: given an exact factorization model, *e.g.*, $M=X_1X_2$, and a set of constraints $\mathcal{C}_i$ such that $X_i\in\mathcal{C}_i$, are solutions to the factorization problem under these constraints essentially unique?
 
@@ -22,7 +22,7 @@ $$
 \argmin{X_1\geq 0,\; X_2\geq 0} \|M - X_1X_2^T\|_F^2 + \mu \left( \|X_1\|_1 + \|X_2\|_1 \right)
 $$
 
-are indeed sparse or not, and under which conditions. This might be due to the relative difficulty of studying the solutions of these problems. Indeed, the same problem with a single factor admits a closed-form solution via the soft-thresholding operator, whereas the sparse NMF problem with two factors is non-convex, non-smooth, and NP-hard. As a first step towards understanding the properties of the solution or rLRA, together with Valentin Leplat, we showed that, for a large class of rLRA problems, explicit regularization, such as $\ell_1$-$\ell_1$, leads to implicit regularization due to the scale-invariance of rLRA models. Our contributions are summarized in [](./HRSI_theory.md), with a discussion of the algorithmic aspects in [](./HRSI_algorithm.ipynb).
+are indeed sparse or not, and under which conditions. This might be due to the relative difficulty of studying the solutions of these problems. The problem with a single factor admits a closed-form solution via the soft-thresholding operator, whereas the sparse NMF problem with two factors is non-convex, non-smooth, and NP-hard. As a first step towards understanding the properties of the solution or rLRA, together with Valentin Leplat, we showed that, for a large class of rLRA problems, explicit regularization, such as $\ell_1$-$\ell_1$, leads to implicit regularization due to the scale-invariance of rLRA models. Our contributions are summarized in [](./HRSI_theory.md), with a discussion of the algorithmic aspects in [](./HRSI_algorithm.ipynb).
 
 
 Because rLRA solutions have ambiguous properties, in particular for homogeneous regularization such as the $\ell_1$ norm, I studied, in another line of work, dictionary learning and dictionary-based LRA under cardinality constraints. Cardinality constraints impose sparsity explicitly on the solution. I have studied in particular the identifiability and the conception of dedicated algorithms for a class of models that includes the following dictionary-based NMF

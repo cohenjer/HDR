@@ -7,6 +7,13 @@ TODO: add a one-liner def for all technical terms used but not properly defined.
 Essential uniqueness is the uniqueness up to permutations and scaling ambiguities inherent to LRA models.
 ## Acronyms
 
+- AMT: Automatic Music Transcription
+- LRA: Low-Rank Approximation(s)
+- MM: Majorization Minimization
+- PCA: Principal Component Analysis 
+- rLRA: Regularized Low-Rank Approximation(s)
+- SPI: Single Pixel Imaging
+
 - **ACMTF** [[CMTF]](../part2/Fast_algorithms_for_rLRA/CMTF)
 - **AD** [[AMT]](../part2/Applications_of_rLRA/AMT) [[CMTF]](../part2/Fast_algorithms_for_rLRA/CMTF)
 - **AI** [[PERSPECTIVES]](../part3/Perspectives)
