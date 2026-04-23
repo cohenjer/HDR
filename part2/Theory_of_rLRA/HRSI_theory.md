@@ -115,11 +115,11 @@ The implicit HRSI problem shows again that ridge-regularization yields a compone
 
 $$ \argmin{\{\mathcal{L}_q\}_{q\leq r},~\text{rank}(\mathcal{L}_q)\leq 1}  \|\mathcal{T} -\sum_{q=1}^{r} \mathcal{L}_q \|_F^2 + 3\mu \sum_{q=1}^{r} \|\mathcal{L}_q\|_F^{\frac{2}{3}} $$
 
-where tensors $\mathcal{L}_q$ are rank-one tensors built from the outer products $X_1[:,q]\otimes X_2[:,q] \otimes X_3[:,q]$. We experimentally validate in [](./HRSI_algorithm.ipynb) that tuning the regularization hyperparameter $\mu$ indeed allows us to select the rank of the nCPD factorization. Moreover, the optimal solution of ridge nCPD verifies the balancing equation
+where tensors $\mathcal{L}_q$ are rank-one tensors built from the outer products $X_1[:,q]\otimes X_2[:,q] \otimes X_3[:,q]$. We experimentally validate in [](./HRSI_algorithm.md) that tuning the regularization hyperparameter $\mu$ indeed allows us to select the rank of the nCPD factorization. Moreover, the optimal solution of ridge nCPD verifies the balancing equation
 
 $$ 1 = \sqrt{2} \|X_i[:,q]\|_2^{-\frac{1}{3}}\prod_{j\neq i}\|X_j[:,q]\|_2^{\frac{2}{3}}  .$$
 
-This balancing identity will be used in [](./HRSI_algorithm.ipynb) to refine the iterations of an iterative optimization algorithm to solve ridge nCPD.
+This balancing identity will be used in [](./HRSI_algorithm.md) to refine the iterations of an iterative optimization algorithm to solve ridge nCPD.
 
 ### Sparse NMF L1-L1
 

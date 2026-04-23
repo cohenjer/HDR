@@ -111,7 +111,7 @@ In other words, for a well-built dictionary with incoherent atoms, the dictionar
 
 ## A simple heuristic for one-sparse DLRA
 
-Designing an optimization algorithm with performance guarantees for one-sparse DLRA is not an easy task, in particular since one-sparse DLRA is a generalization of sparse coding (sparse coding is recovered when $n=1$). While we can consider convex relaxations for the sparsity constraints, empirically, we found that a heuristic based on alternating least squares works rather well. In what follows, we introduce this heuristic, which we coin Maximum Correlation ALS (MC-ALS), and showcase its performance in spectral unmixing. However, we defer a theoretical analysis to the [k-sparse DLRA problem](./MixedSparseCoding.ipynb).
+Designing an optimization algorithm with performance guarantees for one-sparse DLRA is not an easy task, in particular since one-sparse DLRA is a generalization of sparse coding (sparse coding is recovered when $n=1$). While we can consider convex relaxations for the sparsity constraints, empirically, we found that a heuristic based on alternating least squares works rather well. In what follows, we introduce this heuristic, which we coin Maximum Correlation ALS (MC-ALS), and showcase its performance in spectral unmixing. However, we defer a theoretical analysis to the [k-sparse DLRA problem](./MixedSparseCoding.md).
 
 ```{margin}
 The original name of MC-ALS in {cite}`cohenDictionarybasedTensorCanonical2018` was Matching Pursuit ALS, which is somewhat misleading, since it involves only one Matching Pursuit iteration and the overall algorithm is not greedy.

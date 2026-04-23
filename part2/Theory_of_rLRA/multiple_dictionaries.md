@@ -19,7 +19,7 @@ kernelspec:
 
 
 
-In the [one-sparse DLRA section](./onesparseDLRA.ipynb), we have seen that in the context of spectral unmixing, we may use the whole hyperspectral image $Y$ as a dictionary. Then computing one-sparse DLRA means identifying pure pixels in the image $Y$ whose spectra correspond to a single material.
+In the [one-sparse DLRA section](./onesparseDLRA.md), we have seen that in the context of spectral unmixing, we may use the whole hyperspectral image $Y$ as a dictionary. Then computing one-sparse DLRA means identifying pure pixels in the image $Y$ whose spectra correspond to a single material.
 
 While this approach can, in principle, detect pure pixels, the optimisation problem is in fact difficult to solve: the dictionary contains as many atoms as there are pixels, and these atoms are highly correlated. A potential workaround, proposed in {cite:p}`cohenSpectralUnmixingMultiple2018`, is to consider a subset of the image. The user might select regions on a projected view of $Y$, typically in an RGB visualization, believing they contain pure pixels. 
 
@@ -88,7 +88,7 @@ The dictionaries Di have shapes {glue:}`Dshapes`. We seek {glue:}`d` atoms in ea
 ```
 
 
-Solving this multiple-dictionary one-sparse DLRA problem seems daunting. However, it is not much more difficult than solving a one-sparse DLRA if an alternating optimization strategy is used. Solving for matrix $B$ with fixed pure pixel indices is a simple NNLS. When fixing matrix $B$, estimating pure pixel indices $\mathcal{K}_i$ for each dictionary is very challenging. Nevertheless, we can adapt the [MC-ALS](./onesparseDLRA.ipynb) strategy to handle this problem:
+Solving this multiple-dictionary one-sparse DLRA problem seems daunting. However, it is not much more difficult than solving a one-sparse DLRA if an alternating optimization strategy is used. Solving for matrix $B$ with fixed pure pixel indices is a simple NNLS. When fixing matrix $B$, estimating pure pixel indices $\mathcal{K}_i$ for each dictionary is very challenging. Nevertheless, we can adapt the [MC-ALS](./onesparseDLRA.md) strategy to handle this problem:
 
 - First, given an estimate for matrix $B$, compute $ A := \underset{A\geq 0}{\text{argmin}} \|Y - AB^T \|_F^2 $ with a NNLS solver.
 - Then, fixing $A$, we find the pure pixel indices by solving the following optimization problem:

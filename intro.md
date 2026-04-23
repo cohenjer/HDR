@@ -15,17 +15,18 @@ The book contains code snippets with barebone implementations of algorithms, num
 The scientific content of the book is summarized in the [](./introduction/summary.md). Here is the table of content for quick access.
 
 TODOlist:
-- Figure inline integration with glue and environments
 - Relecture
     - Acronyms, vocabulary and math notations list (NNKL or NN-KL)
-    - Broken links
     - Cohérence style (we, I (only where relevant), forme passive...)
     - Coherence between parts, intro, perspectives.
 - Fix code dependencies again
+  ------- Envoi 1 --------- (web)
+- Figure inline integration with glue and environments
 - Binder build
 - Precise Version and package dependence
 - Latex build fork ?
 - Photo plus fun accueil
+  ------- Envoi 2 (pdf) ----
 
 %- Maybe later:
   %- bar instead of line plots in HRSI alg

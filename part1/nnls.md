@@ -25,7 +25,7 @@ $$
 
 where $f(y,z)$ is a positive, separable, convex (with respect to the second variable) loss function comparing two vectors $y\in\mathbb{R}^{m}$ and $z\in\mathbb{R}^{m}$ elementwise, and $W\in\mathbb{R}^{m\times n}$ is an observation matrix. The constraint $x\geq 0$ is meant elementwise. Typically, both the observations $y$ and the matrix $W$ are also elementwise nonnegative. This section introduces two particular nonnegative regression problems, Nonnegative Least Squares (NNLS) and Nonnegative Kullback-Leibler (NNKL), that will be of particular interest for the rest of the manuscript.
 
-(subsec:nnls-kl)=
+(subsec:nnls)=
 ## Nonnegative Least Squares (NNLS)
 
 Nonnegative Least Squares is a classic quadratic optimization problem, maybe one of the simplest generalizations of ordinary least squares. I am unsure of its origin, but the oldest mention of NNLS I am aware of is in the book of Lawson and Hanson on optimization methods for least-squares problems {cite:p}`lawsonSolvingLeastSquares1974`. Unlike ordinary least squares, however, NNLS does not have, in general, a closed-form solution.
@@ -36,7 +36,7 @@ NNLS can be formulated as the following optimization problem, with $ f\left(y,Wx
 
 $$ \text{Find}\; x^\ast\in\argmin{x\geq 0} \|y - Wx\|_2^2.$$
 
-In general, the solution to NNLS is **not** the projected unconstained least squares estimate, $\left[W^{\dagger}y\right]^+$, see [](../part2/Fast_algorithms_for_rLRA/proco-als.ipynb) for more details.
+In general, the solution to NNLS is **not** the projected unconstained least squares estimate, $\left[W^{\dagger}y\right]^+$, see [](../part2/Fast_algorithms_for_rLRA/proco-als.md) for more details.
 
 The cost function of NNLS is coercive and continuous, which ensures the existence of a solution. If matrix $W\in\mathbb{R}^{m\times n}$ is full column rank, which is often the case in low-rank approximation problems, then the cost is also strongly convex (and Lipschitz-smooth), ensuring the NNLS solution is unique. When the matrix $W$ is not full column-rank, the discussion on the uniqueness is more difficult. One of the interests of NNLS over ordinary least squares, however, is that the solution for underdetermined systems can still be unique, see the [NNLS KKT conditions](subsec:nnls-kkt) below.
 
@@ -335,7 +335,7 @@ $$
 showing that an optimal solution $x^\ast$ must satisfy $\sum_{i,j} W[i,j]x[j] = \sum_{i} y[i]$. We find that $\sum_{j} \left(\sum_{i}W[i,j]\right) x[j] = \sum_{i} y[i]$. By scaling the columns of matrix $W$ to sum to one, we find that the marginals of $x$ and $y$ must match. Therefore, an algorithm that solves NNKL can be refined by scaling the initial and output estimates $x$.
 
 ```{Note}
-If nonnegativity constraints are dropped and the observation matrix $W$ is right-invertible, the linear system $y=Wx$ has at least one exact solution, and the Euclidean norm or the KL-divergence minimization problems have a common solution $ x^\ast = W^\dagger y$. This observation emphasizes the importance of the nonnegativity constraints in NNLS and NNKL, which act as an informative prior. Solutions to NNLS and NNKL can be arbitrarily far from the right pseudo-inverse and its projection on the nonnegative orthant, see the end of [](../part2/Fast_algorithms_for_rLRA/proco-als.ipynb) for an illustration for NNLS.
+If nonnegativity constraints are dropped and the observation matrix $W$ is right-invertible, the linear system $y=Wx$ has at least one exact solution, and the Euclidean norm or the KL-divergence minimization problems have a common solution $ x^\ast = W^\dagger y$. This observation emphasizes the importance of the nonnegativity constraints in NNLS and NNKL, which act as an informative prior. Solutions to NNLS and NNKL can be arbitrarily far from the right pseudo-inverse and its projection on the nonnegative orthant, see the end of [](../part2/Fast_algorithms_for_rLRA/proco-als.md) for an illustration for NNLS.
 ```
 
 ## Algorithms for NNLS and NNKL
@@ -473,7 +473,7 @@ $$
 
 Another point of view is to observe that in the NNLS KKT conditions, the quantity $W^Tr$ must be null on the optimal support and negative outside the support. Therefore, the selection step selects the largest nonzero scalar product and assumes it should be null. The last estimate of the residual is always an orthogonal projection on the span of $W[:,S]$, hence no atom can be selected that is already in the support, or in the span of $W[:,S]$, even without the explicit support constraint. This allows matrix $W[:,S]$ to always be full column-rank, except maybe at initialization.
 
-This observation is also discussed in [](../part2/Theory_of_rLRA/onesparseDLRA.ipynb), but with $\ell_2$-normalized atoms.
+This observation is also discussed in [](../part2/Theory_of_rLRA/onesparseDLRA.md), but with $\ell_2$-normalized atoms.
 
 ### Second step: restricted least-squares regression
 
@@ -702,7 +702,7 @@ $$
 
 both of which, when plugged into the stationary point equation {eq}`eq:stationary-point`, boil down to the MU updates {eq}`eq:MU-NNLS` and {eq}`eq:MU-NNKL`.
 
-The MM interpretation of MU is useful because it automatically guarantees that MU iterations always decrease the cost. Moreover, for NNLS with positive initialization, MU falls within the scope of the [SUM framework](./AlternatingOptimization.md#successive-upper-bound-minimization), which guarantees convergence of the cost to a stationary point. However, additional hypotheses are required to guarantee that the limit point of the cost and the iterates are respectively stationary points and global minimizers of the cost function in the NNKL problem. These assumptions are summarized in {cite:p}`gillisNonnegativeMatrixFactorization2020`, and revolve around the fact that Lipschitz continuity of the cost is required to avoid arbitrarily small improvements of the iterates for a given cost decrease. 
+The MM interpretation of MU is useful because it automatically guarantees that MU iterations always decrease the cost. Moreover, for NNLS with positive initialization, MU falls within the scope of the [SUM framework](AlternatingOptimization.md#successive-upper-bound-minimization), which guarantees convergence of the cost to a stationary point. However, additional hypotheses are required to guarantee that the limit point of the cost and the iterates are respectively stationary points and global minimizers of the cost function in the NNKL problem. These assumptions are summarized in {cite:p}`gillisNonnegativeMatrixFactorization2020`, and revolve around the fact that Lipschitz continuity of the cost is required to avoid arbitrarily small improvements of the iterates for a given cost decrease. 
 
 ```{margin}
 The zero-locking phenomenon is a numerical instability that occurs when the entries of the vector $x$ are numerically so close to zero that the computer stores then as actual zeros. Once a value in $x$ is zero, it can never increase again in MU due to the elementwise multiplications at each iteration. This can prevent convergence in practice and lead to numerical instabilities due to division by zero.

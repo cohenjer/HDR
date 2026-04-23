@@ -21,13 +21,13 @@ kernelspec:
 :::
 
 
-Let us now look at the DLRA problem when the sparsity level is greater than 1. As we have seen in the [one-sparse DLRA problem](onesparseDLRA.ipynb), the DLRA problem is tricky to solve. To design alternating optimization algorithms for DLRA, it is necessary to first study the subproblem of estimating a column-wise k-sparse matrix $X$. The resulting estimation problem, coined Mixed Sparse Coding (MSC), is the following:
+Let us now look at the DLRA problem when the sparsity level is greater than 1. As we have seen in the [one-sparse DLRA problem](onesparseDLRA.md), the DLRA problem is tricky to solve. To design alternating optimization algorithms for DLRA, it is necessary to first study the subproblem of estimating a column-wise k-sparse matrix $X$. The resulting estimation problem, coined Mixed Sparse Coding (MSC), is the following:
 
 $$ \min_{X\in\Omega_{X},\; \|X[:,q]\|_0\leq k\; \forall q\leq r } \|Y - DXB^T \|_F^2 $$
 
 where matrix $B$ is assumed to be of full column rank. Recall that $\Omega_X$ typically stands for $\mathbb{R}^{d\times r}$ or $\mathbb{R}^{d\times r}_+$.
 
-This problem is studied in particular in {cite:p}`cohenDictionaryBasedLowRankApproximations2022`, below we provide a short and incomplete overview of the results obtained in this work. It also relates to the [sparse NNLS problem](sparse_nnls.ipynb) discussed later.
+This problem is studied in particular in {cite:p}`cohenDictionaryBasedLowRankApproximations2022`, below we provide a short and incomplete overview of the results obtained in this work. It also relates to the [sparse NNLS problem](../Fast_algorithms_for_rLRA/sparse_nnls.md) discussed later.
 
 ## A few observations
 
@@ -46,7 +46,7 @@ A naive heuristic for solving MSC assumes noise is absent. In that case, denotin
 
 $$ YC = DX $$
 
-which allows us to compute the optimal matrix $X$ by solving a sparse coding problem, for instance, with Orthogonal Matching Pursuit {cite:p}`Pati1993Orthogonal`. In particular, when $k=1$, the optimum is obtained by a single iteration of Matching Pursuit. This heuristic, coined Trick-OMP (Trick Orthogonal Matching Pursuit), is in fact exactly the approach used in MC-ALS [described earlier](onesparseDLRA.ipynb) (not the linear assignment variant). While this is correct in the noiseless case, it is a priori unclear how robust this method can be. The following theorem is one possible characterization of the robustness of Trick-OMP. I show that when the noise level is small compared to the conditioning of both matrices $B$ and $D$, the Trick-OMP procedure can identify the support of the solution.
+which allows us to compute the optimal matrix $X$ by solving a sparse coding problem, for instance, with Orthogonal Matching Pursuit {cite:p}`Pati1993Orthogonal`. In particular, when $k=1$, the optimum is obtained by a single iteration of Matching Pursuit. This heuristic, coined Trick-OMP (Trick Orthogonal Matching Pursuit), is in fact exactly the approach used in MC-ALS [described earlier](onesparseDLRA.md) (not the linear assignment variant). While this is correct in the noiseless case, it is a priori unclear how robust this method can be. The following theorem is one possible characterization of the robustness of Trick-OMP. I show that when the noise level is small compared to the conditioning of both matrices $B$ and $D$, the Trick-OMP procedure can identify the support of the solution.
 
 ```{margin}
 Matrix $X'$ stands for the estimate produced by the MC-ALS algorithm, while $X$ is the ground truth solution to the mixed sparse coding problem.
