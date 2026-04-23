@@ -19,7 +19,7 @@ kernelspec:
 
 A core issue in source separation models is ensuring that a user can uniquely identify the output of a separation algorithm with the ground-truth sources. We say that a model is identifiable if it features this uniqueness property. To illustrate what a lack of identifiability means, let a nonnegative matrix $X$ be generated as the product of nonnegative matrices $WH$. If an NMF $X=\tilde{W}\tilde{H}^T$ is computed, in general, the estimated sources $\tilde{W}, \tilde{H}$ are not essentially the same as the ground truth sources $W,H$ (*i.e.*, up to permutation and scaling ambiguities).
 
-This issue is shared by many matrix and tensor decomposition models. In what follows, we summarize our contribution {cite}`Cohen2019Identifiability`, in which we study the identifiability of complete Dictionary Learning (cDL). Note that this work has been extended for sparse nonnegative matrix factorization {cite}`abdolaliDualSimplexVolume2024,abdolaliSimplexStructuredMatrixFactorization2021`.
+This issue is shared by many matrix and tensor decomposition models. In what follows, we summarize our contribution {cite}`Cohen2019Identifiability`, in which we study the identifiability of complete Dictionary Learning (cDL). Note that this work has been extended for sparse NMF {cite}`abdolaliDualSimplexVolume2024,abdolaliSimplexStructuredMatrixFactorization2021`.
 
 cDL is a sparse matrix factorization model, where $n$ vectors $M[:,i]$ of dimensions $p$ stacked in a matrix $M\in\mathbb{R}^{p\times n}$ are decomposed as a sparse combinations (at most $k$ nonzero coefficients) of $r$ vectors $D[:,q]$ called atoms and stacked in a dictionary matrix $D\in\mathbb{R}^{p\times r}$:
 
@@ -33,9 +33,9 @@ Our identifiability result relies on the geometric interpretation of cDL. cDL ca
 
 $$M[:,i] = \sum_{q\leq k} D[:,S[q]]B[S[q],i].$$
 
-Since $B$ is unknown, so is the support $S_i$ but we still know that $M[:,i]$ must live in one of the subspaces spanned by any $k$ columns of $D$, therefore for any $i\leq n$, $M[:,i]\in\cup_{|S|\leq k} \text{span}\left(D[:,S]\right)$.
+Since $B$ is unknown, so is the support $S_i$ but we still know that $M[:,i]$ must live in one of the subspaces spanned by any $k$ columns of $D$, therefore for any $i\leq n$, $M[:,i]\in\cup_{|S|\leq k} \text{col}\left(D[:,S]\right)$.
 
-Informally, our theorem states the following. Suppose there exists a cDL factorisation $M=DB$. Then the dictionary atoms define $r-1$-dimensional subspaces, called facets, $F_i = \text{span}(D[:,-i])$, that contain the data points. These facets can be used to uniquely recover the atoms in dictionary $D$ up to scalings using 
+Informally, our theorem states the following. Suppose there exists a cDL factorisation $M=DB$. Then the dictionary atoms define $r-1$-dimensional subspaces, called facets, $F_i = \text{col}(D[:,-i])$, that contain the data points. These facets can be used to uniquely recover the atoms in dictionary $D$ up to scalings using 
 
 $$D[:,i] = \cap_{j\leq i}F_i .$$
 
@@ -87,16 +87,16 @@ Our result complements the existing literature in several ways:
 - It contradicts an existing result from Georgiev et. al. {cite}`georgievSparseComponentAnalysis2005`. These authors incorrectly assumed that facets can be uniquely identified using $r$ data points (when $k=r-1$), but we provide a counterexample in Figure {ref}`DL_identifiability_ex2`. When $r=3$ and $k=2$, we need in fact $r+1$ data points on the facets.
 - It is fully deterministic, therefore it holds with slightly more generality than many existing results based on a Bayesian description of the model, see for instance {cite}`gribonvalSparseSpuriousDictionary2015` for an overview.
 
-In the next section, we compute cDL using Tensorly!
+In the next section, we compute cDL using tensorly!
 
 
-## Computation of complete Dictionary Learning with Tensorly
+## Computation of complete Dictionary Learning with tensorly
 
-It is possible to compute a cDL with Tensorly using the constrained CP decomposition function. Indeed, one may compute a solution to the cDL problem by solving the optimization problem
+It is possible to compute a cDL with tensorly using the constrained CP decomposition function. Indeed, one may compute a solution to the cDL problem by solving the optimization problem
 
 $$ \min_{D,B} \|M - DB\|_F^2 + \eta_{\|B[:,i]\|_0\leq k} $$
 
-Tensorly implements an alternating optimization algorithm (AO, also called inexact block-coordinate descent) where each block (here the dictionary $D$ and the coefficients $X$ respectively) are updated using a few iterations of Alternating Descent Method of Multipliers. This algorithm was proposed as a flexible optimization framework for constrained matrix and tensor problems by Huang, Sidiropoulos and Liavas {cite}`huangFlexibleEfficientAlgorithmic2016` and implemented in Tensorly in collaboration with Caglayan Tuna in [PR#284](https://github.com/tensorly/tensorly/pull/284).
+tensorly implements an alternating optimization algorithm (AO, also called inexact block-coordinate descent) where each block (here the dictionary $D$ and the coefficients $X$ respectively) are updated using a few iterations of Alternating Descent Method of Multipliers. This algorithm was proposed as a flexible optimization framework for constrained matrix and tensor problems by Huang, Sidiropoulos and Liavas {cite}`huangFlexibleEfficientAlgorithmic2016` and implemented in tensorly in collaboration with Caglayan Tuna in [PR#284](https://github.com/tensorly/tensorly/pull/284).
 
 This algorithm is demonstrated below on a simulated example. Convergence speed and runtime can be improved by using more dedicated software and algorithms.
 
@@ -139,7 +139,7 @@ D0 = D+sig*np.random.randn(*D.shape)
 X0 = X+sig*np.random.randn(*X.shape)
 init = (None,[D0,X0.T])
 
-# ------- Decomposition with Tensorly -----
+# ------- Decomposition with tensorly -----
 out, err = constrained_parafac(Mnoise, rank, hard_sparsity_rowwise={1:kest}, verbose=False, init=init, n_iter_max=500, return_errors=True, tol_outer=0)
 print(f"Initial cost was {err[0]}, Final cost is {err[-1]}, {len(err)} iterations were used")
 # postprocess estimate by permuting the components optimally

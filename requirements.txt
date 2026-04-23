@@ -19,7 +19,7 @@ soundfile
 # correct branch of tensorly
 tensorly @ git+https://github.com/cohenjer/tensorly@tensorly_HDR
 
-# Tensorly eco-system
+# tensorly eco-system
 tensorly-viz
 matcouply
 

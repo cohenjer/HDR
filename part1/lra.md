@@ -14,7 +14,7 @@ kernelspec:
 
 # Low-rank models: Survival kit
 
-Low-rank models are important tools in both unsupervised and supervised machine learning, signal processing, and more generally in applied mathematics. They are also the main mathematical object studied in this manuscript. This section briefly introduces matrix and tensor, low-rank models. A solid background in linear algebra is required. Some of the material presented in the following sections has been covered in more detail in the book chapter I wrote with Pierre Comon and Rasmus Bro {cite:p}`cohenTensorDecompositionsPrinciples2023`. The book of Golub and Van Loan provides a complete description of matrix low-rank models {cite:p}`Golub1989Matrix`. The recent book of Grey Ballard and Tammy Kolda provides a deeper introduction to tensor decompositions, with a focus on computational aspects {cite:p}`ballardTensorDecompositionsData2025`.
+Low-rank models are important tools in both unsupervised and supervised machine learning, signal processing, and more generally in applied mathematics. They are also the main mathematical object studied in this manuscript. This section briefly introduces matrix, and tensor, Low-Rank Approximations (LRA). A solid background in linear algebra is required. Some of the material presented in the following sections has been covered in more detail in the book chapter I wrote with Pierre Comon and Rasmus Bro {cite:p}`cohenTensorDecompositionsPrinciples2023`. The book of Golub and Van Loan provides a complete description of matrix low-rank models {cite:p}`Golub1989Matrix`. The recent book of Grey Ballard and Tammy Kolda provides a deeper introduction to tensor decompositions, with a focus on computational aspects {cite:p}`ballardTensorDecompositionsData2025`.
 
 ## Matrix low-rank factorizations and approximations
 
@@ -32,7 +32,7 @@ Matrix $U$ encodes a basis of the low-dimensional subspace spanning the columns 
 
 The computation of matrix $U$ and coefficients $V$ from the data matrix $M$ can be performed using Singular Value Decomposition (SVD). Algorithms for the SVD rely on either QR decomposition or related tools from linear algebra; see the excellent book of Golub and Van Loan {cite:p}`Golub1989Matrix`, and are implemented in the widely distributed LAPACK software {cite:p}`anderson1999lapack`.
 
-When the data matrix $M$ is centered, the (truncated) SVD returns a particular low-rank factorization (approximation) of the data matrix, known as the Principal Component Analysis (PCA). PCA is a cornerstone of unsupervised machine learning, used not only for dimensionality reduction but also for mining information from high dimensional dataset; see {numref}`fig:pca` for an illustration, and [](#low-rank-approximations) for a discussion on low-rank approximations.
+When the data matrix $M$ is centered, the (truncated) SVD returns a particular low-rank factorization (approximation) of the data matrix, known as the Principal Component Analysis (PCA). PCA is a cornerstone of unsupervised machine learning, used not only for dimensionality reduction but also for mining information from high dimensional dataset; see {numref}`fig:pca` for an illustration, and [](#low-rank-approximations) for a discussion on approximations.
 
 ```{figure} ../Figures/Pca.png
 ---
@@ -67,16 +67,16 @@ The decomposition of a matrix as the sum of rank-one matrices can be understood 
 The point of view of low-rank models as a decomposition into a minimal sum of rank-one terms establishes a clear link between inverse problems and LRA. It is also powerful when considering [extensions of the notion of matrix rank to tensors](#tensor-decompositions). 
 
 ```{note}
-There are several other definitions of the rank for matrices that are widely used. An important definition is the dimension of the row-space or the column-space of a matrix $M$, both of which are in fact equal in dimension.
+There are several other equivalent definitions of the rank for matrices that are widely used. An important definition is the dimension of the row-space or the column-space of a matrix $M$, both of which are in fact equal in dimension.
 ```
 
 ### Low-rank approximations
 
-In most practical applications of interest to this manuscript, the data matrices are not exactly low-rank. Instead, these data matrices are well approximated by low-rank matrices. A Low-Rank Approximation (LRA) is determined by the loss function, often the squared Euclidean distance, the input data matrix, and the rank of the approximation. A rank $r$ approximation of a data matrix $M$, in the Euclidean distance, can be formulated as an optimization problem
+In most practical applications of interest to this manuscript, the data matrices are not exactly low-rank. Instead, these data matrices are well approximated by low-rank matrices. A specific LRA is determined by the loss function, often the squared Euclidean distance, the input data matrix, and the rank of the approximation. A rank $r$ approximation of a data matrix $M$, in the Euclidean distance, can be formulated as an optimization problem
 
 $$ \argmin{\rank{N}\leq r} \|M - N \|_F^2 $$
 
-where $\|M-N\|^2_F = \sum_{i,j} \left(M[i,j]-N[i,j]\right)^2$ is the Frobenius norm of the difference $M-N$, with $N$ the low-rank approximation of data matrix $M$.
+where $\|M-N\|^2_F = \sum_{i,j} \left(M[i,j]-N[i,j]\right)^2$ is the (squared) Frobenius norm of the difference $M-N$, with $N$ the low-rank approximation of data matrix $M$.
 
 A different formulation of LRA is obtained if the approximation matrix is parameterized by two factor matrices $U$ and $V$,
 
@@ -88,7 +88,7 @@ Note that the exact low-rank factorization problem may also be written with a si
 
 $$ \text{Find } U\in\mathbb{R}^{n_1\times r},\;V\in\mathbb{R}^{n_2\times r} \text{ such that } M = UV^T. $$
 
-The Frobenius norm is the most widely used distance metric for LRA, as it yields a closed-form solution. Indeed, let $M = ASB^T$ be the SVD of the matrix $ M$. Then the following result {cite:p}`eckartApproximationOneMatrix1936` shows that $U=A$ and $V^T = SB^T$ is optimal in the least-squares sense.
+The Frobenius norm is the most widely used distance metric for LRA, as it yields a closed-form solution. Indeed, let $M = ASB^T$ be the SVD of the matrix $ M$. Then the following result {cite:p}`eckartApproximationOneMatrix1936` shows that $U=A$ and $V^T = SB^T$ is optimal in the least squares sense.
 
 ```{margin}
 Uniqueness is meant here in the sense that matrix $N$ is the only best rank-$r$ approximation of the data. This is compatible with the lack of identifiability of factor matrices $U$ and $V$.
@@ -107,6 +107,10 @@ The Eckart-Young theorem is a remarkable and incredibly useful result in linear 
 ### Why are data matrices often (approximately) low-rank
 After many years of research in signal processing and machine learning, I have observed an intriguing yet recurring phenomenon: data matrices encountered in various applications are often approximately low-rank. While there is probably no general explanation for this phenomenon, here are a few (non-orthogonal) reasons why this can happen.
 
+```{margin}
+  The first claim however must be mitigated, the class of "nice" latent variable models is more restrictive than hinted in the initial publication by Udell and co-authors, see {cite:p}`budzinskiyWhenBigData2025`.
+```
+
 1. "Nice" latent variable models are of low-rank {cite:p}`udellWhyAreBig2019`, meaning that for a large catalogue of generative models, the resulting data matrix can be well approximated (in entry-wise error) by a low-rank matrix.
 2. The entries of a rank-one matrix are samples of a separable map in two variables, 
    
@@ -118,7 +122,7 @@ After many years of research in signal processing and machine learning, I have o
 3. Low-rank models $M=UV^T$ can be seen as linear source separation models. The rank of the LRA is then the number of underlying sources. Matrix $U$ contains columnwise the templates for the sources, and matrix $V$ contains the mixing coefficients for these sources in the data. Nonlinearities, measurement noise, and missing data corrupt the low-rank data matrix. Many physical processes can be described this way, see examples in audio and hyperspectral image processing in [](../part2/Applications_of_rLRA/intro.md).
 
 
-The second explanation also implies that in many applications, the factor matrices bear physical meaning. Consequently, LRA for source separation should return good approximations of the underlying true factor matrices $U$ and $V$. There are two important questions to answer regarding the estimation of the factor matrices:
+The second and third explanations also imply that in many applications, the factor matrices bear physical meaning: the practitionners ask of LRA for source separation to return good approximations of the underlying true factor matrices $U$ and $V$. There are two important questions to answer regarding the estimation of the factor matrices:
 1. Is the model essentially identifiable, *i.e.*, does equality of two low-rank models $M= U_1V_1^T = U_2V_2^T$ implies equality of the factors up to trivial ambiguities ?
 2. Is the estimation of factor matrices robust in the presence of noise?
 
@@ -133,7 +137,7 @@ The answer to the first question is negative: if $U_1V_1^T = U_2V_2^T$ with the 
 The answer to the second question is well understood in the context of matrix low-rank approximations in the Frobenius norm: the robustness of LRA is directly related to the conditioning number of the data matrix. 
 
 ```{note}
-The algorithmic development for LRA is only briefly described in this section. Two other sections in the manuscript are dedicated to numerical optimization: [nonnegative regression problems](./nnls.md) and [multiblock, alternating optimization problems](./AlternatingOptimization.md).
+The algorithmic development for LRA is only briefly described in this section. Two other sections in the manuscript are dedicated to numerical optimization: [](./nnls.md) and [](./AlternatingOptimization.md).
 ```
 
 ### Nonnegative Matrix Factorization
@@ -150,7 +154,7 @@ Nonnegative Matrix Factorization (NMF) writes an elementwise nonnegative matrix 
 One possible route to make LRA parameters identifiable is to impose constraints on them. A constraint that is physically meaningful in many applications is nonnegativity. It applies naturally when factor matrices represent relative concentrations, spectral templates, images, probabilities, user ratings, energy, and other nonnegative physical quantities. The exact NMF model can be formulated as
 
 ```{margin}
-NMF is traditionally denoted with factors $W$ and $H$. I therefore switch to this notation for this section and use this notation consistently in the manuscript.
+NMF is traditionally denoted with factors $W$ and $H$. I therefore switch to this notation for this section and use this notation consistently throughout the manuscript.
 ```
 
 $$ \text{Find } W\in\mathbb{R}_+^{n_1\times r}, \; H\in\mathbb{R}_+^{n_2\times r} \text{ such that } M=WH^T. $$
@@ -159,7 +163,7 @@ Unlike unconstrained low-rank approximation, exact and approximate NMF do not ad
 
 $$ \argmin{W\in \mathbb{R}_+^{n_1\times r},\;H\in\mathbb{R}_+^{n_2\times r}} \| M - WH^T \|_F^2. $$
 
-Computing exact NMF is an NP-hard problem {cite:p}`Vavasis2010complexity`. Therefore, there exist many strategies, many of which are based on alternating optimization, as discussed in [](./AlternatingOptimization.md), and, to the best of my knowledge, there is no single best method for computing exact or approximate NMF for all datasets. An algorithm that provides reasonably good performance across a large set of problems is Hierarchical Alternating Least Squares; see [](./AlternatingOptimization.md) and [](./nnls.md) for a detailed description.
+Computing exact NMF is an NP-hard problem {cite:p}`Vavasis2010complexity`. There exist many strategies, many of which are based on alternating optimization, as discussed in [](./AlternatingOptimization.md), and, to the best of my knowledge, there is no single best method for computing exact or approximate NMF for all datasets. An algorithm that provides reasonably good performance across a large set of problems is Hierarchical Alternating Least Squares (HALS); see [](./nnls.md) and [](./AlternatingOptimization.md) for a detailed description.
 
 Another difficulty with NMF, compared to unconstrained LRA, is determining the approximation rank. With LRA, one may simply compute the full SVD of the input matrix and truncate according to the distribution of the singular values. Dropping orthogonality implies that the deflation strategy of truncated SVD does not transfer to NMF, and in fact, no deflation strategy exists for NMF that is as simple and general as truncated SVD. In practice, the rank is often guessed by the user, or several approximate NMF models are computed with various ranks, and the best model is kept.
 
@@ -177,7 +181,7 @@ width: 700px
 align: center
 name: fig:nmfr3d3
 ---
-A graphical illustration of the projection of one possible NMF of data matrix $M$. The cone $\cp{W}$ collecting all the positive combinations of columns of matrix $W$, and must contain all the columns of matrix $M$.
+A graphical illustration of one possible NMF of data matrix $M$. The cone $\cp{W}$ collects all the positive combinations of columns of matrix $W$, and must contain all the columns of matrix $M$.
 ```
 
 With this interpretation, it is simple to deduce the non-uniqueness, in general, of NMF. Consider the dimension two and rank-two case, $n_1=r=2$, in {numref}`fig:nmfr2`. As soon as $M[:,1]$ or $M[:,2]$ is elementwise positive, the purple areas are non-trivial and there are infinitely many solutions. The only way NMF can be unique when $n_1$ equals the rank is if $W=I$ is the only solution (up to scaling and permutation and its columns), since $M = IM$ is always a valid NMF in that case.
@@ -188,7 +192,7 @@ width: 700px
 align: center
 name: fig:nmfr2
 ---
-A simple graphical explanation of why NMF without further regularization is generally non-unique. As long the purple areas around the cone spanned by the data points are sufficiently large, there may be infinetly many positive cones that contain the data. The situation is more complex in higher dimensions.
+A simple graphical explanation of why NMF without further regularization is generally non-unique. As long the purple areas around the cone spanned by the data points are sufficiently large, there may be infinitely many positive cones that contain the data. The situation is more complex in higher dimensions.
 ```
 
 
@@ -205,10 +209,10 @@ width: 700px
 align: center
 name: fig:nmfsimplex
 ---
-Exact NMF in dimension 3 and rank 2. The data, after $\ell_1$ normalization, lies on the simplex $\mathcal{S}_2$. This embedding allows to visualize NMF in dimension three in the 2D plane. The right-hand side show two possible scenarios, where NMF is either unique if the data points touch the border of the simplex, or not unique if the data are located on a segment strictly contained in the simplex.
+Exact NMF in dimension 3 and rank 2. The data, after $\ell_1$ normalization, lies on the simplex $\mathcal{S}_2$. This embedding allows to visualize NMF in dimension three in the 2D plane. The right-hand side shows two possible scenarios, where NMF is either unique if the data points touch the border of the simplex, or not unique if the data are located on a segment strictly contained in the simplex.
 ```
 
-This geometric view allows for a finer description of identifiability in low-dimensional settings. Consider the case $n_1=3$ and $r=2$. We see that identifiability can be achieved without further regularization only if the data points touch the boundary of the simplex.
+This geometric view allows for a finer description of identifiability in low-dimensional settings. Consider the case $n_1=3$ and $r=2$ in {numref}`fig:nmfsimplex`. We see that identifiability can be achieved without further regularization only if the data points touch the boundary of the simplex.
 
 %Other interpretations of NMF include the nested polytopes problem, ..., see the book of Gillis for more details {cite:p}`gillisNonnegativeMatrixFactorization2020`.
 
@@ -231,7 +235,7 @@ width: 700px
 align: center
 name: fig:sepnmf
 ---
-Separable NMF finds the matrix $W$ in the columns of the data matrix $M$. In the particular case of rank 2 separable NMF (on the right), the solution can be obtained by picking for the first columns of matrix $W$ the data point with largest $\ell_2$ norm after $\ell_1$ normalization, and then choosing the furthest data point as the second column. When the rank is larger, algorithms exist that can compute exactly separable NMF in polynomial time, such as SNPA {cite}`gillisSuccessiveNonnegativeProjection2014`; the underlying idea behind SNPA is similar to that of orthogonal matching pursuit.
+Separable NMF finds the matrix $W$ in the columns of the data matrix $M$. In the particular case of rank-two separable NMF (on the right), the solution can be obtained by picking for the first columns of matrix $W$ the data point with largest $\ell_2$ norm after $\ell_1$ normalization, and then choosing the furthest data point as the second column. When the rank is larger, algorithms exist that can compute exactly separable NMF in polynomial time, such as the Successive Nonnegative Projection Algorithm (SNPA) {cite}`gillisSuccessiveNonnegativeProjection2014`; the underlying idea behind SNPA is similar to that of OMP.
 ```
 
 A second variant of NMF is sparse NMF, in which the entries of the matrices $W$ and/or $H$ are pushed towards zero. A typical formulation of sparse NMF with $\ell_1$ regularization writes
@@ -247,7 +251,7 @@ In many practical uses of NMF, it is important to consider whether regularized N
 
 To fit NMF to a dataset, several Python libraries are available. [Scikit-learn](https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.NMF.html) has a nice implementation of both [multiplicative updates](../part1/nnls.md) and cyclic coordinate descent, which allow for sparsity-inducing regularization. [Nimfa](https://nimfa.biolab.si/) is a toolbox dedicated to NMF that implements many variants of NMF, including Bayesian and graph-regularized NMF. It has not been updated since 2019, and as far as I know, it is geared towards flexibility rather than performance. 
 
-A third and probably less advertised option is to use nonnegative tensor decomposition available in [Tensorly](http://tensorly.org/stable/modules/generated/tensorly.decomposition.non_negative_parafac_hals.html#tensorly.decomposition.non_negative_parafac_hals). The interface is rather simple and, like in Scikit-learn, two algorithms are proposed, namely multiplicative updates and alternating [HALS](../part1/nnls.md#hals-nnls-only). Tensorly, in fact, implements HALS as an NNLS solver, which can be handy as a building block for other nonnegative factorization problems. Since I am a co-developer of Tensorly, let us demonstrate how to perform a toy NMF factorization with Tensorly.
+A third and probably less advertised option is to use nonnegative tensor decomposition available in [tensorly](http://tensorly.org/stable/modules/generated/tensorly.decomposition.non_negative_parafac_hals.html#tensorly.decomposition.non_negative_parafac_hals). The interface is rather simple and, like in Scikit-learn, two algorithms are proposed, namely multiplicative updates and alternating [HALS](../part1/nnls.md#hals-nnls-only). tensorly, in fact, implements HALS as an NNLS solver, which can be handy as a building block for other nonnegative factorization problems. Since I am a co-developer of tensorly, let us demonstrate how to perform a toy NMF factorization with tensorly.
 
 ```{code-cell} ipython3
 import numpy as np
@@ -349,15 +353,15 @@ In the following, a minimal description of tensor decomposition is provided to u
 ### Tensors and the tensor product
 
 #### The tensor product 
-We start by defining a tensor space in terms of linear algebra. Tensor spaces emerge as a way to provide a "nice" vector space for bilinear objects. Consider the couple $(x,y)\in E\times F$ with $E$ and $F$ two given real (or complex) vector spaces. The carthesian product $E\times F$ is a vector space of dimension $\text{dim}(E) + \text{dim}(F)$, and scalar multiplication with a scalar $\lambda$ write $\lambda(x,y) = (\lambda x, \lambda y)$. The Cartesian product simply juxtaposes the vector spaces $E$ and $F$, but it does not allow much interaction between them. Notice, for instance, that there is no clear way in the Cartesian product to multiply each vector $x$ and $y$ by two different scalars by scalar multiplication. Vectors $x$ and $y$ in a Cartesian product are essentially living in two unrelated spaces.
+We start by defining a tensor space in terms of linear algebra. Tensor spaces emerge as a way to provide a "nice" vector space for bilinear objects. Consider the couple $(x,y)\in E\times F$ with $E$ and $F$ two given real (or complex) vector spaces. The carthesian product $E\times F$ is a vector space of dimension $\text{dim}(E) + \text{dim}(F)$, and scalar multiplication with a scalar $\lambda$ write $\lambda(x,y) = (\lambda x, \lambda y)$. The Cartesian product simply juxtaposes the vector spaces $E$ and $F$, but it does not allow much interaction between them. Notice, for instance, that there is no principled way in the Cartesian product to multiply each vector $x$ and $y$ by two different scalars. Vectors $x$ and $y$ in a Cartesian product are essentially living in two unrelated spaces.
 
 In data mining and low-rank approximations in particular, there is a clear interest in extracting patterns that span across the two dimensions of a matrix. Think how NMF extracts patterns (column of matrix $W$) for each dimension jointly with the activations (columns of matrix $H$). Therefore, we need an underlying vector space that contains interactions between the two vector spaces, larger than the Cartesian product. One way to do this is to consider multilinear maps, such as the scalar product,
 
 $$ \langle x,y \rangle = u(x,y),$$
-where $u$ is a multilinear map acting on the couple $(x,y)$. The core idea of tensor spaces and the tensor product is to find a canonical way to map the couple $(x,y)$ to a vector $\otimes(x,y):= x\otimes y$, where $\otimes$ is the tensor product, such that the multilinear map $u$ decomposes as a linear map $w_u$ and the tensor product:
+where $u$ is a multilinear map acting on the couple $(x,y)$. The core idea of tensor spaces and the tensor product is to find a canonical way to map the couple $(x,y)$ to a vector $\otimes(x,y):= x\otimes y$, where $\otimes$ is the tensor product, such that the multilinear map $u$ decomposes as a linear map $w_u$ acting on the tensor product:
 
 $$ u(x,y) = w_u(\otimes(x,y)) = w_u(x\otimes y).$$
-The tensor product is, therefore, a canonical multilinear map that can be used to make all multilinear maps linear. An important mathematical result, proved for instance in {cite:p}`Schwartz1975` and called the universality theorem, is that this canonical multilinear map $\otimes$ always exists and that for any multilinear map $u$ and fixed tensor product $\otimes$, there is a **unique** linear map $w_u$ such that $u(x,y) = w_u(x\otimes y)$. The set $E\otimes F:=\{x\otimes y, (x,y)\in E\times F\}$ is a vector space, coined the tensor product space. Its dimension is $\text{dim}(E)\text{dim}(F)$ and it is generated by basis elements $e_i\otimes f_j$ for two bases $\{e_i\}_i$ and $\{f_j\}_j$ of respectively vector spaces E and F.
+The tensor product is, therefore, a canonical multilinear map that can be used to make all multilinear maps linear. An important mathematical result, proved for instance in {cite:p}`Schwartz1975` and called the universality theorem, is that this canonical multilinear map $\otimes$ always exists and that for any multilinear map $u$ and fixed tensor product $\otimes$, there is a **unique** linear map $w_u$ such that $u(x,y) = w_u(x\otimes y)$. The set $E\otimes F:=\{x\otimes y, (x,y)\in E\times F\}$ is a vector space, coined the tensor product space. Its dimension is $\text{dim}(E)\text{dim}(F)$ and it is generated by basis elements $e_i\otimes f_j$ for two bases $\{e_i\}_i$ and $\{f_j\}_j$ of respectively vector spaces $E$ and $F$.
 
 The tensor product itself is not unique. However, it can be shown that any two tensor products are related through an isomorphism. This fact is very well known to all data scientists. Take the outer product $xy^T$, and the Kronecker product $x\otimes_K y$. It turns out both are tensor products, related through a trivial isomorphism: row-first vectorization.
 
@@ -393,17 +397,17 @@ The answer to the first question is positive: rank-one tensors are generators of
 $$ M = \sum_{i,j} M[i,j] e_i f_j^T$$
 with $e_i$ and $f_j$ vectors null everywhere except in position respectively $i$ and $j$ where they contain one. This also shows that using more than $d=\text{dim}(E)\text{dim}(F)$ is not required.
 
-The answer to the second part of the second question is directly related to the Canonical Polyadic decomposition described in the next section. Regarding the first half of the question, it is simple to exhibit a tensor that cannot be written as a rank-one tensor. Take $e_1 f_1^T + e_2 f_2^T$ with the previous bases notations. If there exists a rank-one tensor $xy^T$ such that $xy^T = e_1f_1^T + e_2 f_2^T$, then denoting $z_x$ an orthogonal vector to $x$,
+The answer to the second part of the second question is directly related to the canonical tensor decomposition described in the next section. Regarding the first half of the question, it is simple to exhibit a tensor that cannot be written as a rank-one tensor. Take $e_1 f_1^T + e_2 f_2^T$ with the previous bases notations. If there exists a rank-one tensor $xy^T$ such that $xy^T = e_1f_1^T + e_2 f_2^T$, then denoting $z_x$ an orthogonal vector to $x$,
 
 $$ z_x^T x y^T = 0$$
 for the left-hand side, while
 
-$$ z_x^T (e_1f_1^T + e_2 f_2^T) = \langle z_x, e_1\rangle f_1 + \langle z_x, e_2\rangle f_2.$$
-Because $f_1$ and $f_2$ are linearly independent, the last two equalities cannot happen simultaneously, and therefore $e_1 f_1^T + e_2 f_2^T$ cannot be written as a rank-one tensor (matrix).
+$$ z_x^T (e_1f_1^T + e_2 f_2^T) = \langle z_x, e_1\rangle f_1^T + \langle z_x, e_2\rangle f_2^T.$$
+Because $f_1$ and $f_2$ are linearly independent, the two equalities cannot happen simultaneously, and therefore $e_1 f_1^T + e_2 f_2^T$ cannot be written as a rank-one tensor (matrix). The counter-example holds for tensor spaces of higher order as well.
 
 ### CP decomposition
 
-The Canonical Polyadic decomposition (CP or CPD), also called PARAFAC decomposition, is the decomposition of a given tensor into a sum of rank-one tensors with as few terms as possible {cite:p}`hitchcockExpressionTensorPolyadic1927,carrollAnalysisIndividualDifferences1970,harshman1970foundations`. This minimal number of terms is called the rank of a tensor, and is an extension of matrix rank. Indeed, matrix rank can be described, among all possible equivalent definitions, as 
+The Canonical Polyadic decomposition (CP decomposition or CPD), also called PARAFAC decomposition, is the decomposition of a given tensor into a sum of rank-one tensors with as few terms as possible {cite:p}`hitchcockExpressionTensorPolyadic1927,carrollAnalysisIndividualDifferences1970,harshman1970foundations`. This minimal number of terms is called the rank of a tensor, and is an extension of matrix rank. Indeed, matrix rank can be described, among all possible equivalent definitions, as 
 
 $$ \rank{M} = \min \{q\in\mathbb{N},\; M = \sum_{i\leq q} x_i\otimes y_i \text{ where } \; x_i\otimes y_i \in E\otimes F\}$$
 when $E$ and $F$ are real finite-dimensional vector spaces.
@@ -444,7 +448,7 @@ To see this, observe that the CP decomposition of a third-order tensor can be wr
 $$ \forall k\leq n_3, \; T[:,:,k] = A\text{Diag}\left(C[:,k]\right)B^T. $$
 In other words, the CP decomposition is the joint diagonalization of each slice $T[:,:,k]$ of the tensor. Joint diagonalization means that the same bases for the column and row spaces $A$ and $B$ are used for all slices.
 
-To explain further why joint diagonalization fixes rotation ambiguities, let us assume that there are only two slices in the tensor, $n_3=2$, and assume these two slices admit an exact CP decomposition with full rank matrices $A$ and $B$ and nonzero entries in one of the two columns of matrix $C$. It is possible to estimate $A$ and $B$ directly from $T$ using Jenrich's algorithm. Observe that 
+To explain further why joint diagonalization fixes rotation ambiguities, let us assume that there are only two slices in the tensor, $n_3=2$, and assume these two slices admit an exact CP decomposition with full rank matrices $A$ and $B$ and nonzero entries in one of the two columns of matrix $C$. It is possible to estimate $A$ and $B$ directly from the tensor $T$ using Jenrich's algorithm. Observe that 
 
 $$ T[:,:,1]T[:,:,2]^{\dagger} = A \text{Diag}(\frac{C[:,1]}{C[:,2]}) A^{\dagger}, $$
 which is exactly the nonzero part of the eigenvalue decomposition of the rank-deficient symmetric matrix $T[:,:,1]T[:,:,2]^{\dagger}$. It is unique up to scaling and permutations, provided the singular values are distinct. Similarly, matrix $B$ can be obtained from the eigenvalue decomposition of $T[:,:,1]^{\dagger}T[:,:,2]$. The estimation of matrix $C$ can be performed by solving an overdetermined linear system, with a unique solution since matrices $A$ and $B$ are full column rank.
@@ -456,11 +460,11 @@ The CP decomposition model, like matrix LRA, has many applications. This is beca
 
 $$ f(x,y,z) = \sum_{q=1}^{r} f_{1,q}(x)f_{2,q}(y)f_{3,q}(z).$$
 
-The number of parameters in the CP decomposition is $(n_1+n_2+n_3)r$, much smaller than the number of entries in the tensor $T$, $n_1n_2n_3$, when the rank is smaller than the product of two dimensions. Therefore, CP decomposition can also be used purely as a dimensionality reduction tool.
+The number of parameters in the CP decomposition is $(n_1+n_2+n_3)r$, much smaller than the $n_1n_2n_3$ entries in the tensor $T$ when the rank is smaller than the product of any two dimensions. Therefore, CP decomposition can also be used purely as a dimensionality reduction tool.
 
 ```{Note}
 
-There exist many shorthand notations for CP decomposition. Many authors use the so-called Kruskal notation $T=\llbracket A, B, C \rrbracket$, which I will also use in this manuscript {cite:p}`Kolda2009Tensor`. However, in some settings, I prefer working with the more rigorous notation
+There exist several shorthand notations for CP decomposition. Many authors use the so-called Kruskal notation $T=\llbracket A, B, C \rrbracket$, which I will also use in this manuscript {cite:p}`Kolda2009Tensor`. However, in some settings, I prefer working with the more rigorous notation
 
 $$ T = \left(A\otimes B\otimes C \right) I_{r}$$
 where $I_{r}[i,j,k] = \delta_{ir}\delta_{jr}\delta_{kr}$ is a diagonal tensor of ones. The tensor product $\otimes$ is here meant in the sense of linear operators. This is in practice equivalent to the multiway product notation
@@ -474,11 +478,11 @@ but also makes explicit the tensor structure of the linear operators acting on t
 
 On the surface, approximate CP decomposition is simply a particular case of approximate LRA. Let $T$ be a data tensor to decompose. Approximate CP decomposition aims at finding a rank $r$ tensor $\llbracket A, B, C \rrbracket$ as close as possible to $T$; the rank of the approximation $r$ is fixed in advance. If the Frobenius norm $\|T\|_F^2 = \sum_{i,j,k} T[i,j,k]^2$ is used as an error metric, the approximate CP decomposition computes the best rank-$r$ approximation by solving the optimization problem
 
-$$ \argmin{A\in\R{n_1},\; B\in\R{n_2},\; C\in\R{n_3}} \| T - \llbracket A,B,C \rrbracket \|_2^2. $$
+$$ \argmin{A\in\R{n_1\times r},\; B\in\R{n_2\times r},\; C\in\R{n_3\times r}} \| T - \llbracket A,B,C \rrbracket \|_2^2. $$
 Like most LRA-related optimization problems, this is a non-convex, multiblock optimization problem that can be addressed in practice by [alternating optimization](./AlternatingOptimization.md). The workhorse algorithm for fitting approximate CP decomposition is the Alternating Least Squares (ALS) algorithm. It updates each matrix $A$, $B$, and $C$ in sequence, which, in general, can be done in closed form since the cost is quadratic in each parameter matrix. For instance, the update for the parameter matrix $A$ is obtained by solving the linear system
 
 ```{margin}
-Many cumbersome notations, such as unfoldings and the Khatri-Rao product, are used to describe optimization algorithms. I will make as little use as possible of these notations and therefore avoid defining them in this section. It is not important to understand them to follow the overall discussion; informal definitions are provided in the [notation](/Howtouse/notation.md) section. In fact, in Tensorly, these operations are not actually performed, and tensor contractions are preferred for performance reasons.
+Many cumbersome notations, such as unfoldings and the Khatri-Rao product, are used to describe optimization algorithms. I will make as little use as possible of these notations and therefore avoid defining them in this section. It is not important to understand them to follow the overall discussion; informal definitions are provided in the [notation](/Howtouse/notation.md) section. In fact, in tensorly, these operations are not actually performed, and tensor contractions are preferred for performance reasons.
 ```
 
 $$  T_{[1]}(B\odot C) = A (B^TB \ast C^TC), $$
@@ -492,14 +496,14 @@ Since this manuscript is mostly concerned with regularized LRA, this problem is 
 
 A classic example of regularized CP decomposition is approximate nonnegative CP Decomposition (nCPD), defined as the solution to the optimization problem
 
-$$ \argmin{A\in\R_+{n_1},\; B\in\R_+{n_2},\; C\in\R_+{n_3}} \| T - \llbracket A,B,C \rrbracket \|_2^2. $$
+$$ \argmin{A\in\R{n_1\times r}_+,\; B\in\R{n_2\times r}_+,\; C\in\R{n_3\times r}_+} \| T - \llbracket A,B,C \rrbracket \|_2^2. $$
 
 Notice that the matrices have nonnegative entries. Algorithms to compute nCPD are similar to algorithms for solving NMF, and rely on NNLS solvers described extensively in [](./nnls.md). Notice also that coercivity is achieved with nonnegativity constraints, since the components cannot cancel out, and the cost function increases toward infinity as the components grow. Therefore, the best nonnegative low-rank approximation of a tensor always exists.
 
 ```
 
 ### Tucker decomposition
-In the CP decomposition, the factor matrices $A$, $B$, and $C$ can be seen as linear operators that map a diagonal tensor to the data tensor $T$. In fact, using the linear operator tensor space point of view, the map $A\otimes B\otimes C$ is a rank one linear operator acting on tensors. The idea of Tucker decomposition is to generalize this observation by using rank-one linear operators to map large tensors to smaller tensors, thereby performing multilinear dimensionality reduction.
+In the CP decomposition, the factor matrices $A$, $B$, and $C$ can be seen as linear operators that map a diagonal tensor to the data tensor $T$. In fact, using the linear operator tensor space point of view, the map $A\otimes B\otimes C$ is a rank-one linear operator acting on tensors. The idea of Tucker decomposition is to generalize this observation by using rank-one linear operators to map large tensors to smaller tensors, thereby performing multilinear dimensionality reduction.
 
 ```{figure} ../Figures/Tucker.png
 ---
@@ -515,7 +519,7 @@ For a data tensor $T\in\R{n_1\times n_2\times n_3}$, the Tucker decomposition fi
 $$ T = \left( U\otimes V\otimes W\right) G =  U\times_1 V\times_2 W\times_3 G.$$
 with $\times_i$ the multiway product [defined above](./lra.md#cp-decomposition). Matrices $U$, $V$, and $W$ as well as the core tensor $G$ are the parameters of the model, which involves $n_1r_1 + n_2r_2+ n_3r_3 + r_1r_2r_3$ parameters. This is significantly smaller than the number of entries in the tensor $T$ when the so-called multilinear ranks $r_i$ are smaller than the tensor dimensions. A tensor following an exact Tucker decomposition is written as 
 
-$$ \llbracket U, V, W; G\rrbracket.$$
+$$ T = \llbracket U, V, W; G\rrbracket.$$
 
 The Tucker decomposition is more similar to matrix LRA than the CP decomposition in terms of algorithmic development and uniqueness properties. Tucker decomposition has rotation ambiguities in each mode, since $U\times_1 G = (UQ\times_1) (Q^T\times_1G)$ and is therefore never unique without further regularizations. Orthogonality is typically employed on each mode {cite:p}`Lathauwer2000Multilinear`, although nonnegativity is also a popular choice {cite:p}`morup2008algorithms,cohenTheoryNonnegativeTucker2017` that I have worked with, see [](../introduction/summary.md). The identifiability of Nonnegative Tucker decomposition is a longstanding problem that has seen some recent progress {cite:p}`sahaIdentifiabilityNonnegativeTucker2025`.
 

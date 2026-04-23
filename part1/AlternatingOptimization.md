@@ -17,7 +17,7 @@ Many estimation problems considered in the manuscript rely on solving an optimiz
 
 $$ \argmin{x_1\in\mathcal{X}_1,~\ldots~,x_d\in\mathcal{X}_d} f(x_1,x_2,\ldots,x_d) $$
 
-where $f:\mathcal{X}_1\times \ldots \times \mathcal{X}_{d} \mapsto \mathbb{R}_+$ is a positive cost function and $\mathcal{X}_k$ are Euclidean spaces embedded in $\mathbb{R}^{n_k}$. Indeed, low-rank approximation models are multifactor models; each block $x_k$ may represent a factor matrix in a low-rank model. For instance, solving a rank $r$ approximate nonnegative matrix factorization problem in the presence of Gaussian noise may result in the following two-block optimization problem
+where $f:\mathcal{X}_1\times \ldots \times \mathcal{X}_{d} \mapsto \mathbb{R}_+$ is a positive cost function and $\mathcal{X}_k$ are Euclidean spaces embedded in $\mathbb{R}^{n_k}$. Indeed, low-rank approximation models are multifactor models; each block $x_k$ may represent a factor matrix in a low-rank model. For instance, solving a rank $r$ approximate NMF problem in the presence of Gaussian noise may result in the following two-block optimization problem
 
 $$ \argmin{X_1\in \mathbb{R}_+^{n_1\times r},~X_2\in \mathbb{R}_+^{n_2\times r}} \|Y - X_1X_2^T \|_F^2 $$
 
@@ -200,7 +200,7 @@ Assume that the function $f$ is continuously differentiable, and assume that the
 
 ```
 
-Notice how the assumptions for the two-block case are milder than in the general case. Compared to {prf:ref}`th:AO4`, the two-block case requires neither the uniqueness of block updates nor the monotonicity of the cost along the update path. The two-block case is useful when considering the convergence of alternating algorithms for models such as nonnegative matrix factorization or dictionary learning.
+Notice how the assumptions for the two-block case are milder than in the general case. Compared to {prf:ref}`th:AO4`, the two-block case requires neither the uniqueness of block updates nor the monotonicity of the cost along the update path. The two-block case is useful when considering the convergence of alternating algorithms for models such as NMF or dictionary learning.
 
 
 ```{admonition} Convergence rate of AO with two blocks

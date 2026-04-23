@@ -2,9 +2,9 @@
 
 The topics discussed in this section are scientific questions that I want to address, which are not directly related to the KL-divergence and Poisson noise.
 
-## Single pixel imaging and compressive acquisition
+## Single-pixel imaging and compressive acquisition
 
-Single-pixel imaging has already been discussed in [](../part2/Applications_of_rLRA/Single_pixel_spectral_imaging.md). While the reconstruction algorithm is critical, to improve the overall algorithmic and hardware pipeline, the acquisition system is maybe even more important. The acquisition is modeled as a linear system $y=Hx$, where the matrix $H$ contains, in each row, the pattern of ones and zeros representing the micro-mirror positions at each acquisition. There are two relatively open questions regarding the choice of these patterns.
+SPI has already been discussed in [](../part2/Applications_of_rLRA/Single_pixel_spectral_imaging.md). While the reconstruction algorithm is critical, to improve the overall algorithmic and hardware pipeline, the acquisition system is maybe even more important. The acquisition is modeled as a linear system $y=Hx$, where the matrix $H$ contains, in each row, the pattern of ones and zeros representing the micro-mirror positions at each acquisition. There are two relatively open questions regarding the choice of these patterns.
 
 As discussed in [](../part2/Applications_of_rLRA/Single_pixel_spectral_imaging.md), the acquisition matrix coefficients have to belong to the interval $[0,1]$. The statistical optimality of Hadamard patterns holds for additive noise and entries in $[-1,1]$. There are other acquisition matrices, such as $S$ matrices {cite:p}`Harwit_1979`, that are shown to be optimal up to a factor $2$. We are working on a research paper summarizing these ideas {cite:p}`ducrosFreeformHadamardImaging2025`. Ongoing research in the team is also concerned with learning the acquisition patterns from a training dataset, or from the color camera in a multimodal acquisition setup. I will not explore this direction. 
 

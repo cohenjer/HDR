@@ -23,7 +23,7 @@ def convert_to_pixel(pixlist, imshape_x):
 def convert_to_index(Kx, Ky, imshape_x):
     '''
     Takes two input lists Kx and Ky containing positions in the (x,y) plane of pixels, and converts them into a single list of indices in the unfolded image.
-    Unfolding (vectorization) is supposed row-first as in Tensorly, therefore we only need to know the number of pixels along the x axis, imshape_x.
+    Unfolding (vectorization) is supposed row-first as in tensorly, therefore we only need to know the number of pixels along the x axis, imshape_x.
     '''
     K = []
     for i in range(len(Kx)):

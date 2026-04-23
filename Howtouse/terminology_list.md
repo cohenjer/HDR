@@ -2,17 +2,32 @@
 
 This document lists all acronyms, technical terms, and words with ambiguous spelling found in the manuscript.
 
-TODO: add a one-liner def for all technical terms used but not properly defined.
+%TODO: add a one-liner def for all technical terms used but not properly defined.
 
-Essential uniqueness is the uniqueness up to permutations and scaling ambiguities inherent to LRA models.
 ## Acronyms
 
 - AMT: Automatic Music Transcription
+- CPD: Canonical Polyadic Decomposition
+- HALS: Hierarchical Alternating Least Squares
+- HDR: Habilitation à Diriger des Recherches
+- HOMP: Hierarchical Orthogonal Matching Pursuit
 - LRA: Low-Rank Approximation(s)
 - MM: Majorization Minimization
+- nCPD: Nonnegative CPD
+- NMF: Nonnegative Matrix Factorization
+- NNKL: Nonnegative Kullback-Leibler regression
+- NNLS: Nonnegative Least Squares
+- OMP: Orthogonal Matching Pursuit
 - PCA: Principal Component Analysis 
 - rLRA: Regularized Low-Rank Approximation(s)
-- SPI: Single Pixel Imaging
+- SNPA: Successive Nonnegative Projection Algorithm
+- SPI: Single-Pixel Imaging
+- SVD: Singular Value Decomposition
+
+## Definitions
+
+
+%- Essential uniqueness is the uniqueness up to permutations and scaling ambiguities inherent to LRA models.
 
 %- **ACMTF** [[CMTF]](../part2/Fast_algorithms_for_rLRA/CMTF)
 %- **AD** [[AMT]](../part2/Applications_of_rLRA/AMT) [[CMTF]](../part2/Fast_algorithms_for_rLRA/CMTF)

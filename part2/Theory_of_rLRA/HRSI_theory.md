@@ -17,7 +17,7 @@ kernelspec:
 {cite:p}`cohenEfficientAlgorithmsRegularized2025` J. E. Cohen, V. Leplat, "Efficient Algorithms for Regularized Nonnegative Scale-invariant Low-rank Approximation Models", SIAM Journal of Mathematics on Data Science, 2025 [[arxiv]](https://arxiv.org/abs/2403.18517)
 :::
 
-Consider the ridge Nonnegative Matrix Factorization problem with Frobenius loss:
+Consider the ridge NMF problem with Frobenius loss:
 
 (eq:ridge-NMF)=
 $$ \argmin{X_1\geq 0, X_2\geq 0} \|M - X_1X_2^T\|_F^2 + \lambda_1 \|X_1\|_F^2 + \lambda_2 \|X_2\|_F^2. $$
@@ -187,7 +187,7 @@ lambset = [0, 0.05, 0.1, 0.15, 0.2, 0.3, 0.4, 0.6, 0.7, 0.75, 0.78, 0.8, 1, 1.2,
 
 import copy
 for lamb in lambset:
-    # Computing the sparse NMF with Tensorly (the algorithm is HALS, which is the state of the art for this problem)
+    # Computing the sparse NMF with tensorly (the algorithm is HALS, which is the state of the art for this problem)
     out = tl.decomposition.non_negative_parafac_hals(Yn, r, sparsity_coefficients=[lamb, lamb], init=copy.deepcopy((None, [W0, H0])))
     # Estimated factors
     We[lamb] = out[1][0]

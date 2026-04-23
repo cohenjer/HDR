@@ -11,7 +11,7 @@ kernelspec:
 ---
 
 (part:applications)=
-# Summary
+# Applications of rLRA in source separation
 
 Regularizations in LRA are necessarily driven by the properties of the low-rank factors one seeks to recover from the computation of LRA. Therefore, by understanding the applications of LRA in signal processing, one can derive both interesting fundamental problems related to LRA and ideas for designing regularizations and algorithms. Conversely, in some applications, such as medical imaging, theoretical guarantees on the quality of the reconstructed factors in rLRA are important because interpretation errors in these methods' outputs may have a significant impact. In an [optical biopsy application](../../introduction/summary.md#optical-biopsy-nmf) I contributed to, rLRA outputs allow a surgeon to decide whether to remove brain cells during surgery. Removing too few may lead to cancer recurrence, but removing too much may harm critical brain functionalities.
 
@@ -77,7 +77,7 @@ $$ Y \approx WH^T $$
 
 where $W$ is a matrix containing the spectra of each individual fluorophore in the chemical mixture, and $H$ contains the amplitude of each fluorophore response to the excitation wavelength. Applying NMF to the data matrix $Y$, or nonnegative tensor factorization to several such measurement matrices, can in principle recover the individual fluorescence spectra, essentially performing spectral unmixing.
 
-b. **The linear mixing model in remote sensing** makes the hypothesis that materials on an observed scene are spatially distributed and non-overlapping. The scene is cut into pixels by the camera, and each pixel may therefore contain several materials with proportions given by the portion of the pixel covered by each material. The spectral acquisition is then the additive mixture of the reflectance spectra (the ambient-light spectrum, essentially white, filtered by each material). For a single pixel $Y[:,i]$ of the acquired spectral image $Y$ with $m$ spectral wavelengths (or spectral bands if spectra are acquired in a compressed spectral representation) and $n$ pixels, the additive mixture of $K$ materials simply translates into a linear model
+b. **The linear mixing model in remote sensing** makes the hypothesis that materials on an observed scene are spatially distributed and non-overlapping. The scene is cut into pixels by the camera, and each pixel may therefore contain several materials with proportions given by the portion of the pixel covered by each material. The spectral acquisition is then the additive mixture of the reflectance spectra (the ambient-light spectrum, essentially white, filtered by each material). For a single-pixel $Y[:,i]$ of the acquired spectral image $Y$ with $m$ spectral wavelengths (or spectral bands if spectra are acquired in a compressed spectral representation) and $n$ pixels, the additive mixture of $K$ materials simply translates into a linear model
 
 $$ Y[:,i] \approx \sum_{k=1}^{K} W[i,k] H^T[:,k];\; Y\approx WH^T $$
 

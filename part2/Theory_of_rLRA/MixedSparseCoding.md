@@ -122,9 +122,9 @@ This second approach, coined Block-Lasso, is simple because we can compute gradi
 
 To tune all the $\lambda_i$ parameters, we assume that the desired sparsity level $k$ for each column is known. Parameters $\lambda_i$ can then be tuned dynamically using a simple heuristic to reach $k$ nonzero entries within an iterative algorithm. The resulting algorithm is coined Block-FISTA and is a Proximal Fast Gradient algorithm with heuristically adaptive regularization weights.
 
-We may compare the three proposed methods (Trick-OMP, HOMP, Block-FISTA) as MSC solvers, as is done in {cite:p}`cohenDictionaryBasedLowRankApproximations2022`. However, to remain concise, we show below an example of the use of an alternating algorithm with Block-FISTA as the MSC solver, applied to smooth canonical polyadic decomposition.
+We may compare the three proposed methods (Trick-OMP, HOMP, Block-FISTA) as MSC solvers, as is done in {cite:p}`cohenDictionaryBasedLowRankApproximations2022`. However, to remain concise, we show below an example of the use of an alternating algorithm with Block-FISTA as the MSC solver, applied to smooth CPD.
 
-## DLRA for Smooth Canonical Polyadic Decomposition
+## DLRA for Smooth CPD
 
 ```{margin}
 

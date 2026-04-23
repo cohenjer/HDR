@@ -12,7 +12,7 @@ kernelspec:
   name: python3
 ---
 
-# Proco-ALS for fast NCPD
+# Proco-ALS for fast nCPD
 
 :::{admonition} Reference
 :class: tip
@@ -22,7 +22,7 @@ kernelspec:
 
 ## Projected least squares for solving NNLS
 
-When discussing nonnegative least squares algorithms, we overlooked one possible naive idea for computing an approximate solution: first compute the unconstrained least squares solution, then project it onto the nonnegative orthant. Given an NNLS problem NNLS(A,b), this means computing
+When discussing NNLS algorithms, we overlooked one possible naive idea for computing an approximate solution: first compute the unconstrained least squares solution, then project it onto the nonnegative orthant. Given an NNLS problem NNLS(A,b), this means computing
 ```python
     x_hat = tl.solve(A,b)
     x_hat[x_hat<0] = 0
@@ -209,7 +209,7 @@ $$ T = \left( A \otimes B \otimes C \right) I_r = \left( UA_c \otimes VB_c \otim
 
 where the tensor $\left(A_c\otimes B_c\otimes C_c \right) I_r \in \mathbb{R}^{r_1\times r_2\times r_3}$ can be understood as a core tensor $G$ with a CP decomposition of rank $r$ and small factors $A_c,B_c,C_c$.
 
-In Tensorly, we can perform Tucker compression (also called CANDELINC {cite:p}`Carroll1980CANDELINC`) easily as follows
+In tensorly, we can perform Tucker compression (also called CANDELINC {cite:p}`Carroll1980CANDELINC`) easily as follows
 
 ```{code-cell} ipython3
 cp_true = tl.random.random_cp([100,100,100], 3)
@@ -245,7 +245,7 @@ $$ A_c^{k+1} = \Pi_{U\cdot\geq 0}\left[ A_c - \eta \left( G_{[1]}\left(B_c \odot
 
 The cost of the gradient step is low due to Tucker compression, but the cost of the projection onto the positive cone of $U$ can be consequential if $U$ is a large matrix (which is exactly the setup we consider for Tucker compression). This projection is in fact exactly a collection of $n_1$ NNLS problems of dimensions $r$, with $n_1$ the dimension in the first mode of the original tensor. 
 
-In our work [ref, date], we proposed to use the Pro-ALS idea to avoid resorting to NNLS solvers entirely. This gave birth to the Proco-ALS algorithm detailed below. We first solve the least-squares problem unconstrained, then project onto the constraint set $ UA_c\geq 0$. As mentioned above, such a projection is also costly. We use a heuristic approximate projection instead,
+In our work [ref, date], we proposed to use the Pro-ALS idea to avoid resorting to NNLS solvers entirely. This gave birth to the Proco-ALS algorithm detailed below. We first solve the least squares problem unconstrained, then project onto the constraint set $ UA_c\geq 0$. As mentioned above, such a projection is also costly. We use a heuristic approximate projection instead,
 
 $$ \hat{\Pi}(y) = U^T\left[Ux\right]_+. $$
 
@@ -366,7 +366,7 @@ for i in range(grid_z.shape[0]):
 plt.contourf(grid_x[0], grid_x[1], grid_z)
 plt.plot([0,1],[0,0],'r')
 plt.plot([0,0],[0,2],'r')
-plt.scatter(x_LS[0],x_LS[1]) # Least squares solution is blue dot
+plt.scatter(x_LS[0],x_LS[1]) # Leastsquares solution is blue dot
 plt.scatter(x_pro_LS[0],x_pro_LS[1]) # Pro-LS is orange dot (zero)
 plt.scatter(x_NNLS[0], x_NNLS[1]) # NNLS solution is green dot
 plt.colorbar()

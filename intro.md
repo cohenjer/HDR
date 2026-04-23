@@ -36,12 +36,13 @@ TODOlist:
 
 %- Maybe later:
   %- bar instead of line plots in HRSI alg
+  %- Local installation instructions ?
+  %- precise pages in books refs
   %- Figures
     %- CMTF models [CMTF.md] --> main
     %- PARAFAC2 projections
     %- projection cone dual [proco-als.md] (utile?) --> main
     %- rank r matrix factorization [lra.md] --> main
-  %- Local installation instructions ?
 
 
 %## Note to self about figures:

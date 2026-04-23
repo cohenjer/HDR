@@ -23,12 +23,12 @@ $$
 \argmin{x\geq 0} f(y, Wx)
 $$
 
-where $f(y,z)$ is a positive, separable, convex (with respect to the second variable) loss function comparing two vectors $y\in\mathbb{R}^{m}$ and $z\in\mathbb{R}^{m}$ elementwise, and $W\in\mathbb{R}^{m\times n}$ is an observation matrix. The constraint $x\geq 0$ is meant elementwise. Typically, both the observations $y$ and the matrix $W$ are also elementwise nonnegative. This section introduces two particular nonnegative regression problems, Nonnegative Least Squares (NNLS) and Nonnegative Kullback-Leibler (NNKL), that will be of particular interest for the rest of the manuscript.
+where $f(y,z)$ is a positive, separable, convex (with respect to the second variable) loss function comparing two vectors $y\in\mathbb{R}^{m}$ and $z\in\mathbb{R}^{m}$ elementwise, and $W\in\mathbb{R}^{m\times n}$ is an observation matrix. The constraint $x\geq 0$ is meant elementwise. Typically, both the observations $y$ and the matrix $W$ are also elementwise nonnegative. This section introduces two particular nonnegative regression problems, Nonnegative Least Squares (NNLS) and Nonnegative Kullback-Leibler regression (NNKL), that will be of particular interest for the rest of the manuscript.
 
 (subsec:nnls)=
-## Nonnegative Least Squares (NNLS)
+## Nonnegative Least Squares
 
-Nonnegative Least Squares is a classic quadratic optimization problem, maybe one of the simplest generalizations of ordinary least squares. I am unsure of its origin, but the oldest mention of NNLS I am aware of is in the book of Lawson and Hanson on optimization methods for least-squares problems {cite:p}`lawsonSolvingLeastSquares1974`. Unlike ordinary least squares, however, NNLS does not have, in general, a closed-form solution.
+NNLS is a classic quadratic optimization problem, maybe one of the simplest generalizations of ordinary least squares. I am unsure of its origin, but the oldest mention of NNLS I am aware of is in the book of Lawson and Hanson on optimization methods for least squares problems {cite:p}`lawsonSolvingLeastSquares1974`. Unlike ordinary least squares, however, NNLS does not have, in general, a closed-form solution.
 
 ### Problem description
 
@@ -340,7 +340,7 @@ If nonnegativity constraints are dropped and the observation matrix $W$ is right
 
 ## Algorithms for NNLS and NNKL
 
-There is a vast literature on optimization algorithms for solving NNLS, NNKL, or both, some of which is included in later parts of this manuscript. Listing all these methods, with their advantages and disadvantages, is an important but challenging task to which I will devote time in the coming years; see the [discussion on research perspectives](../part3/Perspectives.md). In the rest of this section, only the most useful NNLS and NNKL algorithms for the manuscript are introduced: active-set, hierarchical alternating least-squares, and multiplicative updates.
+There is a vast literature on optimization algorithms for solving NNLS, NNKL, or both, some of which is included in later parts of this manuscript. Listing all these methods, with their advantages and disadvantages, is an important but challenging task to which I will devote time in the coming years; see the [discussion on research perspectives](../part3/Perspectives.md). In the rest of this section, only the most useful NNLS and NNKL algorithms for the manuscript are introduced: active-set, HALS, and multiplicative updates.
 
 %| alg name |  LS | KL | fast ? | Convergence cost | 
 %| ---------| ----|----|--------|------       |
@@ -353,7 +353,7 @@ There is a vast literature on optimization algorithms for solving NNLS, NNKL, or
 
 ## Active-set (NNLS only)
 
-A workhorse algorithm to solve NNLS is the Active-Set (AS) algorithm proposed by Lawson and Hanson in 1974 {cite:p}`lawsonSolvingLeastSquares1974,Bro1997fast`. It is based on the observation that, knowing the support of the solution $x^\ast$, the solution itself can be computed using the unconstrained least squares estimate restricted to this support. AS therefore iteratively searches for the support of the solution. It works similarly to the Orthogonal Matching Pursuit algorithm {cite:p}`Pati1993Orthogonal`, where a candidate index is first added to the current estimation of the solution support, and the unconstrained least squares estimate restricted to the current support estimate is then computed. However, unlike greedy sparse approximation algorithms, AS includes a third step that thins the support. Below is a pseudo-code for AS and a simple example. We then describe each step in more detail. We will see that any step taken by the AS algorithm has to decrease the cost function.
+A workhorse algorithm to solve NNLS is the Active-Set (AS) algorithm proposed by Lawson and Hanson in 1974 {cite:p}`lawsonSolvingLeastSquares1974,Bro1997fast`. It is based on the observation that, knowing the support of the solution $x^\ast$, the solution itself can be computed using the unconstrained least squares estimate restricted to this support. AS therefore iteratively searches for the support of the solution. It works similarly to the OMP algorithm {cite:p}`Pati1993Orthogonal`, where a candidate index is first added to the current estimation of the solution support, and the unconstrained least squares estimate restricted to the current support estimate is then computed. However, unlike greedy sparse approximation algorithms, AS includes a third step that thins the support. Below is a pseudo-code for AS and a simple example. We then describe each step in more detail. We will see that any step taken by the AS algorithm has to decrease the cost function.
 
 ```{code-cell}ipython3
 :tags: [hide-input]
@@ -475,7 +475,7 @@ Another point of view is to observe that in the NNLS KKT conditions, the quantit
 
 This observation is also discussed in [](../part2/Theory_of_rLRA/onesparseDLRA.md), but with $\ell_2$-normalized atoms.
 
-### Second step: restricted least-squares regression
+### Second step: restricted least squares regression
 
 The second step of AS is straightforward: one simply computes the unconstrained least squares estimate $z = W[:,S]^\dagger y$, knowing that matrix $W$ is full column rank. Note that at this step, the cost function can only decrease since the support increased in size due to the selection step. If $z$ is nonnegative, we can safely continue the AS algorithm by looping back to step 1 with $x=z$. However, if $z$ is not an admissible solution, the AS algorithm enters a third step.
 
@@ -499,9 +499,9 @@ $$
 \argmin{H\geq 0} \|Y - WH^T\|_F^2 = \argmin{H\geq 0} \sum_{i\leq n} \|Y[:,i] - WH^T[i,:]\|_2^2.
 $$
 
-Indeed, the AS algorithm would search for the optimal support of each column of the unknown matrix $H^T$. These supports can all be different. The costly operation in AS is solving the least-squares systems restricted to the current support estimate, and for matrix NNLS, these operations must be performed independently for each column. The fast active-set algorithm {cite:p}`Bro1997fast` improves on this issue by precomputing the grammians $W^TW$ and $W^TY$ in the case where $W$ is a tall matrix.
+Indeed, the AS algorithm would search for the optimal support of each column of the unknown matrix $H^T$. These supports can all be different. The costly operation in AS is solving the least squares systems restricted to the current support estimate, and for matrix NNLS, these operations must be performed independently for each column. The fast active-set algorithm {cite:p}`Bro1997fast` improves on this issue by precomputing the grammians $W^TW$ and $W^TY$ in the case where $W$ is a tall matrix.
 
-For matrix NNLS, it is, however, useful to design an algorithm that can update all columns $H^T[:,i]$ simultaneously. This is the rationale behind the Hierarchical Alternating Least Squares (HALS) algorithm. HALS updates each row of matrix $H$ sequentially, and this update is known in closed form. Indeed, notice that for any nonzero vector $a\in\mathbb{R}^{m}$ and any matrix $Z\in\mathbb{R}^{m\times n}$,
+For matrix NNLS, it is, however, useful to design an algorithm that can update all columns $H^T[:,i]$ simultaneously. This is the rationale behind the HALS algorithm. HALS updates each row of matrix $H$ sequentially, and this update is known in closed form. Indeed, notice that for any nonzero vector $a\in\mathbb{R}^{m}$ and any matrix $Z\in\mathbb{R}^{m\times n}$,
 
 $$
    \argmin{h\in\mathbb{R}_+^{n}} \|Z - ah^T  \|^2_2 = \left[\frac{a^TZ}{\|a\|_2^2} \right]^+.

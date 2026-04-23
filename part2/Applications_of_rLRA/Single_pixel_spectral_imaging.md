@@ -10,7 +10,7 @@ kernelspec:
   name: python3
 ---
 
-# Single pixel hyperspectral image reconstruction and unmixing
+# Single-pixel hyperspectral image reconstruction and unmixing
 
 :::{admonition} Reference
 :class: tip
@@ -25,7 +25,7 @@ kernelspec:
 
 Spectral cameras are invaluable tools for acquiring detailed spectral information. They function by spatially spreading an incoming light flux across its constituent wavelengths. This spectral-spatial (Fourier) transformation implies that, by design, it is difficult to acquire spectral images with high spatial and spectral resolution. This is particularly true if the imaging device must remain affordable and lightweight.
 
-Although the idea of compressive acquisitions in computational optics precedes the development of compressive sensing {cite:p}`nelsonHadamardSpectroscopy1970c`, Duarte and co-authors proposed the single-pixel camera, which uses spatial multiplexing to feed focalized masked images into a high-resolution point spectrometer {cite:p}`duarteSinglepixelImagingCompressive2008, Duarte2012Kronecker`. In the setup available at CREATIS, the compressed light flux is the input of a spectrometer. The hyperspectral cube containing both the spatial information (images) and the spectral information (spectra) is then reconstructed by solving an inverse problem, following a long tradition of reconstruction imaging techniques in the computational imaging community {cite:p}`BenetiMartins_2023`.
+Although the idea of compressive acquisitions in computational optics precedes the development of compressive sensing {cite:p}`nelsonHadamardSpectroscopy1970c`, Duarte and co-authors proposed the single-pixel camera for Single-Pixel Imaging (SPI), which uses spatial multiplexing to feed focalized masked images into a high-resolution point spectrometer {cite:p}`duarteSinglepixelImagingCompressive2008, Duarte2012Kronecker`. In the setup available at CREATIS, the compressed light flux is the input of a spectrometer. The hyperspectral cube containing both the spatial information (images) and the spectral information (spectra) is then reconstructed by solving an inverse problem, following a long tradition of reconstruction imaging techniques in the computational imaging community {cite:p}`BenetiMartins_2023`.
 
 ```{figure} ../../Figures/schema_spc.png
 ---
@@ -33,7 +33,7 @@ width: 650px
 align: center
 name: singlepixel_camera
 ---
-Representation of the single pixel camera [credits: Séréna Hariga].
+Representation of the single-pixel camera [credits: Séréna Hariga].
 ```
 
 
@@ -62,7 +62,7 @@ In 1970, Nelson and Fredman introduced the concept of Hadamard spectrocopy {cite
 
 Nelson and Fredman are concerned with linear reconstructions of acquisitions $y=Ax + e$, where matrix $A$ is either the identity matrix (raster scan) or a complete Hadamard basis. The noise $e$ is supposed to be additive, i.i.d. with finite variance $\sigma$, but the distribution of $e$ is not necessarily Gaussian. 
 
-Linear reconstructions are of the form $\hat{x} = By$ with matrix $B$ defined as the pseudo-inverse of matrix $A$. This choice for the reconstruction corresponds to the least-squares estimation of the unknown $x$; it is the maximum-likelihood estimator under Gaussian noise. If the noise is not Gaussian, its statistical meaning is more ambiguous.
+Linear reconstructions are of the form $\hat{x} = By$ with matrix $B$ defined as the pseudo-inverse of matrix $A$. This choice for the reconstruction corresponds to the least squares estimation of the unknown $x$; it is the maximum-likelihood estimator under Gaussian noise. If the noise is not Gaussian, its statistical meaning is more ambiguous.
 
 The quantity that Nelson and Fredman consider for measuring the quality of the reconstruction is the Root Mean Squared Error (RMSE), defined as
 
@@ -91,8 +91,8 @@ $$ 1 = \sum_{j} B[i,j]A[i,j] \leq  \underbrace{\|B[i,:]\|_2}_{F_i^{-1}} \|A[i,:]
 Therefore, it holds that $F_i\leq \|A[i,:]\|_2 \leq \sqrt{n}$ where the last inequality assumes that the measurement operator $A$ has all values between $-1$ and $1$. Hadamard matrices are thus MSE-optimal.
 
 The optimality of the Hadamard patterns, however, is meant under many unrealistic assumptions:
-- The measurement operator $A$ has values in $[-1,1]$. The bound on the magnitude is reasonable for single-pixel imaging, but a DMD can only implement nonnegative entries. Neslon and Fredman discussed this issue and introduced binary $S$-matrices, which have a Felgett advantage of $\frac{n+1}{2\sqrt{n}}$, therefore quasi-optimal.
-- The noise is additive. In single-pixel imaging, the noise model is Poisson-Gaussian, so additivity is not a valid assumption.
+- The measurement operator $A$ has values in $[-1,1]$. The bound on the magnitude is reasonable for SPI, but a DMD can only implement nonnegative entries. Neslon and Fredman discussed this issue and introduced binary $S$-matrices, which have a Felgett advantage of $\frac{n+1}{2\sqrt{n}}$, therefore quasi-optimal.
+- The noise is additive. In SPI, the noise model is Poisson-Gaussian, so additivity is not a valid assumption.
 - The reconstruction is linear. Most state-of-the-art reconstruction algorithms employ more sophisticated reconstruction strategies.
 - The error is measured with the RMSE, which is not a robust or statistically meaningful error metric for Poisson-Gaussian noise.
 
@@ -173,7 +173,7 @@ plt.title("A 64x64 cat image")
 plt.show()
 ```
 
-We define the measurement operator and the noise model, then use fast transforms to efficiently simulate the acquisition. Note that while the mathematical discussion in this section is focused on 1D vectors $x$, we apply single-pixel imaging in the context of 2D monochromatic images (or 3D hyperspectral cubes when spectra are considered). The Hadamard and split Hadamard operators can be defined in 2D using separability.
+We define the measurement operator and the noise model, then use fast transforms to efficiently simulate the acquisition. Note that while the mathematical discussion in this section is focused on 1D vectors $x$, SPI involves 2D monochromatic images (or 3D hyperspectral cubes when spectra are considered). The Hadamard and split Hadamard operators can be defined in 2D using separability.
 
 We can also visualize the measurements as coefficients in the Hadamard basis, which can be seen as a wavelet transform. This is more meaningful here to display the coefficients corresponding to the split acquisitions, $[H]^+$ and $[H]^-$.
 
@@ -335,7 +335,7 @@ Denoting $g(X)$ the negative log-prior, reconstruction in the Maximum *a posteri
 
 $$ \KL{Y, AX} + \lambda g(X), $$
 
-while the regularized least-squares estimator is obtained by minimizing
+while the regularized least squares estimator is obtained by minimizing
 
 $$ \|Y - AX\|_F^2 + \lambda g(X). $$
 
@@ -377,7 +377,7 @@ plt.colorbar(fraction=0.046, pad=0.04)
 plt.show()
 ```
 
-Again, in this setup, nonnegativity alone is essentially useless, since the subsampled pseudo-inverse reconstruction is already nonnegative. This means that the reconstruction error for both the regularized least-squares and the MAP is null at $\hat{X} = A^{\dagger}y$; both reconstructions may provide the exact same estimate. Moreover, we see on the error map that the original image is poorly estimated around the edges. This observation is consistent with the absence of high-frequency content. The image details cannot be reconstructed solely from the measurements. 
+Again, in this setup, nonnegativity alone is essentially useless, since the subsampled pseudo-inverse reconstruction is already nonnegative. This means that the reconstruction error for both the regularized least squares and the MAP is null at $\hat{X} = A^{\dagger}y$; both reconstructions may provide the exact same estimate. Moreover, we see on the error map that the original image is poorly estimated around the edges. This observation is consistent with the absence of high-frequency content. The image details cannot be reconstructed solely from the measurements. 
 
 ## Unmixing and reconstruction with known spectra and non-smooth priors
 
