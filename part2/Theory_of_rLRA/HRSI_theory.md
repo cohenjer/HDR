@@ -131,7 +131,7 @@ Intuitively, a practitioner using sparse NMF with $\ell_1$ penalizations on both
 
 $$ \argmin{L_q\in\mathbb{R}_+^{m_1\times m_2},\; \text{rank}(L_q)\leq 1} \|M - \sum_{q=1}^{r}L_q\|_F^2 + 2\sqrt{\mu_1\mu_2}\sum_{q=1}^{r} \sqrt{\|L_q\|_1}.$$
 
-The problem with this formulation is that both effects (element-wise sparsity and component-wise sparsity) are not controlled individually but rather by the same regularization hyperparameter. This yields unexpected component pruning as shown in the simulation below with mixtures of Gaussians. It is also unclear from the implicit formulation whether both factors will be sparse element-wise.
+The problem with this formulation is that both effects (elementwise sparsity and component-wise sparsity) are not controlled individually but rather by the same regularization hyperparameter. This yields unexpected component pruning as shown in the simulation below with mixtures of Gaussians. It is also unclear from the implicit formulation whether both factors will be sparse elementwise.
 
 
 

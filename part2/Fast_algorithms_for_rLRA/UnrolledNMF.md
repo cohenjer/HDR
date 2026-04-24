@@ -99,7 +99,7 @@ The main design choices for the unrolled algorithm are
   - The (truncated) iterative algorithm $\mathcal{A}$
   - The trained parameters $\theta$.
 
-In a series of works with Christophe Kervazo, we proposed unrolling a workhorse algorithm for NMF, the Multiplicative Updates algorithm; see {ref}`sec:nnls` for a detailed presentation. Other algorithms could be considered, but MU poses an interesting challenge: there are no obvious trainable parameters in the algorithm. For instance, the MU update for matrix $W$ with Frobenius loss writes
+In a series of works with Christophe Kervazo, we proposed unrolling a workhorse algorithm for NMF, the MU algorithm; see {ref}`sec:nnls` for a detailed presentation. Other algorithms could be considered, but MU poses an interesting challenge: there are no obvious trainable parameters in the algorithm. For instance, the MU update for matrix $W$ with Frobenius loss writes
 
 $$
   W \leftarrow W \ast  \frac{YH}{WH^TH}.

@@ -91,7 +91,7 @@ $$
 A_x(x) = \text{Diag}\left(\frac{W^TWx}{x}\right).
 $$
 
-Recall from [](../../part1/nnls.md#multiplicatives-updates) that this is exactly the diagonal preconditioner that MU utilizes, when understanding MU as a preconditioned gradient descent algorithm. Therefore, setting $u=x$ yields the MU update with a projection operator
+Recall from [](../../part1/nnls.md#multiplicative-updates) that this is exactly the diagonal preconditioner that MU utilizes, when understanding MU as a preconditioned gradient descent algorithm. Therefore, setting $u=x$ yields the MU update with a projection operator
 
 $$
 x^{(k+1)} = \Pi_{\mathcal{C}}\left(x^{(k)}\frac{W^Ty}{W^TWx} \right).

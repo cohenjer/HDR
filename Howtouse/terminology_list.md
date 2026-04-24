@@ -13,6 +13,7 @@ This document lists all acronyms, technical terms, and words with ambiguous spel
 - HOMP: Hierarchical Orthogonal Matching Pursuit
 - LRA: Low-Rank Approximation(s)
 - MM: Majorization Minimization
+- MU: Multiplicative Updates
 - nCPD: Nonnegative CPD
 - NMF: Nonnegative Matrix Factorization
 - NNKL: Nonnegative Kullback-Leibler regression

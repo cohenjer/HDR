@@ -14,16 +14,16 @@ kernelspec:
 # Nonnegative Regressions: NNLS and NNKL
 
 ```{Note}
-This section is based partly on a doctoral course I taught at the doctoral school of [ITWIST 2020](https://itwist20.ls2n.fr/doctoral-school/), and partly on more recent works around the Multiplicative Updates algorithm. It is quite dense and long; however, nonnegative optimization problems are crucial tools to understand the rest of this manuscript.
+This section is based partly on a doctoral course I taught at the doctoral school of [ITWIST 2020](https://itwist20.ls2n.fr/doctoral-school/), and partly on more recent works around the MU algorithm. It is quite dense and long; however, nonnegative optimization problems are crucial tools to understand the rest of this manuscript.
 ```
 
-Nonnegative regression problems are central in nonnegative low-rank approximations. Many LRA algorithms are based on [alternating optimization](./AlternatingOptimization.md), and other methods are often heavily inspired by algorithms designed for nonnegative regression. Nonnegative regression is a class of optimization problems defined as
+Nonnegative regression problems are central in nonnegative low-rank approximations. Many LRA algorithms are based on [alternating optimization](./AlternatingOptimization.md), and optimization methods for nonnegative LRA are often heavily inspired by algorithms designed for nonnegative regression. Nonnegative regression is a class of optimization problems defined as
 
 $$
 \argmin{x\geq 0} f(y, Wx)
 $$
 
-where $f(y,z)$ is a positive, separable, convex (with respect to the second variable) loss function comparing two vectors $y\in\mathbb{R}^{m}$ and $z\in\mathbb{R}^{m}$ elementwise, and $W\in\mathbb{R}^{m\times n}$ is an observation matrix. The constraint $x\geq 0$ is meant elementwise. Typically, both the observations $y$ and the matrix $W$ are also elementwise nonnegative. This section introduces two particular nonnegative regression problems, Nonnegative Least Squares (NNLS) and Nonnegative Kullback-Leibler regression (NNKL), that will be of particular interest for the rest of the manuscript.
+where $f(y,z)$ is a nonnegative, separable, convex (with respect to the second variable) loss function comparing two vectors $y\in\mathbb{R}^{m}$ and $z\in\mathbb{R}^{m}$ elementwise, and $W\in\mathbb{R}^{m\times n}$ is an observation matrix. The constraint $x\geq 0$ is meant elementwise. Typically, both the observations $y$ and the matrix $W$ are also elementwise nonnegative. This section introduces two particular nonnegative regression problems, Nonnegative Least Squares (NNLS) and Nonnegative Kullback-Leibler regression (NNKL), that will be of particular interest for the rest of the manuscript.
 
 (subsec:nnls)=
 ## Nonnegative Least Squares
@@ -36,19 +36,19 @@ NNLS can be formulated as the following optimization problem, with $ f\left(y,Wx
 
 $$ \text{Find}\; x^\ast\in\argmin{x\geq 0} \|y - Wx\|_2^2.$$
 
-In general, the solution to NNLS is **not** the projected unconstained least squares estimate, $\left[W^{\dagger}y\right]^+$, see [](../part2/Fast_algorithms_for_rLRA/proco-als.md) for more details.
+In general, the projected unconstained least squares estimate, $\left[W^{\dagger}y\right]^+$, is **not** a solution to NNLS, see [](../part2/Fast_algorithms_for_rLRA/proco-als.md) for more details.
 
-The cost function of NNLS is coercive and continuous, which ensures the existence of a solution. If matrix $W\in\mathbb{R}^{m\times n}$ is full column rank, which is often the case in low-rank approximation problems, then the cost is also strongly convex (and Lipschitz-smooth), ensuring the NNLS solution is unique. When the matrix $W$ is not full column-rank, the discussion on the uniqueness is more difficult. One of the interests of NNLS over ordinary least squares, however, is that the solution for underdetermined systems can still be unique, see the [NNLS KKT conditions](subsec:nnls-kkt) below.
+The cost function of NNLS is coercive (with respect to $z$) and continuous and the set of admissible solutions is non-empty, which ensures the existence of a solution. If matrix $W\in\mathbb{R}^{m\times n}$ is full column rank, which is often the case in low-rank approximation problems, then the cost is also strongly convex (and Lipschitz-smooth), ensuring the NNLS solution is unique. When the matrix $W$ is not full column-rank, the discussion on the uniqueness is more difficult. One of the interests of NNLS over ordinary least squares, however, is that the solution for underdetermined systems can still be unique, see the [NNLS KKT conditions](subsec:nnls-kkt) below.
 
 ### Geometric interpretation
 
-When $W$ has desirable properties, NNLS is equivalent to the orthogonal projection of the input vector $y$ on a pointed cone. Indeed, defining $\cp{W} = \{Wx, x\geq 0\}$, we see that $\cp{W}$ is always a cone. Let $Wx_1,Wx_2\in \cp{W}$, for any nonnegative weights $\lambda_1$ and $\lambda_2$, it holds that  $\lambda_1 Wx_1 + \lambda_2Wx_2 = W (\lambda_1 x_1 + \lambda_2 x_2)$ is in $\cp{W}$. NNLS finds the closest vector $z$ to the input $y$ in $\cp{W}$,
+When $W$ has desirable properties such as elementwise nonnegativity, NNLS is equivalent to the orthogonal projection of the input vector $y$ on a pointed cone. Indeed, defining $\cp{W} = \{Wx, x\geq 0\}$, we see that $\cp{W}$ is always a cone. Let $Wx_1,Wx_2\in \cp{W}$, for any nonnegative weights $\lambda_1$ and $\lambda_2$, it holds that  $\lambda_1 Wx_1 + \lambda_2Wx_2 = W (\lambda_1 x_1 + \lambda_2 x_2)$ is in $\cp{W}$. NNLS finds the closest vector $z$ to the input $y$ in $\cp{W}$,
 
 $$
-\argmin{z=Wx,\; x\geq 0} \|y - z\|_2^2
+\argmin{z=Wx,\; x\geq 0} \|y - z\|_2^2,
 $$
 
-which is exactly the orthogonal projection on $\cp{W}$. 
+which is exactly the orthogonal projection on $\cp{W}$. Depending on the matrix $W$, the cone $\cp{W}$ can either be the whole search space $\mathbb{R}^m$, or a pointed cone. The latter is the commonly encountered case in nonnegative LRA problems, in particular when the matrix $W$ is elementwise nonnegative. Below is an illustration in dimensions $m=n=3$.
 
 ```{figure} ../Figures/Nnlsproj2.png
 ---
@@ -59,12 +59,11 @@ name: nnlsproj
 A graphical illustration of the projection of data vector $y$ on the cone $\cp{W}$ collecting all the positive combinations of columns of matrix $W$. The NNLS problem is equivalent to computing the coefficients of the projected data vector in the cone; note that when the data vector $y$ is outside $\cp{W}$, as illustrated here, the solution is sparse since the projection is located on a facet of the cone.
 ```
 
-Depending on the matrix $W$, the cone $\cp{W}$ can either be the whole search space $\mathbb{R}^m$, or a pointed cone. The latter is the commonly encountered case in nonnegative LRA problems, in particular when the matrix $W$ is elementwise nonnegative. Below is an illustration in dimensions $m=n=3$.
-
 From this geometric interpretation, we can deduce a few results:
-- If the measurement vector $y$ lies in the cone $\cp{W}$, then an exact reconstruction is possible. We show with the [KKT conditions](#kkt-conditions-and-the-night-sky-theorem) that the NNLS solution is exactly the least squares estimate $W^{\dagger}y$.
+- If the measurement vector $y$ lies inside the cone $\cp{W}$, then an exact reconstruction is possible. We show with the [KKT conditions](#kkt-conditions-and-the-night-sky-theorem) that the least squares estimate $W^{\dagger}y$ is a NNLS solution. The solution may be non-unique.
 - If matrix $W$ has more columns than rows, but these columns are in general position, and vector $y$ lies outside $\cp{W}$, then in general the NNLS solution is unique.
 - When vector $y$ lies outside the cone $\cp{W}$, the projection solution $z^\ast = Wx^\ast$ is located on a facet of the cone. In fact, it is the orthogonal projection of $y$ on this facet. Hence, $x^\ast$ may be sparse.
+
 These results can be formalized using the KKT conditions.
 
 (subsec:nnls-kkt)=
@@ -85,7 +84,7 @@ and the optimality conditions are:
 We can refine these conditions by introducing the support $S^\ast$ of a solution; the support $S(x)$ is the set of indices of the nonzero entries of the vector $x$. The Fermat rule, combined with complementary slackness, then yields
 
 ```{margin}
-Even if multiple solutions to the NNLS exist, the residual $y-Wx^\ast$ must always be the same as the orthogonal projection on a convex set.
+Even if multiple solutions $x^\ast$ to the NNLS exist, the residual $y-Wx^\ast$ must always be the same: the orthogonal projection on a convex set has a single solution.
 ```
 
 $$
@@ -95,10 +94,10 @@ with $r = y - W[:,S^\ast]x[S^\ast]$ the residual of the projection of $y$ on the
 
 
 ```{margin}
-The spark of a matrix $W$ indicates the smallest number of columns from $W$ that are linearly dependent. If the spark of a matrix is larger than $n$, then any $n$-sparse solution to linear systems involving $W$ is obtained by the well-defined pseudo-inverse of $W$ restricted to the support of that solution.
+The spark of a matrix $W$ indicates the smallest number of columns from $W$ that are linearly dependent. If the spark of a matrix is larger than $n$, then any $n$-sparse solution to linear systems involving $W$ is obtained by the well-defined left pseudo-inverse of $W$ restricted to the support of that solution.
 ```
 
-If there is no group of $m$ columns of matrix $W$ that are linearly dependent, that is, if $\text{spark}(W)>m-1$, then there can be only a single subset of at most $m-1$ linearly independent columns of matrix $W$ in $r^⟂$. This can happen even if matrix $W$ has more columns than rows; we only require here that no subset of $m$ columns is linearly dependent (and in particular cannot belong to $r^\perp$). With this observation, we can conclude that $S$ has size at most $m-1$, *i.e.*, NNLS solutions, under some conditions, are generally sparse. Moreover, the Fermat rule gives $x^\ast[S^\ast] = W[:, S^\ast]^\dagger y$: knowing the support of the solution is enough to find the solution itself (up to solving a linear system).
+If there is no group of $m$ columns of matrix $W$ that are linearly dependent, that is, if $\text{spark}(W)>m$, then there can be only a single subset of at most $m-1$ linearly independent columns of matrix $W$ in $r^⟂$. This can happen even if matrix $W$ has more columns than rows; we only require here that no subset of $m$ columns is linearly dependent (and in particular cannot belong to $r^\perp$). With this observation, we can conclude that $S^\ast$ has size at most $m-1$, *i.e.*, NNLS solutions, under some conditions, are generally sparse. Moreover, the Fermat rule gives $x^\ast[S^\ast] = W[:, S^\ast]^\dagger y$: knowing the support of the solution is enough to find the solution itself (up to solving a linear system).
 
 
 ```{prf:theorem} Night sky theorem [Byrne 1981]
@@ -291,7 +290,7 @@ KL-divergence also does not satisfy the global Polyak-Lojasiewicz inequality, a 
 Another important issue with the KL-divergence is that, although it is strictly convex, it is not strongly convex. Indeed, the KL-divergence is asymptotically linear when $z$ is much larger than $y$. This causes problems in particular when the data measurement $y$ is sparse or exhibits large dynamics. Strong convexity guarantees linear convergence rates for gradient descent; when the cost function is not strongly convex, first-order algorithms might converge sub-linearly {cite:p}`beck2017first`. In the extreme case where $y$ has many zeroes, a significant part of the cost is linear, and convex first-order optimization techniques are, in general, ill-suited for linear programming.
 
 
-Smoothness and convexity issues combined imply that there may not exist a safe stepsize and a linear convergence rate for gradient descent applied to NNKL. [In the following](#multiplicatives-updates), we explore preconditionned first-order algorithms that partially avoid these issues.
+Smoothness and convexity issues combined imply that there may not exist a safe stepsize and a linear convergence rate for gradient descent applied to NNKL. [In the following](#multiplicative-updates), we explore preconditionned first-order algorithms that partially avoid these issues.
 
 #### Support issue
 
@@ -340,7 +339,7 @@ If nonnegativity constraints are dropped and the observation matrix $W$ is right
 
 ## Algorithms for NNLS and NNKL
 
-There is a vast literature on optimization algorithms for solving NNLS, NNKL, or both, some of which is included in later parts of this manuscript. Listing all these methods, with their advantages and disadvantages, is an important but challenging task to which I will devote time in the coming years; see the [discussion on research perspectives](../part3/Perspectives.md). In the rest of this section, only the most useful NNLS and NNKL algorithms for the manuscript are introduced: active-set, HALS, and multiplicative updates.
+There is a vast literature on optimization algorithms for solving NNLS, NNKL, or both, some of which is included in later parts of this manuscript. Listing all these methods, with their advantages and disadvantages, is an important but challenging task to which I will devote time in the coming years; see the [discussion on research perspectives](../part3/Perspectives.md). In the rest of this section, only the most useful NNLS and NNKL algorithms for the manuscript are introduced: active-set, HALS, and MU.
 
 %| alg name |  LS | KL | fast ? | Convergence cost | 
 %| ---------| ----|----|--------|------       |
@@ -596,9 +595,9 @@ plt.show()
 
 ```
 
-## Multiplicatives Updates
+## Multiplicative Updates
 
-One of the most well-known iterative solvers for general nonnegative least squares problems (both quadratic and KL although it is primarily used for the latter) is the Multiplicative Updates (MU) algorithm. The history of MU is complex. It has been proposed independently under various names in the literature; the oldest reference of MU that I am aware of is probably the so-called Richardson-Lucy iteration {cite:p}`LucyIterativeTechniqueRectification1974,richardsonBayesianBasedIterativeMethod1972`, which is specialized for convolutive models and stems from the computational imaging community. MU is also sometimes referred to as the Maximum-Likelihood-Expectation-Maximization algorithm (ML-EM) {cite:p}`dempsterMaximumLikelihoodIncomplete1977,fesslerSpacealternatingGeneralizedExpectationmaximization1994` as it can be formulated as a particular case of the generic EM framework. MU was popularized in the source-separation community as an algorithm for solving NMF by Lee and Seung in several seminal papers {cite:p}`Lee1999Learning` and was later generalized by Fevotte and Idier for a wider class of loss functions {cite:p}`fevotte2011algorithms`.
+One of the most well-known iterative solvers for general nonnegative least squares problems (both quadratic and KL although it is primarily used for the latter) is the Multiplicative Updates algorithm. The history of MU is complex. It has been proposed independently under various names in the literature; the oldest reference of MU that I am aware of is probably the so-called Richardson-Lucy iteration {cite:p}`LucyIterativeTechniqueRectification1974,richardsonBayesianBasedIterativeMethod1972`, which is specialized for convolutive models and stems from the computational imaging community. MU is also sometimes referred to as the Maximum-Likelihood-Expectation-Maximization algorithm (ML-EM) {cite:p}`dempsterMaximumLikelihoodIncomplete1977,fesslerSpacealternatingGeneralizedExpectationmaximization1994` as it can be formulated as a particular case of the generic EM framework. MU was popularized in the source-separation community as an algorithm for solving NMF by Lee and Seung in several seminal papers {cite:p}`Lee1999Learning` and was later generalized by Fevotte and Idier for a wider class of loss functions {cite:p}`fevotte2011algorithms`.
 
 ```{margin}
 It is, in fact, interesting to note that the Richardson-Lucy/ML-EM algorithm has seen many developments and improvements over the years in parallel with developments proposed in the source separation/numerical optimization literature. A few interesting reads are a constrained version of Richardson-Lucy called one-step late {cite:p}`greenUseEmAlgorithm1990` that amounts to MM with linearized regularizations, the general formulation of EM for likelihoods in the exponential family as an mirror gradient descent which allows to derive a generic linear convergence rate {cite:p}`kunstnerHomeomorphicInvarianceEMNonAsymptotic2021` and the design of TV-regularized and Plug-and-Play variants with convergence guarantees (work under way in the team {cite:p}`modrzykConvergentPlugandPlayMajorizationMinimization`).

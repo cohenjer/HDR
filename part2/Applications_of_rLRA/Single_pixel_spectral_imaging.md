@@ -284,7 +284,7 @@ The Maximum-Likelihood (ML) estimator for Poisson noise is given by the minimize
 
 $$ \hat{X} = \argmin{X\geq 0} \KL{\frac{1}{\alpha} Y, AX}, $$
 
-which can be approximately computed using, *e.g.*, the [MU algorithm](../../part1/nnls.md#multiplicatives-updates). Below is an example of ML reconstruction.
+which can be approximately computed using, *e.g.*, the [MU algorithm](../../part1/nnls.md#multiplicative-updates). Below is an example of ML reconstruction.
 
 ```{code-cell}ipython3
 # Reco avec MU
@@ -391,7 +391,7 @@ The notations $U$ and $V$ are used to avoid confusion with the Hadamard matrix $
 
 $$ X = UV^T, $$
 
-where the nonnegative matrix $V\in\mathbb{R}_+^{p\times r}$ contains the endmembers columnwise, and the nonnegative matrix $U\in\mathbb{R}_+^{n\times r}$ contains the abundance maps, that is, the proportion of each material at each pixel. Because the illumination of the scene is not homogeneous spatially, and spectra may vary depending on other physical parameters such as the geometry of the scene, we refrain from assuming that the abundances sum to one pixel-wise, but we assume that they are bounded by one element-wise.
+where the nonnegative matrix $V\in\mathbb{R}_+^{p\times r}$ contains the endmembers columnwise, and the nonnegative matrix $U\in\mathbb{R}_+^{n\times r}$ contains the abundance maps, that is, the proportion of each material at each pixel. Because the illumination of the scene is not homogeneous spatially, and spectra may vary depending on other physical parameters such as the geometry of the scene, we refrain from assuming that the abundances sum to one pixel-wise, but we assume that they are bounded by one elementwise.
 
 In preliminary works, we have assumed that the endmembers $V$ are known. The acquisition model then becomes
 
@@ -402,7 +402,7 @@ and our goal is to design a state-of-the-art reconstruction algorithm that estim
 
 ### Joint reconstruction and unmixing in one step
 
-In {cite:p}`harigaJointReconstructionSpectral2024`, a simple strategy to jointly reconstruct and unmix a single-pixel image was proposed, computing the maximum likelihood estimator from Equation {eq}`eq:joint-reco-unmixing-model` with an alternating optimization algorithm, in this case alternating Multiplicative Updates (MU). The update rule for the spectra $V$ is the same as detailled in [](../../part1/nnls.md#multiplicatives-updates), and for $U$ it can be obtained simply by 1) flattening the variables, 2) computing the classical MU rule and 3) folding the output into a matrix (see also {cite:p}`fevotte2011algorithms`). This yields after simplification
+In {cite:p}`harigaJointReconstructionSpectral2024`, a simple strategy to jointly reconstruct and unmix a single-pixel image was proposed, computing the maximum likelihood estimator from Equation {eq}`eq:joint-reco-unmixing-model` with an alternating optimization algorithm, in this case alternating MU. The update rule for the spectra $V$ is the same as detailled in [](../../part1/nnls.md#multiplicative-updates), and for $U$ it can be obtained simply by 1) flattening the variables, 2) computing the classical MU rule and 3) folding the output into a matrix (see also {cite:p}`fevotte2011algorithms`). This yields after simplification
 
 $$
  U^{(k+1)} = U^{(k)} \ast \frac{A^T\frac{Y}{AUV^T}V}{A^T\mathbb{1}_{m,p}V}.

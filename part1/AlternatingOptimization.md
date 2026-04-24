@@ -13,11 +13,17 @@ kernelspec:
 
 # Alternating Optimization
 
+```{margin}
+
+We assume the cost function $f$ is nonnegative for simplicity and coherence with the rest of the manuscript. However it is sufficient to assume that $f$ is lower-bounded so that coercivity and continuity imply the existence of a minimizer.
+
+```
+
 Many estimation problems considered in the manuscript rely on solving an optimization problem that involves $d$ different blocks, of the form
 
 $$ \argmin{x_1\in\mathcal{X}_1,~\ldots~,x_d\in\mathcal{X}_d} f(x_1,x_2,\ldots,x_d) $$
 
-where $f:\mathcal{X}_1\times \ldots \times \mathcal{X}_{d} \mapsto \mathbb{R}_+$ is a positive cost function and $\mathcal{X}_k$ are Euclidean spaces embedded in $\mathbb{R}^{n_k}$. Indeed, low-rank approximation models are multifactor models; each block $x_k$ may represent a factor matrix in a low-rank model. For instance, solving a rank $r$ approximate NMF problem in the presence of Gaussian noise may result in the following two-block optimization problem
+where $f:\mathcal{X}_1\times \ldots \times \mathcal{X}_{d} \mapsto \mathbb{R}_+$ is a nonnegative cost function and $\mathcal{X}_k$ are Euclidean spaces embedded in $\mathbb{R}^{n_k}$. Indeed, low-rank approximation models are multifactor models; each block $x_k$ may represent a factor matrix in a low-rank model. For instance, solving a rank $r$ approximate NMF problem in the presence of Gaussian noise may result in the following two-block optimization problem
 
 $$ \argmin{X_1\in \mathbb{R}_+^{n_1\times r},~X_2\in \mathbb{R}_+^{n_2\times r}} \|Y - X_1X_2^T \|_F^2 $$
 
@@ -247,7 +253,7 @@ Assume that the function $f$ admits directional derivatives at all points, and t
 From {cite}`razaviyaynUnifiedConvergenceAnalysis2013`.
 ```
 
-A typical use of the SUM framework is when the cost decomposes as $f(x) = f_0(x) + r(x)$, with function $f$ continuously differentiable and function $r$ a proximable regularization with direction derivatives such as the $\ell_1$ norm. Then SUM where $f$ is majorized by a second-order Taylor expansion of $f_0$ with an isotropic quadratic term is exactly a proximal gradient descent algorithm. SUM also covers the multiplicative updates algorithm discussed in [](./nnls.md). In general, the convergence rate of SUM is therefore at best sublinear.
+A typical use of the SUM framework is when the cost decomposes as $f(x) = f_0(x) + r(x)$, with function $f$ continuously differentiable and function $r$ a proximable regularization with direction derivatives such as the $\ell_1$ norm. Then SUM where $f$ is majorized by a second-order Taylor expansion of $f_0$ with an isotropic quadratic term is exactly a proximal gradient descent algorithm. SUM also covers the MU algorithm discussed in [](./nnls.md). In general, the convergence rate of SUM is therefore at best sublinear.
 
 ### The block successive upper-bound minimization framework
 
