@@ -7,11 +7,17 @@ This document lists all acronyms, technical terms, and words with ambiguous spel
 ## Acronyms
 
 - AMT: Automatic Music Transcription
+- AS: Active-Set
+- cDL: complete Dictionary Learning
 - CPD: Canonical Polyadic Decomposition
+- DL: Dictionary Learning
+- EM: Expectation-Maximization
 - HALS: Hierarchical Alternating Least Squares
 - HDR: Habilitation à Diriger des Recherches
 - HOMP: Hierarchical Orthogonal Matching Pursuit
+- KL-divergence: Kullback Leibler-divergence
 - LRA: Low-Rank Approximation(s)
+- ML-EM: Maximum Likelihood-Expectation-Maximization
 - MM: Majorization Minimization
 - MU: Multiplicative Updates
 - nCPD: Nonnegative CPD
@@ -286,7 +292,7 @@ This document lists all acronyms, technical terms, and words with ambiguous spel
  %[[SINGLE_PIXEL_SPECTRAL_IMAGING]](../part2/Applications_of_rLRA/Single_pixel_spectral_imaging)
 %- **code-cell**
  %[[AMT]](../part2/Applications_of_rLRA/AMT) [[HRSI_THEORY]](../part2/Theory_of_rLRA/HRSI_theory) [[INTRO]](../part2/Applications_of_rLRA/intro) [[MSOM]](../part2/Fast_algorithms_for_rLRA/mSOM) [[PROCO-ALS-CHECKPOINT]](../part2/.ipynb_checkpoints/proco-als-checkpoint) [[UNROLLEDNMF]](../part2/Fast_algorithms_for_rLRA/UnrolledNMF)
-%- **column-wise**
+%- **columnwise**
  %[[HRSI_THEORY]](../part2/Theory_of_rLRA/HRSI_theory)
 %- **comb-like**
  %[[AMT]](../part2/Applications_of_rLRA/AMT)

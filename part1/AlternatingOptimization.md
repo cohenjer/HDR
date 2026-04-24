@@ -82,7 +82,7 @@ We use the notation (A9)($f$) to denote, for instance, assumption (A9) applied o
 
 ```
 
-This section also relies on the concept of Majorization Minimization (MM), already discussed in the context of expectation maximization in [](nnls.md). Providing an overview of MM in this manuscript would be out of scope; the reader is referred to the excellent survey article by Sun, Babu, and Palomar {cite}`sunMajorizationMinimizationAlgorithmsSignal2017`.
+This section also relies on the concept of MM, already discussed in the context of EM in [](nnls.md). Providing an overview of MM in this manuscript would be out of scope; the reader is referred to the excellent survey article by Sun, Babu, and Palomar {cite}`sunMajorizationMinimizationAlgorithmsSignal2017`.
 
 ```{note}
 Three assumptions often found in the numerical optimization literature, 
@@ -206,7 +206,7 @@ Assume that the function $f$ is continuously differentiable, and assume that the
 
 ```
 
-Notice how the assumptions for the two-block case are milder than in the general case. Compared to {prf:ref}`th:AO4`, the two-block case requires neither the uniqueness of block updates nor the monotonicity of the cost along the update path. The two-block case is useful when considering the convergence of alternating algorithms for models such as NMF or dictionary learning.
+Notice how the assumptions for the two-block case are milder than in the general case. Compared to {prf:ref}`th:AO4`, the two-block case requires neither the uniqueness of block updates nor the monotonicity of the cost along the update path. The two-block case is useful when considering the convergence of alternating algorithms for models such as NMF or Dictionary Dearning (DL).
 
 
 ```{admonition} Convergence rate of AO with two blocks
@@ -416,7 +416,7 @@ plt.show()
 ```
 
 ```{margin}
-We could also solve the NNLS problems exactly using the active set instead of HALS, but the runtime would be even slower due to the sequential processing of the rows of matrices $W$ and $H$.
+We could also solve the NNLS problems exactly using AS instead of HALS, but the runtime would be even slower due to the sequential processing of the rows of matrices $W$ and $H$.
 ```
 
 We may observe that

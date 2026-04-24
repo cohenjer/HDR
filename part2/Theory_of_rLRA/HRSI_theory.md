@@ -30,8 +30,8 @@ It turns out that, maybe surprisingly at first, the ridge-regularized NMF proble
 $$ \argmin{X_1\geq 0, X_2\geq 0} \|M -  X_1X_2^T\|_F^2 + \frac{\sqrt{\lambda_1\lambda_2}}{2} \sum_{q=1}^{r} \|X_1[:,q]\otimes X_2[:,q]\|_F $$
 
 This second formulation is insightful in many ways.
-  - The regularization in the second, implicit formulation, takes the form of a group-sparse regularization of the rank-one terms in NMF. Without nonnegativity constraints, this constraint is exactly the nuclear norm of the low-rank matrix $X_1X_2^T$. The ridge penalty on each factor matrix, therefore, implies rank-minimization implicitly!
-  - Tuning each parameter $\lambda_1$ and $\lambda_2$ individually yields counterintuitive results. For instance, the regularization on the first factor $X_1$ is not stronger than on the second factor $X_2$ in the case where $\lambda_1$ is much larger than $\lambda_2$. Only the product of the two regularization hyperparameters governs the regularization intensity.
+  - The regularization in the second, implicit formulation, takes the form of a group-sparse regularization of the rank-one terms in NMF. Without nonnegativity constraints, this constraint is exactly the nuclear norm of the low-rank matrix $X_1X_2^T$. The ridge penalty on each factor matrix, therefore, implies rank-minimization implicitly.
+  - Tuning each parameter $\lambda_1$ and $\lambda_2$ individually yields counterintuitive results. For instance, when $\lambda_1$ is much larger than $\lambda_2$, the regularization on the first factor $X_1$ is not stronger than on the second factor $X_2$. Only the product of the two regularization hyperparameters governs the regularization intensity.
 
 In the work conducted with Valentin Leplat {cite:p}`cohenEfficientAlgorithmsRegularized2025`, we generalize this observation for a large class of regularized LRA models, namely Homogeneous Regularized Scale-Invariant models (HRSI), that account for many LRA models regularized with homogeneous positive-definite regularizations such as any $\ell_p$ norm. The implicit rank-selection effect observed for ridge regularization is shown to be due to the scale-ambiguity of LRA models, and therefore pertains to most $\ell_p$ norms. We provide the [main theoretical result](sec:theory) below, and provide more examples, namely $\ell_1$-$\ell_1$ and $\ell_1$-$\ell_2$ regularizations.
 
@@ -57,17 +57,17 @@ Coercivity is satisfied by the regularization functions considered in this secti
 ```
 
 where $f$ is a continuous map from the Cartesian product $\times_{i=1}^{n} \mathbb{R}^{m_i\times r} \cap \text{dom}(g_i)$ to $\mathbb{R}_+$, $\{\mu_i\}_{i\leq n}$ is a set of positive regularization hyperparameters, and $\{g_i\}_{i\leq n}$ is a set of lower semi-continuous regularization maps from $\mathbb{R}^{m_i}$ to $\mathbb{R}_+$. We assume that the total cost is coercive, ensuring the existence of a minimizer. Furthermore, we assume the following assumptions hold:
-- **A1**: The function $f$ is invariant to column-wise scaling of the parameter matrices. For any sequence of positive diagonal matrices $\{\Lambda_i\}_{i\leq n}$,
+- **A1**: The function $f$ is invariant to columnwise scaling of the parameter matrices. For any sequence of positive diagonal matrices $\{\Lambda_i\}_{i\leq n}$,
   
-$$  f(\{X_i\Lambda_i\}_{i\leq n}) = f(\{X_i\}_{i\leq n})\;\;\text{if}\; \prod_{i=1}^{n}\Lambda_i = I_r,
-\; \Lambda_i>0. $$
+    $$  f(\{X_i\Lambda_i\}_{i\leq n}) = f(\{X_i\}_{i\leq n})\;\;\text{if}\; \prod_{i=1}^{n}\Lambda_i = I_r,
+    \; \Lambda_i>0. $$
 
-In other words, scaling any two columns $X_{i_1}[:,q]$ and $X_{i_2}[:,q]$ inversely proportionally has no effect on the value of $f$. 
+    In other words, scaling any two columns $X_{i_1}[:,q]$ and $X_{i_2}[:,q]$ inversely proportionally has no effect on the value of $f$. 
 - **A2**: Each regularization function $g_i$ is positive homogeneous of degree $p_i$, that is for all $i\leq n$ there exists $p_i>0$ such that for any $\lambda > 0$ and any $x\in \mathbb{R}^{m_i}$,
 
-$$        g_i(\lambda x) = \lambda^{p_i} g_i(x). $$
+    $$        g_i(\lambda x) = \lambda^{p_i} g_i(x). $$
 
-This property holds in particular for any $\ell_p^p$ norm in the ambient vector space.
+    This property holds in particular for any $\ell_p^p$ norm in the ambient vector space.
 ```{margin}
 Assumption **A3** limits the framework's applicability by excluding positive homogeneous regularizations such as Total Variation.
 ```

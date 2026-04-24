@@ -241,8 +241,8 @@ Notice that, in this toy example, while mSOM is designed to be sharper than MU i
 Equipped with the mSOM solver for nonnegative convex problems, one may factorize NMF using an alternating optimization strategy, with mSOM as the inner solver. The following code implements the resulting Alternating mSOM (AmSOM) for NMF with the Frobenius loss and compares it with alternating MU (AMU) and alternating projected Gradient Descent (APGD) on a toy synthetic dataset. The AmSOM updates rules for this problem formalized as $\argmin{W,H\geq \epsilon} \|Y-WH^T\|_F^2$ are
 
 $$
-    H \leftarrow \max\left(H - \gamma\frac{1}{\mathbb{1}_{n\times r}W^TW}\left(HW^TW - Y^TW \right) , \epsilon \right), \\
-    W \leftarrow \max\left(W - \gamma\frac{1}{\mathbb{1}_{m\times r}H^TH}\left(WH^TH - YH \right) , \epsilon \right).
+    H \leftarrow \max\left(H - \gamma\frac{1}{1_{n\times r}W^TW}\left(HW^TW - Y^TW \right) , \epsilon \right), \\
+    W \leftarrow \max\left(W - \gamma\frac{1}{1_{m\times r}H^TH}\left(WH^TH - YH \right) , \epsilon \right).
 $$
 
 

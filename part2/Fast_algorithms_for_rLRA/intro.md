@@ -21,7 +21,7 @@ Non-smooth optimization has received a lot of attention in the signal processing
 $$ \text{prox}_{\lambda g}(x) = \argmin{u\in\mathbb{R}^n} g(u) + \frac{1}{2}\|u - x \|_2^2 $$
 where $\lambda$ is a positive scaling parameter. The proximity operator of many classic regularizations is known in closed form or can be efficiently computed, a [list is available online](http://proximity-operator.net/). The proximity operator of the characteristic function of a convex set, which penalizes to $+\infty$ any vector outside that set, is exactly the projection on that convex set. The particular case of nonnegativity constraints has been studied extensively and is summarized in [](../../part1/nnls.md).
 
-A third field of research in optimization, sometimes encountered when fitting rLRA models, concerns cost functions that are not Lipschitz-smooth. A typical example is the Kullback-Leibler divergence, which plays a central role in nonnegative low-rank approximations. First-order algorithms are hard to derive in this context, see the discussion in [](../../part1/nnls.md#nonnegative-kullback-leibler-regression-nnkl).
+A third field of research in optimization, sometimes encountered when fitting rLRA models, concerns cost functions that are not Lipschitz-smooth. A typical example is the KL-divergence, which plays a central role in nonnegative low-rank approximations. First-order algorithms are hard to derive in this context, see the discussion in [](../../part1/nnls.md#nonnegative-kullback-leibler-regression-nnkl).
 
 Because rLRA leads to optimization problems that mix multiblock, non-smooth, and sometimes non-Lipschitz-smooth optimization, fitting rLRA models efficiently is often challenging.
 

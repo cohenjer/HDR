@@ -101,7 +101,7 @@ Then the optimal solution is simply (up to sign ambiguities) $x_1=x_2=\sqrt{y-\l
 
 This suggests that balancing the estimates optimally before, after, or within an optimization algorithm solving HRSI could help avoid the scaling swamp phenomenon. We explore here only the balancing of initialization and/or outputs of an algorithm for simplicity.
 
-Balancing initial or final estimates of an algorithm is a straightforward operation using {prf:ref}`HRSI`. First, compute the column-wise geometric mean
+Balancing initial or final estimates of an algorithm is a straightforward operation using {prf:ref}`HRSI`. First, compute the columnwise geometric mean
 
 $$ \beta_q = \left(\prod_{i\leq n} \left(p_i\mu_ig_i(X^\ast_i[:,q])\right)^{\frac{1}{p_i}}\right)^{\frac{1}{\sum_{i\leq n} \frac{1}{p_i}}} . $$
 

@@ -21,7 +21,7 @@ kernelspec:
 :::
 
 
-Let us now look at the DLRA problem when the sparsity level is greater than 1. As we have seen in the [one-sparse DLRA problem](onesparseDLRA.md), the DLRA problem is tricky to solve. To design alternating optimization algorithms for DLRA, it is necessary to first study the subproblem of estimating a column-wise k-sparse matrix $X$. The resulting estimation problem, coined Mixed Sparse Coding (MSC), is the following:
+Let us now look at the DLRA problem when the sparsity level is greater than 1. As we have seen in the [one-sparse DLRA problem](onesparseDLRA.md), the DLRA problem is tricky to solve. To design alternating optimization algorithms for DLRA, it is necessary to first study the subproblem of estimating a columnwise k-sparse matrix $X$. The resulting estimation problem, coined Mixed Sparse Coding (MSC), is the following:
 
 $$ \min_{X\in\Omega_{X},\; \|X[:,q]\|_0\leq k\; \forall q\leq r } \|Y - DXB^T \|_F^2 $$
 

@@ -20,7 +20,7 @@ kernelspec:
 
 ## Nonnegative matrix factorization for automatic music transcription
 
-Spectrograms of piano recordings contain the spectral information of the notes played over time.  An interesting property of the spectrogram of a single piano note recording is that it is typically well approximated by a rank-one matrix. For instance, on a recorded piano A4 (440Hz) from the dataset MAPS {cite:p}`emiya2010maps`, the best rank-one approximation of the magnitude spectrogram looks similar to the magnitude spectrogram, in particular when using Kullback-Leibler divergence as a loss function, see [](../../part1/nnls.md#best-nonnegative-rank-one-approximations) for a discussion on the rank-one approximation closed-form algorithm.
+Spectrograms of piano recordings contain the spectral information of the notes played over time.  An interesting property of the spectrogram of a single piano note recording is that it is typically well approximated by a rank-one matrix. For instance, on a recorded piano A4 (440Hz) from the dataset MAPS {cite:p}`emiya2010maps`, the best rank-one approximation of the magnitude spectrogram looks similar to the magnitude spectrogram, in particular when using KL-divergence as a loss function, see [](../../part1/nnls.md#best-nonnegative-rank-one-approximations) for a discussion on the rank-one approximation closed-form algorithm.
 
 ```{code-cell} ipython3
 from cmath import phase

@@ -1,5 +1,8 @@
 # Notation
 
+
+## General notation
+
 - Matrices are typically represented by uppercase letters, such as $M$, while vectors and scalars are denoted by lowercase letters, like $x$.
 - Scalar values are often indicated using lowercase Greek $\lambda$. 
 - The transpose of a matrix or vector is indicated with a superscript $M^T$.
@@ -14,6 +17,7 @@
 - The spark of a matrix $M$, or the smallest number of linearly dependent columns in $M$, is written as $\text{spark}(W)$. 
 - The column space, or span, of a matrix $U$ is the set of any vector that can be written as $Ux$ and is denoted as $\text{col}(U)$. The positive span of matrix $U$, obtained when $x$ is elementwise nonnegative, is denoted by $\cp(U)$.
 - The set of linear maps acting on vectors from a subspace $E$ is denoted as $\mathcal{L}(E)$.
+- The matrix of vector full of ones is written either $1_{n}$ where $n$ is its dimension, or sometimes simply $1$.
 
 ## Tensor notation
 The unfolding of a tensor $T$ along mode $i$, denoted $T_{[i]}$, is obtained by row-first vectorization of all modes but $i$. The Khatri-Rao product of two matrices $A$ and $B$ with the same number $r$ of columns is the columnwise Kronecker product,

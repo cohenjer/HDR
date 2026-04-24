@@ -62,7 +62,7 @@ In 1970, Nelson and Fredman introduced the concept of Hadamard spectrocopy {cite
 
 Nelson and Fredman are concerned with linear reconstructions of acquisitions $y=Ax + e$, where matrix $A$ is either the identity matrix (raster scan) or a complete Hadamard basis. The noise $e$ is supposed to be additive, i.i.d. with finite variance $\sigma$, but the distribution of $e$ is not necessarily Gaussian. 
 
-Linear reconstructions are of the form $\hat{x} = By$ with matrix $B$ defined as the pseudo-inverse of matrix $A$. This choice for the reconstruction corresponds to the least squares estimation of the unknown $x$; it is the maximum-likelihood estimator under Gaussian noise. If the noise is not Gaussian, its statistical meaning is more ambiguous.
+Linear reconstructions are of the form $\hat{x} = By$ with matrix $B$ defined as the pseudo-inverse of matrix $A$. This choice for the reconstruction corresponds to the least squares estimation of the unknown $x$; it is the MLE under Gaussian noise. If the noise is not Gaussian, its statistical meaning is more ambiguous.
 
 The quantity that Nelson and Fredman consider for measuring the quality of the reconstruction is the Root Mean Squared Error (RMSE), defined as
 
@@ -121,13 +121,13 @@ Hadamard matrices have both a simple form for the pseudo-inverse and a cheap mat
 
 First, the product $A^Ty$ can be obtained using the fast Hadamard transform. Indeed, $[H]^{\pm} = \frac{1}{2} \left[H \pm 1\right]$. Second, the pseudo-inverse $A^{\dagger}$ admits a closed-form expression, see section 3.5.4 in {cite:p}`Harwit_1979`.
 
-$$ A^\dagger = \frac{2}{n} \left( I_n - \frac{1}{n+1} \mathbb{1}_{n\times n} \right) A^T $$
+$$ A^\dagger = \frac{2}{n} \left( I_n - \frac{1}{n+1} 1_{n\times n} \right) A^T $$
 
-where $\mathbb{1}_{n,n}$ is a matrix of ones, and its contraction is implemented as a summation. This is obtained by noting that
+where $1_{n,n}$ is a matrix of ones, and its contraction is implemented as a summation. This is obtained by noting that
 
-$$ A^TA = \frac{n}{2} \left( I_n +\mathbb{1}_{n\times n} \right) $$
+$$ A^TA = \frac{n}{2} \left( I_n +1_{n\times n} \right) $$
 
-and that $ \left( I_n - \frac{1}{n+1}\mathbb{1}_{n\times n} \right)\left( I_n +\mathbb{1}_{n\times n} \right)  = I_n $.
+and that $ \left( I_n - \frac{1}{n+1}1_{n\times n} \right)\left( I_n +1_{n\times n} \right)  = I_n $.
 
 ```{note} Inversion of the positive Hadamard matrix
 
@@ -135,7 +135,7 @@ Most matrices obtained from the Hadamard matrix admit fast inversion algorithms.
 
 Matrix $[H]^+$ is left-invertible, and by noticing that
 
-$$ \frac{1}{n}H^T[H]^+ = \frac{1}{2}I + \frac{1}{2} e_1 \mathbb{1}^T,\; e_1 = [1,0,\ldots,0]^T  $$
+$$ \frac{1}{n}H^T[H]^+ = \frac{1}{2}I + \frac{1}{2} e_1 1^T,\; e_1 = [1,0,\ldots,0]^T  $$
 
 we get that for any vector $x\in\mathbb{R}^{n}$,
 
@@ -143,11 +143,11 @@ $$ \frac{1}{n}H^T[H]^+ x = \left[x[1] + \sum_{j>1} \frac{x[j]}{2} , \frac{x[2]}{
 
 and vector $x$ is recovered as
 
-$$ x = \frac{1}{n} \left(2I_n - e_1 \mathbb{1}^T\right)H^T [H]^+ x.$$ 
+$$ x = \frac{1}{n} \left(2I_n - e_1 1^T\right)H^T [H]^+ x.$$ 
 
 We see that the pseudo-inverse of $[H]^+$ is computed as
 
-$$ \frac{1}{n} \left(2I_n - e_1 \mathbb{1}^T\right)H^T = \frac{1}{n} \left( 2H^T - e_1e_1^T\right) $$
+$$ \frac{1}{n} \left(2I_n - e_1 1^T\right)H^T = \frac{1}{n} \left( 2H^T - e_1e_1^T\right) $$
 
 which can be efficiently contracted with any vector $x$ given a fast Hadamard transform algorithm.
 
@@ -250,7 +250,7 @@ plt.title("Reconstructed image using pseudo-inverse")
 plt.show()
 ```
 
-Note that the pseudo-inverse reconstruction gives essentially the same result as the NNLS solver. The two reconstructions are not the same, however, if we did not have to split the acquisitions and could acquire $Hx$ directly, then they would be the same. Indeed, $H$ is an invertible matrix and therefore $x^\ast=H^Ty$ minimizes the loss $\|y - Hx\|_2^2$. The same solution would also minimize any positive loss $g(x)$ equal to zero at $x^\ast$, which includes the maximum-likelihood reconstruction discussed next. This observation suggests that the choice of reconstruction method may not significantly affect the results, and that the pseudo-inverse is a good compromise among speed, simplicity, and performance.
+Note that the pseudo-inverse reconstruction gives essentially the same result as the NNLS solver. The two reconstructions are not the same, however, if we did not have to split the acquisitions and could acquire $Hx$ directly, then they would be the same. Indeed, $H$ is an invertible matrix and therefore $x^\ast=H^Ty$ minimizes the loss $\|y - Hx\|_2^2$. The same solution would also minimize any positive loss $g(x)$ equal to zero at $x^\ast$, which includes the MLE discussed next. This observation suggests that the choice of reconstruction method may not significantly affect the results, and that the pseudo-inverse is a good compromise among speed, simplicity, and performance.
 
 We can also show the error map for the pseudo-inverse reconstruction, to observe that the residual is not evidently spatially correlated, despite the misfit between the noise model and the reconstruction loss. 
 
@@ -266,7 +266,7 @@ plt.show()
 This can be explained by the fact that entries of $\alpha Ax$ are large and concentrated around the same value $\frac{1}{2}\alpha \sum_{i\leq n}x[i]$. Indeed, except for the first row of $A$ and the row of zeroes, all rows have exactly half their values set to 1, and the other half to zero. The measurements are therefore essentially bootstraped mean evaluations of the image. This has two consequences:
 - The empirical measurements $y_i$ are large enough to obtain a faithful approximation of the elementwise Poisson distribution by Gaussian distributions of mean $\alpha A[i,:]x$ and variance $\alpha A[i,:]x$.
 - The variance is essentially the same for all measurements, except $y[0]$ (corresponding to the row of ones) and $y[1]$ (corresponding to the row of zeroes, and that could be ignored). We denote $\sigma=\frac{1}{2}\alpha \sum_{i\leq n}x[i]$ the empirical variance estimation.
-If we consider the model $y \sim \mathcal{N}(\alpha Ax, \sigma)$, which according to the previous point, should correctly approximate the Poisson distribution, then the pseudo-inverse is a reasonable approximation of the maximum-likelihood estimator of the image. For Gaussian problems, it is known that the residuals are uncorrelated with the image, this can be observed numerically on the previous example.
+If we consider the model $y \sim \mathcal{N}(\alpha Ax, \sigma)$, which according to the previous point, should correctly approximate the Poisson distribution, then the pseudo-inverse is a reasonable approximation of the MLE of the image. For Gaussian problems, it is known that the residuals are uncorrelated with the image, this can be observed numerically on the previous example.
 
 ```{code-cell}ipython3
 :tags: [hide-input]
@@ -278,9 +278,9 @@ plt.ylabel("Number of occurrences")
 plt.show()
 ```
 
-#### Maximum-Likelihood reconstruction
+#### Maximum Likelihood reconstruction
 
-The Maximum-Likelihood (ML) estimator for Poisson noise is given by the minimizer of the Kullback-Leibler divergence
+The MLE for Poisson noise is given by the minimizer of the KL-divergence
 
 $$ \hat{X} = \argmin{X\geq 0} \KL{\frac{1}{\alpha} Y, AX}, $$
 
@@ -310,7 +310,7 @@ plt.axis('off')
 plt.colorbar(fraction=0.046, pad=0.04)
 plt.show()
 ```
-Arguably, in this context, the complication induced by using the Poisson ML estimator instead of the pseudo-inverse may not be worth the gain in estimation performance. However, the ML estimator can be easily generalized to measurements that are not Hadamard-based, such as a raster scan that acquires each pixel sequentially. We therefore work with this estimator in the following.
+Arguably, in this context, the complication induced by using the Poisson MLE instead of the pseudo-inverse may not be worth the gain in estimation performance. However, the MLE can be easily generalized to measurements that are not Hadamard-based, such as a raster scan that acquires each pixel sequentially. We therefore work with this estimator in the following.
 
 Both the LS and the ML reconstruction are computed in parallel across wavelengths. Therefore, it is expected that incoherent reconstruction artifacts will be found in the reconstructed spectra. The goal of the works presented subsequently is to use known spectra or spectral priors to improve spectral reconstruction.
 
@@ -402,10 +402,10 @@ and our goal is to design a state-of-the-art reconstruction algorithm that estim
 
 ### Joint reconstruction and unmixing in one step
 
-In {cite:p}`harigaJointReconstructionSpectral2024`, a simple strategy to jointly reconstruct and unmix a single-pixel image was proposed, computing the maximum likelihood estimator from Equation {eq}`eq:joint-reco-unmixing-model` with an alternating optimization algorithm, in this case alternating MU. The update rule for the spectra $V$ is the same as detailled in [](../../part1/nnls.md#multiplicative-updates), and for $U$ it can be obtained simply by 1) flattening the variables, 2) computing the classical MU rule and 3) folding the output into a matrix (see also {cite:p}`fevotte2011algorithms`). This yields after simplification
+In {cite:p}`harigaJointReconstructionSpectral2024`, a simple strategy to jointly reconstruct and unmix a single-pixel image was proposed, computing the MLE from Equation {eq}`eq:joint-reco-unmixing-model` with an alternating optimization algorithm, in this case alternating MU. The update rule for the spectra $V$ is the same as detailled in [](../../part1/nnls.md#multiplicative-updates), and for $U$ it can be obtained simply by 1) flattening the variables, 2) computing the classical MU rule and 3) folding the output into a matrix (see also {cite:p}`fevotte2011algorithms`). This yields after simplification
 
 $$
- U^{(k+1)} = U^{(k)} \ast \frac{A^T\frac{Y}{AUV^T}V}{A^T\mathbb{1}_{m,p}V}.
+ U^{(k+1)} = U^{(k)} \ast \frac{A^T\frac{Y}{AUV^T}V}{A^T1_{m,p}V}.
 $$
 
 where the product $\ast$ stands for elementwise multiplication.

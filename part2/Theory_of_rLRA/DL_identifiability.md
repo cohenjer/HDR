@@ -19,13 +19,13 @@ kernelspec:
 
 A core issue in source separation models is ensuring that a user can uniquely identify the output of a separation algorithm with the ground-truth sources. We say that a model is identifiable if it features this uniqueness property. To illustrate what a lack of identifiability means, let a nonnegative matrix $X$ be generated as the product of nonnegative matrices $WH$. If an NMF $X=\tilde{W}\tilde{H}^T$ is computed, in general, the estimated sources $\tilde{W}, \tilde{H}$ are not essentially the same as the ground truth sources $W,H$ (*i.e.*, up to permutation and scaling ambiguities).
 
-This issue is shared by many matrix and tensor decomposition models. In what follows, we summarize our contribution {cite}`Cohen2019Identifiability`, in which we study the identifiability of complete Dictionary Learning (cDL). Note that this work has been extended for sparse NMF {cite}`abdolaliDualSimplexVolume2024,abdolaliSimplexStructuredMatrixFactorization2021`.
+This issue is shared by many matrix and tensor decomposition models. In what follows, we summarize our contribution {cite}`Cohen2019Identifiability`, in which we study the identifiability of cDL. Note that this work has been extended for sparse NMF {cite}`abdolaliDualSimplexVolume2024,abdolaliSimplexStructuredMatrixFactorization2021`.
 
 cDL is a sparse matrix factorization model, where $n$ vectors $M[:,i]$ of dimensions $p$ stacked in a matrix $M\in\mathbb{R}^{p\times n}$ are decomposed as a sparse combinations (at most $k$ nonzero coefficients) of $r$ vectors $D[:,q]$ called atoms and stacked in a dictionary matrix $D\in\mathbb{R}^{p\times r}$:
 
 $$ M = DB$$ 
 
-where $\|B[:,i]\|_0\leq k$ for all column $B[:,i]$ of the coefficients matrix $B\in\mathbb{R}^{r\times n}$. We consider the blind setup where both $D$ and $B$ are unknown. In short, the goal of cDL is to estimate the dictionary $D$ and the coefficients matrix $B$ solely from the knowledge of $X$, the number of atoms $r$, and the sparsity level $k$. In what follows, we set the dimensions such that $p\leq r$ and suppose that $D$ has full column rank. This means that the dictionary is not over-complete (which is a usual setup of interest, but harder to study), thus the name complete DL. In this setup, without loss of generality in the noiseless setting, we can assume $p=r$ and will do so in the following.
+where $\|B[:,i]\|_0\leq k$ for all column $B[:,i]$ of the coefficients matrix $B\in\mathbb{R}^{r\times n}$. We consider the blind setup where both $D$ and $B$ are unknown. In short, the goal of cDL is to estimate the dictionary $D$ and the coefficients matrix $B$ solely from the knowledge of $X$, the number of atoms $r$, and the sparsity level $k$. In what follows, we set the dimensions such that $p\leq r$ and suppose that $D$ has full column rank. This means that the dictionary is not over-complete (which is a usual setup of interest, but harder to study), thus the name cDL. In this setup, without loss of generality in the noiseless setting, we can assume $p=r$ and will do so in the following.
 
 ## Identifying $r-1$ dimensional facets
 
