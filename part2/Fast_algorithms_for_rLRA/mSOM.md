@@ -47,7 +47,7 @@ $$
  \argmin{y\in\mathbb{R}^m} \phi_x(y) = x - [\nabla^2f(x)]^{-1} \nabla f(x),
 $$
 
-while with constraints, the miniminization of $\phi$ has no closed form expression. In the particular case where $\mathcal{C}$ is the nonnegative orthant, minimizing the second-order approximation $\phi$ amounts to solving an NNLS problem.
+while with constraints, the miniminization of $\phi$ has no closed form expression. In the particular case where $\mathcal{C}$ is the nonnegative orthant, minimizing the second-order approximation $\phi$ amounts to solving a NNLS problem.
 
 ```{margin}
 More can be read about Newton and quasi-Newton algorithms in {cite:p}`Bertsekas1999Nonlinear`.
@@ -85,7 +85,7 @@ is a majorant of the Hessian, namely $A_u(x) - \nabla^2 f$ is positive semi-defi
 
 ## MU algorithm as quadratic majorant minimization
 
-The SOM algorithm reduces the design of the diagonal matrix $A_u(x)$ to choosing a positive vector $u$. Any choice of $u$ ensures that $A_u(x)$ is a majorant of the Hessian and therefore that the obtained algorithm is principled. It turns out that for an NNLS problem, the MU algorithm is a particular case of SOM when $u=x$. Indeed, for $f(x) = \frac{1}{2}\|y - Wx\|_2^2$ and nonnegativity constraints, the hessian matrix writes $\nabla^2 f(x) = W^TW$, and the majorant matrix $A_u(x)$ with $u=x$ is
+The SOM algorithm reduces the design of the diagonal matrix $A_u(x)$ to choosing a positive vector $u$. Any choice of $u$ ensures that $A_u(x)$ is a majorant of the Hessian and therefore that the obtained algorithm is principled. It turns out that for a NNLS problem, the MU algorithm is a particular case of SOM when $u=x$. Indeed, for $f(x) = \frac{1}{2}\|y - Wx\|_2^2$ and nonnegativity constraints, the hessian matrix writes $\nabla^2 f(x) = W^TW$, and the majorant matrix $A_u(x)$ with $u=x$ is
 
 $$
 A_x(x) = \text{Diag}\left(\frac{W^TWx}{x}\right).

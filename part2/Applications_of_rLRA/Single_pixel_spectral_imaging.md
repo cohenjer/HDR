@@ -228,7 +228,7 @@ In practice, the spyrit package that we rely on does not yet implement these fas
 # Reconstruction with pseudo-inverse
 x_rec = torch.linalg.lstsq(meas_op.A, y).solution.reshape(64, 64)
 print(f"The pseudo-inverse reconstruction has {torch.sum(x_rec<0)} negative entries")
-# Bonus: we can use an nnls solver, also very slow without fast operators
+# Bonus: we can use a nnls solver, also very slow without fast operators
 from tensorly.solvers.nnls import hals_nnls
 Aty = meas_op.adjoint(y)[:,None]
 AtA = meas_op.A.T@meas_op.A
@@ -418,7 +418,7 @@ $$
 \argmin{U\geq 0, V\geq 0} \KL{Y, AUV^T} + \lambda \left( \|U\|_1 + \|V\|_1 \right)
 $$
 
-is jointly non-convex, initialization is important. A viable optimization for simple unmixing problems is to first perform the reconstruction, for instance, solving an NNLS problem, then use a pure-pixel selection algorithm such as SNPA {cite}`gillisSuccessiveNonnegativeProjection2014` to initialize $V$.
+is jointly non-convex, initialization is important. A viable optimization for simple unmixing problems is to first perform the reconstruction, for instance, solving a NNLS problem, then use a pure-pixel selection algorithm such as SNPA {cite:p}`gillisSuccessiveNonnegativeProjection2014` to initialize $V$.
 
 This procedure is illustrated below on, first, a synthetic exemple, and then on a real dataset acquired in CREATIS.
 

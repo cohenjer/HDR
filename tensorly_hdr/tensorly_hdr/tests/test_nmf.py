@@ -53,7 +53,7 @@ fit = np.linalg.norm(data-W@H)**2/np.linalg.norm(data)**2
 
 plt.plot(W)
 
-plt.figure()
+plt.figure(figsize=(12,10))
 for i in range(rank):
     plt.subplot(1, rank, i+1)
     image = np.reshape(H[i, :], [307, 307]).T

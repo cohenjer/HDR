@@ -235,7 +235,7 @@ width: 700px
 align: center
 name: fig:sepnmf
 ---
-Separable NMF finds the matrix $W$ in the columns of the data matrix $M$. In the particular case of rank-two separable NMF (on the right), the solution can be obtained by picking for the first columns of matrix $W$ the data point with largest $\ell_2$ norm after $\ell_1$ normalization, and then choosing the furthest data point as the second column. When the rank is larger, algorithms exist that can compute exactly separable NMF in polynomial time, such as the Successive Nonnegative Projection Algorithm (SNPA) {cite}`gillisSuccessiveNonnegativeProjection2014`; the underlying idea behind SNPA is similar to that of OMP.
+Separable NMF finds the matrix $W$ in the columns of the data matrix $M$. In the particular case of rank-two separable NMF (on the right), the solution can be obtained by picking for the first columns of matrix $W$ the data point with largest $\ell_2$ norm after $\ell_1$ normalization, and then choosing the furthest data point as the second column. When the rank is larger, algorithms exist that can compute exactly separable NMF in polynomial time, such as the Successive Nonnegative Projection Algorithm (SNPA) {cite:p}`gillisSuccessiveNonnegativeProjection2014`; the underlying idea behind SNPA is similar to that of OMP.
 ```
 
 A second variant of NMF is sparse NMF, in which the entries of the matrices $W$ and/or $H$ are pushed towards zero. A typical formulation of sparse NMF with $\ell_1$ regularization writes
@@ -251,7 +251,7 @@ In many practical uses of NMF, it is important to consider whether regularized N
 
 To fit NMF to a dataset, several Python libraries are available. [Scikit-learn](https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.NMF.html) has a nice implementation of both [MU](../part1/nnls.md) and cyclic coordinate descent, which allow for sparsity-inducing regularization. [Nimfa](https://nimfa.biolab.si/) is a toolbox dedicated to NMF that implements many variants of NMF, including Bayesian and graph-regularized NMF. It has not been updated since 2019, and as far as I know, it is geared towards flexibility rather than performance. 
 
-A third and probably less advertised option is to use nonnegative tensor decomposition available in [tensorly](http://tensorly.org/stable/modules/generated/tensorly.decomposition.non_negative_parafac_hals.html#tensorly.decomposition.non_negative_parafac_hals). The interface is rather simple and, like in Scikit-learn, two algorithms are proposed, namely MU and alternating [HALS](../part1/nnls.md#hals-nnls-only). tensorly, in fact, implements HALS as an NNLS solver, which can be handy as a building block for other nonnegative factorization problems. Since I am a co-developer of tensorly, let us demonstrate how to perform a toy NMF factorization with tensorly.
+A third and probably less advertised option is to use nonnegative tensor decomposition available in [tensorly](http://tensorly.org/stable/modules/generated/tensorly.decomposition.non_negative_parafac_hals.html#tensorly.decomposition.non_negative_parafac_hals). The interface is rather simple and, like in Scikit-learn, two algorithms are proposed, namely MU and alternating [HALS](../part1/nnls.md#hals-nnls-only). tensorly, in fact, implements HALS as a NNLS solver, which can be handy as a building block for other nonnegative factorization problems. Since I am a co-developer of tensorly, let us demonstrate how to perform a toy NMF factorization with tensorly.
 
 ```{code-cell} ipython3
 import numpy as np

@@ -38,7 +38,7 @@ $$ \text{Find}\; x^\ast\in\argmin{x\geq 0} \|y - Wx\|_2^2.$$
 
 In general, the projected unconstained least squares estimate, $\left[W^{\dagger}y\right]^+$, is **not** a solution to NNLS, see [](../part2/Fast_algorithms_for_rLRA/proco-als.md) for more details.
 
-The cost function of NNLS is coercive (with respect to $z$) and continuous and the set of admissible solutions is non-empty, which ensures the existence of a solution. If matrix $W\in\mathbb{R}^{m\times n}$ is full column rank, which is often the case in low-rank approximation problems, then the cost is also strongly convex (and Lipschitz-smooth), ensuring the NNLS solution is unique. When the matrix $W$ is not full column-rank, the discussion on the uniqueness is more difficult. One of the interests of NNLS over ordinary least squares, however, is that the solution for underdetermined systems can still be unique, see the [NNLS KKT conditions](subsec:nnls-kkt) below.
+The cost function of NNLS is coercive (with respect to $z$) and continuous and the set of admissible solutions is non-empty, which ensures the existence of a solution. If matrix $W\in\mathbb{R}^{m\times n}$ is full column rank, which is often the case in low-rank approximation problems, then the cost is also strongly convex (and Lipschitz-smooth), ensuring the NNLS solution is unique. When the matrix $W$ is not full column rank, the discussion on the uniqueness is more difficult. One of the interests of NNLS over ordinary least squares, however, is that the solution for underdetermined systems can still be unique, see the [NNLS KKT conditions](subsec:nnls-kkt) below.
 
 ### Geometric interpretation
 
@@ -470,7 +470,7 @@ $$
  \langle W[:,i], r\rangle = \Pi_{W[:,i]}(r) \|W[:,i]\|_2^2.
 $$
 
-Another point of view is to observe that in the NNLS KKT conditions, the quantity $W^Tr$ must be null on the optimal support and negative outside the support. Therefore, the selection step selects the largest nonzero scalar product and assumes it should be null. The last estimate of the residual is always an orthogonal projection on the span of $W[:,S]$, hence no atom can be selected that is already in the support, or in the span of $W[:,S]$, even without the explicit support constraint. This allows matrix $W[:,S]$ to always be full column-rank, except maybe at initialization.
+Another point of view is to observe that in the NNLS KKT conditions, the quantity $W^Tr$ must be null on the optimal support and negative outside the support. Therefore, the selection step selects the largest nonzero scalar product and assumes it should be null. The last estimate of the residual is always an orthogonal projection on the span of $W[:,S]$, hence no atom can be selected that is already in the support, or in the span of $W[:,S]$, even without the explicit support constraint. This allows matrix $W[:,S]$ to always be full column rank, except maybe at initialization.
 
 This observation is also discussed in [](../part2/Theory_of_rLRA/onesparseDLRA.md), but with $\ell_2$-normalized atoms.
 

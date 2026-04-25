@@ -23,7 +23,7 @@ kernelspec:
 
 Low-rank approximation models such as NMF are designed to perform unsupervised learning: given a data matrix $Y$, their goal is to compute two possibly constrained matrices $W,H$ such that $Y\approx WH^T$. In practical applications, as discussed in {ref}`part:applications`, however, performing LRA is not the final goal. The estimated factor matrices are instead further processed for a downstream task. These post-processing operations include clustering of the components, thresholding activations, or performing linear regression. Often, additional side information is available on the expected outcome of this post-processing. In the language of machine learning, we could say that this additional information takes the form of training data stored in a matrix $M$.
 
-A simple way to make use of this additional data $M$ is to modify the LRA cost to incorporate this data. This procedure has been named "Supervised LRA" in the literature, see {cite}`lockSupervisedMultiwayFactorization2018` and references therein. For NMF, linear regression from a matrix $W$ to additional data $M$ can, for instance, drive the supervision task. The "supervised" NMF problem formulation is then given by
+A simple way to make use of this additional data $M$ is to modify the LRA cost to incorporate this data. This procedure has been named "Supervised LRA" in the literature, see {cite:p}`lockSupervisedMultiwayFactorization2018` and references therein. For NMF, linear regression from a matrix $W$ to additional data $M$ can, for instance, drive the supervision task. The "supervised" NMF problem formulation is then given by
 
 $$
   \argmin{W\geq 0,\; H\geq 0,\; \theta} \mathcal{D}\left(Y, WH^T\right) + \lambda \|W - M\theta\|_F^2

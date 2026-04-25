@@ -243,7 +243,7 @@ The convergence speed of this alternating optimization algorithm is suspiciously
 
 ## Nonnegative PARAFAC2 for GCMS data
 
-We may now compute PARAFAC2 with and without nonnegativity constraints on the time elution mode. The AO-ADMM implementation of PARAFAC2 with constraints is found in the [matcouply package](https://github.com/MarieRoald/matcouply){cite}`roaldMatCoupLyLearningCoupled2023`, developed by [Marie Roald](https://github.com/MarieRoald) at Simula (Norway) during her PhD thesis. For PARAFAC2 without nonnegativity on the second mode (but with nonnegativity on the first mode to avoid sign ambiguities), we use the implementation available in tensorly, which uses reparameterization and relies on the CP decomposition.
+We may now compute PARAFAC2 with and without nonnegativity constraints on the time elution mode. The AO-ADMM implementation of PARAFAC2 with constraints is found in the [matcouply package](https://github.com/MarieRoald/matcouply){cite:p}`roaldMatCoupLyLearningCoupled2023`, developed by [Marie Roald](https://github.com/MarieRoald) at Simula (Norway) during her PhD thesis. For PARAFAC2 without nonnegativity on the second mode (but with nonnegativity on the first mode to avoid sign ambiguities), we use the implementation available in tensorly, which uses reparameterization and relies on the CP decomposition.
 
 ```{code-cell}ipython3
 

@@ -6,11 +6,14 @@ This document lists all acronyms, technical terms, and words with ambiguous spel
 
 ## Acronyms
 
+- ADMM: Alternating Descent Method of MultipliersA
+- ALS: Alternating Least Squares
 - AMT: Automatic Music Transcription
 - AS: Active-Set
 - cDL: complete Dictionary Learning
 - CPD: Canonical Polyadic Decomposition
 - DL: Dictionary Learning
+- DLRA: Dictionary-based Low-Rank Approximation
 - EM: Expectation-Maximization
 - HALS: Hierarchical Alternating Least Squares
 - HDR: Habilitation à Diriger des Recherches
@@ -18,8 +21,10 @@ This document lists all acronyms, technical terms, and words with ambiguous spel
 - HRSI: Homogeneous Regularized Scale-Invariant problem
 - KL-divergence: Kullback Leibler-divergence
 - LRA: Low-Rank Approximation(s)
+- MC-ALS: Maximum Correlation ALS
 - ML-EM: Maximum Likelihood-Expectation-Maximization
 - MM: Majorization Minimization
+- MMV: Multiple Measurement VectorA
 - MU: Multiplicative Updates
 - nCPD: Nonnegative CPD
 - NMF: Nonnegative Matrix Factorization

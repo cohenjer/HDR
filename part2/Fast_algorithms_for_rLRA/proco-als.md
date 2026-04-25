@@ -22,7 +22,7 @@ kernelspec:
 
 ## Projected least squares for solving NNLS
 
-When discussing NNLS algorithms, we overlooked one possible naive idea for computing an approximate solution: first compute the unconstrained least squares solution, then project it onto the nonnegative orthant. Given an NNLS problem NNLS(A,b), this means computing
+When discussing NNLS algorithms, we overlooked one possible naive idea for computing an approximate solution: first compute the unconstrained least squares solution, then project it onto the nonnegative orthant. Given a NNLS problem NNLS(A,b), this means computing
 ```python
     x_hat = tl.solve(A,b)
     x_hat[x_hat<0] = 0
@@ -319,7 +319,7 @@ We use the KKT conditions to show that solving
 
 $$ \min_{Ux\geq 0} \frac{1}{2} \|x - \hat{x}\|_2^2 $$
 
-is equivalent to an NNLS problem
+is equivalent to a NNLS problem
 
 $$ \min_{z\geq 0} \frac{1}{2} \|U^Tz + \hat{x}\|_2^2 . $$
 
@@ -341,7 +341,7 @@ To summarize, we may compute the projection $\Pi_{U\cdot}(y)$ by first solving s
 +++
 
 ```{admonition} Note on the suboptimality of projected least squares estimates
-Using $\left[A^\dagger b\right]_+$ as the solution to an NNLS problem $\min_{x\geq 0} \|Ax - b\|_2^2$ can be a terrible idea for some problem instances. We can use NumPy to generate examples in which projected least squares solutions are arbitrarily far from the true NNLS solutions, even in two dimensions. This may happen in particular when the linear system is poorly conditioned. In the plot below, the projected least squares solution is always zero, but the NNLS solution can be made arbitrarily large by stretching and rotating the mixing matrix $A$ as desired.
+Using $\left[A^\dagger b\right]_+$ as the solution to a NNLS problem $\min_{x\geq 0} \|Ax - b\|_2^2$ can be a terrible idea for some problem instances. We can use NumPy to generate examples in which projected least squares solutions are arbitrarily far from the true NNLS solutions, even in two dimensions. This may happen in particular when the linear system is poorly conditioned. In the plot below, the projected least squares solution is always zero, but the NNLS solution can be made arbitrarily large by stretching and rotating the mixing matrix $A$ as desired.
 ```
 
 ```{code-cell} ipython3

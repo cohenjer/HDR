@@ -82,8 +82,12 @@ HRSI is quite general and encompasses many instances of regularized LRA problems
 
 We proved the following result in {cite:p}`cohenEfficientAlgorithmsRegularized2025`, relying on an identity for the geometric mean.
 ````{prf:theorem} HRSI solutions characterization and implicit equivalent formulation
-:label: HRSI
-If $\mu_i>0$ for all $i$, any solution $\{X_i^\ast\}_{i\leq n}$ to the HRSI problem {eq}`eq:hrsi-pb` satisfies $p_i\mu_ig_i(X_i^{\ast}[:,q]) = \beta_q$ for all $i\leq n$ and $q\leq r$, where 
+:label: th:HRSI
+If $\mu_i>0$ for all $i$, any solution $\{X_i^\ast\}_{i\leq n}$ to the HRSI problem {eq}`eq:hrsi-pb` under assumptions **A1**, **A2** and **A3** satisfies 
+
+$$p_i\mu_ig_i(X_i^{\ast}[:,q]) = \beta_q$$
+
+for all $i\leq n$ and $q\leq r$, where 
 
 $$ \beta_q = \left(\prod_{i\leq n} \left(p_i\mu_ig_i(X^\ast_i[:,q])\right)^{\frac{1}{p_i}}\right)^{\frac{1}{\sum_{i\leq n} \frac{1}{p_i}}} . $$
 
@@ -98,12 +102,12 @@ where $\tilde{\mu} = \left(\prod_{i=1}^{n}(p_i\mu_i)^{\frac{1}{p_i}}
 From this theorem, we observe that
 - Only the product of regularization hyperparameters impacts the regularity of the solution.
 - The sum of columnwise regularization on the factor matrices in the explicit formulation becomes a product of regularizations in the implicit formulation, yielding group-sparsity on the rank-one components.
-- At optimality, the scales of the components must satisfy the balancing condition $p_i\mu_ig_i(X_i^{\ast}[:,q])=\beta_q$. This means, in particular, that the regularized LRA model does not suffer from scale ambiguity.
+- At optimality, the scales of the components must satisfy the balancing condition $p_i\mu_ig_i(X_i^{\ast}[:,q])=\beta_q$. This means, in particular, that LRA models regularized with homogeneous functions do not suffer from scale ambiguity.
 
 
 ## Special cases with $\ell_1$ and $\ell_2$ regularizations
 
-To make our main result {prf:ref}`HRSI` more explicit, let us instantiate the implicit HRSI formulation and the optimal scales for a couple of classical problems in rLRA. Based on the observation that only the product of regularization hyperparameters matters, the same regularization hyperparameter is used for all factor matrices.
+To make our main result {prf:ref}`th:HRSI` more explicit, let us instantiate the implicit HRSI formulation and the optimal scales for a couple of classical problems in rLRA. Based on the observation that only the product of regularization hyperparameters matters, the same regularization hyperparameter is used for all factor matrices.
 
 ### Ridge-regularized nonnegative CPD
 
@@ -111,15 +115,15 @@ Define the ridge nCPD formally as the optimization problem
 
 $$ \argmin{X_i\geq 0}  \| \mathcal{T} - \mathcal{I}_r \times_1 X_1 \times_2 X_2 \times_3 X_3 \|^2_F +  \mu \left(\|X_1\|_F^2 + \|X_2\|_F^2 + \|X_3\|_F^2\right). $$
 
-The implicit HRSI problem shows again that ridge-regularization yields a component-wise group-sparsity implicit regularization,
+The implicit HRSI problem shows that ridge-regularization yields a componentwise group-sparsity implicit regularization,
 
 $$ \argmin{\{\mathcal{L}_q\}_{q\leq r},~\text{rank}(\mathcal{L}_q)\leq 1}  \|\mathcal{T} -\sum_{q=1}^{r} \mathcal{L}_q \|_F^2 + 3\mu \sum_{q=1}^{r} \|\mathcal{L}_q\|_F^{\frac{2}{3}} $$
 
-where tensors $\mathcal{L}_q$ are rank-one tensors built from the outer products $X_1[:,q]\otimes X_2[:,q] \otimes X_3[:,q]$. We experimentally validate in [](./HRSI_algorithm.md) that tuning the regularization hyperparameter $\mu$ indeed allows us to select the rank of the nCPD factorization. Moreover, the optimal solution of ridge nCPD verifies the balancing equation
+where tensors $\mathcal{L}_q$ are rank-one tensors $X_1[:,q]\otimes X_2[:,q] \otimes X_3[:,q]$. We experimentally validate in [the experiments subsection](#balanced-and-non-euclidean-algorithms-for-regularized-lra) that tuning the regularization hyperparameter $\mu$ indeed helps us to select the rank of the nCPD factorization automatically. Moreover, the optimal solution of ridge nCPD verifies the balancing equation
 
-$$ 1 = \sqrt{2} \|X_i[:,q]\|_2^{-\frac{1}{3}}\prod_{j\neq i}\|X_j[:,q]\|_2^{\frac{2}{3}}  .$$
+$$ 1 = \sqrt{2} \|X^\ast_i[:,q]\|_2^{-\frac{1}{3}}\prod_{j\neq i}\|X^\ast_j[:,q]\|_2^{\frac{2}{3}}  .$$
 
-This balancing identity will be used in [](./HRSI_algorithm.md) to refine the iterations of an iterative optimization algorithm to solve ridge nCPD.
+This balancing identity will be used in [the experiments subsection](#balanced-and-non-euclidean-algorithms-for-regularized-lra) to refine the iterations of an iterative optimization algorithm to solve ridge nCPD.
 
 ### Sparse NMF L1-L1
 
@@ -127,11 +131,11 @@ Another interesting case of an implicit regularization effect concerns the (doub
 
 $$\argmin{X_1\geq 0, X_2\geq 0} \|M - X_1X_2^T\|_F^2 + \mu \left( \|X_1\|_1 + \|X_2\|_1 \right). $$
 
-Intuitively, a practitioner using sparse NMF with $\ell_1$ penalizations on both factors would expect sparse entries in both matrices, leveraging the behavior of the $\ell_1$ norm in regression problems. The implicit formulation shows that, while both factors are indeed penalized to be sparse, there is another group-sparse effect that prunes entire components,
+Intuitively, a practitioner using sparse NMF with $\ell_1$ penalizations on both factors would expect sparse entries in both matrices, leveraging the usual behavior of the $\ell_1$ norm in regression problems. The implicit formulation 
 
-$$ \argmin{L_q\in\mathbb{R}_+^{m_1\times m_2},\; \text{rank}(L_q)\leq 1} \|M - \sum_{q=1}^{r}L_q\|_F^2 + 2\sqrt{\mu_1\mu_2}\sum_{q=1}^{r} \sqrt{\|L_q\|_1}.$$
+$$ \argmin{L_q\in\mathbb{R}_+^{m_1\times m_2},\; \text{rank}(L_q)\leq 1} \|M - \sum_{q=1}^{r}L_q\|_F^2 + 2\sqrt{\mu_1\mu_2}\sum_{q=1}^{r} \sqrt{\|L_q\|_1}$$
 
-The problem with this formulation is that both effects (elementwise sparsity and component-wise sparsity) are not controlled individually but rather by the same regularization hyperparameter. This yields unexpected component pruning as shown in the simulation below with mixtures of Gaussians. It is also unclear from the implicit formulation whether both factors will be sparse elementwise.
+shows that, while both factors are indeed penalized to be sparse, there is another group-sparse effect that prunes entire components. The problem with this formulation is that both effects (elementwise sparsity and componentwise sparsity) are not controlled individually but rather by the same regularization hyperparameter. This yields unexpected component pruning as shown in the simulation below with mixtures of Gaussians. It is also unclear from the implicit formulation whether both factors will be sparse elementwise.
 
 
 
@@ -175,9 +179,6 @@ Yn = Y + sig*rng.random((n1, n2))  # corruption with gaussian noise
 W0 = 0*W + 0.5*rng.random(W.shape)
 H0 = 0*H + 0.5*rng.random(H.shape)
 
-font = {'size'   : 16}
-matplotlib.rc('font', **font)
-
 # Storing output factors for various regularization in dictionaries
 We = dict()
 He = dict()
@@ -218,12 +219,17 @@ output_notebook()
 ```{code-cell} ipython3
 :tags: [hide-input]
 
+
+font = {'size'   : 16}
+matplotlib.rc('font', **font)
+
 # Initial data for lambda = 0
 initial_idx = 0
-sources = [ColumnDataSource(data=dict(x=x, y=We[initial_idx][:, i])) for i in range(r)]
+initial_lamb = lambset[initial_idx]
+sources = [ColumnDataSource(data=dict(x=x, y=We[initial_lamb][:, i])) for i in range(r)]
 
 # Figure setup
-p = figure(title=f"Regularization = {lambset[initial_idx]}", width=700, height=400,
+p = figure(title=f"Regularization = {initial_lamb}", width=700, height=400,
            x_axis_label="X", y_axis_label="We[:,q]")
 
 # --- Set up Bokeh plot ---
@@ -276,7 +282,7 @@ slider.js_on_change('value', callback)
 show(column(p, slider))
 ```
 
-Observe in particular that the sparsity level of the components does not evolve smoothly with the regularization hyperparameter. Components vanish brutally at $\mu=5.2$ and $\mu=0.75$.
+Observe in particular that the sparsity level of the components does not evolve smoothly with the regularization hyperparameter. Components vanish brutally at $\mu=0.75$ and $\mu=5.2$.
 
 
 ## The sparse NMF using l1-l2 regularization
@@ -293,7 +299,7 @@ where the mixed matrix norm is defined as $\|L_q\|_{1,2} = \sqrt{\sum_{j} \left(
 
 $$ \|x\otimes y\|_{1,2} = \|x\|_1\|y\|_2 $$ 
 
-for any vectors $x$ and $y$. One may observe that the implicit regularization acts as a group-lasso norm  on the rows of the rank-one components, effectively enforcing sparsity elementwise in the factor matrix $X_1$. The group-lasso effect on the rank-one components still appears, however, in the implicit regularization, and similarly to the $\ell_1$-$\ell_1$ case, the two effects may occur simultaneously.
+that holds for any two vectors $x$ and $y$. One may observe that the implicit regularization acts as a group-LASSO norm  on the rows of the rank-one components, effectively enforcing sparsity elementwise in the factor matrix $X_1$. The group-LASSO effect on the rank-one components still appears, however, in the implicit regularization, and similarly to the $\ell_1$-$\ell_1$ case, the two effects may occur simultaneously.
 
 It is still open to fully characterize the link between the regularized formulation and the constrained formulation
 
@@ -306,21 +312,21 @@ Interestingly, Marmin, Goulard, and Févotte show equivalence between the constr
 
 In our work with Valentin Leplat, in addition to the theoretical analysis of HRSI discussed in [](./HRSI_theory.md), we tackle a more practical problem. We observe, both numerically and theoretically, the existence of scaling swamps that considerably slow the convergence of alternating algorithms. Can the balancing equation $p_i\mu_ig_i(X_i^{\ast}[:,q]) = \beta_q$ be leveraged to escape these swamps?
 
-In what follows, we first show the existence of scaling swamps in a toy problem numerically ({cite}`cohenEfficientAlgorithmsRegularized2025` formally proves the sublinear convergence rate of ALS for this problem). A simulation then shows the rank-selection capabilities of ridge-regularized nCPD, along with the importance of balancing.
+In what follows, we first show the existence of scaling swamps in a toy problem numerically ({cite:p}`cohenEfficientAlgorithmsRegularized2025` formally proves the sublinear convergence rate of ALS for this problem). A simulation then shows the rank-selection capabilities of ridge nCPD, along with the importance of balancing.
 
 ### Scaling swamps
 
-In the tensor decomposition literature, swamps refer to many consecutive iterations of optimization algorithms in which the cost function remains nearly constant while the parameters change significantly. This phenomenon occurs for many algorithms and is conjectured to be due to the ill-posedness of tensor low-rank approximations {cite}`hillar:2013:tensor.problems.nphard`, {cite}`Comon2009Tensor`, {cite}`mohlenkampDynamicsSwampsCanonical2019`, {cite}`vermeylenReducingSwampBehavior2025a`.
+In the tensor decomposition literature, swamps refer to many consecutive iterations of optimization algorithms in which the cost function remains nearly constant while the parameters change significantly. This phenomenon occurs for many algorithms and is conjectured to be due to the ill-posedness of tensor LRA {cite:p}`hillar:2013:tensor.problems.nphard`, {cite:p}`Comon2009Tensor`, {cite:p}`mohlenkampDynamicsSwampsCanonical2019`, {cite:p}`vermeylenReducingSwampBehavior2025a`.
 
-Another kind of swamp was observed by Papalexakis and Sidiropoulos {cite}`Papalexakis2016Tensors` for $\ell_1$-$\ell_1$ sparse NMF. It is called a scaling-swamp because, as in traditional swamps, the cost improves very slowly over many iterations. Unlike in swamps from the tensor decomposition literature, however, the cost does not decrease any faster after a certain number of iterations, and scaling swamps also occur in matrix factorization problems such as NMF, even though the low-rank manifold is closed.
+Another kind of swamp was observed by Papalexakis and Sidiropoulos {cite:p}`Papalexakis2016Tensors` for $\ell_1$-$\ell_1$ sparse NMF. It is called a scaling-swamp because, as in traditional swamps, the cost improves very slowly over many iterations. Unlike in swamps from the tensor decomposition literature, however, the cost does not decrease any faster after a certain number of iterations, and scaling swamps also occur in matrix factorization problems such as NMF, even though the low-rank manifold is closed.
 
 We can construct a simple numerical example in one dimension in which the ALS algorithm is provably slow. Consider the loss function
 
 $$ f(x_1,x_2) = (y - x_1x_2)^2 + \lambda (x_1^2 + x_2^2). $$ (eq:toy-pb)
 
-where $x_1$ and $x_2$ are reals and the regularization hyperparameter $\lambda$ and the data $y$ are positive reals.
+where $x_1$ and $x_2$ are real values and the regularization hyperparameter $\lambda$ and the data $y$ are positive real values.
 
-Using a perturbation analysis, it can be observed that the ALS algorithm, whose updates are given by
+Using a perturbation analysis, it can be observed that the ALS algorithm, whose updates at iteration $k+1$ are given by
 
 $$
     x_1^{(k+1)} = \frac{x_2^{(k)}y}{{x^2_2}^{(k)}+\lambda} \; \; \text{and} \; \; 
@@ -366,7 +372,7 @@ print(f"Loss: {loss[-1]}, Optimal loss: {(y-np.sqrt(y-lamb))**2+ lamb * 2 * (y-l
 ```
 
 ```{code-cell} ipython3
-:tags: []
+:tags: [hide-input]
 
 fig, axes = plt.subplots(1, 2, figsize=(12, 5))
 axes[0].plot(x1store, label='x1')
@@ -383,7 +389,7 @@ plt.show()
 
 ```
 
-Interestingly, the toy problem {eq}`eq:toy-pb` has a simple closed form solution that can be obtained by optimally balancing the two scalar values $x_1$ and $x_2$ as defined in {ref}`sec:theorem-HRSI`, namely
+Interestingly, the toy problem {eq}`eq:toy-pb` has a simple closed form solution that can be obtained by optimally balancing the two scalar values $x_1$ and $x_2$ as defined in {prf:ref}`th:HRSI`, namely
 
 $$
 |x_1| = |x_2|.
@@ -393,7 +399,7 @@ Then the optimal solution is simply (up to sign ambiguities) $x_1=x_2=\sqrt{y-\l
 
 This suggests that balancing the estimates optimally before, after, or within an optimization algorithm solving HRSI could help avoid the scaling swamp phenomenon. We explore here only the balancing of initialization and/or outputs of an algorithm for simplicity.
 
-Balancing initial or final estimates of an algorithm is a straightforward operation using {prf:ref}`HRSI`. First, compute the columnwise geometric mean
+Balancing initial or final estimates of an algorithm is a straightforward operation using {prf:ref}`th:HRSI`. First, compute the columnwise geometric mean
 
 $$ \beta_q = \left(\prod_{i\leq n} \left(p_i\mu_ig_i(X^\ast_i[:,q])\right)^{\frac{1}{p_i}}\right)^{\frac{1}{\sum_{i\leq n} \frac{1}{p_i}}} . $$
 
@@ -425,7 +431,8 @@ def optimal_balancing(factors):
     return balanced_factors
 ```
 
-The following simulation illustrates the importance of balancing initial (and sometimes final) estimates. In {cite}`cohenEfficientAlgorithmsRegularized2025`, we also show that balancing at every outer iteration in the ANLS algorithm further improves the convergence speed empirically, but this simulation only performs balancing at the first and last iteration.
+The simulation below illustrates the importance of balancing initial (and sometimes final) estimates. In {cite:p}`cohenEfficientAlgorithmsRegularized2025`, we also show that balancing at every outer iteration in the HALS algorithm further improves the convergence speed empirically.
+%, but this simulation only performs balancing at the first and last iteration.
 
 Recall the ridge-regularized nCPD problem
 
@@ -554,6 +561,8 @@ plt.grid()
 plt.show()
 ```
 
+We can also look at the loss function with and without balancing of the final estimates to observe that balancing reduces the final error slightly, and the effect is more prononced for the output of algorithms that did not scale and balance the initial guess.
+
 ```{code-cell} ipython3
 :tags: []
 
@@ -583,19 +592,6 @@ print(f"{loss(data, CPe_balanced, ridge_reg)} | {loss(data, CPe_balanced_fbalanc
 print("With scaling and balancing:")
 print(f"{loss(data, CPe_scaled_balanced, ridge_reg)} | {loss(data, CPe_scaled_balanced_fbalance, ridge_reg)}")
 
-# We also analyse the number of components in the final estimates
-plt.figure(figsize=(8, 8))
-plt.subplot(3, 1, 1)
-plt.plot(CPe_scaled_balanced.factors[0])
-plt.title('Estimated factors')
-plt.legend(['Component ' + str(i) for i in range(CPe_scaled_balanced.factors[0].shape[1])], loc='upper right')
-plt.subplot(3, 1, 2)
-plt.plot(CPe_scaled_balanced.factors[1])
-plt.ylabel('Component value')
-plt.subplot(3, 1, 3)
-plt.plot(CPe_scaled_balanced.factors[2])
-plt.xlabel('Component index')
-plt.show()
 ```
 
 

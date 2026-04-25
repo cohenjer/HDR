@@ -54,7 +54,7 @@ Matrix $X'$ stands for the estimate produced by the MC-ALS algorithm, while $X$ 
 
 ```{prf:theorem}
 :label: robustness_trickMP
-Let $ X,X'$ two columnwise $ k $-sparse matrices and $ \epsilon>0,\; \delta>0 $ such that $ \|Y-DXB\|_F^2 \leq \epsilon $ and $ \|YB(B^TB)^{-1} - DX' \|_F^2 \leq \delta $. Further suppose that $ \text{spark}(D)>2k $ and that $ B $ has full column-rank. Then
+Let $ X,X'$ two columnwise $ k $-sparse matrices and $ \epsilon>0,\; \delta>0 $ such that $ \|Y-DXB\|_F^2 \leq \epsilon $ and $ \|YB(B^TB)^{-1} - DX' \|_F^2 \leq \delta $. Further suppose that $ \text{spark}(D)>2k $ and that $ B $ has full column rank. Then
     
 $$ \|X-X'\|_F \leq \frac{1}{\sigma^{(2k)}_{\min}(D)}\sqrt{\delta+\frac{\epsilon}{\sigma^2_{\min}(B)}}$$
 where $ \sigma_{\min}(B) $ is the smallest nonzero singular value of matrix $ B $ and $ \sigma_{\min}^{(2k)} $ is the smallest nonzero singular value of all submatrices of $ D $ constructed with $ 2k $ columns.
@@ -110,7 +110,7 @@ In an unpublished note {cite:p}`cohenComputingProximalOperator`, I showed how to
 Suppose the $\ell_{1,1}$ relaxed problem has a unique solution $X^\ast$. Let $I$ the set of indices such that for any $i$ in $I$, $\|X^\ast[:,i]\|_1 = \|X^\ast\|_{1,1}$. Denote $S$ the support of $X^\ast$. Then there exists at least one index $i$ in $I$ such that $D[:,S[i]]$ is full column rank and $\|X^\ast[:,i]\|_0\leq n$.
 ```
 
-Experiments conducted in {cite}`cohenDictionaryBasedLowRankApproximations2022` moreover showed that this approach performs worse than a simpler approach we now describe.
+Experiments conducted in {cite:p}`cohenDictionaryBasedLowRankApproximations2022` moreover showed that this approach performs worse than a simpler approach we now describe.
 
 ### A simpler convex relaxation
 
@@ -118,7 +118,7 @@ A simpler strategy consists of penalizing each column of matrix $X$ with the $\e
 
 $$ \min_{X\in\Omega_X} \|Y - DXB^T\|^2_F + \sum_{i=1}^{r}\lambda_i \|X[:,i]\|_1 $$
 
-This second approach, coined Block-Lasso, is simple because we can compute gradients and apply the soft-thresholding operator (the proximity operator of the $\ell_1$ norm) column by column. However, it requires introducing one regularization parameter $\lambda_i>0$ for each column of the matrix $X$. This is tedious, in particular since designing homotopy algorithms that can automatically select these values is not straightforward at all. 
+This second approach, coined Block-LASSO, is simple because we can compute gradients and apply the soft-thresholding operator (the proximity operator of the $\ell_1$ norm) column by column. However, it requires introducing one regularization parameter $\lambda_i>0$ for each column of the matrix $X$. This is tedious, in particular since designing homotopy algorithms that can automatically select these values is not straightforward at all. 
 
 To tune all the $\lambda_i$ parameters, we assume that the desired sparsity level $k$ for each column is known. Parameters $\lambda_i$ can then be tuned dynamically using a simple heuristic to reach $k$ nonzero entries within an iterative algorithm. The resulting algorithm is coined Block-FISTA and is a Proximal Fast Gradient algorithm with heuristically adaptive regularization weights.
 
