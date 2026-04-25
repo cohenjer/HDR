@@ -15,6 +15,7 @@ This document lists all acronyms, technical terms, and words with ambiguous spel
 - HALS: Hierarchical Alternating Least Squares
 - HDR: Habilitation à Diriger des Recherches
 - HOMP: Hierarchical Orthogonal Matching Pursuit
+- HRSI: Homogeneous Regularized Scale-Invariant problem
 - KL-divergence: Kullback Leibler-divergence
 - LRA: Low-Rank Approximation(s)
 - ML-EM: Maximum Likelihood-Expectation-Maximization

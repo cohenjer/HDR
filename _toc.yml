@@ -25,8 +25,6 @@ parts:
     chapters:
       - file: part2/Theory_of_rLRA/intro
       - file: part2/Theory_of_rLRA/HRSI_theory
-        sections:
-        - file: part2/Theory_of_rLRA/HRSI_algorithm
       - file: part2/Theory_of_rLRA/DL_identifiability
       - file: part2/Theory_of_rLRA/DLRA  
         sections:
