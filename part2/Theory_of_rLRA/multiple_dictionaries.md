@@ -10,7 +10,7 @@ kernelspec:
   name: python3
 ---
 
-# Multiple Dictionaries
+# Multiple dictionaries
 
 :::{admonition} Reference
 :class: tip

@@ -11,7 +11,7 @@ kernelspec:
 ---
 
 (sec:nnls)=
-# Nonnegative Regressions: NNLS and NNKL
+# Nonnegative regressions: NNLS and NNKL
 
 ```{Note}
 This section is based partly on a doctoral course I taught at the doctoral school of [ITWIST 2020](https://itwist20.ls2n.fr/doctoral-school/), and partly on more recent works around the MU algorithm. It is quite dense and long; however, nonnegative optimization problems are crucial tools to understand the rest of this manuscript.
@@ -287,7 +287,7 @@ A globally Lipschitz-smooth function can be bounded globally by a local quadrati
 KL-divergence also does not satisfy the global Polyak-Lojasiewicz inequality, a more relaxed assumption than strong convexity {cite:p}`karimiLinearConvergenceGradient2020`. It is unclear to me at the time of writing whether KL-divergence satisfies the Kurdyka-Lojasiewicz condition globally, or a local variant of the Polyak-Lojasiewicz condition useful for studying the convergence of first-order methods in non-convex problems {cite:p}`attouchConvergenceProximalAlgorithm2009,bolte2014proximal`. 
 ```
 
-Another important issue with the KL-divergence is that, although it is strictly convex, it is not strongly convex. Indeed, the KL-divergence is asymptotically linear when $z$ is much larger than $y$. This causes problems in particular when the data measurement $y$ is sparse or exhibits large dynamics. Strong convexity guarantees linear convergence rates for gradient descent; when the cost function is not strongly convex, first-order algorithms might converge sub-linearly {cite:p}`beck2017first`. In the extreme case where $y$ has many zeroes, a significant part of the cost is linear, and convex first-order optimization techniques are, in general, ill-suited for linear programming.
+Another important issue with the KL-divergence is that, although it is strictly convex, it is not strongly convex. Indeed, the KL-divergence is asymptotically linear when $z$ is much larger than $y$. This causes problems in particular when the data measurement $y$ is sparse or exhibits large dynamics. Strong convexity guarantees linear convergence rates for gradient descent; when the cost function is not strongly convex, first-order algorithms might converge sub-linearly {cite:p}`beck2017first`. In the extreme case where $y$ has many zeros, a significant part of the cost is linear, and convex first-order optimization techniques are, in general, ill-suited for linear programming.
 
 
 Smoothness and convexity issues combined imply that there may not exist a safe stepsize and a linear convergence rate for gradient descent applied to NNKL. [In the following](#multiplicative-updates), we explore preconditionned first-order algorithms that partially avoid these issues.
@@ -603,16 +603,20 @@ One of the most well-known iterative solvers for general nonnegative least squar
 It is, in fact, interesting to note that the Richardson-Lucy/ML-EM algorithm has seen many developments and improvements over the years in parallel with developments proposed in the source separation/numerical optimization literature. A few interesting reads are a constrained version of Richardson-Lucy called one-step late {cite:p}`greenUseEmAlgorithm1990` that amounts to MM with linearized regularizations, the general formulation of EM for likelihoods in the exponential family as a mirror gradient descent which allows to derive a generic linear convergence rate {cite:p}`kunstnerHomeomorphicInvarianceEMNonAsymptotic2021` and the design of TV-regularized and Plug-and-Play variants with convergence guarantees (work under way in the team {cite:p}`modrzykConvergentPlugandPlayMajorizationMinimization`).
 ```
 
+```{margin}
+The $\ast$ symbol in the MU updates denotes the Hadamard (element-wise) product.
+```
+
 The general equations for the MU are, for the NNLS problem,
 
 $$ 
-x^{(k+1)} = x^{(k)} \frac{W^Ty}{W^TWx^{(k)}},
+x^{(k+1)} = x^{(k)} \ast \frac{W^Ty}{W^TWx^{(k)}},
 $$ (eq:MU-NNLS)
 
 and for the NNKL problem,
 
 $$ 
-x^{(k+1)} = x^{(k)} \frac{W^T\frac{y}{Wx^{(k)}}}{W1_n}.
+x^{(k+1)} = x^{(k)} \ast \frac{W^T\frac{y}{Wx^{(k)}}}{W1_n}.
 $$ (eq:MU-NNKL)
 
 These updates can be derived from several frameworks, as already underlined for the quadratic case in Gillis's book on NMF {cite:p}`gillisNonnegativeMatrixFactorization2020`. However, for NNKL, it is important to note that MU is a special case of the EM algorithm; this fact is known to experts in NMF but not to practitioners in computational imaging, where EM for NNKL was originally derived. Below, I therefore provide a brief explanation of how to obtain MU from these various frameworks and the implications of these derivations. 
@@ -631,7 +635,7 @@ $$
 Note that the terms $W^TWx, W^Ty, W^T\frac{y}{Wx}$ and $W^T1_n$ are all nonnegative. Denoting $\nabla_x^{+}$ the positive terms in the gradient computation and similarly for $\nabla_x^{-}$, we may write rewrite the MU updates as
 
 $$
-x^{(k+1)} = x^{(k)}\frac{ \nabla_x^- f\left(y,x\right) }{\nabla_x^+ f\left(y,x\right)}.
+x^{(k+1)} = x^{(k)}\ast\frac{ \nabla_x^- f\left(y,x\right) }{\nabla_x^+ f\left(y,x\right)}.
 $$
 
 This interpretation of MU is, in my opinion, useful mostly to quickly remember the updates. While Gillis {cite:p}`gillisNonnegativeMatrixFactorization2020` provides an interpretation of the gradient ratio related to the KKT conditions (namely, the ratio should get closer to one to satisfy the KKT conditions), deriving convergence results from this formulation is not straightforward. It is also unclear how this update rule will behave for regularized NNLS/NNKL problems.
@@ -713,16 +717,16 @@ The zero-locking phenomenon is a numerical instability that occurs when the entr
 A workaround for the NNKL problem, that also guarantees the positivity required for convergence in NNLS, is to impose positivity constraints by introducing $\epsilon>0$ such that $x\geq \epsilon$. Positivity avoids the non-Lipschitz smoothness of the KL-divergence at zero, and avoids the zero-locking phenomenon {cite:p}`takahashiGlobalConvergenceModified2014`. The MU iterates become
 
 $$ 
-x^{(k+1)} = \max\left( x^{(k)} \frac{W^Ty}{W^TWx^{(k)}}, \epsilon\right),
+x^{(k+1)} = \max\left( x^{(k)} \ast \frac{W^Ty}{W^TWx^{(k)}}, \epsilon\right),
 $$
 
 for the NNLS problem, and
 
 $$ 
-x^{(k+1)} = \max\left(x^{(k)} \frac{W^T\frac{y}{Wx^{(k)}}}{W^T1_n},\epsilon\right).
+x^{(k+1)} = \max\left(x^{(k)} \ast \frac{W^T\frac{y}{Wx^{(k)}}}{W^T1_n},\epsilon\right).
 $$
 
-for the NNKL problem, where the maximum is applied elementwise. The underlying algorithm here can be thought of as a generalized proximal gradient or preconditioned forward-backward algorithm; see, for instance, the Variable Metric forward-backward framework for more details {cite:p}`chouzenouxVariableMetricForward2014,chouzenouxBlockCoordinateVariable2016`.
+for the NNKL problem, where the maximum is applied elementwise. The underlying algorithm here can be thought of as a generalized proximal gradient or preconditioned forward-backward algorithm; see, for instance, the variable metric forward-backward framework for more details {cite:p}`chouzenouxVariableMetricForward2014,chouzenouxBlockCoordinateVariable2016`.
 
 ```
 
@@ -791,7 +795,7 @@ $ \KL{y,Wx} \leq \KL{y,Wx^{(k)}} + \langle W^T\left(1_n-\frac{y}{Wx^{(k)}}\right
 
 Minimizing this upper bound leads to unusual multiplicative updates 
 
-$ x = x \frac{1}{1+\frac{1}{\|y\|_1}x \odot \left(W^T1_n - W^T\frac{y}{Wx}\right)}. $
+$ x = x \ast \frac{1}{1+\frac{1}{\|y\|_1}x \odot \left(W^T1_n - W^T\frac{y}{Wx}\right)}. $
 
 Since these updates allow the use of (Bregman) proximal operators while ensuring convergence, they have been used in regularized NNKL problems {cite:p}`huraultConvergentBregmanPlugandPlay2023b`. However, it is unclear how these updates compare to the classical MU {eq}`eq:MU-NNKL` and its convergence rate is unknown.
 
@@ -875,14 +879,14 @@ Importantly, while the EM algorithm can in principle be used to derive update ru
 If additive $\ell_1$ and $\ell_2$ regularizations terms $\lambda_1 \|x\|_1 + \frac{1}{2}\lambda_2 \|x\|_2^2$ are added to the cost, the MU updates using the gradient ratio for both NNLS and NNKL would write
 
 $$
-x^{(k+1)} = x^{(k)}\frac{ \nabla_x^- f\left(y,x\right) }{\nabla_x^+ f\left(y,x\right) + \lambda_1 + \lambda_2 x^{(k)}}.
+x^{(k+1)} = x^{(k)}\ast \frac{ \nabla_x^- f\left(y,x\right) }{\nabla_x^+ f\left(y,x\right) + \lambda_1 + \lambda_2 x^{(k)}}.
 $$
 
 since the gradients of the regularizations are always positive.
 For instance, for NNKL, MU obtained from the gradient ratio heuristic is
 
 $$
-x^{(k+1)} =  x^{(k)} \frac{W^T\frac{y}{Wx^{(k)}}}{W1_n + \lambda_1 + \lambda_2 x^{(k)}}.
+x^{(k+1)} =  x^{(k)}\ast  \frac{W^T\frac{y}{Wx^{(k)}}}{W1_n + \lambda_1 + \lambda_2 x^{(k)}}.
 $$
 
 
@@ -902,7 +906,7 @@ $$
 and the resulting MU updates for the NNLS problem are
 
 $$ 
-x^{(k+1)} = \max\left( x^{(k)} \frac{W^Ty - \lambda_1}{W^TWx^{(k)} + \lambda_2}, \epsilon\right).
+x^{(k+1)} = \max\left( x^{(k)}\ast \frac{W^Ty - \lambda_1}{W^TWx^{(k)} + \lambda_2}, \epsilon\right).
 $$
 
 Note the difference with the gradient ratio heuristic that places the $\ell_1$ regularization hyperparameter in the denominator. Moreover, these MU updates with $\lambda_1\geq 0$ can in principle become negative or zero; therefore, positivity constraints should be enforced as discussed [above](block:pos_cstr).

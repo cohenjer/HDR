@@ -172,7 +172,7 @@ cp_e, err = pro_als_basic(clean_data, rank, init=deepcopy(init_cp), callback=err
 ```
 
 ```{code-cell}ipython3
-tags: [hide-input]
+:tags: [hide-input]
 
 # Plot the errors per iterations and time
 fig, axes = plt.subplots(1, 2, figsize=(10, 5))
@@ -195,7 +195,7 @@ plt.show()
 
 
 ## Note on the suboptimality of projected least squares estimates
-Using $\left[A^\dagger b\right]_+$ as the solution to a NNLS problem $\min_{x\geq 0} \|Ax - b\|_2^2$ can be a terrible idea for some problem instances. We can use NumPy to generate examples in which projected least squares solutions are arbitrarily far from the true NNLS solutions, even in two dimensions. This may happen in particular when the linear system is poorly conditioned. In the plot below, the projected least squares solution is always zero, but the NNLS solution can be made arbitrarily large by stretching and rotating the mixing matrix $A$ as desired.
+Using $\left[A^\dagger b\right]_+$ as the solution to a NNLS problem $\min_{x\geq 0} \|Ax - b\|_2^2$ can be a terrible idea for some problem instances. We can use NumPy to generate examples in which projected least squares solutions are arbitrarily far from the true NNLS solutions, even in dimensions two. This may happen in particular when the linear system is poorly conditioned. In the plot below, the projected least squares solution is always zero, but the NNLS solution can be made arbitrarily large by stretching and rotating the mixing matrix $A$ as desired.
 
 ```{code-cell} ipython3
 import numpy as np
@@ -211,7 +211,12 @@ b = A@x_LS
 # LS, Pro-LS, NNLS sols
 x_pro_LS = np.maximum(x_LS,0)
 x_NNLS = tl.solvers.nnls.active_set_nnls(A.T@b,A.T@A)
+```
 
+
+```{code-cell}ipython
+:tags: [hide-input]
+plt.figure(figsize=(9,6))
 # Plot 
 for i in range(grid_z.shape[0]):
     for j in range(grid_z.shape[1]):
@@ -263,17 +268,24 @@ small_cp_est = tl.decomposition.parafac(G, 3)
 # Recover larger cp by chain rule
 cp_est = tl.cp_tensor.CPTensor((small_cp_est[0], [t_tensor[1][i]@small_cp_est[1][i] for i in range(T.ndim)]))
 
-# Reconstruction error
-print(tl.norm(cp_est.to_tensor() - T)/tl.norm(T))
-
 # Comparing with direct cp algorithm
 cp_est_direct = tl.decomposition.parafac(T, 3)
-print(tl.norm(cp_est_direct.to_tensor() - T)/tl.norm(T))
+
 ```
+
+```{code-cell}ipython3
+:tags: [remove-input]
+
+# Reconstruction error
+print(f"Relative reconstruction error of ALS with Tucker compression {tl.norm(cp_est.to_tensor() - T)/tl.norm(T)}")
+print(f"Relative reconstruction error of ALS without Tucker compression {tl.norm(cp_est_direct.to_tensor() - T)/tl.norm(T)}")
+```
+
+In this noiseless experiment, Tucker compression is lossless.
 
 ### Tucker compression for Nonnegative CP
 
-This procedure is standard for unconstrained CP as it offers little inconvenience when high precision is not required. It is recommended when several CP decompositions of the same tensor are to be computed.
+This procedure is standard for unconstrained CP as it offers little inconvenience when high precision is not required or when the data is noiseless. It is particularly useful when several CP decompositions of the same tensor are to be computed.
 
 However, for nonnegative CP, when working on the core tensor $G$, one has to keep in mind that nonnegativity applies to the original factors, not the small compressed ones. It means that when updating, *e.g.*, factor $A_c$ during the CP decomposition of $G$, the problem to solve is
 
@@ -281,15 +293,15 @@ $$ \min_{UA_c\geq 0} \|G_{[1]} - A_c\left(B_c \odot C_c \right)^T \|_F^2 $$
 
 which is not a typical NNLS problem. It is still a quadratic program; we can solve it up to machine precision with a variety of algorithms. However, these algorithms might be costly. Consider a projected gradient descent algorithm
 
-$$ A_c^{k+1} = \Pi_{U\cdot\geq 0}\left[ A_c - \eta \left( G_{[1]}\left(B_c \odot C_c\right) + \left(B_c^TB_c \ast C_c^TC_c \right)\right)\right] $$
+$$ A_c^{k+1} = \Pi_{Ux\geq 0}\left[ A_c - \eta \left( G_{[1]}\left(B_c \odot C_c\right) + \left(B_c^TB_c \ast C_c^TC_c \right)\right)\right] $$
 
 The cost of the gradient step is low due to Tucker compression, but the cost of the projection onto the positive cone of $U$ can be consequential if $U$ is a large matrix (which is exactly the setup we consider for Tucker compression). This projection is in fact exactly a collection of $n_1$ NNLS problems of dimensions $r$, with $n_1$ the dimension in the first mode of the original tensor. 
 
-In our work [ref, date], we proposed to use the pro-ALS idea to avoid resorting to NNLS solvers entirely. This gave birth to the Proco-ALS algorithm detailed below. We first solve the least squares problem unconstrained, then project onto the constraint set $ UA_c\geq 0$. As mentioned above, such a projection is also costly. We use a heuristic approximate projection instead,
+In earlier work {cite:p}`Cohen2015Fast`, we proposed to use the pro-ALS idea to avoid resorting to costly NNLS solvers. This gave birth to the proco-ALS algorithm detailed below. We first solve the least squares problem unconstrained, then project onto the constraint set $ UA_c\geq 0$. As mentioned above, such a projection is also costly. We use a heuristic approximate projection instead,
 
-$$ \hat{\Pi}(y) = U^T\left[Ux\right]_+. $$
+$$ \hat{\Pi}(x) = U^T\left[Ux\right]_+. $$
 
-It turns out that $\hat{\Pi}$ is one iteration of alternating projection on convex sets (projection on the nonnegative orthant, and on the linear span of $U$ since $U$ is a frame). In particular, it is a non-expensive operator. This means that iterating $\hat{\Pi}$ several times would converge towards $\Pi$. However, for performance reasons, we recommend running it only once.
+This projector $\hat{\Pi}$ is one iteration of alternating projection on convex sets (projection on the nonnegative orthant, and on $\text{col}(U)$ since $U$ is a frame). In particular, it is a non-expensive operator. This means that iterating $\hat{\Pi}$ several times would converge towards $\Pi_{Ux\geq 0}$. However, for performance reasons, we recommend running it only once.
 
 ```{code-cell} ipython3
 def proco_als(G, r, init, comp_facs, itermax=100):
@@ -324,7 +336,7 @@ def proco_als(G, r, init, comp_facs, itermax=100):
     return cp_e, err
 ```
 
-Again we can test this proposed Proco-ALS algorithm on a simple synthetic dataset.
+Again we can test this proposed proco-ALS algorithm on a simple synthetic dataset.
 
 ```{code-cell} ipython3
 cp_true = tl.random.random_cp([100,100,100], 3)
@@ -345,13 +357,20 @@ small_cp_est, err = proco_als(G, 3, init_small, t_tensor[1])
 # Recover larger cp by chain rule
 cp_est = tl.cp_tensor.CPTensor((small_cp_est[0], [t_tensor[1][i]@small_cp_est[1][i] for i in range(T.ndim)]))
 
-# Reconstruction error
-print(tl.norm(cp_est.to_tensor() - T)/tl.norm(T))
-
 # Comparing with direct cp algorithm
 cp_est_direct = tl.decomposition.non_negative_parafac_hals(T, 3)
-print(tl.norm(cp_est_direct.to_tensor() - T)/tl.norm(T))
 ```
+
+
+```{code-cell}ipython3
+:tags: [remove-input]
+
+# Reconstruction error
+print(f"Relative reconstruction error of ALS with Tucker compression {tl.norm(cp_est.to_tensor() - T)/tl.norm(T)}")
+print(f"Relative reconstruction error of ALS without Tucker compression {tl.norm(cp_est_direct.to_tensor() - T)/tl.norm(T)}")
+```
+
+In this example without noise and with perfectly hand-picked multilinear ranks, Tucker compression using proco-ALS helps converging toward the optimal nCP much faster. 
 
 ```{admonition} Note on the Projection $\Pi$
 
@@ -370,5 +389,5 @@ which when minimized w.r.t. $x$ yields $x^\ast = \hat{x} + U^T\mu^\ast$.
 The dual problem is therefore formalized as 
 $ \min_{\mu\geq 0} -\frac{1}{2}\|U^T\mu\|_2^2 + \|U^T\mu\|_2^2 + \mu^TU\hat{x}$ which has the same minimizer than $\min_{z\geq 0} \frac{1}{2} \|U^Tz + \hat{x}\|_2^2$
 
-To summarize, we may compute the projection $\Pi_{U\cdot}(y)$ by first solving several small NNLS problems with mixing matrix $U^T$. This yields $z$. Then we compute the projection by using the primal-dual relationship $\Pi_{U\cdot}(y) = y + U^Tz$.
+To summarize, we may compute the projection $\Pi_{U\cdot}(y)$ by first solving several small NNLS problems with mixing matrix $U^T$. This yields $z$. Then we compute the projection by using the primal-dual relationship $\Pi_{Ux}(y) = y + U^Tz$.
 ```

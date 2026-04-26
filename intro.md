@@ -21,22 +21,17 @@ Except for the picture above, generative AI has been used in this manuscript onl
 ```
 
 TODOlist:
-- Relecture
-    - Acronyms, vocabulary and math notations list (NNKL or NN-KL)
-    - Cohérence style (we, I (only where relevant), forme passive...)
-    - Coherence between parts, intro, perspectives.
 - Fix code dependencies again
   ------- Envoi 1 --------- (web)
 - Figure inline integration with glue and environments
 - Binder build
 - Precise Version and package dependence
 - Latex build fork ?
-- Photo plus fun accueil
   ------- Envoi 2 (pdf) ----
 
 %- Maybe later:
-  %- bar instead of line plots in HRSI alg
   %- Local installation instructions ?
+  %- Better proofread project
   %- precise pages in books refs
   %- Figures
     %- CMTF models [CMTF.md] --> main

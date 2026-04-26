@@ -12,7 +12,7 @@ kernelspec:
   name: python3
 ---
 
-# Low-rank models: Survival kit
+# Low-rank matrix and tensor models
 
 Low-rank models are important tools in both unsupervised and supervised machine learning, signal processing, and more generally in applied mathematics. They are also the main mathematical object studied in this manuscript. This section briefly introduces matrix, and tensor, Low-Rank Approximations (LRA). A solid background in linear algebra is required. Some of the material presented in the following sections has been covered in more detail in the book chapter I wrote with Pierre Comon and Rasmus Bro {cite:p}`cohenTensorDecompositionsPrinciples2023`. The book of Golub and Van Loan provides a complete description of matrix low-rank models {cite:p}`Golub1989Matrix`. The recent book of Grey Ballard and Tammy Kolda provides a deeper introduction to tensor decompositions, with a focus on computational aspects {cite:p}`ballardTensorDecompositionsData2025`.
 
@@ -287,7 +287,7 @@ M = M / np.sum(M, axis=0)
 Me = Me / np.sum(Me, axis=0)
 
 # b. 3d plotting
-fig = plt.figure(figsize=(8,6))
+fig = plt.figure(figsize=(12,10))
 ax = fig.add_subplot(projection='3d', elev=20, azim=10)
 # 3d data
 for i in range(n2):
@@ -315,7 +315,7 @@ Me_snpa = We_snpa@He_snpa.T
 print(f"Final mean reconstruction error with SNPA, {np.linalg.norm(M-Me_snpa)/n1/n2}")
 
 # Plotting the 3d data points, true W positions as triangles and estimated W positions with SNPA
-fig = plt.figure(figsize=(8,6))
+fig = plt.figure(figsize=(12,10))
 ax = fig.add_subplot(projection='3d', elev=20, azim=10)
 # 3d data
 for i in range(n2):

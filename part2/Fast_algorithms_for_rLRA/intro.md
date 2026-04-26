@@ -1,4 +1,4 @@
-# Summary
+# Fast algorithms: summary
 
 ## Optimization challenges in rLRA
 Once a rLRA model has been designed for a targeted application, the computation of the rLRA parameters, often called training, parameter estimation, or model fitting, boils down to solving an optimization of the form

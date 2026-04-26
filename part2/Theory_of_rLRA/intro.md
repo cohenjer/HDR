@@ -1,4 +1,4 @@
-# Summary
+# Theory of rLRA: summary
 
 Despite their widespread use in the signal processing and machine learning communities, rLRA models remain rather poorly understood to this day. There are two kinds of theoretical questions in the literature for which there are no clear answers.
 

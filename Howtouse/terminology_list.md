@@ -9,19 +9,27 @@ This document lists all acronyms, technical terms, and words with ambiguous spel
 - ADMM: Alternating Descent Method of MultipliersA
 - ALS: Alternating Least Squares
 - AMT: Automatic Music Transcription
+- AMU: Alternating Multiplicative Updates
 - ANLS: Alternating Nonnegative Least Squares
+- APGD: Alternating Projected Gradient Descent
 - AS: Active-Set
 - cDL: complete Dictionary Learning
-- CPD: Canonical Polyadic Decomposition
+- CPD: Canonical Polyadic DecompositionA
+- CMTF: Coupled Matrix and Tensor Factorization
 - DL: Dictionary Learning
 - DLRA: Dictionary-based Low-Rank Approximation
 - EM: Expectation-Maximization
 - HALS: Hierarchical Alternating Least Squares
 - HDR: Habilitation à Diriger des Recherches
+- HER: Heuristic Extrapolation with Restart
 - HOMP: Hierarchical Orthogonal Matching Pursuit
 - HRSI: Homogeneous Regularized Scale-Invariant problem
+- GCMS: Gas Chromatography Mass Spectrometry
 - KL-divergence: Kullback Leibler-divergence
+- LCMS: Liquid Chromatography Mass Spectrometry
 - LRA: Low-Rank Approximation(s)
+- MAP: Maximum *A Posteriori*
+- mSOM: median Second-Order Majorant
 - MC-ALS: Maximum Correlation ALS
 - ML-EM: Maximum Likelihood-Expectation-Maximization
 - MM: Majorization Minimization
@@ -36,7 +44,9 @@ This document lists all acronyms, technical terms, and words with ambiguous spel
 - PCA: Principal Component Analysis 
 - pro-ALS: projected Alternating Least Squares 
 - rLRA: Regularized Low-Rank Approximation(s)
+- RMSE: Root Mean Square Error
 - SNPA: Successive Nonnegative Projection Algorithm
+- SOM: Second-Order Majorant
 - SPI: Single-Pixel Imaging
 - SVD: Singular Value Decomposition
 

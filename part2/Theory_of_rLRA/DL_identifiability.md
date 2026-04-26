@@ -10,7 +10,7 @@ kernelspec:
   name: python3
 ---
 
-# Identifiability of complete Dictionary Learning
+# Identifiability of complete dictionary learning
 
 :::{admonition} Reference
 :class: tip

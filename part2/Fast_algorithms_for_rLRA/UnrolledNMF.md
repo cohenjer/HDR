@@ -63,13 +63,13 @@ Bilevel formulations address the trade-off between model inference and parameter
 There is, however, not a single canonical bilevel formulation for unrolling LRA. On the above example of supervised NMF, a naive formulation that separates the model computation (forward pass) and the actual training of the model (backward pass, *i.e.*, updating model parameters $\theta$ to reduce a training loss) writes
 
 $$
-    \argmin{\theta,\; W} \sum_{i=1}^{p} \|M_i - W^\ast_i\theta\|_F^2 \quad \text{such that} \quad H_i^\ast, W_i^\ast = \argmin{W_i\geq 0, H_i\geq 0}\mathcal{D}(Y_i,W_iH_i^T).
+    \argmin{\theta} \sum_{i=1}^{p} \|M_i - W^\ast_i\theta\|_F^2 \quad \text{such that} \quad H_i^\ast, W_i^\ast = \argmin{W_i\geq 0, H_i\geq 0}\mathcal{D}(Y_i,W_iH_i^T).
 $$
 
 Such a bilevel optimization problem is not particularly interesting because the two optimization problems are essentially decoupled and can be solved sequentially. We are back to simply post-processing the estimated parameter matrices of NMF. Following data-driven or task-driven dictionary learning {cite:p}`mairal2011task,sprechmannSupervisedNoneuclideanSparse2014a`, the symmetry between matrices $W$ and $H$ may be broken. We then solve a bilevel problem of the form
 
 $$
-    \argmin{\theta} \sum_{i=1}^{p} \mathcal{L}(M_i, H_i^\ast(W), \theta) \quad \text{such that} \quad H_i^\ast(W) = \argmin{H_i\geq 0}\mathcal{D}(Y_i,WH_i^T).
+    \argmin{\theta,\; W} \sum_{i=1}^{p} \mathcal{L}(M_i, H_i^\ast(W), \theta) \quad \text{such that} \quad H_i^\ast(W) = \argmin{H_i\geq 0}\mathcal{D}(Y_i,WH_i^T).
 $$
 
 Hence, the dictionary $W$ is now trained to reduce the training loss $\mathcal{L}$ while only the scores $H_i$ are computed at the inner level. Updating matrix $W$ means computing gradients through minimizers $H_i^\ast(W)$, which is tractable analytically depending on the choice of the model, loss $\mathcal{D}$, and in the presence of regularizations such as sparsity {cite:p}`mairal2011task`. It is, however, not obvious how to form these gradients for NMF.
@@ -99,13 +99,13 @@ The main design choices for the unrolled algorithm are
   - The (truncated) iterative algorithm $\mathcal{A}$
   - The trained parameters $\theta$.
 
-In a series of works with Christophe Kervazo, we proposed unrolling a workhorse algorithm for NMF, the MU algorithm; see {ref}`sec:nnls` for a detailed presentation. Other algorithms could be considered, but MU poses an interesting challenge: there are no obvious trainable parameters in the algorithm. For instance, the MU update for matrix $W$ with Frobenius loss writes
+In a series of works with Christophe Kervazo, we proposed unrolling a workhorse algorithm for NMF, the MU algorithm; see {ref}`sec:nnls` for a detailed presentation. Other algorithms could be considered, but MU poses an interesting challenge: there are no obvious trainable parameters $\theta$ in the algorithm. For instance, the MU update for matrix $W$ with Frobenius loss writes
 
 $$
   W \leftarrow W \ast  \frac{YH}{WH^TH}.
 $$
 
-Unrolling strategies typically train a stepsize or a linear operator in the log-prior (*e.g.*, the finite difference operator). Strategies to unroll MU previously proposed by Nasser [ref Eldar] replace both matrix $H$ and the cross product $H^TH$ with trainable matrices. However, this strategy is not suited for an alternating procedure since the dependence on $H$ is lost. 
+Unrolling strategies typically train a stepsize or a linear operator in the log-prior (*e.g.*, the finite difference operator). Strategies to unroll MU previously proposed by Nasser {cite:p}`nasserDeepUnfoldingNonNegative2022` replace both matrix $H$ and the cross product $H^TH$ with trainable matrices. However, this strategy is not suited for an alternating procedure since the dependence on $H$ is lost. 
 
 We proposed introducing trainable parameters that are multiplied elementwise with the updates. At iteration $k$, the proposed Non-Adaptive Linearize MU (NALMU) is given by  
 
@@ -157,6 +157,7 @@ sig = 0.1
 K = 20
 itermax = 1000
 nu = torch.logspace(-7, 0, K)  # logspaced weights
+# Play with the code: you can disable distillation 
 #nu = torch.zeros(K)
 #nu[K-1] = 1.0
 
@@ -169,7 +170,7 @@ Y = W@H + sig*torch.randn(m, p)
 
 # define trainable parameters
 Ah = torch.ones(n,K, requires_grad=True)
-#Ah = torch.ones(n, requires_grad=True)
+#Ah = torch.ones(n, requires_grad=True)  # for tied weights
 
 # define loss function
 def loss_fn(Y, W, H):
@@ -199,7 +200,7 @@ def NALMU(W, Y, Xinit, Ah, itermax=25, Xgt=None):
     sup_loss = []
     for i in range(itermax):
         XAh = (X.T*Ah[:,i]).T
-        #XAh = (X.T*Ah).T
+        #XAh = (X.T*Ah).T  # for tied weights
         X = XAh*WtY/(WtW@X)
         Xs.append(X)
         loss.append(loss_fn(Y, W, X))  # can be optimized using stored quantities

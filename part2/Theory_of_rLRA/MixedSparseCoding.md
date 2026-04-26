@@ -10,7 +10,7 @@ kernelspec:
   name: python3
 ---
 
-# Mixed Sparse Coding
+# Mixed sparse coding
 
 :::{admonition} Reference
 :class: tip

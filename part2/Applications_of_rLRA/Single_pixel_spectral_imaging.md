@@ -44,7 +44,7 @@ The noise model for single-pixel imagers is standardized as a Poisson-Gaussian m
 
 $$ Y \sim \mathcal{P}(\alpha AX) $$
 
-where $\alpha$ is the average photon count that can be interpreted as the signal strength. The signal to noise ratio can be shown to be proportional $\sqrt{\alpha}$: the higher $\alpha$ the less noisy the acquisition. We consider that the hypercube $X$ has normalized intensities in $[0,1]$.
+where $\alpha$ is the average photon count that can be interpreted as the signal strength. The signal to noise ratio can be shown to be proportional to $\sqrt{\alpha}$: the higher $\alpha$ the less noisy the acquisition. We consider that the hypercube $X$ has normalized intensities in $[0,1]$.
 
 The reconstruction of the hypercube $X$, knowing the measurements $Y$ and the acquisition matrix $A$, is an inverse problem. It is ill-posed in the sense that infinitely many measurements are required to obtain a perfect reconstruction, because of Poisson noise. Furthermore, if the number of patterns is strictly smaller than the number of pixels $n:=n_1n_2$, the linear system $Y=AX$ has infinitely many solutions. For both these reasons, regularization is essential in single-pixel image reconstruction. The [classical approach](#reconstruction-wavelength-by-wavelength-existing-work) is to reconstruct each slice of the hypercube separately, wavelength by wavelength, using state-of-the-art image reconstruction algorithms and priors. In the PhD thesis of Serena Hariga, co-supervised with Nicolas Ducros, we have studied the joint reconstruction and unmixing of the hypercube using spectral regularization {cite:p}`harigaJointReconstructionSpectral2024`, as well as spectral unmixing directly from the measurements with spatial priors {cite:p}`harigaApprochePlugandplayPour2025`.
 
@@ -64,11 +64,11 @@ Nelson and Fredman are concerned with linear reconstructions of acquisitions $y=
 
 Linear reconstructions are of the form $\hat{x} = By$ with matrix $B$ defined as the pseudo-inverse of matrix $A$. This choice for the reconstruction corresponds to the least squares estimation of the unknown $x$; it is the MLE under Gaussian noise. If the noise is not Gaussian, its statistical meaning is more ambiguous.
 
-The quantity that Nelson and Fredman consider for measuring the quality of the reconstruction is the Root Mean Squared Error (RMSE), defined as
+The quantity that Nelson and Fredman consider for measuring the quality of the reconstruction is the Root Mean Square Error (RMSE), defined as
 
 $$ \mathbb{E}\left[ \| x - \hat{x} \|^2 \right]. $$
 
-RMSE is exactly the average estimation error in $\ell_2$ norm, and therefore is a reasonable error metric for Gaussian noise. Because matrix $B$ is the pseudo-inverse of the acquisition operator $A$, we see that the residual $x - \hat{x}$ amounts to exactly $Be$, a centered noise with covariance $B^TB$. The RMSE is thus easily derived as
+RMSE is exactly the average estimation error in $\ell_2$ norm, and therefore is a reasonable error metric for Gaussian noise. Because matrix $B$ is the pseudo-inverse of the acquisition operator $A$, we see that the residual $x - \hat{x}$ amounts to exactly $Be$, a centered noise with covariance $B^TB$ ($\hat{x}$ is an unbiaised estimate). The RMSE is thus easily derived as
 
 $$ \text{RMSE}(B) = \sigma\sqrt{\text{Tr}\left(BB^T\right)}, $$
 
@@ -76,11 +76,11 @@ or for the $i$-th measurement only,
 
 $$ \text{RMSE}_i(B) = \mathbb{E}\left[ \left(x[i] - \hat{x}[i] \right)^2 \right] = \sigma\sqrt{\sum_{j} B[i,j]^2}. $$
 
-The Felgett advantage is obtained when comparing the RMSE of Hadamard patterns and raster scan. The ratio of the $\text{RMSE}_i$ values, denoted by $F_i$, is simply 
+The Felgett advantage is obtained when comparing the RMSE of Hadamard patterns and raster scan. The ratio of the RMSE$_i$ values, denoted by $F_i$, is simply 
 
 $$F_i = \frac{\text{RMSE}_i(B)}{\text{RMSE}_i(I_n)} = \frac{\sigma\sqrt{\sum_{j} B[i,j]^2}}{\sigma} = \|B[i,:]\|_2.$$
 
-For raster scan the rows of matrix $B^2$ sum to one, while for Hadamard patterns $B=\frac{1}{n}A^T$, which leads to 
+For raster scan the rows of matrix $B$ have unit $\ell_2$ norm, while for Hadamard patterns the rows of $B=\frac{1}{n}A^T$ have constant norm, $\sqrt{n}$, which leads to 
 
 $$ F_i =: F = \sqrt{n}.$$
 
@@ -96,14 +96,14 @@ The optimality of the Hadamard patterns, however, is meant under many unrealisti
 - The reconstruction is linear. Most state-of-the-art reconstruction algorithms employ more sophisticated reconstruction strategies.
 - The error is measured with the RMSE, which is not a robust or statistically meaningful error metric for Poisson-Gaussian noise.
 
-There are, therefore, ample research avenues for improving upon the (nonnegative) Hadamard patterns design. Revisiting the MSE gains for Poisson-Gaussian noise is one of my [research perspectives](../../part3/KarpCoi.md#kl-based-inverse-problems-for-computational-imaging).
+There are, therefore, ample research avenues for improving upon the (nonnegative) Hadamard patterns design. Revisiting the acquisition patterns, MSE gains for Poisson-Gaussian noise and statistical estimators is one of my [research perspectives](../../part3/KarpCoi.md#kl-based-inverse-problems-for-computational-imaging).
 :::
 
-A practical solution for implementing the DMD of Hadamard patterns is to acquire the positive and negative parts sequentially and concatenate the measurements into a single vector. If the image has $n$ pixels and $n$ Hadamard patterns to be acquired, the number of measurements is then $m:=2n-1$ (one pattern is full of zeros and ignored), and the data vector $y$ has size $m$. Doing so preserves the Poisson distribution. Another usual post-processing method computes the difference of the positive and negative acquisitions, resulting in a simulated Hadamard acquisition, but the noise distribution is modified. Formally, we define 
+A practical solution for implementing the Hadamard patterns on the DMD is to acquire the positive and negative parts sequentially and concatenate the measurements into a single vector. If the image has $n$ pixels and $n$ Hadamard patterns to be acquired, the number of measurements is then $m:=2n-1$ (one pattern is full of zeros and ignored), and the data vector $y$ has size $m$. Doing so preserves the Poisson distribution. Another usual post-processing method computes the difference of the positive and negative acquisitions, resulting in a simulated Hadamard acquisition, but the noise distribution is modified. Formally, we define 
 
 $$ A = \left[ \begin{array}{c} [H]^+ \\ [H]^- \end{array}\right] $$
 
-where $H$ here denotes a Hadamard matrix, and $[x]^- \geq 0$ is the negative part of a vector or matrix $x$. Matrix $[H]^-$ contains a row of zeroes that is usually removed. 
+where $H$ here denotes a Hadamard matrix, and $[x]^- \geq 0$ is the negative part of a vector or matrix $x$. Matrix $[H]^-$ contains a row of zeros that is usually removed. 
 
 
 ```{figure} ../../Figures/hadamard.gif
@@ -112,7 +112,7 @@ width: 350px
 align: center
 name: hadamard
 ---
-Examples of Hadamard patterns stored in the rows of matrix $H$. Ones are shown in white, and minus ones (zeroes in practice) in black. The patterns are orthogonal and have the same number of black and white pixels, except the first two (all white, all black).
+Examples of Hadamard patterns stored in the rows of matrix $H$. Ones are shown in white, and minus ones (zeros in practice) in black. The patterns are orthogonal and have the same number of black and white pixels, except the first two (all white, all black).
 ```
 
 In short, we suppose that measurements $Y$ are stored in a matrix of size $m\times p$, and assume the model $Y\sim \mathcal{P}\left(\alpha AX\right)$ with $A$ of size $m\times n$ a matrix with entries in $\{0,1\}$.
@@ -129,7 +129,7 @@ $$ A^TA = \frac{n}{2} \left( I_n +1_{n\times n} \right) $$
 
 and that $ \left( I_n - \frac{1}{n+1}1_{n\times n} \right)\left( I_n +1_{n\times n} \right)  = I_n $.
 
-```{note} Inversion of the positive Hadamard matrix
+```{admonition} Inversion of the positive Hadamard matrix
 
 Most matrices obtained from the Hadamard matrix admit fast inversion algorithms. The methodology, exemplified on matrix $[H]^+$, is as follows.
 
@@ -167,6 +167,7 @@ tl.set_backend("pytorch")
 x = torch.sum(torchvision.io.read_image("../../tensorly_hdr/dataset/cat.jpg"), axis=0)
 x = x/torch.max(x)  # normalize to [0,1], this is realistic
 
+plt.figure(figsize=(12,10))
 plt.imshow(x, cmap='gray')
 plt.colorbar()
 plt.title("A 64x64 cat image")
@@ -213,7 +214,7 @@ As long as the spectral dimension is ignored and reconstruction, that is, recove
 
 #### Pseudo-inverse reconstruction
 
-The simplest reconstruction algorithm performs a Least Squares (LS) reconstruction,
+The simplest reconstruction algorithm performs a least squares reconstruction,
 
 $$ \hat{X} = \frac{1}{\alpha}A^{\dagger} Y = \argmin{X\in\mathbb{R}^{n\times p}} \|\frac{1}{\alpha}Y - AX \|_F^2. $$
 
@@ -222,7 +223,7 @@ This reconstruction has several advantages.
 - It is unbiased.
 - It is reasonably cheap to perform as long as the observation matrix $A$ is not too large. Recall that the pseudo-inverse of matrix $A$ is known in closed form, and its contraction with a vector or matrix leverages fast Hadamard transforms.
 
-In practice, the spyrit package that we rely on does not yet implement these fast transforms for the split Hadamard measurements without further processing, so the pseudo-inverse computation is quite slow. The solvers I use are not compatible with fast Hadamard transforms and are also quite slow.
+In practice, the spyrit package that we rely on does not yet implement these fast transforms for the split Hadamard measurements without further processing, so the pseudo-inverse computation is quite slow. The solvers I use are not compatible with fast Hadamard transforms and are also quite slow. Since the image is nonnegative, we can also use a NNLS solver such as HALS.
 
 ```{code-cell}ipython3
 # Reconstruction with pseudo-inverse
@@ -255,7 +256,7 @@ Note that the pseudo-inverse reconstruction gives essentially the same result as
 We can also show the error map for the pseudo-inverse reconstruction, to observe that the residual is not evidently spatially correlated, despite the misfit between the noise model and the reconstruction loss. 
 
 ```{code-cell}ipython3
-plt.figure(figsize=(8,6))
+plt.figure(figsize=(12,10))
 plt.imshow(torch.abs(x - x_rec), cmap='gray')
 plt.colorbar()
 plt.axis('off')
@@ -263,14 +264,14 @@ plt.title("Error map for pseudo-inverse")
 plt.show()
 ```
 
-This can be explained by the fact that entries of $\alpha Ax$ are large and concentrated around the same value $\frac{1}{2}\alpha \sum_{i\leq n}x[i]$. Indeed, except for the first row of $A$ and the row of zeroes, all rows have exactly half their values set to 1, and the other half to zero. The measurements are therefore essentially bootstraped mean evaluations of the image. This has two consequences:
-- The empirical measurements $y_i$ are large enough to obtain a faithful approximation of the elementwise Poisson distribution by Gaussian distributions of mean $\alpha A[i,:]x$ and variance $\alpha A[i,:]x$.
-- The variance is essentially the same for all measurements, except $y[0]$ (corresponding to the row of ones) and $y[1]$ (corresponding to the row of zeroes, and that could be ignored). We denote $\sigma=\frac{1}{2}\alpha \sum_{i\leq n}x[i]$ the empirical variance estimation.
-If we consider the model $y \sim \mathcal{N}(\alpha Ax, \sigma)$, which according to the previous point, should correctly approximate the Poisson distribution, then the pseudo-inverse is a reasonable approximation of the MLE of the image. For Gaussian problems, it is known that the residuals are uncorrelated with the image, this can be observed numerically on the previous example.
+The good performance of the least squares estimate for this Poisson noise problem can be explained by the fact that entries of $\alpha Ax$ are large and concentrated around the same value $\frac{1}{2}\alpha \sum_{i\leq n}x[i]$. Indeed, except for the first row of $A$ and the row of zeros, all rows have exactly half their values set to 1, and the other half to zero. The measurements are therefore essentially bootstraped mean evaluations of the image. This has two consequences:
+- The empirical measurements $y_i$ are large enough to obtain a faithful approximation of the (elementwise) Poisson distributions by Gaussian distributions of mean $\alpha A[i,:]x$ and variance $\alpha A[i,:]x$.
+- The variance is essentially the same for all measurements, except $y[0]$ (corresponding to the row of ones) and $y[1]$ (corresponding to the row of zeros, and that could be ignored). We denote $\sigma=\frac{1}{2}\alpha \sum_{i\leq n}x[i]$ the empirical variance estimation.
+If we consider the model $y \sim \mathcal{N}(\alpha Ax, \sigma)$, which according to the previous point, should correctly approximate the Poisson distribution, then the pseudo-inverse is a reasonable approximation of the MLE of the image. For Gaussian problems, it is known that the residuals are uncorrelated with the image, this can be observed numerically on the previous example. Below we plot the histogram of the values in the measurement $y$, to check that they are indeed concentrated around the same numerical value.
 
 ```{code-cell}ipython3
 :tags: [hide-input]
-plt.figure(figsize=(8,6))
+plt.figure(figsize=(12,10))
 plt.hist(y)
 plt.title("Histogram of the measurements")
 plt.xlabel("Measurement value")
@@ -284,7 +285,7 @@ The MLE for Poisson noise is given by the minimizer of the KL-divergence
 
 $$ \hat{X} = \argmin{X\geq 0} \KL{\frac{1}{\alpha} Y, AX}, $$
 
-which can be approximately computed using, *e.g.*, the [MU algorithm](../../part1/nnls.md#multiplicative-updates). Below is an example of ML reconstruction.
+which can be approximately computed using, *e.g.*, the [MU algorithm](../../part1/nnls.md#multiplicative-updates). Below is an example of MLE reconstruction.
 
 ```{code-cell}ipython3
 # Reco avec MU
@@ -292,12 +293,12 @@ from tensorly_hdr.nmf_kl import Lee_Seung_KL_regression
 # remove the second element in y and the row of zeros to avoid division by zero
 yr = torch.cat([y[0:1], y[2:]])
 Ar = torch.cat([meas_op.A[0:1,:], meas_op.A[2:,:]], dim=0)
-crit, x_mu, time, _ = Lee_Seung_KL_regression(yr, Ar, Hini=x_rec_nnls.reshape(64**2), epsilon=1e-8, NbIter=150, tol=1e-6, verbose=True, print_it=50)
+crit, x_mu, time, _ = Lee_Seung_KL_regression(yr, Ar, Hini=x_rec_nnls.reshape(64**2), epsilon=1e-8, NbIter=60, tol=1e-6, verbose=True, print_it=20)
 ```
 
 ```{code-cell} ipython3
 :tags: [hide-input]
-plt.figure(figsize=(8,6))
+plt.figure(figsize=(12,10))
 plt.subplot(1,2,1)
 plt.imshow(x_mu.reshape(64,64), cmap='gray')
 plt.colorbar(fraction=0.046, pad=0.04)
@@ -310,9 +311,9 @@ plt.axis('off')
 plt.colorbar(fraction=0.046, pad=0.04)
 plt.show()
 ```
-Arguably, in this context, the complication induced by using the Poisson MLE instead of the pseudo-inverse may not be worth the gain in estimation performance. However, the MLE can be easily generalized to measurements that are not Hadamard-based, such as a raster scan that acquires each pixel sequentially. We therefore work with this estimator in the following.
+Arguably, in this context, the complication induced by using the Poisson MLE instead of the pseudo-inverse may not be worth the gain in estimation performance. However, the MLE can be easily generalized to measurements that are not Hadamard-based, such as a raster scan that acquires each pixel sequentially. We therefore work with this estimator in the following, with least squares initialization.
 
-Both the LS and the ML reconstruction are computed in parallel across wavelengths. Therefore, it is expected that incoherent reconstruction artifacts will be found in the reconstructed spectra. The goal of the works presented subsequently is to use known spectra or spectral priors to improve spectral reconstruction.
+Both the least squares and the MLE reconstruction are computed in parallel across wavelengths. Therefore, it is expected that incoherent reconstruction artifacts will be found in the reconstructed spectra. The goal of the works presented subsequently is to use known spectra or spectral priors to improve spectral reconstruction.
 
 ### Undersampled reconstruction
 
@@ -326,12 +327,9 @@ One may use the right pseudo-inverse instead of the left one, which is known to 
 
 $$ \argmin{Y = AX} \|X\|_F^2. $$
 
-Prior information about the image is typically incorporated into the model to ensure identifiability. Classical priors include:
-- Nonnegativity
-- Sparsity in wavelet bases
-- Sparsity in finite differences, also called Total Variation.
+Prior information about the image is typically incorporated into the model to ensure identifiability. Classical priors include nonnegativity, sparsity in wavelet bases and sparsity in finite differences, also called Total Variation.
 
-Denoting $g(X)$ the negative log-prior, reconstruction in the Maximum *a posteriori* sense is then performed by minimizing
+Denoting $g(X)$ the negative log-prior, reconstruction in the Maximum *A Posteriori* (MAP) sense is then performed by minimizing
 
 $$ \KL{Y, AX} + \lambda g(X), $$
 
@@ -358,7 +356,7 @@ x_mu_sub = x_mu_sub.reshape(64,64)
 
 ```{code-cell}ipython3
 :tags: [hide-input]
-plt.figure(figsize=(8,6))
+plt.figure(figsize=(12,10))
 plt.subplot(1,3,1)
 plt.imshow(x_rec_ls_sub, cmap='gray')
 plt.title("Pseudo-inverse subsampled")
@@ -383,7 +381,7 @@ Again, in this setup, nonnegativity alone is essentially useless, since the subs
 
 ### Joint reconstruction and unmixing principle
 
-[As discussed in the introduction of this section](./intro.md#spectral-mixing-and-unmixing), when considering hyperspectral images, it is reasonable to assume that the spectrum at each pixel is a linear combination of so-called endmembers, which are the spectra of pure materials present in the scene. When there are $r$ different endmembers and $r$ is smaller than the number of pixels $n$, and the number of spectral bands $p$, a simple but powerful model to represent the hyperspectral image is NMF,
+[As discussed in the introduction of this section](./intro.md#spectral-mixing-and-unmixing), when considering hyperspectral images, it is reasonable to assume that the spectrum at each pixel is a linear combination of so-called endmembers, which are the spectra of pure materials present in the scene. When there are $r$ different endmembers and $r$ is smaller than the number of pixels $n$ and the number of spectral bands $p$, a simple but powerful model to represent the hyperspectral image is NMF,
 
 ```{margin}
 The notations $U$ and $V$ are used to avoid confusion with the Hadamard matrix $H$ and the observation matrix $A$. 
@@ -391,7 +389,7 @@ The notations $U$ and $V$ are used to avoid confusion with the Hadamard matrix $
 
 $$ X = UV^T, $$
 
-where the nonnegative matrix $V\in\mathbb{R}_+^{p\times r}$ contains the endmembers columnwise, and the nonnegative matrix $U\in\mathbb{R}_+^{n\times r}$ contains the abundance maps, that is, the proportion of each material at each pixel. Because the illumination of the scene is not homogeneous spatially, and spectra may vary depending on other physical parameters such as the geometry of the scene, we refrain from assuming that the abundances sum to one pixel-wise, but we assume that they are bounded by one elementwise.
+where the nonnegative matrix $V\in\mathbb{R}_+^{p\times r}$ contains the endmembers columnwise, and the nonnegative matrix $U\in\mathbb{R}_+^{n\times r}$ contains the abundance maps, that is, the proportion of each material at each pixel. Because the illumination of the scene is not homogeneous spatially, and spectra may vary depending on other physical parameters such as the geometry of the scene, we refrain from assuming that the abundances sum to one pixelwise, but we assume that they are bounded by one elementwise.
 
 In preliminary works, we have assumed that the endmembers $V$ are known. The acquisition model then becomes
 
@@ -402,15 +400,13 @@ and our goal is to design a state-of-the-art reconstruction algorithm that estim
 
 ### Joint reconstruction and unmixing in one step
 
-In {cite:p}`harigaJointReconstructionSpectral2024`, a simple strategy to jointly reconstruct and unmix a single-pixel image was proposed, computing the MLE from Equation {eq}`eq:joint-reco-unmixing-model` with an alternating optimization algorithm, in this case alternating MU. The update rule for the spectra $V$ is the same as detailled in [](../../part1/nnls.md#multiplicative-updates), and for $U$ it can be obtained simply by 1) flattening the variables, 2) computing the classical MU rule and 3) folding the output into a matrix (see also {cite:p}`fevotte2011algorithms`). This yields after simplification
+In {cite:p}`harigaJointReconstructionSpectral2024`, a simple strategy to jointly reconstruct and unmix a single-pixel image was proposed, computing the MLE from Equation {eq}`eq:joint-reco-unmixing-model` with an alternating optimization algorithm, in this case alternating MU. The update rule for the spectra $V$ is the same as detailled in [](../../part1/nnls.md), and for $U$ it can be obtained simply by 1) flattening the variables, 2) computing the classical MU rule and 3) folding the output into a matrix (see also {cite:p}`fevotte2011algorithms`). This yields after simplification
 
 $$
  U^{(k+1)} = U^{(k)} \ast \frac{A^T\frac{Y}{AUV^T}V}{A^T1_{m,p}V}.
 $$
 
-where the product $\ast$ stands for elementwise multiplication.
-
-The code for the algorithm is slightly too complex to show here and is available in the tensorly_hdr package. A $\ell_1$ regularization is added on both factors, which adds a constant term in the denominator of the update and helps control the dynamics of the factors, see [](../Theory_of_rLRA/HRSI_theory.md).
+The code for the algorithm is slightly too complex to show here and is available in the `tensorly_hdr` package. A $\ell_1$ regularization is added on both factors, which adds a constant term in the denominator of the update and helps control the dynamics of the factors, see [](../Theory_of_rLRA/HRSI_theory.md).
 
 Since the optimization problem 
 
@@ -486,7 +482,7 @@ plt.show()
 
 An acquisition was performed in the laboratory, with a cat image layered with two color filters, red and green. There is a thin spatial overlap between the two filters, which induces subtractive mixing; therefore, the hyperspectral image will be rank-two plus nonlinear mixing terms plus noise. However, the abundance maps are mostly disjoint, and the spectral bands where the green and red filters are intense also mostly do not overlap. Therefore, the separation problem is rather simple and amenable to separable NMF algorithms.
 
-We first load the data and the metadata and process them to permute the acquisitions correctly. Then we remove the dark current, which is essentially the mean of the Gaussian noise in the Poisson-Gaussian mixture. We chose to ignore the Gaussian noise and assume that the only source of measurement variation is the Poisson distribution. However, Gaussian noise is not zero-centered, and the induced bias must be corrected. It can be estimated from the measurement acquired with the first row of the negative patterns $H^{-}$, filled with zeroes. The data is then clipped and normalized to lie in the interval $[0,1]$.
+We first load the data and the metadata and process them to permute the acquisitions correctly. Then we remove the dark current, which is essentially the mean of the Gaussian noise in the Poisson-Gaussian mixture. We chose to ignore the Gaussian noise and assume that the only source of measurement variation is the Poisson distribution. However, Gaussian noise is not zero-centered, and the bias must be corrected. It can be estimated from the measurement acquired with the first row of the negative patterns $H^{-}$, filled with zeros. The data is then clipped and normalized to lie in the interval $[0,1]$.
 
 ```{code-cell}ipython3
 # Loading
@@ -532,6 +528,7 @@ Y = tl.clip(Y, 0, tl.max(Y))
 Y = Y / tl.max(Y)
 
 # Showing the measurements after dark current removal
+plt.figure(figsize=(10,5))
 plt.imshow(Y.cpu().numpy(), aspect='auto', cmap='gray')
 plt.title("Measurements after dark current removal")
 plt.xlabel("Pattern index")
@@ -540,7 +537,7 @@ plt.colorbar()
 plt.show()
 ```
 
-We then follow the reconstruction procedure described earlier. We remove some elements from the data matrix: the measurement with the row of zeros, which, apart from the dark current estimation, is uninformative, and some spectral bands that acquired no signal; here, the first 16 bands. The remaining spectral bands are binned into groups of $8$ to reduce the dimension of the problem due to runtime issues. We first show here the pseudo-inverse reconstruction.
+We then follow the reconstruction procedure described earlier. We remove some elements from the data matrix: the measurement with the row of zeros, which, apart from the dark current estimation, is uninformative, and some spectral bands that acquired no signal; here, the first 16 bands. The remaining spectral bands are binned into groups of size eight to reduce the dimension of the problem due to runtime issues. We first show here the pseudo-inverse reconstruction.
 
 ```{code-cell}ipython3
 # Reconstruction with pseudo-inverse
@@ -592,7 +589,7 @@ def adjoint(y):
 X_rec = torch.linalg.lstsq(Anz, Ynz.T).solution.T
 
 # Show cat reconstructed with all wavelengths
-plt.figure(figsize=(8,6))
+plt.figure(figsize=(12,10))
 plt.imshow(np.rot90(torch.sum(X_rec, dim=0).reshape(64,64), 2), cmap='gray')
 plt.title("Reconstructed image at all wavelengths")
 plt.colorbar()
@@ -612,7 +609,7 @@ Kset, W0, A0 = snpa(X_rec, rank, verbose=True)
 # Reconstruction with NMF
 from tensorly_hdr.nmf_kl import MU_SinglePixel_fast
 lmbd = 1e-4
-W_est, A_est, crit = MU_SinglePixel_fast(Ynz, forward, adjoint, tl.abs(A0), tl.abs(W0), lmbd=lmbd, maxA=1, niter=120, n_iter_inner=20, eps=1e-8, verbose=True, print_it=40)  # regularization just for implicit scaling
+W_est, A_est, crit = MU_SinglePixel_fast(Ynz, forward, adjoint, tl.abs(A0), tl.abs(W0), lmbd=lmbd, maxA=1, niter=60, n_iter_inner=20, eps=1e-8, verbose=True, print_it=20)  # regularization just for implicit scaling
 print("Computation done")
 ```
 
@@ -669,6 +666,7 @@ if rank>3:
             abundance_map_rgb[:,:,2] += A_est[5,:].reshape(n,n)
 # Clip values to [0,1]
 abundance_map_rgb = torch.clamp(abundance_map_rgb, 0, 1)
+plt.figure(figsize=(12,10))
 plt.imshow(np.rot90(abundance_map_rgb.cpu().numpy(), k=2))
 plt.title("Superimposed estimated abundance maps")
 # add color legends

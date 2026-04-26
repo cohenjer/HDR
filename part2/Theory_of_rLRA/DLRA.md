@@ -10,7 +10,7 @@ kernelspec:
   name: python3
 ---
 
-# Dictionary-based Low-Rank Approximations
+# Dictionary-based LRA
 
 :::{admonition} Reference
 :class: tip

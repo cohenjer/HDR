@@ -10,7 +10,7 @@ kernelspec:
   name: python3
 ---
 
-# Median Second-Order-Majorant for faster NNLS
+# Median second-order majorant for faster NNLS
 
 :::{admonition} Reference
 {cite:p}`phamSecondOrderMajorantAlgorithm2025` M-Q. Pham, J. E. Cohen, T. Chonavel, "A fast Multiplicative Updates algorithm for Nonnegative Matrix Factorization", accepted at TMLR, 2026 [arxiv](https://arxiv.org/pdf/2303.17992) [reviews](https://openreview.net/forum?id=lm16IQmimK)
@@ -21,10 +21,10 @@ kernelspec:
 
 In [](../../part1/nnls.md), various equivalent formulations of MU have been discussed. There is, however, one more equivalent procedure that leads to MU updates for both Frobenius loss and KL-divergence loss that we leverage in {cite:p}`phamSecondOrderMajorantAlgorithm2025` to derive more efficient algorithms for NMF (or nonnegative tensor decomposition). This procedure is not limited to matrix and tensor factorizations.
 
-Instead, let us consider the optimization problem
+Consider the optimization problem
 
 ```{margin}
-We typically consider convex sets for which the projection is easy and cheap to compute.
+We typically work with convex sets for which the projection is easy and cheap to compute.
 ```
 
 $$
@@ -33,7 +33,7 @@ $$
 
 where $f:\mathbb{R}^{n} \mapsto \mathbb{R}_+$ is twice-differentiable, and $\mathcal{C}$ is a convex set. We also require that the Hessian matrix $\nabla^2 f(x)$ is nonnegative elementwise.
 
-Since $f$ is twice differentiable, we consider its truncated Taylor expansion for two vectors $x,y$ in $\mathbb{R}^{n}$:
+Since $f$ is twice differentiable, we may consider its truncated Taylor expansion for two vectors $x,y$ in $\mathbb{R}^{n}$:
 
 $$
     \phi_x(y) = f(x) + \langle \nabla f(x), y-x \rangle + \frac{1}{2}\langle \nabla^2 f(x) (y-x), y-x \rangle,
@@ -41,7 +41,7 @@ $$
 
 and $\phi_x(y) \approx f(x)$ when vectors $y$ and $x$ are close. 
 
-The traditional approach to second-order algorithms, and in particular the Newton method, is to minimize $\phi_{x^{(k)}}(y)$, denote $x^{(k+1)}$ the minimizer, and repeat this procedure {cite:p}`Bertsekas1999Nonlinear`. While the Newton algorithm features super-linear convergence near a stationary point of $f$, each iteration is computationally expensive. Moreover, Newton's method typically does not account for non-smooth constraints. Indeed, without constraints,
+The traditional approach to second-order iterative algorithms, and in particular the Newton method, is, at iteration index $k$, to minimize $\phi_{x^{(k)}}(y)$, denote $x^{(k+1)}$ the minimizer, and repeat this procedure until convergence {cite:p}`Bertsekas1999Nonlinear`. While the Newton algorithm features super-linear convergence near a stationary point of $f$, each iteration is computationally expensive. Moreover, Newton's method typically does not account for non-smooth constraints. Indeed, without constraints,
 
 $$
  \argmin{y\in\mathbb{R}^m} \phi_x(y) = x - [\nabla^2f(x)]^{-1} \nabla f(x),
@@ -83,19 +83,6 @@ For a quadratic loss function $f$, the SOM algorithm is guaranteed to converge s
 
 is a majorant of the Hessian, namely $A_u(x) - \nabla^2 f$ is positive semi-definite. The proof is straightforward and can be found in {cite:p}`phamSecondOrderMajorantAlgorithm2025`. If matrix $A(x)$ is a majorant of the Hessian, we obtain a majorization minimization algorithm as long as $f$ is a quadratic function, because the truncated second-order Taylor expansion is exact. When $f$ is not quadratic, the proposed procedure, which, as far as we know, has not been explored in the optimization literature (at least for computing NMF), is coined Second-Order Majorant (SOM), because we minimize a majorant of a separable second-order approximation of the cost function. 
 
-## MU algorithm as quadratic majorant minimization
-
-The SOM algorithm reduces the design of the diagonal matrix $A_u(x)$ to choosing a positive vector $u$. Any choice of $u$ ensures that $A_u(x)$ is a majorant of the Hessian and therefore that the obtained algorithm is principled. It turns out that for a NNLS problem, the MU algorithm is a particular case of SOM when $u=x$. Indeed, for $f(x) = \frac{1}{2}\|y - Wx\|_2^2$ and nonnegativity constraints, the hessian matrix writes $\nabla^2 f(x) = W^TW$, and the majorant matrix $A_u(x)$ with $u=x$ is
-
-$$
-A_x(x) = \text{Diag}\left(\frac{W^TWx}{x}\right).
-$$
-
-Recall from [](../../part1/nnls.md#multiplicative-updates) that this is exactly the diagonal preconditioner that MU utilizes, when understanding MU as a preconditioned gradient descent algorithm. Therefore, setting $u=x$ yields the MU update with a projection operator
-
-$$
-x^{(k+1)} = \Pi_{\mathcal{C}}\left(x^{(k)}\frac{W^Ty}{W^TWx} \right).
-$$
 
 ## mSOM: choosing an optimal majorant to the quadratic approximation of $f$
 
@@ -236,9 +223,24 @@ plt.show()
 
 Notice that, in this toy example, while mSOM is designed to be sharper than MU in median along the line $t[0,1,0]$, MU is tighter.
 
+
+### MU algorithm as quadratic majorant minimization
+
+The SOM algorithm reduces the design of the diagonal matrix $A_u(x)$ to choosing a positive vector $u$. Any choice of $u$ ensures that $A_u(x)$ is a majorant of the Hessian and therefore that the obtained algorithm is principled. It turns out that for a NNLS problem, the MU algorithm is a particular case of SOM when $u=x$. Indeed, for $f(x) = \frac{1}{2}\|y - Wx\|_2^2$ and nonnegativity constraints, the Hessian matrix writes $\nabla^2 f(x) = W^TW$, and the majorant matrix $A_u(x)$ with $u=x$ is
+
+$$
+A_x(x) = \text{Diag}\left(\frac{W^TWx}{x}\right).
+$$
+
+Recall from [](../../part1/nnls.md) that this is exactly the diagonal preconditioner that MU utilizes, when understanding MU as a preconditioned gradient descent algorithm. Therefore, setting $u=x$ yields the MU update with a projection operator
+
+$$
+x^{(k+1)} = \Pi_{\mathcal{C}}\left(x^{(k)}\frac{W^Ty}{W^TWx} \right).
+$$
+
 ## Alternating mSOM for NMF
 
-Equipped with the mSOM solver for nonnegative convex problems, one may factorize NMF using an alternating optimization strategy, with mSOM as the inner solver. The following code implements the resulting Alternating mSOM (AmSOM) for NMF with the Frobenius loss and compares it with alternating MU (AMU) and alternating projected Gradient Descent (APGD) on a toy synthetic dataset. The AmSOM updates rules for this problem formalized as $\argmin{W,H\geq \epsilon} \|Y-WH^T\|_F^2$ are
+Equipped with the mSOM solver for nonnegative convex problems, one may factorize NMF using an alternating optimization strategy, with mSOM as the inner solver. The following code implements the resulting Alternating mSOM (AmSOM) for NMF with the Frobenius loss and compares it with Alternating MU (AMU) and Alternating Projected Gradient Descent (APGD) on a toy synthetic dataset. The AmSOM updates rules for this problem formalized as $\argmin{W,H\geq \epsilon} \|Y-WH^T\|_F^2$ are
 
 $$
     H \leftarrow \max\left(H - \gamma\frac{1}{1_{n\times r}W^TW}\left(HW^TW - Y^TW \right) , \epsilon \right), \\

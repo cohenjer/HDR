@@ -23,7 +23,7 @@ kernelspec:
 
 ## Why Nonnegative PARAFAC2
 
-The PARAFAC2 model is often used in applications such as Liquid/Gas Chromatography Mass Spectroscopy (LCMS and GC-MS, respectively) to extract mass spectra and time elution profiles for various experimental setups. The mixture of interest is injected into a long tube where the various chemical compounds glide at different speeds, and therefore reach the end of the tube at different times. By measuring the mass spectrum at the output of the tube with a mass spectrometer, one may acquire spectra at various time instants. One acquisition, therefore, yields a data matrix with intensities collected at various coordinates (mass-to-charge (m/z) x time). Repeating this acquisition several times for different chemical compounds yields a tensor dataset, with the third dimension indexing the experiments. An example GCMS dataset is available below, with different wine samples from various producers measured individually. The full dataset is described in {cite:p}`ballabioClassificationGCMSMeasurements2008`.
+The PARAFAC2 model is often used in applications such as Liquid/Gas Chromatography Mass Spectroscopy (LCMS and GCMS, respectively) to extract mass spectra and time elution profiles for various experimental setups. The mixture of interest is injected into a long tube where the various chemical compounds glide at different speeds, and therefore reach the end of the tube at different times. By measuring the mass spectrum at the output of the tube with a mass spectrometer, one may acquire spectra at various time instants. One acquisition, therefore, yields a data matrix with intensities collected at various coordinates (mass-to-charge (m/z) x time). Repeating this acquisition several times for different chemical compounds yields a tensor dataset, with the third dimension indexing the experiments. An example GCMS dataset is available below, with different wine samples from various producers measured individually. The full dataset is described in {cite:p}`ballabioClassificationGCMSMeasurements2008`.
 
 %Also nice example usage with others constraints by Rivet and Magbonde 2023 (finger strength of climbers)
 
@@ -39,17 +39,14 @@ from bokeh.layouts import column, row
 from bokeh.plotting import figure, show, output_notebook
 from bokeh.models import Slider, ColumnDataSource, CustomJS
 from bokeh.palettes import Category10
-
 output_notebook()
-
-# Experiment (long time) x time x m/z
-dataset, tensor, time_steps = load_gcms_interval()
-tensor = tensor[:52,:,:]  # two full acquisitions of the wine along the industrial process
-
 ```
 
 ```{code-cell}ipython3
 :tags: [hide-input]
+# Experiment (long time) x time x m/z
+dataset, tensor, time_steps = load_gcms_interval()
+tensor = tensor[:52,:,:]  # two full acquisitions of the wine along the industrial process
 
 # Initial indices
 xp_index = 1
@@ -147,7 +144,7 @@ $$
 
 that is by computing a CPD from the data tensor $X$. The factors bear physical meaning (mass spectra, elution time profiles, and experiment contribution); it is reasonable to impose nonnegativity on all factors.
 
-However, in practice, as observed in this dataset, the injection of chemical compounds into the chromatography system is done manually, and the elution time varies due to other experimental conditions, such as temperature. Therefore, the time profiles of components $B$ are slightly modified across experiments indexed by $k$. As discussed in {ref}`subsec:parafac2-and-variants`, further constraints are required to link the resulting $B_k$ matrices, and PARAFAC2 ensure in particular that 
+However, in practice, as observed in this dataset, the injection of chemical compounds into the chromatography system is done manually, which impacts the elution time. Elution time may also fluctuate due to other experimental conditions, such as temperature. Therefore, the time profiles of components $B$ are slightly modified across experiments indexed by $k$. As discussed in {ref}`subsec:parafac2-and-variants`, further constraints are required to link the resulting $B_k$ matrices, and PARAFAC2 ensure in particular that 
 - The columns of factors $B_k$ are transformed similarly (the same transformation matrix $P_k$ applies to each column $B[:,q]$).
 - The cross product of the $B_k$ factors is constant.
 
@@ -160,7 +157,7 @@ The matrices $B_k$ do not appear explicitly in this algorithm, and therefore, we
 
 ## Formalisation of the Nonnegative PARAFAC2 problem
 
-In our first work with Rasmus Bro, we proposed to use a flexible constraint formulation for the Nonnegative PARAFAC2 {cite:p}`cohenNonnegativePARAFAC2Flexible2018`. While this work had a good impact on the chemometrics community, it relies on a relaxation of the PARAFAC2 constraint. It is, however, possible to use the AO-ADMM framework discussed in {ref}`LC-CMTF` to design an alternating iterative algorithm that solves the nonnegative PARAFAC2 problem. The core idea is to introduce a "PARAFAC2 constraint" on the matrices $B_k$ that imposes that their cross products are constant. A collection of matrices $\{B_k\}_{k\leq K}$ satisfies the PARAFAC2 constraint if for all $k\leq K$, $B_k^TB_k$ is constant. In that case we write that $\{B_k\}_{k\leq K}\in\mathcal{C}_{\text{P2}}$.
+In our first work with Rasmus Bro, we proposed to use a flexible constraint formulation for the Nonnegative PARAFAC2 {cite:p}`cohenNonnegativePARAFAC2Flexible2018`. While this work had a good impact on the chemometrics community, it relies on a relaxation of the PARAFAC2 constraint. It is, however, possible to use the AO-ADMM framework discussed in [](./CMTF.md) to design an alternating iterative algorithm that solves the nonnegative PARAFAC2 problem. The core idea is to introduce a "PARAFAC2 constraint" on the matrices $B_k$ that imposes that their cross products are constant. A collection of matrices $\{B_k\}_{k\leq K}$ satisfies the PARAFAC2 constraint if for all $k\leq K$, $B_k^TB_k$ is constant. In that case we write that $\{B_k\}_{k\leq K}\in\mathcal{C}_{\text{P2}}$.
 
 Nonnegative PARAFAC2 then boils down to the optimization problem
 
@@ -180,7 +177,7 @@ $$
 \{PB ~|~ P^TP=I  \} = \mathcal{O}(B).
 $$
 
-Projection on the PARAFAC2 constraint therefore means finding a matrix $B$ such that the distance $d(B, B_k)$ between each point $B_k$ and the orbit $\mathcal{O}(B)$ is as small as possible:
+Projection on the PARAFAC2 constraint therefore means finding a matrix $B$ such that the total distance between each point $B_k$ and the orbit $\mathcal{O}(B)$ is as small as possible:
 
 $$
  \argmin{B} \sum_{k\leq K} d(B,B_k).
@@ -246,6 +243,7 @@ The convergence speed of this alternating optimization algorithm is suspiciously
 We may now compute PARAFAC2 with and without nonnegativity constraints on the time elution mode. The AO-ADMM implementation of PARAFAC2 with constraints is found in the [matcouply package](https://github.com/MarieRoald/matcouply){cite:p}`roaldMatCoupLyLearningCoupled2023`, developed by [Marie Roald](https://github.com/MarieRoald) at Simula (Norway) during her PhD thesis. For PARAFAC2 without nonnegativity on the second mode (but with nonnegativity on the first mode to avoid sign ambiguities), we use the implementation available in tensorly, which uses reparameterization and relies on the CP decomposition.
 
 ```{code-cell}ipython3
+:tags: [remove-output]
 
 import matcouply as mcl
 from matcouply.decomposition import parafac2_aoadmm
@@ -271,7 +269,7 @@ B_is = [P_i @ B for P_i in P_is]
 :tags: [hide-input]
 
 # Showing error plot
-plt.figure(figsize=(4, 3))
+plt.figure(figsize=(10, 3))
 plt.title("Convergence of the PARAFAC2 decomposition")
 plt.xlabel("Iteration")
 plt.ylabel("Error (log scale)") 
@@ -336,10 +334,10 @@ source2 = ColumnDataSource(data=dict(
 ))
 
 # Plot
-p = figure(height=300, width=350, title="Without nonnegativity on B mode (abs value)", x_axis_label="Time", y_axis_label="Intensity")
+p = figure(height=300, width=380, title="Without nonnegativity on B mode (abs value)", x_axis_label="Time", y_axis_label="Intensity")
 p.multi_line(xs='x', ys='y', source=source, line_color='color')
 
-p2 = figure(height=300, width=350, title="With nonnegativity on B mode", x_axis_label="Time", y_axis_label="Intensity")
+p2 = figure(height=300, width=380, title="With nonnegativity on B mode", x_axis_label="Time", y_axis_label="Intensity")
 p2.multi_line(xs='x', ys='y',  source=source2, line_color='color')
 
 # Slider

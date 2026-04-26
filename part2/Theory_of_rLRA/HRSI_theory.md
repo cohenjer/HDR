@@ -10,7 +10,7 @@ kernelspec:
   name: python3
 ---
 (sec:HRSItheory)=
-# Implicit regularization in regularized low-rank approximations 
+# Implicit regularization in rLRA
 
 :::{admonition} Reference
 :class: tip

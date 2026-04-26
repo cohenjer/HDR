@@ -11,7 +11,7 @@ kernelspec:
 ---
 
 
-# Alternating Optimization
+# Alternating optimization
 
 ```{margin}
 

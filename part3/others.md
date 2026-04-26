@@ -1,4 +1,4 @@
-# Other topics
+# Other perspectives
 
 The topics discussed in this section are scientific questions that I want to address, which are not directly related to the KL-divergence and Poisson noise.
 

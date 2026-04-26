@@ -28,7 +28,7 @@ tensorly-viz
 matcouply
 
 # custom libraries
-./tensorly_hdr
+./tensorly_hdr -e
 
 # Julia packages
 # julia !!
