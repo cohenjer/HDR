@@ -61,7 +61,7 @@ K = convert_to_index(Kx, Ky, image_t.shape[1])
 ```
 
 ```{code-cell}ipython3
-tags: [hide-input]
+:tags: [hide-input]
 
 # Show the hyperspectral image at a given band
 plt.figure(figsize=(12,10))

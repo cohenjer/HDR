@@ -50,8 +50,6 @@ This document lists all acronyms, technical terms, and words with ambiguous spel
 - SPI: Single-Pixel Imaging
 - SVD: Singular Value Decomposition
 
-## Definitions
-
 
 %- Essential uniqueness is the uniqueness up to permutations and scaling ambiguities inherent to LRA models.
 

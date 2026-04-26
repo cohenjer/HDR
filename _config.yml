@@ -1,7 +1,7 @@
 # Book settings
 # Learn more at https://jupyterbook.org/customize/config.html
 
-title: Regularized matrix and tensor decompositions. Models, algorithms and implementation.
+title: Regularized low-rank approximations.
 author: Jeremy E. Cohen
 logo: Figures/cube_on_dico_page.png
 
@@ -49,12 +49,57 @@ repository:
 
 sphinx:
   config:
+    latex_logo: Figures/cube_on_dico_page.png
     mathjax_path: https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
     html_js_files:
     - https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js
     latex_elements:
       preamble: |
         \usepackage{stmaryrd}
+        \usepackage{graphicx}
+        
+        % Custom math commands
+        \newcommand{\argmin}[1]{\underset{#1}{\text{argmin}}~}
+        \newcommand{\argmax}[1]{\underset{#1}{\text{argmax}}~}
+        \newcommand{\amin}[1]{\underset{#1}{\text{min}}~}
+        \newcommand{\R}[1]{\mathbb{R}^{#1}}
+        \newcommand{\vec}[1]{\text{vec}\left(#1\right)}
+        \newcommand{\KL}[1]{\mathcal{D}_{\text{KL}}\left(#1\right)}
+        \newcommand{\cp}[1]{\text{col}_{+}\left(#1\right)}
+        \newcommand{\rank}[1]{\text{rank}\left(#1\right)}
+      sphinxsetup: |
+        div.topic_border-width=1pt,
+        div.topic_border-TeXcolor={RGB}{120,120,120},
+        div.topic_background-TeXcolor={RGB}{245,245,245},
+        div.topic_padding=7pt,
+        div.topic_box-shadow=none,
+        div.note_border-width=1pt,
+        div.note_border-TeXcolor={RGB}{40,90,180},
+        div.note_background-TeXcolor={RGB}{235,242,255},
+        div.hint_border-width=1pt,
+        div.hint_border-TeXcolor={RGB}{30,140,85},
+        div.hint_background-TeXcolor={RGB}{232,248,238},
+        div.important_border-width=1pt,
+        div.important_border-TeXcolor={RGB}{120,85,40},
+        div.important_background-TeXcolor={RGB}{252,244,228},
+        div.tip_border-width=1pt,
+        div.tip_border-TeXcolor={RGB}{30,140,85},
+        div.tip_background-TeXcolor={RGB}{232,248,238},
+        div.warning_border-width=1pt,
+        div.warning_border-TeXcolor={RGB}{180,120,0},
+        div.warning_background-TeXcolor={RGB}{255,245,214},
+        div.caution_border-width=1pt,
+        div.caution_border-TeXcolor={RGB}{170,70,0},
+        div.caution_background-TeXcolor={RGB}{255,235,217},
+        div.attention_border-width=1pt,
+        div.attention_border-TeXcolor={RGB}{170,70,0},
+        div.attention_background-TeXcolor={RGB}{255,235,217},
+        div.danger_border-width=1pt,
+        div.danger_border-TeXcolor={RGB}{170,35,35},
+        div.danger_background-TeXcolor={RGB}{255,232,232},
+        div.error_border-width=1pt,
+        div.error_border-TeXcolor={RGB}{150,20,20},
+        div.error_background-TeXcolor={RGB}{255,225,225}
     # Configure references
     bibtex_reference_style: author_year
     #bibtex_reference_style: label

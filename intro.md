@@ -25,13 +25,12 @@ Except for the picture above, generative AI has been used in this manuscript onl
   %------- Envoi 1 --------- (web)
 %- Latex build fork ?
   %- Moving margin notes
-  %- notes formatting
   %- fixing commands
   %- Removing empty biblio
-  %- Page de garde
   %------- Envoi 2 (pdf) ----
 
 % Before soutenance:
+  %- better bibliography
   %- Binder build
   %- Precise Version and package dependence
 
