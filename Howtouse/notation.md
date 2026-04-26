@@ -10,6 +10,7 @@
 - Notation $\mathbb{R}_+$ denotes the set of nonnegative real numbers, and constraints like $x \geq 0$ indicate elementwise nonnegativity.
 - The Frobenius norm is denoted as $\|M\|_F$.
 - The support of a vector $x$, or the set of indices of its nonzero elements, is denoted by $S(x)$, or simply $S$ when clear from context.
+- The number of elements of a discrete set $\mathcal{K}$ is denoted by $\#\mathcal{K}$.
 - The Kronecker product is symbolized by $\otimes_K$ to avoid confusion with the generic tensor product $\otimes$. 
 - The gradient of a function $f$ is written as $\nabla f$, and its Hessian as $\nabla^2 f$.
 - The (left) Moore-Penrose pseudo-inverse of a matrix $M$ is represented by $M^\dagger$. 

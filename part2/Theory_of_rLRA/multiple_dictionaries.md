@@ -23,7 +23,7 @@ In the [one-sparse DLRA section](./onesparseDLRA.md), we have seen that in the c
 
 While this approach can, in principle, detect pure pixels, the optimisation problem is in fact difficult to solve: the dictionary contains as many atoms as there are pixels, and these atoms are highly correlated. A potential workaround, proposed in {cite:p}`cohenSpectralUnmixingMultiple2018`, is to consider a subset of the image. The user might select regions on a projected view of $Y$, typically in an RGB visualization, believing they contain pure pixels. 
 
-In fact we may go further, and assume that the user selects $p$ regions $D_i:=Y_n[:, S_i]$ in the image where $S_i$ collects the indices of the pixel in the $k$th zone from the columnwise $\ell_2$ normalized image $Y_n$, and that the user guesses how many pure pixels $d_k$ are to be found in each zone. Estimating the pure pixels in each zone and the corresponding abundances can then be formalized as follows:
+In fact we may go further, and assume that the user selects $p$ regions $D_i:=Y_n[:, S_i]$ in the image where $S_i$ collects the indices of the pixel in the $i$th zone from the columnwise $\ell_2$ normalized image $Y_n$, and that the user guesses how many pure pixels $d_i$ are to be found in each zone, at most. Finding the pure pixels in each zone and the corresponding abundances can then be formalized as follows:
 
 $$ \min_{\mathcal{K}_i\subset [1,\#S_i], B\in\mathbb{R}_+^{n\times r}} \|Y - \left[D_1[:, \mathcal{K}_1], \ldots, D_p[:, \mathcal{K}_p]\right]B^T \|_F^2 \;\; \text{s.t.} \;\; \#\mathcal{K}_i\leq d_i, \; \sum_{i=1}^{p} \#\mathcal{K}_i = r $$
 
@@ -84,22 +84,22 @@ glue("Dshapes", [D[i].shape for i in range(len(D))])
 
 Showing the hyperspectral image at the {glue:}`band`th band.
 Colored zones mark the position of the hand-picked pure pixel zones.
-The dictionaries Di have shapes {glue:}`Dshapes`. We seek {glue:}`d` atoms in each dictionary.
+The dictionaries $D_i$ have shapes {glue:}`Dshapes`. We seek {glue:}`d` atoms in each dictionary.
 ```
 
 
-Solving this multiple-dictionary one-sparse DLRA problem seems daunting. However, it is not much more difficult than solving a one-sparse DLRA if an alternating optimization strategy is used. Solving for matrix $B$ with fixed pure pixel indices is a simple NNLS. When fixing matrix $B$, estimating pure pixel indices $\mathcal{K}_i$ for each dictionary is very challenging. Nevertheless, we can adapt the [MC-ALS](./onesparseDLRA.md) strategy to handle this problem:
+Solving this multiple-dictionary one-sparse DLRA problem seems daunting. However, it is not much more difficult than solving a one-sparse DLRA if an alternating optimization strategy is used. Solving for matrix $B$ with fixed pure pixel indices is a simple NNLS. When fixing matrix $B$, estimating pure pixel indices $\mathcal{K}_i$ for each dictionary is combinatorial. Nevertheless, we can adapt the [MC-ALS](./onesparseDLRA.md) strategy to handle this problem:
 
 - First, given an estimate for matrix $B$, compute $ A := \underset{A\geq 0}{\text{argmin}} \|Y - AB^T \|_F^2 $ with a NNLS solver.
 - Then, fixing $A$, we find the pure pixel indices by solving the following optimization problem:
 
-$$ \underset{\mathcal{K}_i\subset[1,\#S_i]\;\forall i\leq p}{\text{argmin}} \|A - \left[D_1[:, \mathcal{K}_1], \ldots, D_p[:, \mathcal{K}_p]\right] . $$
+$$ \underset{\mathcal{K}_i\subset[1,\#S_i]\;\forall i\leq p}{\text{argmin}} \|A - \left[D_1[:, \mathcal{K}_1], \ldots, D_p[:, \mathcal{K}_p]\right]\|_F^2 . $$
 
 This quadratic cost can be turned into a linear cost since the dictionaries are normalized columnwise and all quantities are nonnegative.
 
 $$ \underset{\mathcal{K}_i\subset[1,\#S_i]\;\forall i\leq p}{\text{argmax}} \langle A , \left[D_1[:, \mathcal{K}_1], \ldots, D_p[:, \mathcal{K}_p]\right]\rangle $$
 
-where $\langle A,D\rangle = \text{Tr}(A^TD)$ is the usual scalar product for matrices. It turns out that we can view this linear but combinatorial problem as a linear sum assignment problem, for which efficient solvers are known {cite:p}`Kuhn1955Hungarian`. First, we may assume that all $d_i$ are equal to one, since we can always duplicate any dictionary $D_i$ to handle $d_i>1$. When $d_i=1$ for all $i\leq p$, for each dictionary $D_i$, only one atom can be selected. It is therefore natural to define a distance between a column $j$ of matrix $A$ and the whole dictionary $D_i$, here stored in a matrix $C\in\mathbb{R}^{p\times r}$
+where $\langle A,D\rangle = \text{Tr}(A^TD)$ is the usual scalar product for matrices. This problem can be seen as a linear sum assignment problem, for which efficient solvers are known {cite:p}`Kuhn1955Hungarian`. First, we may assume that all $d_i$ are equal to one, since we can always duplicate any dictionary $D_i$ to handle $d_i>1$. When $d_i=1$ for all $i\leq p$, for each dictionary $D_i$, only one atom can be selected. It is therefore natural to define a distance between a column $j$ of matrix $A$ and the whole dictionary $D_i$, here stored in a matrix $C\in\mathbb{R}^{p\times r}$
 
 ```{margin}
 We used here the fact that minimization over all $\mathcal{K}_i$ can be decomposed in two steps: minimization over $\mathcal{K}_i$ for a single $i$ and each column of $A$, yielding the $i$th row of cost matrix $C$, then minimization over all $i\leq p$ and all columns of $A$, which is done by the linear sum assignement solver (typically dedicated linear program solvers such as the Hungarian algorithm).
@@ -199,8 +199,8 @@ glue("pix", pix, display=False)
 glue("pix_e", [out[0][i][1] for i in range(len(out[0]))], display=False)
 ```
 
-The true selected pixels are {glue:}`pix` (indices are local for each dictionary Di). The ones provided by the algorithm, without hints, are {glue:}`pix_e`. 
-Now we can test the full alternating algorithm on Indian Pines and see what it gives, when compared to naive separable NMF (one-sparse DLRA or even SPA)!
+The true selected pixels are {glue:}`pix` (indices are local for each dictionary $D_i$). The ones provided by the algorithm, without hints, are {glue:}`pix_e`. 
+Now we can test the full alternating algorithm on Indian Pines and see what it gives, when compared to naive separable NMF such as one-sparse DLRA or SNPA.
 
 ```{code-cell} ipython3
 :tags: []
@@ -260,11 +260,9 @@ for i in range(rank):
     axs[i, 0].plot(ABest[1][0][:,i], color=colors[i])
     axs[i, 1].imshow(tl.reshape(ABest[1][1][:,i], [n1, n2]))
     axs[i, 1].set_axis_off()
-    axs[i, 0].legend([str(i)])
     axs[i, 2].plot(Asep[:,i], color=colors[i])
     axs[i, 3].imshow(tl.reshape(Bsep[i,:], [n1, n2]))
     axs[i, 3].set_axis_off()
-    axs[i, 2].legend([str(i)])
 glue("fig_spectra", fig, display=False)
 plt.close()
 ```
