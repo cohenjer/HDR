@@ -25,8 +25,6 @@ Except for the picture above, generative AI has been used in this manuscript onl
   %------- Envoi 1 --------- (web)
 %- Latex build fork ?
   %- Moving margin notes
-  %- fixing commands
-  %- Removing empty biblio
   %------- Envoi 2 (pdf) ----
 
 % Before soutenance:
