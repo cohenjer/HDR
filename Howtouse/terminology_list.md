@@ -26,6 +26,7 @@ This document lists all acronyms, technical terms, and words with ambiguous spel
 - MM: Majorization Minimization
 - MMV: Multiple Measurement VectorA
 - MU: Multiplicative Updates
+- MSC: Mixed Sparse Coding
 - nCPD: Nonnegative CPD
 - NMF: Nonnegative Matrix Factorization
 - NNKL: Nonnegative Kullback-Leibler regression
