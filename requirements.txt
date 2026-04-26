@@ -24,7 +24,7 @@ tensorly-viz
 matcouply
 
 # custom libraries
-./tensorly_hdr -e
+-e ./tensorly_hdr
 
 # Few personnal external packages for DLRA
 mscode @git+https://github.com/cohenjer/mscode
