@@ -49,8 +49,8 @@ Except for the picture above, generative AI has been used in this manuscript onl
 %## Note to self about figures:
 %On peut cacher le print avec plt.close(). Sinon pour le dev, utiliser remove-output dans les tags de la cellule de code; glue permet de garder en mémoire des variables, on peut alors cacher les cellules où on fait ca. [TODO remove]
 
-```{tableofcontents}
-```
+%```{tableofcontents}
+%```
 
 Many pages contain code executed upon compilation of the book for publication, below is their status.
 
