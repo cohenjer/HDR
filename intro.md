@@ -20,16 +20,23 @@ The scientific content of the book is summarized in the [](./introduction/summar
 Except for the picture above, generative AI has been used in this manuscript only for grammar and style checking, and generate javascript codes for interactive plots.
 ```
 
-TODOlist:
-- Fix code dependencies again
-  ------- Envoi 1 --------- (web)
-- Figure inline integration with glue and environments
-- Binder build
-- Precise Version and package dependence
-- Latex build fork ?
-  ------- Envoi 2 (pdf) ----
+%TODOlist:
+%- Fix code dependencies again
+  %------- Envoi 1 --------- (web)
+%- Latex build fork ?
+  %- Moving margin notes
+  %- notes formatting
+  %- fixing commands
+  %- Removing empty biblio
+  %- Page de garde
+  %------- Envoi 2 (pdf) ----
+
+% Before soutenance:
+  %- Binder build
+  %- Precise Version and package dependence
 
 %- Maybe later:
+  %- Figure inline integration with glue and environments
   %- Local installation instructions ?
   %- Better proofread project
   %- precise pages in books refs
