@@ -12,10 +12,6 @@ scipy  # for audio, for KL
 spyrit # for single-pixel imaging
 # TODO tester install manuelle de spyrit avec pip et le .toml minimal
 
-# Few personnal external packages for DLRA
-mscode @git+https://github.com/cohenjer/mscode
-dlra @git+https://github.com/cohenjer/dlra
-
 # audio processing
 #librosa
 soundfile
@@ -29,6 +25,10 @@ matcouply
 
 # custom libraries
 ./tensorly_hdr -e
+
+# Few personnal external packages for DLRA
+mscode @git+https://github.com/cohenjer/mscode
+dlra @git+https://github.com/cohenjer/dlra
 
 # Julia packages
 # julia !!
