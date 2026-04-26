@@ -16,7 +16,7 @@
 - The (left) Moore-Penrose pseudo-inverse of a matrix $M$ is represented by $M^\dagger$. 
 - The Kullback-Leibler divergence between two nonnegative reals $y$ and $z$ is denoted as $\KL{y, z}$. 
 - The spark of a matrix $M$, or the smallest number of linearly dependent columns in $M$, is written as $\text{spark}(W)$. 
-- The column space, or span, of a matrix $U$ is the set of any vector that can be written as $Ux$ and is denoted as $\text{col}(U)$. The positive span of matrix $U$, obtained when $x$ is elementwise nonnegative, is denoted by $\cp(U)$.
+- The column space, or span, of a matrix $U$ is the set of any vector that can be written as $Ux$ and is denoted as $\text{col}(U)$. The positive span of matrix $U$, obtained when $x$ is elementwise nonnegative, is denoted by $\cp{U}$.
 - The set of linear maps acting on vectors from a subspace $E$ is denoted as $\mathcal{L}(E)$.
 - The matrix of vector full of ones is written either $1_{n}$ where $n$ is its dimension, or sometimes simply $1$.
 
