@@ -498,7 +498,9 @@ A classic example of regularized CP decomposition is approximate nonnegative CP 
 
 $$ \argmin{A\in\R{n_1\times r}_+,\; B\in\R{n_2\times r}_+,\; C\in\R{n_3\times r}_+} \| T - \llbracket A,B,C \rrbracket \|_2^2. $$
 
-Notice that the matrices have nonnegative entries. Algorithms to compute nCPD are similar to algorithms for solving NMF, and rely on NNLS solvers described extensively in [](./nnls.md). Notice also that coercivity is achieved with nonnegativity constraints, since the components cannot cancel out, and the cost function increases toward infinity as the components grow. Therefore, the best nonnegative low-rank approximation of a tensor always exists.
+Notice that the matrices have nonnegative entries. Algorithms to compute nCPD are similar to algorithms for solving NMF, and rely on NNLS solvers described extensively in [](./nnls.md). A generic alternating algorithms that solves NNLS problems with respect to each factor matrix is sometimes called Alternating Nonnegative Least Squares (ANLS). 
+
+Notice also that coercivity is achieved with nonnegativity constraints, since the components cannot cancel out, and the cost function increases toward infinity as the components grow. Therefore, the best nonnegative low-rank approximation of a tensor always exists.
 
 ```
 

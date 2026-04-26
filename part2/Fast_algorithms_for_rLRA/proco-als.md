@@ -22,14 +22,14 @@ kernelspec:
 
 ## Projected least squares for solving NNLS
 
-When discussing NNLS algorithms, we overlooked one possible naive idea for computing an approximate solution: first compute the unconstrained least squares solution, then project it onto the nonnegative orthant. Given a NNLS problem NNLS(A,b), this means computing
+In the [NNLS](../../part1/nnls.md) section, we overlooked one possible naive idea for computing an approximate solution: first compute the unconstrained least squares solution, then project it onto the nonnegative orthant. Given a NNLS problem $\argmin{x\geq 0} \|b - Ax\|_2^2$, the following two lines of code compute this estimate:
 ```python
     x_hat = tl.solve(A,b)
     x_hat[x_hat<0] = 0
 ```
-While this solution is not optimal (in fact, there are NNLS instances for which it is arbitrarily far from the solution, see below), it can be much faster to compute, in particular for large and/or structured $A$ for which highly optimized least squares solvers exist.
+While this solution is not optimal (in fact, [there are NNLS instances](#note-on-the-suboptimality-of-projected-least-squares-estimates) for which it is arbitrarily far from the solution), it can be much faster to compute, in particular for large and/or structured $A$ for which highly optimized least squares solvers exist.
 
-A naive algorithm then consists of running the solve-then-project (STP) routine as the ALS solver to compute nonnegative CP. A pitfall to avoid is that sign ambiguity may cause columns of a factor to be all negative at some iteration after the solve operation. Then the projection on the nonnegative orthant yields a zero vector, which makes the next solve ill-posed. A workaround is to flip negative vectors when they occur. The obtained algorithm is coined Pro-ALS (Projected ALS).
+A naive algorithm for nonnegative LRA then consists of using this solve-then-project routine as the ALS inner solver. A pitfall to avoid is that sign ambiguity may cause columns of a factor to be all negative at some iteration after the solve operation. Then the projection on the nonnegative orthant yields a zero vector, which makes the next solve ill-posed. A workaround is to flip negative vectors when they occur. The obtained algorithm is coined pro-ALS (projected ALS).
 
 ```{code-cell} ipython3
 :tags: [hide-input]
@@ -118,14 +118,14 @@ from matplotlib import pyplot as plt
 fig, axes = plt.subplots(1, 2, figsize=(10, 5))
 plt.subplot(121)
 plt.semilogy(errs_pro, label='pro-ALS')
-plt.semilogy(errs_hals, label='ANLS')
+plt.semilogy(errs_hals, label='HALS ANLS')
 plt.legend()
 plt.xlabel('Iteration')
 plt.ylabel('Error')
 plt.subplot(122)
 # with respect to time
 plt.semilogy(times_pro, errs_pro, label='pro-ALS')
-plt.semilogy(times_hals, errs_hals, label='ANLS')
+plt.semilogy(times_hals, errs_hals, label='HALS ANLS')
 plt.legend()
 plt.xlabel('Time (s)')
 plt.ylabel('Error')
@@ -169,6 +169,11 @@ def err_ret_pro(_,b):
 # Run pro-ALS
 cp_e, err = pro_als_basic(clean_data, rank, init=deepcopy(init_cp), callback=err_ret_pro) 
 
+```
+
+```{code-cell}ipython3
+tags: [hide-input]
+
 # Plot the errors per iterations and time
 fig, axes = plt.subplots(1, 2, figsize=(10, 5))
 plt.subplot(121)
@@ -188,11 +193,46 @@ plt.tight_layout()
 plt.show()
 ```
 
+
+## Note on the suboptimality of projected least squares estimates
+Using $\left[A^\dagger b\right]_+$ as the solution to a NNLS problem $\min_{x\geq 0} \|Ax - b\|_2^2$ can be a terrible idea for some problem instances. We can use NumPy to generate examples in which projected least squares solutions are arbitrarily far from the true NNLS solutions, even in two dimensions. This may happen in particular when the linear system is poorly conditioned. In the plot below, the projected least squares solution is always zero, but the NNLS solution can be made arbitrarily large by stretching and rotating the mixing matrix $A$ as desired.
+
+```{code-cell} ipython3
+import numpy as np
+import matplotlib.pyplot as plt
+# Generate data
+grid_x = np.meshgrid(np.linspace(-1,1,50),np.linspace(-2,2,50))
+grid_z = np.copy(grid_x[0])
+theta = 3.14/12
+A = np.array([[1,0],[0,0.01]])@np.array([[np.cos(theta), -np.sin(theta)],[np.sin(theta), np.cos(theta)]]) #scale and rotate
+x_LS = np.array([-0.5,-0.2])
+b = A@x_LS
+
+# LS, Pro-LS, NNLS sols
+x_pro_LS = np.maximum(x_LS,0)
+x_NNLS = tl.solvers.nnls.active_set_nnls(A.T@b,A.T@A)
+
+# Plot 
+for i in range(grid_z.shape[0]):
+    for j in range(grid_z.shape[1]):
+        grid_z[j,i] = np.linalg.norm(b - A@np.array([grid_x[0][0][i],grid_x[1][j][0]]))
+plt.contourf(grid_x[0], grid_x[1], grid_z)
+plt.plot([0,1],[0,0],'r')
+plt.plot([0,0],[0,2],'r')
+plt.scatter(x_LS[0],x_LS[1]) # Leastsquares solution is blue dot
+plt.scatter(x_pro_LS[0],x_pro_LS[1]) # Pro-LS is orange dot (zero)
+plt.scatter(x_NNLS[0], x_NNLS[1]) # NNLS solution is green dot
+plt.colorbar()
+plt.show()
+```
+
+Color stands for the contour lines of the cost $\|Ax-b\|_2$. Red lines mark the nonnegative orthant. The solution to the LS problem is at the center of the darkest ellipse.
+
 ## Proco-ALS
 
 ### Tucker compression for faster CP-Decomposition
 
-The true interest of Pro-ALS lies in its use in conjunction with Tucker compression. The idea of Tucker compression is to first compute an orthogonal, approximate Tucker decomposition with small inner dimensions using, *e.g.*, HOSVD, then work on the resulting smaller core tensor to compute the CP decomposition.
+The true interest of pro-ALS lies in its use in conjunction with Tucker compression. The idea of Tucker compression is to first compute an orthogonal, approximate Tucker decomposition with small inner dimensions using, *e.g.*, HOSVD, then work on the resulting smaller core tensor to compute the CP decomposition.
 
 ```{figure} ../../Figures/CANDELINC.png
 ---
@@ -245,7 +285,7 @@ $$ A_c^{k+1} = \Pi_{U\cdot\geq 0}\left[ A_c - \eta \left( G_{[1]}\left(B_c \odot
 
 The cost of the gradient step is low due to Tucker compression, but the cost of the projection onto the positive cone of $U$ can be consequential if $U$ is a large matrix (which is exactly the setup we consider for Tucker compression). This projection is in fact exactly a collection of $n_1$ NNLS problems of dimensions $r$, with $n_1$ the dimension in the first mode of the original tensor. 
 
-In our work [ref, date], we proposed to use the Pro-ALS idea to avoid resorting to NNLS solvers entirely. This gave birth to the Proco-ALS algorithm detailed below. We first solve the least squares problem unconstrained, then project onto the constraint set $ UA_c\geq 0$. As mentioned above, such a projection is also costly. We use a heuristic approximate projection instead,
+In our work [ref, date], we proposed to use the pro-ALS idea to avoid resorting to NNLS solvers entirely. This gave birth to the Proco-ALS algorithm detailed below. We first solve the least squares problem unconstrained, then project onto the constraint set $ UA_c\geq 0$. As mentioned above, such a projection is also costly. We use a heuristic approximate projection instead,
 
 $$ \hat{\Pi}(y) = U^T\left[Ux\right]_+. $$
 
@@ -325,56 +365,10 @@ $$ \min_{z\geq 0} \frac{1}{2} \|U^Tz + \hat{x}\|_2^2 . $$
 
 This equivalence also has a geometric interpretation: we either project $-\hat{x}$ on the dual cone of $U$ (second problem) or find the closest element to $\hat{x}$ in the intersection of half planes (first problem). 
 
-[insert figure]
-
-
-
 The Lagrangian for the projection problem writes $L(x,\mu) = \frac{1}{2}\|x - \hat{x} \|_2^2  - \mu^TUx$
 which when minimized w.r.t. $x$ yields $x^\ast = \hat{x} + U^T\mu^\ast$.
-
 The dual problem is therefore formalized as 
 $ \min_{\mu\geq 0} -\frac{1}{2}\|U^T\mu\|_2^2 + \|U^T\mu\|_2^2 + \mu^TU\hat{x}$ which has the same minimizer than $\min_{z\geq 0} \frac{1}{2} \|U^Tz + \hat{x}\|_2^2$
 
 To summarize, we may compute the projection $\Pi_{U\cdot}(y)$ by first solving several small NNLS problems with mixing matrix $U^T$. This yields $z$. Then we compute the projection by using the primal-dual relationship $\Pi_{U\cdot}(y) = y + U^Tz$.
-```
-
-+++
-
-```{admonition} Note on the suboptimality of projected least squares estimates
-Using $\left[A^\dagger b\right]_+$ as the solution to a NNLS problem $\min_{x\geq 0} \|Ax - b\|_2^2$ can be a terrible idea for some problem instances. We can use NumPy to generate examples in which projected least squares solutions are arbitrarily far from the true NNLS solutions, even in two dimensions. This may happen in particular when the linear system is poorly conditioned. In the plot below, the projected least squares solution is always zero, but the NNLS solution can be made arbitrarily large by stretching and rotating the mixing matrix $A$ as desired.
-```
-
-```{code-cell} ipython3
-import numpy as np
-import matplotlib.pyplot as plt
-# Generate data
-grid_x = np.meshgrid(np.linspace(-1,1,50),np.linspace(-2,2,50))
-grid_z = np.copy(grid_x[0])
-theta = 3.14/12
-A = np.array([[1,0],[0,0.01]])@np.array([[np.cos(theta), -np.sin(theta)],[np.sin(theta), np.cos(theta)]]) #scale and rotate
-x_LS = np.array([-0.5,-0.2])
-b = A@x_LS
-
-# LS, Pro-LS, NNLS sols
-x_pro_LS = np.maximum(x_LS,0)
-x_NNLS = tl.solvers.nnls.active_set_nnls(A.T@b,A.T@A)
-
-# Plot 
-for i in range(grid_z.shape[0]):
-    for j in range(grid_z.shape[1]):
-        grid_z[j,i] = np.linalg.norm(b - A@np.array([grid_x[0][0][i],grid_x[1][j][0]]))
-plt.contourf(grid_x[0], grid_x[1], grid_z)
-plt.plot([0,1],[0,0],'r')
-plt.plot([0,0],[0,2],'r')
-plt.scatter(x_LS[0],x_LS[1]) # Leastsquares solution is blue dot
-plt.scatter(x_pro_LS[0],x_pro_LS[1]) # Pro-LS is orange dot (zero)
-plt.scatter(x_NNLS[0], x_NNLS[1]) # NNLS solution is green dot
-plt.colorbar()
-plt.show()
-```
-
-Color stands for the contour lines of the cost $\|Ax-b\|_2$. Red lines mark the nonnegative orthant. The solution to the LS problem is at the center of the darkest ellipse.
-
-```{code-cell} ipython3
-
 ```

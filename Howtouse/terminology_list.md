@@ -9,6 +9,7 @@ This document lists all acronyms, technical terms, and words with ambiguous spel
 - ADMM: Alternating Descent Method of MultipliersA
 - ALS: Alternating Least Squares
 - AMT: Automatic Music Transcription
+- ANLS: Alternating Nonnegative Least Squares
 - AS: Active-Set
 - cDL: complete Dictionary Learning
 - CPD: Canonical Polyadic Decomposition
@@ -33,6 +34,7 @@ This document lists all acronyms, technical terms, and words with ambiguous spel
 - NNLS: Nonnegative Least Squares
 - OMP: Orthogonal Matching Pursuit
 - PCA: Principal Component Analysis 
+- pro-ALS: projected Alternating Least Squares 
 - rLRA: Regularized Low-Rank Approximation(s)
 - SNPA: Successive Nonnegative Projection Algorithm
 - SPI: Single-Pixel Imaging
