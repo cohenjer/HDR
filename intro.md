@@ -51,6 +51,11 @@ Except for the picture above, generative AI has been used in this manuscript onl
 %```{tableofcontents}
 %```
 
+
+```{bibliography}
+:style: alpha
+```
+
 Many pages contain code executed upon compilation of the book for publication, below is their status.
 
 ```{nb-exec-table}
