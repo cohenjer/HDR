@@ -14,16 +14,16 @@ This particular family of problems lies at the intersection of two separate rese
   $$
 
   AO and BCD algorithms are frameworks usually employed to solve these problems, when the cost function $f$ has "nice" blockwise properties (convexity, smoothness, closed-form minimization...). The current state-of-the-art on AO and BCD is summarized in [](../../part1/AlternatingOptimization.md). Algorithms that update all the parameters simultaneously can also be efficient, but are not explored in this manuscript {cite:p}`Acar2011Scalable,marminJointMajorizationMinimizationNonnegative2023a, takahashiMajorizationMinimizationBregmanProximal2025`.
-- Non-smooth optimization, encountered when regularizations $g_q$ are non-smooth. Typical examples in signal processing and machine learning are the $\ell_1$ norm, the $\ell_0$ function, or nonnegativity constraints. 
+- Nonsmooth optimization, encountered when regularizations $g_q$ are nonsmooth. Typical examples in signal processing and machine learning are the $\ell_1$ norm, the $\ell_0$ function, or nonnegativity constraints. 
 
-Non-smooth optimization has received a lot of attention in the signal processing optimization community over the last twenty years, as sparse approximations have become more prominent and have required better optimization tools. Among the most significant mathematical tools for non-smooth first-order optimization is the proximity operator, a generalization of projections onto convex sets. The proximity operator is defined for a convex, proper, closed (lower-semi-continuous) function $g$ as 
+Nonsmooth optimization has received a lot of attention in the signal processing optimization community over the last twenty years, as sparse approximations have become more prominent and have required better optimization tools. Among the most significant mathematical tools for nonsmooth first-order optimization is the proximity operator, a generalization of projections onto convex sets. The proximity operator is defined for a convex, proper, closed (lower-semicontinous) function $g$ as 
 
 $$ \text{prox}_{\lambda g}(x) = \argmin{u\in\mathbb{R}^n} g(u) + \frac{1}{2}\|u - x \|_2^2 $$
 where $\lambda$ is a positive scaling parameter. The proximity operator of many classic regularizations is known in closed form or can be efficiently computed, a [list is available online](http://proximity-operator.net/). The proximity operator of the characteristic function of a convex set, which penalizes to $+\infty$ any vector outside that set, is exactly the projection on that convex set. The particular case of nonnegativity constraints has been studied extensively and is summarized in [](../../part1/nnls.md).
 
 A third field of research in optimization, sometimes encountered when fitting rLRA models, concerns cost functions that are not Lipschitz-smooth. A typical example is the KL-divergence, which plays a central role in nonnegative LRA. First-order algorithms are hard to derive in this context, see the discussion in [](../../part1/nnls.md#nonnegative-kullback-leibler-regression-nnkl).
 
-Because rLRA leads to optimization problems that mix multiblock, non-smooth, and sometimes non-Lipschitz-smooth optimization, fitting rLRA models efficiently is often challenging.
+Because rLRA leads to optimization problems that mix multiblock, nonsmooth, and sometimes non-Lipschitz-smooth optimization, fitting rLRA models efficiently is often challenging.
 
 ## Contributions
 

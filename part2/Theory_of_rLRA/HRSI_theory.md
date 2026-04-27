@@ -56,7 +56,7 @@ Consider the following optimization problem
 Coercivity is satisfied by the regularization functions considered in this section.
 ```
 
-where $f$ is a continuous map from the Cartesian product $\times_{i=1}^{n} \mathbb{R}^{m_i\times r} \cap \text{dom}(g_i)$ to $\mathbb{R}_+$, $\{\mu_i\}_{i\leq n}$ is a set of positive regularization hyperparameters, and $\{g_i\}_{i\leq n}$ is a set of lower semi-continuous regularization maps from $\mathbb{R}^{m_i}$ to $\mathbb{R}_+$. We assume that the total cost is coercive, ensuring the existence of a minimizer. Furthermore, we assume the following assumptions hold:
+where $f$ is a continuous map from the Cartesian product $\times_{i=1}^{n} \mathbb{R}^{m_i\times r} \cap \text{dom}(g_i)$ to $\mathbb{R}_+$, $\{\mu_i\}_{i\leq n}$ is a set of positive regularization hyperparameters, and $\{g_i\}_{i\leq n}$ is a set of lower semicontinous regularization maps from $\mathbb{R}^{m_i}$ to $\mathbb{R}_+$. We assume that the total cost is coercive, ensuring the existence of a minimizer. Furthermore, we assume the following assumptions hold:
 - **A1**: The function $f$ is invariant to columnwise scaling of the parameter matrices. For any sequence of positive diagonal matrices $\{\Lambda_i\}_{i\leq n}$,
   
     $$  f(\{X_i\Lambda_i\}_{i\leq n}) = f(\{X_i\}_{i\leq n})\;\;\text{if}\; \prod_{i=1}^{n}\Lambda_i = I_r,

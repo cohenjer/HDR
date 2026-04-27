@@ -284,7 +284,7 @@ A globally Lipschitz-smooth function can be bounded globally by a local quadrati
 #### Convexity issue
 
 ```{margin}
-KL-divergence also does not satisfy the global Polyak-Lojasiewicz inequality, a more relaxed assumption than strong convexity {cite:p}`karimiLinearConvergenceGradient2020`. It is unclear to me at the time of writing whether KL-divergence satisfies the Kurdyka-Lojasiewicz condition globally, or a local variant of the Polyak-Lojasiewicz condition useful for studying the convergence of first-order methods in non-convex problems {cite:p}`attouchConvergenceProximalAlgorithm2009,bolte2014proximal`. 
+KL-divergence also does not satisfy the global Polyak-Lojasiewicz inequality, a more relaxed assumption than strong convexity {cite:p}`karimiLinearConvergenceGradient2020`. It is unclear to me at the time of writing whether KL-divergence satisfies the Kurdyka-Lojasiewicz condition globally, or a local variant of the Polyak-Lojasiewicz condition useful for studying the convergence of first-order methods in nonconvex problems {cite:p}`attouchConvergenceProximalAlgorithm2009,bolte2014proximal`. 
 ```
 
 Another important issue with the KL-divergence is that, although it is strictly convex, it is not strongly convex. Indeed, the KL-divergence is asymptotically linear when $z$ is much larger than $y$. This causes problems in particular when the data measurement $y$ is sparse or exhibits large dynamics. Strong convexity guarantees linear convergence rates for gradient descent; when the cost function is not strongly convex, first-order algorithms might converge sub-linearly {cite:p}`beck2017first`. In the extreme case where $y$ has many zeros, a significant part of the cost is linear, and convex first-order optimization techniques are, in general, ill-suited for linear programming.
@@ -793,7 +793,7 @@ that yields, after simple derivations found in {cite:p}`bauschkeDescentLemmaLips
 
 $ \KL{y,Wx} \leq \KL{y,Wx^{(k)}} + \langle W^T\left(1_n-\frac{y}{Wx^{(k)}}\right), x - x^{(k)} \rangle + \frac{1}{2\|y\|_1} \sum_{j\leq n} \frac{x[j] - x^{(k)}[j]}{x^{(k)}[j]} - \log\frac{x[j]-x^{(k)}[j]}{x^{(k)}[j]}.$
 
-Minimizing this upper bound leads to unusual multiplicative updates 
+Minimizing this upper-bound leads to unusual multiplicative updates 
 
 $ x = x \ast \frac{1}{1+\frac{1}{\|y\|_1}x \odot \left(W^T1_n - W^T\frac{y}{Wx}\right)}. $
 
@@ -836,7 +836,7 @@ $$
 - \log p(z[i,j] ~|~ x[j]) = W[i,j]x[j] - z[i,j]\log W[i,j]x[j] + \log z[i,j]!,
 $$
 
-the upper bound simplifies into
+the upper-bound simplifies into
 
 $$
 \xi(x, x^{(k)}) = \sum_{i\leq m, j\leq n} W[i,j]x[j] - \mathbb{E}_{Z[i,:] | y[i], x^{k}}\left[z[i,j]\right]\log W[i,j]x[j] + \mathbb{E}_{Z[i,:] | y[i], x^{k}}[\log z[i,j]!].

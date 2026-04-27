@@ -377,7 +377,7 @@ plt.show()
 
 Again, in this setup, nonnegativity alone is essentially useless, since the subsampled pseudo-inverse reconstruction is already nonnegative. This means that the reconstruction error for both the regularized least squares and the MAP is null at $\hat{X} = A^{\dagger}y$; both reconstructions may provide the exact same estimate. Moreover, we see on the error map that the original image is poorly estimated around the edges. This observation is consistent with the absence of high-frequency content. The image details cannot be reconstructed solely from the measurements. 
 
-## Unmixing and reconstruction with known spectra and non-smooth priors
+## Unmixing and reconstruction with known spectra and nonsmooth priors
 
 ### Joint reconstruction and unmixing principle
 
@@ -414,7 +414,7 @@ $$
 \argmin{U\geq 0, V\geq 0} \KL{Y, AUV^T} + \lambda \left( \|U\|_1 + \|V\|_1 \right)
 $$
 
-is jointly non-convex, initialization is important. A viable optimization for simple unmixing problems is to first perform the reconstruction, for instance, solving a NNLS problem, then use a pure-pixel selection algorithm such as SNPA {cite:p}`gillisSuccessiveNonnegativeProjection2014` to initialize $V$.
+is jointly nonconvex, initialization is important. A viable optimization for simple unmixing problems is to first perform the reconstruction, for instance, solving a NNLS problem, then use a pure-pixel selection algorithm such as SNPA {cite:p}`gillisSuccessiveNonnegativeProjection2014` to initialize $V$.
 
 This procedure is illustrated below on, first, a synthetic exemple, and then on a real dataset acquired in CREATIS.
 
