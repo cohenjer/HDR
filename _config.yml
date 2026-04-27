@@ -40,7 +40,7 @@ repository:
 
 sphinx:
   config:
-    latex_logo: Figures/cube_on_dico_page.png
+    #latex_logo: Figures/cube_on_dico_page.png
     latex_domain_indices: false
     mathjax_path: https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
     html_js_files:
