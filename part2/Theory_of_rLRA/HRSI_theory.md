@@ -285,7 +285,7 @@ show(column(p, slider))
 Observe in particular that the sparsity level of the components does not evolve smoothly with the regularization hyperparameter. Components vanish brutally at $\mu=0.75$ and $\mu=5.2$.
 
 
-## The sparse NMF using l1-l2 regularization
+## The sparse NMF using $\ell_1$-$\ell_2$ regularization
 
 The explicit $\ell_1$-$\ell_2$ sparse NMF model writes
 
