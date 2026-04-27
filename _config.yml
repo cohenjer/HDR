@@ -14,15 +14,6 @@ execute:
 
 # Define the name of the latex output file for PDF builds
 latex:
-  preamble: |
-    \newcommand{\argmin}[1]{\underset{#1}{\text{argmin}}~}
-    \newcommand{\argmax}[1]{\underset{#1}{\text{argmax}}~}
-    \newcommand{\amin}[1]{\underset{#1}{\text{min}}~}
-    \newcommand{\R}[1]{\mathbb{R}^{#1}}
-    \newcommand{\vec}[1]{\text{vec}\left(#1\right)}
-    \newcommand{\KL}[1]{\mathcal{D}_{\text{KL}}\left(#1\right)}
-    \newcommand{\cp}[1]{\text{col}_{+}\left(#1\right)}
-    \newcommand{\rank}[1]{\text{rank}\left(#1\right)}
   latex_documents:
     targetname: book.tex
 
@@ -60,14 +51,14 @@ sphinx:
         \usepackage{graphicx}
         
         % Custom math commands
-        \newcommand{\argmin}[1]{\underset{#1}{\text{argmin}}~}
-        \newcommand{\argmax}[1]{\underset{#1}{\text{argmax}}~}
-        \newcommand{\amin}[1]{\underset{#1}{\text{min}}~}
-        \newcommand{\R}[1]{\mathbb{R}^{#1}}
-        \newcommand{\vec}[1]{\text{vec}\left(#1\right)}
-        \newcommand{\KL}[1]{\mathcal{D}_{\text{KL}}\left(#1\right)}
-        \newcommand{\cp}[1]{\text{col}_{+}\left(#1\right)}
-        \newcommand{\rank}[1]{\text{rank}\left(#1\right)}
+        \providecommand{\argmin}[1]{\underset{#1}{\text{argmin}}~}
+        \providecommand{\argmax}[1]{\underset{#1}{\text{argmax}}~}
+        \providecommand{\amin}[1]{\underset{#1}{\text{min}}~}
+        \providecommand{\R}[1]{\mathbb{R}^{#1}}
+        \renewcommand{\vec}[1]{\text{vec}\left(#1\right)}
+        \providecommand{\KL}[1]{\mathcal{D}_{\text{KL}}\left(#1\right)}
+        \providecommand{\cp}[1]{\text{col}_{+}\left(#1\right)}
+        \providecommand{\rank}[1]{\text{rank}\left(#1\right)}
       sphinxsetup: |
         div.topic_border-width=1pt,
         div.topic_border-TeXcolor={RGB}{120,120,120},
@@ -107,17 +98,17 @@ sphinx:
     mathjax3_config:
       tex:
         #packages: {'[+]': ['ams']}  # Load AMS extensions
-        #macros:
-          #"llbracket": ["⟦"]
-          #"rrbracket": ["⟧"]
-          #"argmin": ["\\underset{#1}{\\text{argmin}}~",1]
-          #"argmax": ["\\underset{#1}{\\text{argmax}}~",1]
-          #"amin": ["\\underset{#1}{\\text{min}}~",1]
-          #"R": ["\\mathbb{R}^{#1}",1]
-          #"vec": ["\\text{vec}\\left(#1\\right)",1]
-          #"KL": ["\\mathcal{D}_{\\text{KL}}\\left(#1\\right)",1]
-          #"cp": ["\\text{col}_{+}\\left(#1\\right)",1]
-          #"rank": ["\\text{rank}\\left(#1\\right)",1]
+        macros:
+          "llbracket": ["⟦"]
+          "rrbracket": ["⟧"]
+          "argmin": ["\\underset{#1}{\\text{argmin}}~",1]
+          "argmax": ["\\underset{#1}{\\text{argmax}}~",1]
+          "amin": ["\\underset{#1}{\\text{min}}~",1]
+          "R": ["\\mathbb{R}^{#1}",1]
+          "vec": ["\\text{vec}\\left(#1\\right)",1]
+          "KL": ["\\mathcal{D}_{\\text{KL}}\\left(#1\\right)",1]
+          "cp": ["\\text{col}_{+}\\left(#1\\right)",1]
+          "rank": ["\\text{rank}\\left(#1\\right)",1]
   extra_extensions:
     - sphinx_proof
 
