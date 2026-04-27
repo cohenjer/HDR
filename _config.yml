@@ -56,9 +56,13 @@ sphinx:
         \usepackage{stmaryrd}
         \usepackage{graphicx}
         
+        % Center Sphinx images globally (including non-figure images)
+        \let\origSphinxincludegraphics\sphinxincludegraphics
+        \renewcommand{\sphinxincludegraphics}[2][]{\makebox[\linewidth][c]{\origSphinxincludegraphics[#1]{#2}}}
+        
         % Custom math commands
-        \providecommand{\argmin}[1]{\underset{#1}{\text{argmin}}~}
-        \providecommand{\argmax}[1]{\underset{#1}{\text{argmax}}~}
+        \newcommand{\argmin}[1]{\underset{#1}{\text{argmin}}~}
+        \newcommand{\argmax}[1]{\underset{#1}{\text{argmax}}~}
         \providecommand{\amin}[1]{\underset{#1}{\text{min}}~}
         \providecommand{\R}[1]{\mathbb{R}^{#1}}
         \renewcommand{\vec}[1]{\text{vec}\left(#1\right)}
