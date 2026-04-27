@@ -422,7 +422,7 @@ $$ W^{(k+1)} = W^{(k)}\ast \frac{\frac{Y}{\hat{X}^{(k)}}{\tilde{H}^{(k)}}^T }{\m
 
 where $\hat{Y}\in\mathbb{R}^{m\times n}$ is the reconstructed dataset, matrix $\tilde{H}$ is computed from matrix $H$ by shifting each row $T$ times and concatenating the results, resulting in a block-Toeplitz matrix. Recall that $\times_{1,2}$ denotes the tensor contraction on modes 1 and 2, and here corresponds to the broadcasted inner product of slices of $\frac{Y}{\hat{Y}}$ with each slice of tensor $W$ along the third mode. Zero-padding can be considered to handle the border of the input spectrogram. 
 
-Similarly to NMF, CNMF is a non-convex problem. Personal observations lead me to believe that CNMF is significantly harder, with many non-trivial local minima, and therefore initialization is crucial. 
+Similarly to NMF, CNMF is a nonconvex problem. Personal observations lead me to believe that CNMF is significantly harder, with many non-trivial local minima, and therefore initialization is crucial. 
 
 ### A CNMF dictionary of pure notes with rank-one CNMF
 

@@ -21,12 +21,11 @@ Except for the picture above, generative AI has been used in this manuscript onl
 ```
 
 %TODOlist:
-%- Fix code dependencies again
-  %------- Envoi 1 --------- (web)
 %- Latex build fork ?
   %- Moving margin notes
-  %- fixing commands
-  %- Removing empty biblio
+  %- Gif hadamard
+  %- taille figures notamment AMT
+  %- pas de proof index
   %------- Envoi 2 (pdf) ----
 
 % Before soutenance:

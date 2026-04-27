@@ -41,7 +41,7 @@ $$
 
 and $\phi_x(y) \approx f(x)$ when vectors $y$ and $x$ are close. 
 
-The traditional approach to second-order iterative algorithms, and in particular the Newton method, is, at iteration index $k$, to minimize $\phi_{x^{(k)}}(y)$, denote $x^{(k+1)}$ the minimizer, and repeat this procedure until convergence {cite:p}`Bertsekas1999Nonlinear`. While the Newton algorithm features super-linear convergence near a stationary point of $f$, each iteration is computationally expensive. Moreover, Newton's method typically does not account for non-smooth constraints. Indeed, without constraints,
+The traditional approach to second-order iterative algorithms, and in particular the Newton method, is, at iteration index $k$, to minimize $\phi_{x^{(k)}}(y)$, denote $x^{(k+1)}$ the minimizer, and repeat this procedure until convergence {cite:p}`Bertsekas1999Nonlinear`. While the Newton algorithm features super-linear convergence near a stationary point of $f$, each iteration is computationally expensive. Moreover, Newton's method typically does not account for nonsmooth constraints. Indeed, without constraints,
 
 $$
  \argmin{y\in\mathbb{R}^m} \phi_x(y) = x - [\nabla^2f(x)]^{-1} \nabla f(x),

@@ -11,8 +11,11 @@ This document lists all acronyms, technical terms, and words with ambiguous spel
 - AMT: Automatic Music Transcription
 - AMU: Alternating Multiplicative Updates
 - ANLS: Alternating Nonnegative Least Squares
+- AO: Alternating Optimization
 - APGD: Alternating Projected Gradient Descent
 - AS: Active-Set
+- BCD: Block-Coordinate Descent
+- BSUM: Block SUM
 - cDL: complete Dictionary Learning
 - CPD: Canonical Polyadic DecompositionA
 - CMTF: Coupled Matrix and Tensor Factorization
@@ -48,6 +51,7 @@ This document lists all acronyms, technical terms, and words with ambiguous spel
 - SNPA: Successive Nonnegative Projection Algorithm
 - SOM: Second-Order Majorant
 - SPI: Single-Pixel Imaging
+- SUM: Successive Upper-bound Minimization  
 - SVD: Singular Value Decomposition
 
 
@@ -467,7 +471,7 @@ This document lists all acronyms, technical terms, and words with ambiguous spel
  %[[MSOM]](../part2/Fast_algorithms_for_rLRA/mSOM) [[NNLS]](../part1/nnls)
 %- **non-adaptive**
  %[[UNROLLEDNMF]](../part2/Fast_algorithms_for_rLRA/UnrolledNMF)
-%- **non-convex**
+%- **nonconvex**
  %[[AMT]](../part2/Applications_of_rLRA/AMT) [[INTRO2]](../part2/intro2) [[INTRO]](../part2/Theory_of_rLRA/intro) [[PERSPECTIVES]](../part3/Perspectives)
 %- **non-expensive**
  %[[PROCO-ALS-CHECKPOINT]](../part2/.ipynb_checkpoints/proco-als-checkpoint)
@@ -571,7 +575,7 @@ This document lists all acronyms, technical terms, and words with ambiguous spel
  %[[MSOM]](../part2/Fast_algorithms_for_rLRA/mSOM) [[NNLS]](../part1/nnls) [[PERSPECTIVES]](../part3/Perspectives)
 %- **second-order-majorant**
  %[[MSOM]](../part2/Fast_algorithms_for_rLRA/mSOM)
-%- **semi-continuous**
+%- **semicontinous**
  %[[HRSI_THEORY]](../part2/Theory_of_rLRA/HRSI_theory)
 %- **semi-definite**
  %[[MSOM]](../part2/Fast_algorithms_for_rLRA/mSOM)
