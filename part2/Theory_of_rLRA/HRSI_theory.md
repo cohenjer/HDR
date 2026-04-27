@@ -52,10 +52,6 @@ Consider the following optimization problem
  \argmin{\forall i\leq n,\; X_i\in\mathbb{R}^{m_i\times r}}f(\{X_i\}_{i\leq n}) + \sum_{i=1}^{n} \mu_{i} \sum_{q=1}^{r} g_i(X_i[:,q]), 
 ``` 
 
-```{margin}
-Coercivity is satisfied by the regularization functions considered in this section.
-```
-
 where $f$ is a continuous map from the Cartesian product $\times_{i=1}^{n} \mathbb{R}^{m_i\times r} \cap \text{dom}(g_i)$ to $\mathbb{R}_+$, $\{\mu_i\}_{i\leq n}$ is a set of positive regularization hyperparameters, and $\{g_i\}_{i\leq n}$ is a set of lower semicontinous regularization maps from $\mathbb{R}^{m_i}$ to $\mathbb{R}_+$. We assume that the total cost is coercive, ensuring the existence of a minimizer. Furthermore, we assume the following assumptions hold:
 - **A1**: The function $f$ is invariant to columnwise scaling of the parameter matrices. For any sequence of positive diagonal matrices $\{\Lambda_i\}_{i\leq n}$,
   
@@ -68,12 +64,13 @@ where $f$ is a continuous map from the Cartesian product $\times_{i=1}^{n} \math
     $$        g_i(\lambda x) = \lambda^{p_i} g_i(x). $$
 
     This property holds in particular for any $\ell_p^p$ norm.
-```{margin}
-Assumption **A3** limits the framework's applicability by excluding positive homogeneous regularizations such as Total Variation.
-```
 - **A3**: Each function $g_i$ is positive-definite, meaning that for any $i\leq n$, $g_i(x)=0$ if and only if $x$ is null.
  
 We refer to the optimization problem {eq}`eq:hrsi-pb` with assumptions **A1**, **A2**, and **A3**, the Homogeneous Regularized Scale-Invariant problem (HRSI). 
+
+```{sidebar} Remark
+Assumption **A3** limits the framework's applicability by excluding positive homogeneous regularizations such as Total Variation.
+```
 
 HRSI is quite general and encompasses many instances of regularized LRA problems. Specifically, [ridge NMF](eq:ridge-NMF) is an HRSI problem with $f(\{X_i\}_{i\leq n})= \|M - X_1X_2^T\|_F^2$, $g_1(x) = \|x\|^2_2 + \eta_{\mathbb{R}_+^{m_1}}(x)$ and $g_2(x) = \|x\|^2_2 + \eta_{\mathbb{R}_+^{m_2}}(x)$.
 

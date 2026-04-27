@@ -42,7 +42,7 @@ Formally, for matrix data, a real LRA problem is an optimization problem of the 
 $$ \min_{U\in\mathbb{R}^{m\times r},V\in\mathbb{R}^{n\times r}} f(Y, UV^T) $$
 where integer $r$ is the rank of the approximation $UV^T\approx Y$, with $r\ll m,n$, and $f$ is a cost function, typically $f(Y, X) = \|Y-X\|_F^2$.
 
-```{margin}
+```{sidebar} Remark
 We present the case of matrix factorization here for simplicity, but the same logic applies to higher-order factorizations.
 ```
 
@@ -59,11 +59,11 @@ where $g_U$ and $g_V$ are regularizations promoting certain properties in soluti
 Regularizations typically apply to each factor $U$ and $V$ independently. Indeed, the main identifiability issue in LRA is the rotation ambiguity $UV^T = UP\left(VP\right)^T$ for an orthogonal matrix $P$. A regularization $g(UV^T)$ would not discriminate between two solutions and therefore is not enough to ensure the uniqueness of rLRA solutions.
 ```
 
-```{margin}
+PCA is a constrained LRA model: factors are imposed to be orthogonal matrices. This allows us to obtain a model with essentially unique factors (under the mild condition that singular values must be distinct {cite:p}`Golub1989Matrix`), but orthogonality is often not a physically meaningful constraint. In the context of inverse problems, this means that the estimated matrices $U$ and $V$ may be poor approximations of the ground truth matrices $U^\ast$ and $V^\ast$. On the other hand, Nonnegative Matrix Factorization (NMF), obtained by setting $g_U$ and $g_V$ to characteristic functions of the nonnegative orthant, can be unique {cite:p}`gillisNonnegativeMatrixFactorization2020` while using more realistic assumptions. In many applications, elementwise nonnegativity is a natural assumption, which makes NMF particularly suited as a source separation/pattern mining model. A typical example of NMF usage is in spectral unmixing for remote sensing, as illustrated in {numref}`fig:HSI_nmf`, see also [](../part2/Applications_of_rLRA/intro.md).
+
+```{sidebar} Remark
 Essential uniqueness is the uniqueness up to permutations and scaling ambiguities inherent to LRA models, see [](../part1/lra.md) for more details.
 ```
-
-PCA is a constrained LRA model: factors are imposed to be orthogonal matrices. This allows us to obtain a model with essentially unique factors (under the mild condition that singular values must be distinct {cite:p}`Golub1989Matrix`), but orthogonality is often not a physically meaningful constraint. In the context of inverse problems, this means that the estimated matrices $U$ and $V$ may be poor approximations of the ground truth matrices $U^\ast$ and $V^\ast$. On the other hand, Nonnegative Matrix Factorization (NMF), obtained by setting $g_U$ and $g_V$ to characteristic functions of the nonnegative orthant, can be unique {cite:p}`gillisNonnegativeMatrixFactorization2020` while using more realistic assumptions. In many applications, elementwise nonnegativity is a natural assumption, which makes NMF particularly suited as a source separation/pattern mining model. A typical example of NMF usage is in spectral unmixing for remote sensing, as illustrated in {numref}`fig:HSI_nmf`, see also [](../part2/Applications_of_rLRA/intro.md).
 
 ```{figure} ../Figures/Hsi_nmf.png
 ---

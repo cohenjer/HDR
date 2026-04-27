@@ -49,9 +49,6 @@ $$ YC = DX $$
 
 which allows us to compute the optimal matrix $X$ by solving a sparse coding problem, for instance, with OMP {cite:p}`Pati1993Orthogonal`. In particular, when $k=1$, the optimum is obtained by a single iteration of matching pursuit. This heuristic, coined Trick-OMP, is in fact exactly the approach used in MC-ALS [described earlier](onesparseDLRA.md) (not the linear assignment variant). While this is correct in the noiseless case, it is a priori unclear how robust this method can be. The following theorem is one possible characterization of the robustness of Trick-OMP. I show that when the noise level is small compared to the conditioning of both matrices $B$ and $D$, the Trick-OMP procedure can identify the support of the solution.
 
-```{margin}
-Matrix $X'$ stands for the estimate produced by the MC-ALS algorithm, while $X$ is the ground truth solution to the mixed sparse coding problem.
-```
 
 ```{prf:theorem}
 :label: robustness_trickMP
@@ -68,6 +65,10 @@ then matrices $X$ and $X'$ have the same support, $S(X) = S(X')$.
 See {cite:p}`cohenDictionaryBasedLowRankApproximations2022` for the proof.
 ```
 
+```{sidebar} Remark
+Matrix $X'$ stands for the estimate produced by the MC-ALS algorithm, while $X$ is the ground truth solution to the mixed sparse coding problem.
+```
+
 This result shows that Trick-OMP is theoretically robust; in practice, it performs poorly at medium and high noise levels. Since we aim to solve MSC within an alternating algorithm, we cannot expect that $Y=DXB^T$ holds even approximately at each iteration. Using Trick-OMP as an MSC solver for DLRA is consequently ill-advised unless an excellent initialization can be provided.
 
 ### Another greedy approach: Hierarchical OMP
@@ -78,12 +79,14 @@ Both Trick-OMP and HOMP are implemented in the library [dlra](https://github.com
 
 ### A tightest convex relaxation approach
 
-```{margin}
-The $\ell_0$ function is not a norm, and not even a pseudo-norm in the strict mathematical sense, because it is not homogeneous. I prefer to call it the $\ell_0$ function, or $\ell_0$ "norm", to avoid ambiguity.
-```
+
 
 Popular approaches to solve sparse coding problems are to relax the $\ell_0$ function 
 using its convex envelope, the $\ell_1$ norm. The optimization problem then becomes convex and easier to solve, but the challenge is to assess whether the solutions to the relaxed problem are the solutions of the original sparse coding problem {cite:p}`foucart2013introduction`. 
+
+```{sidebar} Remark
+The $\ell_0$ function is not a norm, and not even a pseudo-norm in the strict mathematical sense, because it is not homogeneous. I prefer to call it the $\ell_0$ function, or $\ell_0$ "norm", to avoid ambiguity.
+```
 
 In the MSC problem, it is possible to show that we are, in fact, solving a problem of the form
 
@@ -103,7 +106,7 @@ A first strategy to solve MSC is to mimic the sparse coding case and compute the
 
 $$ \ell_{1,1}(X) = \max_i \|X[:,i]\|_1 .$$
 
-```{margin}
+```{sidebar} Remark
 The proof is purely analytic and rather straightforward; it relies on computing twice the convex envelope of the $\ell_{0,0}$ function.
 ```
 
@@ -128,13 +131,13 @@ We may compare the three proposed methods (Trick-OMP, HOMP, Block-FISTA) as MSC 
 
 ## DLRA for Smooth CPD
 
-```{margin}
+One possible application of DLRA is to impose smoothness constraints in tensor decompositions with splines. The idea of using splines in the CP decomposition is due to Timmerman and Kiers {cite:p}`Timmerman2002Three`. They proposed to constrain one of the factors of the CP decomposition of an input tensor $T\in\R{n_1\times n_2\times n_3}_+$, say matrix $A$, to be decomposed exactly in a basis $U\in\R{n_1\times p}_+$ of B-splines, such that $A = UZ$. The columns of matrix $U$ are the individual splines that compose this basis. The user has to choose the splines manually, by placing knots in the 1D plane and choosing the polynomial degrees. There are typically only a few B-splines, such that $p\leq n_1$, and the smoothness constraint allows for dimensionality reduction. Numerically, Timmerman computes the QR decomposition of $U=QR$ and projects the data tensor, such that $Q^TA\times_1 T$ is the new compressed data. 
+
+```{sidebar} Remark
 
 For low-dimensional linear models of the parameter matrices in most rLRA models, computing the QR decomposition of the basis of the low-dimensional linear space is often a useful numerical trick, which works beyond smoothness and B-splines.
 
 ```
-
-One possible application of DLRA is to impose smoothness constraints in tensor decompositions with splines. The idea of using splines in the CP decomposition is due to Timmerman and Kiers {cite:p}`Timmerman2002Three`. They proposed to constrain one of the factors of the CP decomposition of an input tensor $T\in\R{n_1\times n_2\times n_3}_+$, say matrix $A$, to be decomposed exactly in a basis $U\in\R{n_1\times p}_+$ of B-splines, such that $A = UZ$. The columns of matrix $U$ are the individual splines that compose this basis. The user has to choose the splines manually, by placing knots in the 1D plane and choosing the polynomial degrees. There are typically only a few B-splines, such that $p\leq n_1$, and the smoothness constraint allows for dimensionality reduction. Numerically, Timmerman computes the QR decomposition of $U=QR$ and projects the data tensor, such that $Q^TA\times_1 T$ is the new compressed data. 
 
 The problem of choosing the B-spline by hand is mild for an experienced user with precise knowledge of the expected outcome of the CP decomposition, but it can plague the practical usage of this method by novice users. Using DCPD, it is possible to automatically select the relevant splines from a large dictionary of polynomials by building an explicit dictionary $D$ that stacks all candidate splines. The sparse regression then picks the best splines numerically. Another advantage of this method is that different components (columns of matrix $A$) may use different splines. This comes at the cost of solving a large DLRA problem. This probably makes the method realistically impractical for usage in chemometrics, but the goal of this experiment is rather to showcase one possible application of DLRA. Below, we perform DLRA for a rank-three CP decomposition with smoothness on the second mode, using $251$ splines for a tensor of size $18\times 251\times 21$ with sparsity level $k=6$.
 

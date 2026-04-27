@@ -204,7 +204,7 @@ AMT entered the [MIREX competition](https://www.music-ir.org/mirex/wiki/MIREX_HO
 
 ### NMF for AMT: useful but limited
 
-```{margin}
+```{sidebar} Remark
 Spectrograms have a few hyperparameters that should be fixed, most importantly the time window size and type, and the amount of overlap for the windows. In the following, we use parameters from the literature {cite:p}`chengAttackDecayModel2016`: Hann windows, 4096 samples per window, and 4096 - 882 overlapping samples. This yields a time resolution of about 20ms (the sample rate is usually 44kHz), with spectra computed over 93ms, and a frequency resolution of about 10.7Hz, which is a reasonable time-frequency resolution trade-off for piano transcription.
 ```
 
@@ -261,11 +261,6 @@ H_kl = H_kl[:, perm]
 
 ```
 
-```{margin}
-
-The components are ordered by increasing fundamental frequency. The notes played in the recording are, in order, G3, F3, Bb3, C4, F4, D4, C4, F4, D4, Bb3, C4, G3, F3. We can see that the components match that order.
-
-```
 
 ```{code-cell} ipython3
 :tags: [hide-input]
@@ -313,6 +308,12 @@ for i in range(rank):
 plt.tight_layout()        
 
 plt.show()
+```
+
+```{sidebar} Remark
+
+The components are ordered by increasing fundamental frequency. The notes played in the recording are, in order, G3, F3, Bb3, C4, F4, D4, C4, F4, D4, Bb3, C4, G3, F3. We can see that the components match that order.
+
 ```
 
 While this is promising, we knew the correct number of notes in the recording. Also, the rank-one spectrograms are not well located in time when analyzed on a logarithmic scale. For instance, the spectrogram of C4 has small but nonzero values when all the other notes are played. 

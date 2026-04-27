@@ -317,11 +317,12 @@ Both the least squares and the MLE reconstruction are computed in parallel acros
 
 ### Undersampled reconstruction
 
-```{margin}
-It is possible to interpret the Hadamard transform as a binary equivalent of the Fourier transform and to associate with each pattern a notion of spatial frequency. In this context, the low-frequency patterns are typically crucial for reconstructing the acquired image, while the high-frequency coefficients can help reconstruct finer details but are also more susceptible to noise.
-```
 
 The acquisition of the data matrix $Y$ is performed in parallel along the wavelength dimension, but sequentially along the spatial dimension: Hadamard patterns are loaded onto the DMD one after the other. Each acquisition lasts for a pre-determined time $\Delta t$; the higher $\Delta t$, the more signal is acquired. Therefore, to reduce the total acquisition time, one may either reduce $\Delta t$, which increases the noise level for all acquisitions, or acquire only a subset of the Hadamard patterns. This second choice allows for the acquisition of the most important patterns with a good signal-to-noise ratio. However, the reconstruction using the left pseudo-inverse is no longer available.
+
+```{sidebar} Remark
+It is possible to interpret the Hadamard transform as a binary equivalent of the Fourier transform and to associate with each pattern a notion of spatial frequency. In this context, the low-frequency patterns are typically crucial for reconstructing the acquired image, while the high-frequency coefficients can help reconstruct finer details but are also more susceptible to noise.
+```
 
 One may use the right pseudo-inverse instead of the left one, which is known to amount to solving a problem of the form
 
@@ -383,13 +384,14 @@ Again, in this setup, nonnegativity alone is essentially useless, since the subs
 
 [As discussed in the introduction of this section](./intro.md#spectral-mixing-and-unmixing), when considering hyperspectral images, it is reasonable to assume that the spectrum at each pixel is a linear combination of so-called endmembers, which are the spectra of pure materials present in the scene. When there are $r$ different endmembers and $r$ is smaller than the number of pixels $n$ and the number of spectral bands $p$, a simple but powerful model to represent the hyperspectral image is NMF,
 
-```{margin}
-The notations $U$ and $V$ are used to avoid confusion with the Hadamard matrix $H$ and the observation matrix $A$. 
-```
 
 $$ X = UV^T, $$
 
 where the nonnegative matrix $V\in\mathbb{R}_+^{p\times r}$ contains the endmembers columnwise, and the nonnegative matrix $U\in\mathbb{R}_+^{n\times r}$ contains the abundance maps, that is, the proportion of each material at each pixel. Because the illumination of the scene is not homogeneous spatially, and spectra may vary depending on other physical parameters such as the geometry of the scene, we refrain from assuming that the abundances sum to one pixelwise, but we assume that they are bounded by one elementwise.
+
+```{sidebar} Remark
+The notations $U$ and $V$ are used to avoid confusion with the Hadamard matrix $H$ and the observation matrix $A$. 
+```
 
 In preliminary works, we have assumed that the endmembers $V$ are known. The acquisition model then becomes
 

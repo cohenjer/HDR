@@ -13,17 +13,21 @@ kernelspec:
 
 # Alternating optimization
 
-```{margin}
-
-We assume the cost function $f$ is nonnegative for simplicity and coherence with the rest of the manuscript. However it is sufficient to assume that $f$ is lower-bounded so that coercivity and continuity imply the existence of a minimizer.
-
-```
 
 Many estimation problems considered in the manuscript rely on solving an optimization problem that involves $d$ different blocks, of the form
 
 $$ \argmin{x_1\in\mathcal{X}_1,~\ldots~,x_d\in\mathcal{X}_d} f(x_1,x_2,\ldots,x_d) $$
 
-where $f:\mathcal{X}_1\times \ldots \times \mathcal{X}_{d} \mapsto \mathbb{R}_+$ is a nonnegative cost function and $\mathcal{X}_k$ are Euclidean spaces embedded in $\mathbb{R}^{n_k}$. Indeed, LRA models are multifactor: each block $x_k$ may represent a factor matrix in a low-rank model. For instance, solving a rank $r$ approximate NMF problem in the presence of Gaussian noise may result in the following two-block optimization problem
+where $f:\mathcal{X}_1\times \ldots \times \mathcal{X}_{d} \mapsto \mathbb{R}_+$ is a nonnegative cost function and $\mathcal{X}_k$ are Euclidean spaces embedded in $\mathbb{R}^{n_k}$.
+
+
+```{sidebar} Remark
+
+We assume the cost function $f$ is nonnegative for simplicity and coherence with the rest of the manuscript. However it is sufficient to assume that $f$ is lower-bounded so that coercivity and continuity imply the existence of a minimizer.
+
+```
+
+Indeed, LRA models are multifactor: each block $x_k$ may represent a factor matrix in a low-rank model. For instance, solving a rank $r$ approximate NMF problem in the presence of Gaussian noise may result in the following two-block optimization problem
 
 $$ \argmin{X_1\in \mathbb{R}_+^{n_1\times r},~X_2\in \mathbb{R}_+^{n_2\times r}} \|Y - X_1X_2^T \|_F^2 $$
 
@@ -40,13 +44,6 @@ This section collects useful assumptions for the convergence results of AO and B
 
 
 Here is a list of the assumptions required for proving the convergence of AO and BCD:
-```{margin}
-A few remarks on these assumptions:
- - Block Lischitz-smoothness (A9) does not imply global Lipschitz-smoothness (A8) for nonconvex functions.
- - Boundness of the level sets of the cost is implied, for instance, by coercivity. This property is not trivially satisfied for LRA models, see [](#about-compact-sets-and-lra).
- - Continuity over the definition domain (A5) implies lower-semicontinuity only when the domain is closed.
-```
-
 - (A0): $f$ can be splitted as $ f(x) = f_0(x) + \sum_{k=1}^{d} r_k(x_k)$. 
 - (A1): $\mathcal{X}_k$ are closed convex sets.
 - (A2): $f$ has bounded level sets $I_f(z)=\{x | f(x) \leq z\}$.
@@ -65,6 +62,8 @@ A few remarks on these assumptions:
 
 We use the notation (A9)($f$) to denote, for instance, assumption (A9) applied on the maps $f$. (A0) and (A4,A7)($f_0$) mean that $f$ can be split as $f_0$ and separable maps $r_k$, and that $f_0$ is convex and differentiable on the interior of its domain. When an assumption, *e.g.*, convexity, applies on a majorant $u$ of $f$, the notation (A4)($u$) is used. Table {ref}`tab:convAO` summarizes the various convergence results for AO and BCD with their assumptions.
 
+
+
 ```{table} List of convergence results
 :name: tab:convAO
 
@@ -80,6 +79,13 @@ We use the notation (A9)($f$) to denote, for instance, assumption (A9) applied o
 | {prf:ref}`th:bsum1`  | (A1) (A3,A10,A14)($f$) (A11,A12(d))($u$)  | BSUM limit points are stationary points  | 
 | {prf:ref}`th:bsum2`  | (A1) (A2,A3,A10,A14)($f$) (A11)($u$)    | BSUM iterates converge to stationary points  | 
 
+```
+
+```{sidebar} Remark
+A few remarks on these assumptions:
+ - Block Lischitz-smoothness (A9) does not imply global Lipschitz-smoothness (A8) for nonconvex functions.
+ - Boundness of the level sets of the cost is implied, for instance, by coercivity. This property is not trivially satisfied for LRA models, see [](#about-compact-sets-and-lra).
+ - Continuity over the definition domain (A5) implies lower-semicontinuity only when the domain is closed.
 ```
 
 This section also relies on the concept of MM, already discussed in the context of EM in [](nnls.md). Providing an overview of MM in this manuscript would be out of scope; the reader is referred to the excellent survey article by Sun, Babu, and Palomar {cite:p}`sunMajorizationMinimizationAlgorithmsSignal2017`.
@@ -135,11 +141,12 @@ where $f_0$ is proper, lower-semicontinuous, and continuously differentiable ove
 
 ### Different flavours of convergence of AO iterates
 
-```{margin}
+Probably the most well-known result on the convergence of AO is due to Dimitry Bertsekas and was published in his book Nonlinear Programming in 1995 {cite:p}`Bertsekas1999Nonlinear`. There have been several iterations of his result, in particular to distinguish between convergence to coordinatewise minima and stationary points. Below is a summary of Bertsekas's result and its variations.
+
+```{sidebar} Remark
 The book has been edited three times, in 1995, 1999, and 2016.
 ```
 
-Probably the most well-known result on the convergence of AO is due to Dimitry Bertsekas and was published in his book Nonlinear Programming in 1995 {cite:p}`Bertsekas1999Nonlinear`. There have been several iterations of his result, in particular to distinguish between convergence to coordinatewise minima and stationary points. Below is a summary of Bertsekas's result and its variations.
 
 
 ```{prf:theorem} Convergence of AO, nonconvex nonsmooth 
@@ -238,11 +245,13 @@ This result requires both blockwise strict quasiconvexity and the differentiabil
 (sec:bcd)=
 ## Block-coordinate descent
 
-```{margin}
+AO is a simple framework for multiblock optimization problems, but its convergence guarantees can be hard to satisfy. In particular, computing the exact block updates and ensuring their uniqueness can be challenging. The convergence rate is also sublinear, and one may hope to find faster alternating algorithms. BCD is another algorithmic framework in which the blocks are updated sequentially (in any order), but each block update may only reduce the cost function value. The next sections introduce BCD frameworks based on the MM principle. 
+
+```{sidebar} Remark
 As for AO, in BCD, the blocks can be visited in any order, provided each block is visited at least once every $K$ iterations for a fixed integer $K$. In particular, each block can be updated several times. If a block is updated many times, a BCD algorithm may approximately behave like an AO algorithm, see the discussion on the practical consequences of this observation in [](#practical-issues).
 ```
 
-AO is a simple framework for multiblock optimization problems, but its convergence guarantees can be hard to satisfy. In particular, computing the exact block updates and ensuring their uniqueness can be challenging. The convergence rate is also sublinear, and one may hope to find faster alternating algorithms. BCD is another algorithmic framework in which the blocks are updated sequentially (in any order), but each block update may only reduce the cost function value. The next sections introduce BCD frameworks based on the MM principle. 
+
 
 ### Successive upper-bound minimization
 The Successive Upper-bound Minimization framework (SUM), proposed by Razaviyayn, Hong, and Luo in 2013 {cite:p}`razaviyaynUnifiedConvergenceAnalysis2013`, is an extension of the MM principle, in which the majorant must be continuous and have the same first-order derivative as the cost at the majoration point in all directions. This requirement is rather weak in practice, as many MM algorithms rely on Taylor expansions to build the majorants, in which case this tangent condition holds.
@@ -267,15 +276,17 @@ A typical use of the SUM framework is when the cost decomposes as $f(x) = f_0(x)
 
 ### The block successive upper-bound minimization framework
 
-```{margin}
+
+The extension of SUM to a multiblock function is called Block SUM (BSUM) and is a generic framework that encompasses many other BCD algorithms, such as PALM {cite:p}`bolte2014proximal`, under the hypothesis that the cost admits directional derivatives. BSUM is exactly the application of SUM sequentially over all blocks, in any order.
+
+
+```{sidebar} Remark
 While PALM is arguably more well-known in the French numerical optimization community, in my opinion, it offers little more than the BSUM framework. BSUM is more general than PALM. When the majorants in BSUM are blockwise second-order isotropic Taylor expansions of the differentiable part of the blockwise Lipschitz-smooth cost, BSUM is exactly PALM. The convergence guarantees of BSUM to coordinatewise minima (and to stationary points under regularity assumptions) hold, since the majorants are strongly convex and the updates have unique solutions. PALM leverages the Kurdyka-Łojasiewicz property and assumes a splitting as continuously differentiable plus separable nonsmooth terms to guarantee convergence towards a critical point without directional derivability or regularity assumptions. The proof techniques in SUM and BSUM are also arguably simpler than in PALM; these frameworks are thus more amenable to an introductory course on alternating optimization techniques.
 ```
 
-The extension of SUM to a multiblock function is called Block SUM (BSUM) and is a generic framework that encompasses many other BCD algorithms, such as PALM {cite:p}`bolte2014proximal`, under the hypothesis that the cost admits directional derivatives. BSUM is exactly the application of SUM sequentially over all blocks, in any order. Compared to SUM, BSUM requires additional assumptions for convergence, which come in two flavors. First, one may assume that the majorants are quasiconvex and that the block updates have unique solutions.
+Compared to SUM, BSUM requires additional assumptions for convergence, which come in two flavors. First, one may assume that the majorants are quasiconvex and that the block updates have unique solutions.
 
-```{margin}
-Regular in this context means that the Fermat rule implies stationarity.
-```
+
 
 ```{prf:theorem} Convergence of BSUM, quasiconvex nonsmooth
 :label: th:bsum1
@@ -288,12 +299,11 @@ Then every limit point of the BSUM iterates is a coordinatewise minimum. If, fur
 From {cite:p}`razaviyaynUnifiedConvergenceAnalysis2013`.
 ```
 
-A second version of this convergence result avoids the quasiconvexity assumption and shows convergence of the iterates, rather than of their limit points, towards the set of stationary points. It relies on the compacity of the level set $I_f(x^{(0)})= \{x| f(x)\leq f(x^{(0)}) \}$ where $x^{(0)}$ is the initialization of the BSUM iterates.
-
-```{margin}
-The original work of Razaviyayn states that the level sets must be compact, but the continuity of $f$ implies that they are closed. Hence, compactness here requires only that the level sets be bounded.
-
+```{sidebar} Remark
+Regular in this context means that the Fermat rule implies stationarity.
 ```
+
+A second version of this convergence result avoids the quasiconvexity assumption and shows convergence of the iterates, rather than of their limit points, towards the set of stationary points. It relies on the compacity of the level set $I_f(x^{(0)})= \{x| f(x)\leq f(x^{(0)}) \}$ where $x^{(0)}$ is the initialization of the BSUM iterates.
 
 
 ```{prf:theorem} Convergence of BSUM, nonconvex nonsmooth
@@ -307,6 +317,12 @@ Then the BSUM iterates converge to the set of stationary points.
 
 From {cite:p}`razaviyaynUnifiedConvergenceAnalysis2013`.
 ```
+
+```{sidebar} Remark
+The original work of Razaviyayn states that the level sets must be compact, but the continuity of $f$ implies that they are closed. Hence, compactness here requires only that the level sets be bounded.
+
+```
+
 
 It is important to note that, as with AO, the BSUM framework assumes that the constraint sets are disjoint. In particular, BSUM cannot handle linear couplings between blocks of variables, and in fact, BSUM, like AO, is bound to fail in this setup.
 
@@ -426,13 +442,15 @@ plt.grid()
 plt.show()
 ```
 
-```{margin}
-We could also solve the NNLS problems exactly using AS instead of HALS, but the runtime would be even slower due to the sequential processing of the rows of matrices $W$ and $H$.
-```
+
 
 We may observe that:
 - Setting a large number of inner iterations leads to lower reconstruction error per outer iteration.
 - With respect to time, however, for a data matrix of size $2000$ by $50$, using one to five inner iterations leads to faster runtime to reach a high precision.
+
+```{sidebar} Remark
+We could also solve the NNLS problems exactly using AS instead of HALS, but the runtime would be even slower due to the sequential processing of the rows of matrices $W$ and $H$.
+```
 
 In this example, therefore, AO is a better strategy than BCD per outer iteration. We can only implement approximate AO, and its iterations are costly (solving the NNLS problem exactly requires many inner iterations of HALS); therefore, BCD should be used instead.
 

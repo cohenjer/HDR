@@ -14,7 +14,7 @@ kernelspec:
 
 The primary focus of my research over the past decade has been on rLRA. rLRA is a discipline at the intersection of inverse problems, statistics, numerical optimization, and machine learning, with diverse applications such as music information retrieval and spectral imaging that require specialized expertise. While I have always enjoyed embracing the diversity of the mathematical tools required to make contributions to rLRA, in the coming years, I want to focus especially on numerical optimization, with potential contributions beyond rLRA. I enjoy the idea that, in numerical optimization, there is often a clear problem-solving objective, such as cost minimization or speed maximization, that allows us to compare methods. I also enjoy the mathematical framework of both smooth and discrete optimization problems and algorithms. Numerical optimization provides an opinionated view of the world, as many tasks can be expressed in this framework. On the mathematical side, theoretical results and proofs are both intuitive and rigorously enunciated.
 
-%```{margin}
+%```{sidebar} Remark
 %KARP-COI stands for Kullback-Leibler divergence And Regularized inverse Problems Call for faster OptimIzation algorithms.
 %```
 
@@ -48,11 +48,13 @@ Our challenge is twofold. First, to optimize the design of algorithms for NN-KL 
 ### Positioning with respect to the state of the art
 MU, or ML-EM in computational imaging, remains the historical baseline for KL-based problems. MU is simple to implement and uses second-order information via preconditioning. It is a baseline that can be slow, unstable for sparse data, and difficult to adapt with regularizations. However, it is not so easily beaten, especially in the context of NMF-KL {cite:p}`hienAlgorithmsNonnegativeMatrix2021a`. MU has a wide number of variants, some of which have been developed in the computational imaging community and involve block-coordinate updates {cite:p}`fesslerPenalizedMaximumLikelihoodImage1995,greenUseEmAlgorithm1990,erdoganOrderedSubsetsAlgorithms1999`, while others come from the signal processing community and focus, for instance, on all-at-once updates for wider classes of loss functions {cite:p}`marminJointMajorizationMinimizationNonnegative2023a` or high-order tensor decompositions {cite:p}`hoodNearUniversalMultiplicativeUpdates2026`. Most algorithms for NN-KL and NMF-KL, including MU, fall within the majorization-minimization framework, where the cost is globally majorized by a simpler function, often separable with respect to each parameter, and the majorant is then minimized efficiently. I will use local approximations that do not fall within the majorization-minimization framework.
 
-```{margin}
-The topic of linking MU and mirror descent is under active research within the TOMORADIO team.
-```
 
 Classical constrained formulations lack a general framework for KL-based problems. MU can be applied, after non-trivial modifications, for a limited set of priors such as $\ell_p$ norms and TV regularization. Data-driven approaches (Plug-and-Play, Unrolled NMF) are promising for achieving state-of-the-art performance while ensuring model interpretability, yet their KL-based theoretical grounding is weak. In particular, PnP algorithms for KL-divergence rely on a loose Bregman divergence, Burg’s entropy, resulting in poor convergence speed {cite:p}`bauschkeDescentLemmaLipschitz2017,huraultConvergentBregmanPlugandPlay2023b`. Burg's entropy is used in proximal mirror descent to build a global majorant of the cost, but it can be observed on the following simple synthetic example that MU is typically much faster than Burg's entropy. Damien Lesens has also shown, in a personnal communication, that the majorant of MU is optimal within the set of separable majorants and is therefore always better than the majorant relying on Burg's entropy. The reason why Burg's entropy is used despite its loose majoration of the KL-divergence is that it is unclear how to relate the majorant leading to MU or other existing faster algorithms with proximal mirror gradient descent, and therefore obtain a clean setup for non-Euclidean data-driven algorithms. I hypothesize that such links can be obtained, and that other frameworks than mirror gradient descent may be used for convergent data-driven non-Euclidean algorithms.
+
+
+```{sidebar} Remark
+The topic of linking MU and mirror descent is under active research within the TOMORADIO team.
+```
 
 ```{code-cell}ipython3
 from matplotlib.pylab import f

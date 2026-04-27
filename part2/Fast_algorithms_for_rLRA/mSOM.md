@@ -23,15 +23,16 @@ In [](../../part1/nnls.md), various equivalent formulations of MU have been disc
 
 Consider the optimization problem
 
-```{margin}
-We typically work with convex sets for which the projection is easy and cheap to compute.
-```
-
 $$
  \argmin{x\in\mathcal{C}} f(x)
 $$
 
 where $f:\mathbb{R}^{n} \mapsto \mathbb{R}_+$ is twice-differentiable, and $\mathcal{C}$ is a convex set. We also require that the Hessian matrix $\nabla^2 f(x)$ is nonnegative elementwise.
+
+
+```{sidebar} Remark
+We typically work with convex sets for which the projection is easy and cheap to compute.
+```
 
 Since $f$ is twice differentiable, we may consider its truncated Taylor expansion for two vectors $x,y$ in $\mathbb{R}^{n}$:
 
@@ -49,11 +50,13 @@ $$
 
 while with constraints, the miniminization of $\phi$ has no closed form expression. In the particular case where $\mathcal{C}$ is the nonnegative orthant, minimizing the second-order approximation $\phi$ amounts to solving a NNLS problem.
 
-```{margin}
+Therefore, significant efforts have been made towards designing simpler algorithms than Newton's method that still utilise second-order information to some extent. Among others, Gauss-Newton, Levenberg-Marquardt, and LBFGS are popular methods.
+
+```{sidebar} Remark
 More can be read about Newton and quasi-Newton algorithms in {cite:p}`Bertsekas1999Nonlinear`.
 ```
 
-Therefore, significant efforts have been made towards designing simpler algorithms than Newton's method that still utilise second-order information to some extent. Among others, Gauss-Newton, Levenberg-Marquardt, and LBFGS are popular methods. Maybe the simplest way to change the quadratic estimation of the cost function is to replace the Hessian matrix by a diagonal matrix $A(x)$,
+Maybe the simplest way to change the quadratic estimation of the cost function is to replace the Hessian matrix by a diagonal matrix $A(x)$,
 
 $$
     \psi_x(y) = f(x) + \langle \nabla f(x), y-x \rangle + \frac{1}{2}\langle A(x) (y-x), y-x \rangle.
@@ -77,20 +80,16 @@ $$
 A_u(x) = \text{Diag}\left(\frac{\nabla^2 f(x) u}{u}\right)
 $$
 
-```{margin}
+is a majorant of the Hessian, namely $A_u(x) - \nabla^2 f$ is positive semi-definite. The proof is straightforward and can be found in {cite:p}`phamSecondOrderMajorantAlgorithm2025`. If matrix $A(x)$ is a majorant of the Hessian, we obtain a majorization minimization algorithm as long as $f$ is a quadratic function, because the truncated second-order Taylor expansion is exact. When $f$ is not quadratic, the proposed procedure, which, as far as we know, has not been explored in the optimization literature (at least for computing NMF), is coined Second-Order Majorant (SOM), because we minimize a majorant of a separable second-order approximation of the cost function. 
+
+```{sidebar} Remark
 For a quadratic loss function $f$, the SOM algorithm is guaranteed to converge since each iteration decreases the cost. However, this form of convergence is very weak: we only know that the values of the cost function will stagnate asymptotically, but the estimated minimizer need not be the true minimizer. This result can be refined with the [SUM framework](../../part1/AlternatingOptimization.md) {cite:p}`razaviyaynUnifiedConvergenceAnalysis2013`. Moreover, the convergence rate of SOM in the general case is unknown. In our work, we prove linear convergence of the iterates for the specific problem of NMF with beta-divergence loss. 
 ```
 
-is a majorant of the Hessian, namely $A_u(x) - \nabla^2 f$ is positive semi-definite. The proof is straightforward and can be found in {cite:p}`phamSecondOrderMajorantAlgorithm2025`. If matrix $A(x)$ is a majorant of the Hessian, we obtain a majorization minimization algorithm as long as $f$ is a quadratic function, because the truncated second-order Taylor expansion is exact. When $f$ is not quadratic, the proposed procedure, which, as far as we know, has not been explored in the optimization literature (at least for computing NMF), is coined Second-Order Majorant (SOM), because we minimize a majorant of a separable second-order approximation of the cost function. 
 
 
 ## mSOM: choosing an optimal majorant to the quadratic approximation of $f$
 
-```{margin}
-
-Another interesting choice of criterion is the min-max over the diagonal elements of the preconditioner. We show in this work that this is equivalent to Gradient Descent with an optimal stepsize.
-
-```
 
 The core idea in the joint work with Mai Quyen Pham and Thierry Chonavel {cite:p}`phamSecondOrderMajorantAlgorithm2025` is to select a vector $u$ so that $A_u(x)$ is as small as possible. This amounts to choosing the inverse of the gradient stepsizes as small as possible. We discuss several possible metrics to measure the magnitude of $A_u(x)$, but one design choice that leads to a closed-form expression is to minimize the median values in $A_u(x)$, namely
 
@@ -98,9 +97,12 @@ $$
     u_{mSOM} = \argmin{u>0}\| \frac{\nabla^2 f(x) u}{u} \|_1.
 $$
 
-```{margin}
-Nonnegativity of the Hessian of the cost at any point is a strong assumption in general, but is satisfied in problems of interest to this manuscript, *e.g.*, for NMF with beta-divergence loss. 
+```{sidebar} Remark
+
+Another interesting choice of criterion is the min-max over the diagonal elements of the preconditioner. We show in this work that this is equivalent to Gradient Descent with an optimal stepsize.
+
 ```
+
 
 It can be shown that when $\nabla^2 f(x)$ is nonnegative, the solution is in fact trivial:
 
@@ -113,6 +115,10 @@ and the resulting algorithm is given by
 $$
     x^{(k+1)} = \argmin{y\in\mathcal{C}} \sum_{i=1}^{n} \nabla f(x)[i] y[i] + \frac{(y[i]-x[i])^2}{\sum_{j}\nabla^2f(x)[i,j]}.
 $$
+
+```{sidebar} Remark
+Nonnegativity of the Hessian of the cost at any point is a strong assumption in general, but is satisfied in problems of interest to this manuscript, *e.g.*, for NMF with beta-divergence loss. 
+```
 
 In many particular cases, such as nonnegativity constraints, this update further simplifies to
 

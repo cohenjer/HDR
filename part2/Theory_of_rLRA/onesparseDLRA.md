@@ -104,9 +104,6 @@ There are at least two questions of interest regarding one-sparse DLRA:
 
 We first answer the identifiability question positively under mild conditions on the dictionary.
 
-```{margin}
-Recall that $\text{spark}(D)$ is the minimum integer $k$ such that at least one subset of $k$ columns of matrix $D$ is rank-defficient.
-```
 
 ```{prf:theorem}
 :label: onesparse_identif
@@ -116,13 +113,17 @@ Let $Y$ be a real $m\times n$ matrix of rank $r$, and let $D$ be a real $m\times
 See {cite:p}`cohenDictionarybasedTensorCanonical2018` for the proof.
 ```
 
+```{sidebar} Remark
+Recall that $\text{spark}(D)$ is the minimum integer $k$ such that at least one subset of $k$ columns of matrix $D$ is rank-defficient.
+```
+
 In other words, for a well-built dictionary with incoherent atoms, the dictionary constraint leads to uniqueness of the matrix factorization problem.
 
 ## A simple heuristic for one-sparse DLRA
 
 Designing an optimization algorithm with performance guarantees for one-sparse DLRA is not straightforward since one-sparse DLRA is a generalization of sparse coding (sparse coding is recovered when $n=1$). While we can consider convex relaxations for the sparsity constraints, empirically, we found that a heuristic based on ALS works rather well. In what follows, we introduce this heuristic, which we coin Maximum Correlation ALS (MC-ALS), and showcase its performance in spectral unmixing. However, we defer the formal analysis of MC-ALS performance to the [k-sparse DLRA problem](./MixedSparseCoding.md).
 
-```{margin}
+```{sidebar} Remark
 The original name of MC-ALS in {cite:p}`cohenDictionarybasedTensorCanonical2018` was Matching Pursuit ALS, which is somewhat misleading, since it involves only one Matching Pursuit iteration and the overall algorithm is not greedy.
 ```
 
@@ -136,7 +137,7 @@ Then given an estimation $\hat{A}$, the closest atom in the dictionary $D$ is co
 
 $$ \mathcal{K}[i] = \argmin{j\leq d} |D[:,j]^T\hat{A}[:,i]|. $$
 
-```{margin}
+```{sidebar} Remark
 This formula assumes that the dictionary has $\ell_2$-norm normalized columns.
 ```
 

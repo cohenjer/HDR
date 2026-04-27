@@ -101,17 +101,20 @@ $$ \underset{\mathcal{K}_i\subset[1,\#S_i]\;\forall i\leq p}{\text{argmax}} \lan
 
 where $\langle A,D\rangle = \text{Tr}(A^TD)$ is the usual scalar product for matrices. This problem can be seen as a linear sum assignment problem, for which efficient solvers are known {cite:p}`Kuhn1955Hungarian`. First, we may assume that all $d_i$ are equal to one, since we can always duplicate any dictionary $D_i$ to handle $d_i>1$. When $d_i=1$ for all $i\leq p$, for each dictionary $D_i$, only one atom can be selected. It is therefore natural to define a distance between a column $j$ of matrix $A$ and the whole dictionary $D_i$, here stored in a matrix $C\in\mathbb{R}^{p\times r}$
 
-```{margin}
-We used here the fact that minimization over all $\mathcal{K}_i$ can be decomposed in two steps: minimization over $\mathcal{K}_i$ for a single $i$ and each column of $A$, yielding the $i$th row of cost matrix $C$, then minimization over all $i\leq p$ and all columns of $A$, which is done by the linear sum assignement solver (typically dedicated linear program solvers such as the Hungarian algorithm).
-```
 
-$$ C[i,j] = \max_{l\leq \#S_i} \langle A[:,j], D_i[:,l]\rangle $$
+$$ C[i,j] = \max_{l\leq \#S_i} \langle A[:,j], D_i[:,l]\rangle. $$
+
 
 Then the problem of finding pure pixels with the precomputed matrix $A$ boils down to solving
 
 $$ \underset{\Pi\in\mathcal{P}(p,r)}{\text{argmax}} \langle A, C\Pi \rangle $$
 
 where $\mathcal{P}(p,r)$ is the set of surjective permutations from $[1,p]$ to $[1,r]$. This is a classical formulation of the linear sum assignment problem (with $p$ possibly larger than $r$).
+
+
+```{sidebar} Remark
+We used here the fact that minimization over all $\mathcal{K}_i$ can be decomposed in two steps: minimization over $\mathcal{K}_i$ for a single $i$ and each column of $A$, yielding the $i$th row of cost matrix $C$, then minimization over all $i\leq p$ and all columns of $A$, which is done by the linear sum assignement solver (typically dedicated linear program solvers such as the Hungarian algorithm).
+```
 
 ```{note}
 Building on top of the above derivation, we may in fact use any reasonable distance between atoms in dictionaries $D_{i}$ and columns of $A$ to compute a cost matrix $C$, such as the Spectral Angular Mapper {cite:p}`boardman1993spectral,kruseSpectralImageProcessing1993`. The MC-ALS is a heuristic; in particular, the choice of this distance need not be driven by the noise model for the data $Y$.
