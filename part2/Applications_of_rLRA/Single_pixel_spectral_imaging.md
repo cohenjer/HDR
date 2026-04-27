@@ -101,7 +101,7 @@ There are, therefore, ample research avenues for improving upon the (nonnegative
 
 A practical solution for implementing the Hadamard patterns on the DMD is to acquire the positive and negative parts sequentially and concatenate the measurements into a single vector. If the image has $n$ pixels and $n$ Hadamard patterns to be acquired, the number of measurements is then $m:=2n-1$ (one pattern is full of zeros and ignored), and the data vector $y$ has size $m$. Doing so preserves the Poisson distribution. Another usual post-processing method computes the difference of the positive and negative acquisitions, resulting in a simulated Hadamard acquisition, but the noise distribution is modified. Formally, we define 
 
-$$ A = \left[ \begin{array}{c} [H]^+ \\ [H]^- \end{array}\right] $$
+$$ A = \left[ \begin{array}{c} {[H]^+} \\ {[H]^-} \end{array}\right] $$
 
 where $H$ here denotes a Hadamard matrix, and $[x]^- \geq 0$ is the negative part of a vector or matrix $x$. Matrix $[H]^-$ contains a row of zeros that is usually removed. 
 
