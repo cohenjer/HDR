@@ -20,7 +20,7 @@ This section is based partly on a doctoral course I taught at the doctoral schoo
 Nonnegative regression problems are central in nonnegative low-rank approximations. Many LRA algorithms are based on [alternating optimization](./AlternatingOptimization.md), and optimization methods for nonnegative LRA are often heavily inspired by algorithms designed for nonnegative regression. Nonnegative regression is a class of optimization problems defined as
 
 $$
-\argmin{x\geq 0} f(y, Wx)
+\armin{x\geq 0} f(y, Wx)
 $$
 
 where $f(y,z)$ is a nonnegative, separable, convex (with respect to the second variable) loss function comparing two vectors $y\in\mathbb{R}^{m}$ and $z\in\mathbb{R}^{m}$ elementwise, and $W\in\mathbb{R}^{m\times n}$ is an observation matrix. The constraint $x\geq 0$ is meant elementwise. Typically, both the observations $y$ and the matrix $W$ are also elementwise nonnegative. This section introduces two particular nonnegative regression problems, Nonnegative Least Squares (NNLS) and Nonnegative Kullback-Leibler regression (NNKL), that will be of particular interest for the rest of the manuscript.
@@ -34,7 +34,7 @@ NNLS is a classic quadratic optimization problem, maybe one of the simplest gene
 
 NNLS can be formulated as the following optimization problem, with $ f\left(y,Wx\right)= \|y - Wx\|_2^2$:
 
-$$ \text{Find}\; x^\ast\in\argmin{x\geq 0} \|y - Wx\|_2^2.$$
+$$ \text{Find}\; x^\ast\in\armin{x\geq 0} \|y - Wx\|_2^2.$$
 
 In general, the projected unconstained least squares estimate, $\left[W^{\dagger}y\right]^+$, is **not** a solution to NNLS, see [](../part2/Fast_algorithms_for_rLRA/proco-als.md) for more details.
 
@@ -45,7 +45,7 @@ The cost function of NNLS is coercive (with respect to $z$) and continuous and t
 When $W$ has desirable properties such as elementwise nonnegativity, NNLS is equivalent to the orthogonal projection of the input vector $y$ on a pointed cone. Indeed, defining $\cp{W} = \{Wx, x\geq 0\}$, we see that $\cp{W}$ is always a cone. Let $Wx_1,Wx_2\in \cp{W}$, for any nonnegative weights $\lambda_1$ and $\lambda_2$, it holds that  $\lambda_1 Wx_1 + \lambda_2Wx_2 = W (\lambda_1 x_1 + \lambda_2 x_2)$ is in $\cp{W}$. NNLS finds the closest vector $z$ to the input $y$ in $\cp{W}$,
 
 $$
-\argmin{z=Wx,\; x\geq 0} \|y - z\|_2^2,
+\armin{z=Wx,\; x\geq 0} \|y - z\|_2^2,
 $$
 
 which is exactly the orthogonal projection on $\cp{W}$. Depending on the matrix $W$, the cone $\cp{W}$ can either be the whole search space $\mathbb{R}^m$, or a pointed cone. The latter is the commonly encountered case in nonnegative LRA problems, in particular when the matrix $W$ is elementwise nonnegative. Below is an illustration in dimensions $m=n=3$.
@@ -137,7 +137,7 @@ $$
 see [below](#as-an-em-algorithm) for the estimator derivation. The nonnegative regression problem with KL-divergence as a loss function, that is coined NNKL in this manuscript, is the optimization problem
 
 $$ 
-\text{Find } x \in \argmin{x\in\mathbb{R}^{n}_+} \sum_i \KL{y[i], W[i,:]x}
+\text{Find } x \in \armin{x\in\mathbb{R}^{n}_+} \sum_i \KL{y[i], W[i,:]x}
 $$
 
 where we have set $ f\left(y,Wx\right) = \sum_i \KL{y[i],W[i,:]x}$. Below are two interactive plots showing the graph of KL-divergence in 1D and 2D.
@@ -323,7 +323,7 @@ This rule is similar to the projection on the cone $\cp{W}$ found in the KKT con
 A last but important observation on NNKL is that the solution $Wx^\ast$ must satisfy a simple scaling condition. Indeed, consider the optimal scaling problem
 
 $$
-\argmin{\lambda\geq 0} \KL{y,\lambda Wx} = -\log(\lambda)\sum_{i=1}^{m}y[i] + \lambda \sum_{i=1}^{m}W[i,:]x + \text{cst}(\lambda)
+\armin{\lambda\geq 0} \KL{y,\lambda Wx} = -\log(\lambda)\sum_{i=1}^{m}y[i] + \lambda \sum_{i=1}^{m}W[i,:]x + \text{cst}(\lambda)
 $$
 
 Supposing the unconstrained solution can be positive, the Fermat rule from the KKT conditions gives
@@ -462,7 +462,7 @@ An illustrated example of AS solving a three-dimensional NNLS problem.
 Assuming the current support of $x$ is not $[1,..,n]$, the selection step finds a "reasonable" index of an entry of $x$ to add to the current estimation of the optimal support. A locally optimal choice is to select the index of the column of $W$ most correlated with the residual $r = y-Wx$ at the current iteration,
 
 $$
-S \leftarrow S\cup {j} \; \; \text{where} \;\; j = \argmax{i\notin S} \langle W[:,i], r\rangle.
+S \leftarrow S\cup {j} \; \; \text{where} \;\; j = \armax{i\notin S} \langle W[:,i], r\rangle.
 $$
 
 The local optimality is meant in the following sense: the scalar product $ \langle W[:,i], r\rangle $ is proportional to the orthogonal projection $\Pi_{W[:,i]}(r)$ of the residual on the line spanned by vector $W[:,i]$:
@@ -496,7 +496,7 @@ Then the algorithm loops back to step 2. An important remark is that for each su
 The AS algorithm is the workhorse method for efficiently solving NNLS when the data are a one-dimensional vector. However, it is not well-suited for batch computations when solving the matrix NNLS problem of the form
 
 $$
-\argmin{H\geq 0} \|Y - WH^T\|_F^2 = \argmin{H\geq 0} \sum_{i\leq n} \|Y[:,i] - WH^T[:,i]\|_2^2.
+\armin{H\geq 0} \|Y - WH^T\|_F^2 = \armin{H\geq 0} \sum_{i\leq n} \|Y[:,i] - WH^T[:,i]\|_2^2.
 $$
 
 Indeed, the AS algorithm would search for the optimal support of each column of the unknown matrix $H^T$. These supports can all be different. The costly operation in AS is solving the least squares systems restricted to the current support estimate, and for matrix NNLS, these operations must be performed independently for each column. The fast AS algorithm {cite:p}`Bro1997fast` improves on this issue by precomputing the grammians $W^TW$ and $W^TY$ in the case where $W$ is a tall matrix.
@@ -504,7 +504,7 @@ Indeed, the AS algorithm would search for the optimal support of each column of 
 For matrix NNLS, it is, however, useful to design an algorithm that can update all columns $H^T[:,i]$ simultaneously. This is the rationale behind the HALS algorithm. HALS updates each row of matrix $H$ sequentially, and this update is known in closed form. Indeed, notice that for any nonzero vector $a\in\mathbb{R}^{m}$ and any matrix $Z\in\mathbb{R}^{m\times n}$,
 
 $$
-   \argmin{h\in\mathbb{R}_+^{n}} \|Z - ah^T  \|^2_2 = \left[\frac{a^TZ}{\|a\|_2^2} \right]^+.
+   \armin{h\in\mathbb{R}_+^{n}} \|Z - ah^T  \|^2_2 = \left[\frac{a^TZ}{\|a\|_2^2} \right]^+.
 $$ (eq:HALS_trick)
 
 Indeed, this loss function is separable into $n$ scalar problems
@@ -742,7 +742,7 @@ $$
 The MLE in this setting finds the parameters $x$ that maximize (minimize) the (negative) log-probability of the observations $y$,
 
 $$
-\argmin{x\in\mathbb{R}^{n}} - \sum_{i\leq m} \log p(Y[i]=y[i] ~|~ x),
+\armin{x\in\mathbb{R}^{n}} - \sum_{i\leq m} \log p(Y[i]=y[i] ~|~ x),
 $$
 
 where the summation over $i$ is due to the independence of the random variables in $Y$. For the Poisson distribution, one may observe that the log-likelihood is the KL-divergence up to constant terms with respect to $x$:
@@ -929,7 +929,7 @@ We have mainly focused in this section on solving nonnegative regression problem
 Consider the rank-one NMF approximation problem in the KL-divergence
 
 $$
-\argmin{w\in\mathbb{R}_+^{m},\; h\in\mathbb{R}_+^{n}} \KL{Y, wh^T}.
+\armin{w\in\mathbb{R}_+^{m},\; h\in\mathbb{R}_+^{n}} \KL{Y, wh^T}.
 $$
 
 The [optimal scaling condition](#optimal-scaling) imposes that
@@ -955,7 +955,7 @@ $$
 and that the Sinkhorn algorithm can be used to solve the optimization problem
 
 $$
-\argmin{w\in\mathbb{R}_+^{m},\; h\in\mathbb{R}_+^{n}} \KL{Y, \text{diag}(w) X \text{diag}(h)},
+\armin{w\in\mathbb{R}_+^{m},\; h\in\mathbb{R}_+^{n}} \KL{Y, \text{diag}(w) X \text{diag}(h)},
 $$
 
 that is, scaling a matrix $X$ to have the same marginals as another given matrix $Y$. In general, this problem has no closed-form solution.
@@ -965,7 +965,7 @@ that is, scaling a matrix $X$ to have the same marginals as another given matrix
 Computing the best rank-one approximation in the Frobenius norm, that is, solving
 
 $$
-\argmin{w\in\mathbb{R}_+^{m},\; h\in\mathbb{R}_+^{n}} \|Y -  wh^T\|_F^2
+\armin{w\in\mathbb{R}_+^{m},\; h\in\mathbb{R}_+^{n}} \|Y -  wh^T\|_F^2
 $$
 
 in general is NP-hard {cite:p}`gillisContinuousCharacterizationMaximumedge2014`. However, for nonnegative data $Y\in\mathbb{R}_+^{m\times n}$, the solution can be computed efficiently (in particular, in polynomial time) using a rank-one Singular Value Decomposition. Indeed, for positive matrices, the Perron-Frobenius theorem guarantees that the first singular vectors and the first singular value are always positive. If the data has zero entries, the Perron-Frobenius theorem does not hold in general, but it has been shown that the solution can still be obtained using the absolute values of the first components. Indeed, following {cite:p}`gillisNonnegativeMatrixFactorization2020`:

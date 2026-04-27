@@ -24,7 +24,7 @@ In [](../../part1/nnls.md), various equivalent formulations of MU have been disc
 Consider the optimization problem
 
 $$
- \argmin{x\in\mathcal{C}} f(x)
+ \armin{x\in\mathcal{C}} f(x)
 $$
 
 where $f:\mathbb{R}^{n} \mapsto \mathbb{R}_+$ is twice-differentiable, and $\mathcal{C}$ is a convex set. We also require that the Hessian matrix $\nabla^2 f(x)$ is nonnegative elementwise.
@@ -45,7 +45,7 @@ and $\phi_x(y) \approx f(x)$ when vectors $y$ and $x$ are close.
 The traditional approach to second-order iterative algorithms, and in particular the Newton method, is, at iteration index $k$, to minimize $\phi_{x^{(k)}}(y)$, denote $x^{(k+1)}$ the minimizer, and repeat this procedure until convergence {cite:p}`Bertsekas1999Nonlinear`. While the Newton algorithm features super-linear convergence near a stationary point of $f$, each iteration is computationally expensive. Moreover, Newton's method typically does not account for nonsmooth constraints. Indeed, without constraints,
 
 $$
- \argmin{y\in\mathbb{R}^m} \phi_x(y) = x - [\nabla^2f(x)]^{-1} \nabla f(x),
+ \armin{y\in\mathbb{R}^m} \phi_x(y) = x - [\nabla^2f(x)]^{-1} \nabla f(x),
 $$
 
 while with constraints, the miniminization of $\phi$ has no closed form expression. In the particular case where $\mathcal{C}$ is the nonnegative orthant, minimizing the second-order approximation $\phi$ amounts to solving a NNLS problem.
@@ -65,7 +65,7 @@ $$
 The quadratic function $\psi_x$ is separable, therefore finding the minimum of $\psi_x$ is cheap even under the presence of constraints:
 
 $$
- \argmin{y\in\mathcal{C}} \psi_x(y) = \argmin{y\in\mathcal{C}} \sum_{i=1}^{n} \nabla f(x)[i] y[i] + \frac{1}{2} A[i,i] (y[i]-x[i])^2
+ \armin{y\in\mathcal{C}} \psi_x(y) = \armin{y\in\mathcal{C}} \sum_{i=1}^{n} \nabla f(x)[i] y[i] + \frac{1}{2} A[i,i] (y[i]-x[i])^2
 $$
 
 where $\Pi_{\mathcal{C}}$ denotes the projection on the convex set $\mathcal{C}$. For many constraint sets, including nonnegativity and cardinality constraints (more generally, for any separable prior, stable by elementwise nonnegative scaling), the solution is given in closed form as
@@ -94,7 +94,7 @@ For a quadratic loss function $f$, the SOM algorithm is guaranteed to converge s
 The core idea in the joint work with Mai Quyen Pham and Thierry Chonavel {cite:p}`phamSecondOrderMajorantAlgorithm2025` is to select a vector $u$ so that $A_u(x)$ is as small as possible. This amounts to choosing the inverse of the gradient stepsizes as small as possible. We discuss several possible metrics to measure the magnitude of $A_u(x)$, but one design choice that leads to a closed-form expression is to minimize the median values in $A_u(x)$, namely
 
 $$
-    u_{mSOM} = \argmin{u>0}\| \frac{\nabla^2 f(x) u}{u} \|_1.
+    u_{mSOM} = \armin{u>0}\| \frac{\nabla^2 f(x) u}{u} \|_1.
 $$
 
 ```{sidebar} Remark
@@ -113,7 +113,7 @@ $$
 and the resulting algorithm is given by
 
 $$
-    x^{(k+1)} = \argmin{y\in\mathcal{C}} \sum_{i=1}^{n} \nabla f(x)[i] y[i] + \frac{(y[i]-x[i])^2}{\sum_{j}\nabla^2f(x)[i,j]}.
+    x^{(k+1)} = \armin{y\in\mathcal{C}} \sum_{i=1}^{n} \nabla f(x)[i] y[i] + \frac{(y[i]-x[i])^2}{\sum_{j}\nabla^2f(x)[i,j]}.
 $$
 
 ```{sidebar} Remark
@@ -246,7 +246,7 @@ $$
 
 ## Alternating mSOM for NMF
 
-Equipped with the mSOM solver for nonnegative convex problems, one may factorize NMF using an alternating optimization strategy, with mSOM as the inner solver. The following code implements the resulting Alternating mSOM (AmSOM) for NMF with the Frobenius loss and compares it with Alternating MU (AMU) and Alternating Projected Gradient Descent (APGD) on a toy synthetic dataset. The AmSOM updates rules for this problem formalized as $\argmin{W,H\geq \epsilon} \|Y-WH^T\|_F^2$ are
+Equipped with the mSOM solver for nonnegative convex problems, one may factorize NMF using an alternating optimization strategy, with mSOM as the inner solver. The following code implements the resulting Alternating mSOM (AmSOM) for NMF with the Frobenius loss and compares it with Alternating MU (AMU) and Alternating Projected Gradient Descent (APGD) on a toy synthetic dataset. The AmSOM updates rules for this problem formalized as $\armin{W,H\geq \epsilon} \|Y-WH^T\|_F^2$ are
 
 $$
     H \leftarrow \max\left(H - \gamma\frac{1}{1_{n\times r}W^TW}\left(HW^TW - Y^TW \right) , \epsilon \right), \\

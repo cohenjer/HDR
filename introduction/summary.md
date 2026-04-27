@@ -179,7 +179,7 @@ There have been at least two sources of frustration in my research work so far. 
 
 An optimization problem that I believe is particularly interesting is the so-called NNKL problem described in [](../part1/nnls.md), namely, solving linear regressions under the Kullback-Leibler divergence (KL-divergence) loss. For an input nonnegative data vector $y\in\mathbb{R}_+^{m}$ and a linear observation matrix $A\in\mathbb{R}_+^{m\times n}$, NNKL can be formulated as
 
-$$ \argmin{x\geq 0} \KL{y, Wx},$$
+$$ \armin{x\geq 0} \KL{y, Wx},$$
 where $\KL{y,z} = \sum_{i} y[i]\log(\frac{y[i]}{z[i]}) + z[i] - y[i] $ is the KL-divergence. This optimization problem is quite challenging for at least two reasons:
 - The cost function is not Lipschitz-smooth at zero. Lipschitz-smoothness is a key property of cost functions leveraged in most convergence proofs of first-order methods. In practice, choosing a step-size for first-order methods can be challenging without Lipschitz-smoothness.
 - When $y[i]$ is significantly smaller than $z[i]$, the loss is almost linear (the logarithmic term vanishes). This means that the cost function is not strongly convex, another important property that guarantees the practical speed of first-order methods.

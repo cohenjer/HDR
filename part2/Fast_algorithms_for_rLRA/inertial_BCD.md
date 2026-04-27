@@ -39,25 +39,25 @@ Another work, published almost simultaneously and closely related to ours, propo
 The Heuristic Extrapolation with Restart (HER) framework takes the idea of Nesterov projected gradient but applies it to a full BCD cycle. For simplicity, let us apply the HER framework to a specific model: nonnegative CPD,
 
 $$
-    \argmin{X_i\geq 0} \|\mathcal{T} -  \mathcal{I}_r \times_1 X_1 \times_2 X_2 \times_3 X_3 \|^2_F .
+    \armin{X_i\geq 0} \|\mathcal{T} -  \mathcal{I}_r \times_1 X_1 \times_2 X_2 \times_3 X_3 \|^2_F .
 $$
 
 A vanilla BCD algorithm for nCPD is ANLS, using a generic NNLS solver, which writes as follows for the $k$-th iteration:
 
 $$
-    X^{k+1}_{1} &= \argmin{X_1\geq 0} \|T_{[1]} - X_1 \left(X^{k}_2\odot X^{k}_3\right) \|_F^2 \\
-    X^{k+1}_{2} &= \argmin{X_2\geq 0} \|T_{[2]} - X_2 \left(X^{k+1}_1\odot X^{k}_3\right) \|_F^2 \\
-    X^{k+1}_{3} &= \argmin{X_3\geq 0} \|T_{[3]} - X_3 \left(X^{k+1}_1\odot X^{k+1}_2\right) \|_F^2.
+    X^{k+1}_{1} &= \armin{X_1\geq 0} \|T_{[1]} - X_1 \left(X^{k}_2\odot X^{k}_3\right) \|_F^2 \\
+    X^{k+1}_{2} &= \armin{X_2\geq 0} \|T_{[2]} - X_2 \left(X^{k+1}_1\odot X^{k}_3\right) \|_F^2 \\
+    X^{k+1}_{3} &= \armin{X_3\geq 0} \|T_{[3]} - X_3 \left(X^{k+1}_1\odot X^{k+1}_2\right) \|_F^2.
 $$
 
 In contrast, HER-ANLS extrapolates the estimates $X^{k+1}$ based on the NNLS estimation and the previous value, both taken in a pairing sequence $Y^{k}$, as follows:
 
 $$
-    Y^{k+1}_{1} &= \argmin{Y_1\geq 0} \|T_{[1]} - Y_1 \left(X^{k}_2\odot X^{k}_3\right) \|_F^2 \\
+    Y^{k+1}_{1} &= \armin{Y_1\geq 0} \|T_{[1]} - Y_1 \left(X^{k}_2\odot X^{k}_3\right) \|_F^2 \\
     X^{k+1}_{1} &= \max\left( Y^{k+1}_{1} + \beta_k \left( Y^{k+1}_1 - Y^{k}_1 \right), 0\right) \\
-    Y^{k+1}_{2} &= \argmin{Y_2\geq 0} \|T_{[2]} - Y_2 \left(X^{k+1}_1\odot X^{k}_3\right) \|_F^2 \\
+    Y^{k+1}_{2} &= \armin{Y_2\geq 0} \|T_{[2]} - Y_2 \left(X^{k+1}_1\odot X^{k}_3\right) \|_F^2 \\
     X^{k+1}_{2} &= \max\left( Y^{k+1}_{2} + \beta_k \left( Y^{k+1}_2 - Y^{k}_2 \right), 0\right) \\
-    Y^{k+1}_{3} &= \argmin{Y_3\geq 0} \|T_{[3]} - Y_3 \left(X^{k+1}_1\odot X^{k+1}_2\right) \|_F^2 \\
+    Y^{k+1}_{3} &= \armin{Y_3\geq 0} \|T_{[3]} - Y_3 \left(X^{k+1}_1\odot X^{k+1}_2\right) \|_F^2 \\
     X^{k+1}_{3} &= \max\left( Y^{k+1}_{3} + \beta_k \left( Y^{k+1}_3 - Y^{k}_3 \right), 0\right).
 $$
 

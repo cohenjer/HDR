@@ -7,7 +7,7 @@ Despite their widespread use in the signal processing and machine learning commu
 - **Solution characterization**: given a constrained or regularized optimization problem, for instance 
   
     $$
-    \argmin{X_1,X_2} \|M - X_1X_2^T\|_F^2 + g_1(X_1) + g_2(X_2)
+    \armin{X_1,X_2} \|M - X_1X_2^T\|_F^2 + g_1(X_1) + g_2(X_2)
     $$ 
 
     for some regularization functions $g_1$ and $g_2$, what are the properties satisfied by the solutions of this problem? 
@@ -19,7 +19,7 @@ Identifiability of rLRA has received significant attention, in particular for ma
 Solution characterization, on the other hand, has not been considered much in the literature, in particular in contrast to the significant body of work that concerns regularized regression problems such as ridge regression or LASSO {cite:p}`foucart2013introduction`. For instance, it is still unclear whether solutions to a sparse NMF problem
 
 $$
-\argmin{X_1\geq 0,\; X_2\geq 0} \|M - X_1X_2^T\|_F^2 + \mu \left( \|X_1\|_1 + \|X_2\|_1 \right)
+\armin{X_1\geq 0,\; X_2\geq 0} \|M - X_1X_2^T\|_F^2 + \mu \left( \|X_1\|_1 + \|X_2\|_1 \right)
 $$
 
 are indeed sparse or not, and under which conditions. This might be due to the relative difficulty of studying the solutions of these problems. The problem with a single factor admits a closed-form solution via the soft-thresholding operator, whereas the sparse NMF problem with two factors is nonconvex, nonsmooth, and NP-hard. As a first step towards understanding the properties of the solution or rLRA, together with Valentin Leplat, we showed that, for a large class of rLRA problems, explicit regularization, such as $\ell_1$-$\ell_1$, leads to implicit regularization due to the scale-invariance of rLRA models. Our contributions, both on the implicit regularization and its algorithmic implications, are summarized in [](./HRSI_theory.md).
@@ -28,7 +28,7 @@ are indeed sparse or not, and under which conditions. This might be due to the r
 Because rLRA solutions have ambiguous properties, in particular for homogeneous regularization such as the $\ell_1$ norm, I studied, in another line of work, DL and dictionary-based LRA under cardinality constraints. Cardinality constraints impose sparsity explicitly on the solution. I have studied in particular the identifiability and the conception of dedicated algorithms for a class of models that includes the following dictionary-based NMF
 
 $$
-\argmin{X_2\geq 0,\; S\in\{0,1\},\; \|S[:,q]\|_0\leq 1} \|M - DSX_2^T\|_F^2 
+\armin{X_2\geq 0,\; S\in\{0,1\},\; \|S[:,q]\|_0\leq 1} \|M - DSX_2^T\|_F^2 
 $$
 
 where $D$ is a known dictionary of template components. These contributions are summarized in [](./DLRA.md).

@@ -16,7 +16,7 @@ kernelspec:
 
 Many estimation problems considered in the manuscript rely on solving an optimization problem that involves $d$ different blocks, of the form
 
-$$ \argmin{x_1\in\mathcal{X}_1,~\ldots~,x_d\in\mathcal{X}_d} f(x_1,x_2,\ldots,x_d) $$
+$$ \armin{x_1\in\mathcal{X}_1,~\ldots~,x_d\in\mathcal{X}_d} f(x_1,x_2,\ldots,x_d) $$
 
 where $f:\mathcal{X}_1\times \ldots \times \mathcal{X}_{d} \mapsto \mathbb{R}_+$ is a nonnegative cost function and $\mathcal{X}_k$ are Euclidean spaces embedded in $\mathbb{R}^{n_k}$.
 
@@ -29,7 +29,7 @@ We assume the cost function $f$ is nonnegative for simplicity and coherence with
 
 Indeed, LRA models are multifactor: each block $x_k$ may represent a factor matrix in a low-rank model. For instance, solving a rank $r$ approximate NMF problem in the presence of Gaussian noise may result in the following two-block optimization problem
 
-$$ \argmin{X_1\in \mathbb{R}_+^{n_1\times r},~X_2\in \mathbb{R}_+^{n_2\times r}} \|Y - X_1X_2^T \|_F^2 $$
+$$ \armin{X_1\in \mathbb{R}_+^{n_1\times r},~X_2\in \mathbb{R}_+^{n_2\times r}} \|Y - X_1X_2^T \|_F^2 $$
 
 for a known data matrix $Y\in\mathbb{R}^{n_1\times n_2}$. In this example, and in fact in most problems involving LRA, the cost has interesting blockwise properties. Here, the cost is not convex because of the product of variables, but it is block-convex, and often blockwise strongly convex in practice. This observation hints at the design of a class of convergent algorithms for computing solutions to LRA problems that update each block sequentially.
 
@@ -55,7 +55,7 @@ Here is a list of the assumptions required for proving the convergence of AO and
 - (A8): $f$ is globally Lipschitz-smooth.
 - (A9): $f$ is block Lipschitz-smooth, meaning that the restrictions of function $f$ on each block are Lipschitz-smooth.
 - (A10): $f$ admits directional differentials defined at $x$ along direction $d$ as $f'(x,d) = \underset{\lambda \to 0}{\lim\inf}\frac{f(x\lambda d) - f(x)}{\lambda}$ (notice that $\lambda$ is positive). This includes nonsmooth functions such as the $\ell_1$ norm.
-- (A11): The block updates $\argmin{x_k\in\mathcal{X}_k} f(x_1,\ldots,x_k,\ldots,x_d)$ have a unique minimizer.
+- (A11): The block updates $\armin{x_k\in\mathcal{X}_k} f(x_1,\ldots,x_k,\ldots,x_d)$ have a unique minimizer.
 - (A12(p)): $f$ is block strictly quasiconvex with respect to $p$ blocks. Quasiconvexity of the function $f$ is equivalent to the assumption that any level set $I_f(z)$ is convex.
 - (A13): $f$ is non-increasing on the update path.
 - (A14): $f$ is regular at the limit points of the algorithm sequence.
@@ -104,7 +104,7 @@ are equivalent when considering extended real-valued functions from an Euclidean
 AO, sometimes also called exact BCD, minimizes the cost function $f$ sequentially for each block of variables, essentially performing cyclic updates
 
 $$
-  x^{(i+1)}_{k} = \argmin{x_{k}\in\mathcal{X}_k} f(x_1^{(i+1)},\ldots, x^{(i+1)}_{k-1}, x_k, x^{(i)}_{k+1}, \ldots, x^{(i)}_d ) 
+  x^{(i+1)}_{k} = \armin{x_{k}\in\mathcal{X}_k} f(x_1^{(i+1)},\ldots, x^{(i+1)}_{k-1}, x_k, x^{(i)}_{k+1}, \ldots, x^{(i)}_d ) 
 $$ (eq:AOupdate)
 
 at iteration $i+1$ and for the $k$-th block. It is immediate to observe that because the cost $f$ is positive, and because each AO update diminishes the cost, the sequence of cost function values is always decreasing. Therefore, the AO algorithm converges, in cost, towards a positive value. Interesting questions, therefore, are not to know if the AO algorithm converges in cost, but rather:
@@ -115,7 +115,7 @@ A famous counter-example for the convergence of AO was proposed by Powell in 197
 
 One may note the similarity with the assumptions for the convergence of MM to stationary points. For $d=2$ blocks, single-block MM and AO are in fact equivalent {cite:p}`sunMajorizationMinimizationAlgorithmsSignal2017`. Denoting 
 
-$$x_2(x_1) = \argmin{x_2} f(x_1,x_2),$$
+$$x_2(x_1) = \armin{x_2} f(x_1,x_2),$$
 
 we get that 
 

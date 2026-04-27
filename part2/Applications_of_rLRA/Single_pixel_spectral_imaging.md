@@ -216,7 +216,7 @@ As long as the spectral dimension is ignored and reconstruction, that is, recove
 
 The simplest reconstruction algorithm performs a least squares reconstruction,
 
-$$ \hat{X} = \frac{1}{\alpha}A^{\dagger} Y = \argmin{X\in\mathbb{R}^{n\times p}} \|\frac{1}{\alpha}Y - AX \|_F^2. $$
+$$ \hat{X} = \frac{1}{\alpha}A^{\dagger} Y = \armin{X\in\mathbb{R}^{n\times p}} \|\frac{1}{\alpha}Y - AX \|_F^2. $$
 
 
 This reconstruction has several advantages.
@@ -283,7 +283,7 @@ plt.show()
 
 The MLE for Poisson noise is given by the minimizer of the KL-divergence
 
-$$ \hat{X} = \argmin{X\geq 0} \KL{\frac{1}{\alpha} Y, AX}, $$
+$$ \hat{X} = \armin{X\geq 0} \KL{\frac{1}{\alpha} Y, AX}, $$
 
 which can be approximately computed using, *e.g.*, the [MU algorithm](../../part1/nnls.md#multiplicative-updates). Below is an example of MLE reconstruction.
 
@@ -326,7 +326,7 @@ It is possible to interpret the Hadamard transform as a binary equivalent of the
 
 One may use the right pseudo-inverse instead of the left one, which is known to amount to solving a problem of the form
 
-$$ \argmin{Y = AX} \|X\|_F^2. $$
+$$ \armin{Y = AX} \|X\|_F^2. $$
 
 Prior information about the image is typically incorporated into the model to ensure identifiability. Classical priors include nonnegativity, sparsity in wavelet bases and sparsity in finite differences, also called Total Variation.
 
@@ -413,7 +413,7 @@ The code for the algorithm is slightly too complex to show here and is available
 Since the optimization problem 
 
 $$
-\argmin{U\geq 0, V\geq 0} \KL{Y, AUV^T} + \lambda \left( \|U\|_1 + \|V\|_1 \right)
+\armin{U\geq 0, V\geq 0} \KL{Y, AUV^T} + \lambda \left( \|U\|_1 + \|V\|_1 \right)
 $$
 
 is jointly nonconvex, initialization is important. A viable optimization for simple unmixing problems is to first perform the reconstruction, for instance, solving a NNLS problem, then use a pure-pixel selection algorithm such as SNPA {cite:p}`gillisSuccessiveNonnegativeProjection2014` to initialize $V$.

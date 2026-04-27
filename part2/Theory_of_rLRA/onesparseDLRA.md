@@ -129,13 +129,13 @@ The original name of MC-ALS in {cite:p}`cohenDictionarybasedTensorCanonical2018`
 
 MC-ALS works as follows: we view the submatrix $D[:,\mathcal{K}]$ as factor matrix $A$, and compute the least squares estimate
 
-$$ \hat{A} = \argmin{A} \| Y - AB^T\|_F^2. $$
+$$ \hat{A} = \armin{A} \| Y - AB^T\|_F^2. $$
 
 If, in the application at hand, the matrix $A$ is nonnegative (like the spectra of our running hyperspectral image example), we may use a [NNLS](../../part1/nnls.md) solver instead.
 
 Then given an estimation $\hat{A}$, the closest atom in the dictionary $D$ is computed for each column of $\hat{A}$
 
-$$ \mathcal{K}[i] = \argmin{j\leq d} |D[:,j]^T\hat{A}[:,i]|. $$
+$$ \mathcal{K}[i] = \armin{j\leq d} |D[:,j]^T\hat{A}[:,i]|. $$
 
 ```{sidebar} Remark
 This formula assumes that the dictionary has $\ell_2$-norm normalized columns.
@@ -145,7 +145,7 @@ This formula assumes that the dictionary has $\ell_2$-norm normalized columns.
 
 Using the largest absolute scalar product between the atoms and the estimated factor matrix $\hat{A}$ may lead to selecting the same atom twice, *e.g.*, if two columns of $\hat{A}$ are similar. This problem can be alleviated by rather selecting indices $\mathcal{K}$ as the optimal linear assignement of atoms in the dictionary $D$ to columns of matrix $\hat{A}$:
 
-$$ \mathcal{K} = \argmin{\mathcal{K}} \text{Tr}(|D[:,\mathcal{K}]^TA|) $$
+$$ \mathcal{K} = \armin{\mathcal{K}} \text{Tr}(|D[:,\mathcal{K}]^TA|) $$
 
 This problem is solved efficiently using, for instance, the Hungarian algorithm {cite:p}`Kuhn1955Hungarian`. In the original work {cite:p}`cohenDictionarybasedTensorCanonical2018`, we did not use a linear assignment problem solver, but we do here because it avoids the singularity of the estimated factor.
 

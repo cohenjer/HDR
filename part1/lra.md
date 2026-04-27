@@ -74,13 +74,13 @@ There are several other equivalent definitions of the rank for matrices that are
 
 In most practical applications of interest to this manuscript, the data matrices are not exactly low-rank. Instead, these data matrices are well approximated by low-rank matrices. A specific LRA is determined by the loss function, often the squared Euclidean distance, the input data matrix, and the rank of the approximation. A rank $r$ approximation of a data matrix $M$, in the Euclidean distance, can be formulated as an optimization problem
 
-$$ \argmin{\rank{N}\leq r} \|M - N \|_F^2 $$
+$$ \armin{\rank{N}\leq r} \|M - N \|_F^2 $$
 
 where $\|M-N\|^2_F = \sum_{i,j} \left(M[i,j]-N[i,j]\right)^2$ is the (squared) Frobenius norm of the difference $M-N$, with $N$ the low-rank approximation of data matrix $M$.
 
 A different formulation of LRA is obtained if the approximation matrix is parameterized by two factor matrices $U$ and $V$,
 
-$$ \argmin{U\in\mathbb{R}^{n_1\times r},\;V\in\mathbb{R}^{n_2\times r}} \|M - UV^T \|_F^2, $$
+$$ \armin{U\in\mathbb{R}^{n_1\times r},\;V\in\mathbb{R}^{n_2\times r}} \|M - UV^T \|_F^2, $$
 
 a formulation often coined as the Burer-Montero factorization {cite:p}`burerNonlinearProgrammingAlgorithm2003`.
 
@@ -94,7 +94,7 @@ The Frobenius norm is the most widely used distance metric for LRA, as it yields
 ```{prf:theorem} SVD solves LRA with Frobenius norm (Eckart-Young theorem)
 Assume data matrix $M$ admits the singular value decomposition $M = ASB^T$. Then the optimization problem
 
-$$ \argmin{\rank{N}\leq r} \|M - N \|_F^2 $$
+$$ \armin{\rank{N}\leq r} \|M - N \|_F^2 $$
 
 admits the truncated SVD as a solution, $N^\ast = A[:,:r] S[:r,:r] B^T[:r,:]$. The solution is unique if the $r$-th singular value of $M$ has multiplicity one. The residual error is then exactly $\sum_{q=r+1}^{\min(n_1,n_2)}S[q,q]^2 $.
 ```
@@ -164,7 +164,7 @@ NMF is traditionally denoted with factors $W$ and $H$. I therefore switch to thi
 
 Unlike unconstrained low-rank approximation, exact and approximate NMF do not admit, in general, closed-form solutions, although the best rank-one approximation may be obtained in closed form as discussed in {ref}`subsec:bestr1`. Computing (approximate) NMF amounts to solving an optimization problem. For instance, with the squared Frobenius norm, rank $r$ approximate NMF computes
 
-$$ \argmin{W\in \mathbb{R}_+^{n_1\times r},\;H\in\mathbb{R}_+^{n_2\times r}} \| M - WH^T \|_F^2. $$
+$$ \armin{W\in \mathbb{R}_+^{n_1\times r},\;H\in\mathbb{R}_+^{n_2\times r}} \| M - WH^T \|_F^2. $$
 
 Computing exact NMF is an NP-hard problem {cite:p}`Vavasis2010complexity`. There exist many strategies, many of which are based on alternating optimization, as discussed in [](./AlternatingOptimization.md), and, to the best of my knowledge, there is no single best method for computing exact or approximate NMF for all datasets. An algorithm that provides reasonably good performance across a large set of problems is Hierarchical Alternating Least Squares (HALS); see [](./nnls.md) and [](./AlternatingOptimization.md) for a detailed description.
 
@@ -244,7 +244,7 @@ Separable NMF finds the matrix $W$ in the columns of the data matrix $M$. In the
 
 A second variant of NMF is sparse NMF, in which the entries of the matrices $W$ and/or $H$ are pushed towards zero. A typical formulation of sparse NMF with $\ell_1$ regularization writes
 
-$$ \argmin{W\mathbb{R}_+^{n_1\times r},\; H\in\mathbb{R}_+^{n_2\times r}} \|Y - WH^T\|_F^2 + \lambda \left( \|W\|_F^2 + \|H\|_1 \right), $$
+$$ \armin{W\mathbb{R}_+^{n_1\times r},\; H\in\mathbb{R}_+^{n_2\times r}} \|Y - WH^T\|_F^2 + \lambda \left( \|W\|_F^2 + \|H\|_1 \right), $$
 with $\lambda$ a positive hyperparameter, that promotes sparsity in matrix $H$ when large enough. Such regularized low-rank models are discussed further in [](../part2/Theory_of_rLRA/HRSI_theory.md). Sparse NMF can be unique when NMF is not, since sparsity pushes columns of matrix $H$ towards the border of the simplex, maximizing volume.
 
 A third regularized NMF model is the minimum-volume (or maximum-volume {cite:p}`thanhMaximumVolumeNonnegativeMatrix2026`) NMF. The idea behind minimal-volume NMF is to choose the matrix $W$ to be as close as possible to the convex hull of the data. In a sense, it is a relaxation of the separability assumption that can still work when pure data do not exist. The minimization of the volume of the cone spanned by the matrix $W$ can be related to the maximization of the volume of the columns of matrix $H^T$. The volume of the columns of $W$ can be measured as $\log\det(W^TW)$, which is a concave function.
@@ -482,7 +482,7 @@ but also makes explicit the tensor structure of the linear operators acting on t
 
 On the surface, approximate CP decomposition is simply a particular case of approximate LRA. Let $T$ be a data tensor to decompose. Approximate CP decomposition aims at finding a rank $r$ tensor $\llbracket A, B, C \rrbracket$ as close as possible to $T$; the rank of the approximation $r$ is fixed in advance. If the Frobenius norm $\|T\|_F^2 = \sum_{i,j,k} T[i,j,k]^2$ is used as an error metric, the approximate CP decomposition computes the best rank-$r$ approximation by solving the optimization problem
 
-$$ \argmin{A\in\R{n_1\times r},\; B\in\R{n_2\times r},\; C\in\R{n_3\times r}} \| T - \llbracket A,B,C \rrbracket \|_2^2. $$
+$$ \armin{A\in\R{n_1\times r},\; B\in\R{n_2\times r},\; C\in\R{n_3\times r}} \| T - \llbracket A,B,C \rrbracket \|_2^2. $$
 Like most LRA-related optimization problems, this is a nonconvex, multiblock optimization problem that can be addressed in practice by [alternating optimization](./AlternatingOptimization.md). The workhorse algorithm for fitting approximate CP decomposition is the Alternating Least Squares (ALS) algorithm. It updates each matrix $A$, $B$, and $C$ in sequence, which, in general, can be done in closed form since the cost is quadratic in each parameter matrix. For instance, the update for the parameter matrix $A$ is obtained by solving the linear system
 
 $$  T_{[1]}(B\odot C) = A (B^TB \ast C^TC), $$
@@ -501,7 +501,7 @@ Since this manuscript is mostly concerned with regularized LRA, this problem is 
 
 A classic example of regularized CP decomposition is approximate nonnegative CP Decomposition (nCPD), defined as the solution to the optimization problem
 
-$$ \argmin{A\in\R{n_1\times r}_+,\; B\in\R{n_2\times r}_+,\; C\in\R{n_3\times r}_+} \| T - \llbracket A,B,C \rrbracket \|_2^2. $$
+$$ \armin{A\in\R{n_1\times r}_+,\; B\in\R{n_2\times r}_+,\; C\in\R{n_3\times r}_+} \| T - \llbracket A,B,C \rrbracket \|_2^2. $$
 
 Notice that the matrices have nonnegative entries. Algorithms to compute nCPD are similar to algorithms for solving NMF, and rely on NNLS solvers described extensively in [](./nnls.md). A generic alternating algorithms that solves NNLS problems with respect to each factor matrix is sometimes called Alternating Nonnegative Least Squares (ANLS). 
 

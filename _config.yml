@@ -61,8 +61,8 @@ sphinx:
         \renewcommand{\sphinxincludegraphics}[2][]{\makebox[\linewidth][c]{\origSphinxincludegraphics[#1]{#2}}}
         
         % Custom math commands
-        \newcommand{\argmin}[1]{\underset{#1}{\text{argmin}}~}
-        \newcommand{\argmax}[1]{\underset{#1}{\text{argmax}}~}
+        \newcommand{\armin}[1]{\underset{#1}{\text{argmin}}~}
+        \newcommand{\armax}[1]{\underset{#1}{\text{argmax}}~}
         \providecommand{\amin}[1]{\underset{#1}{\text{min}}~}
         \providecommand{\R}[1]{\mathbb{R}^{#1}}
         \renewcommand{\vec}[1]{\text{vec}\left(#1\right)}

@@ -58,7 +58,7 @@ All the slices $T[:,:,k]$ are therefore jointly diagonalized with left and right
 One of the most well-known examples of joint decompositions is coined Coupled Matrix and Tensor Factorization (CMTF) {cite:p}`acarUnderstandingDataFusion2013`. CMTF couples a matrix and a tensor on a single mode, where the matrix $Y$ is low-rank, and the tensor $T$ has low CP-rank. CMTF may be formulated as an optimization problem
 
 $$
-\argmin{A,B,C,D} \|T - I_r \times_1 A \times_2 B \times_3 C \|_F^2 + \|Y-AD^T\|_F^2.
+\armin{A,B,C,D} \|T - I_r \times_1 A \times_2 B \times_3 C \|_F^2 + \|Y-AD^T\|_F^2.
 $$
 The first factor of the low-rank approximations of the tensor and the matrix is the same. This means that the same underlying patterns are sought in both datasets along the first mode. In practice, the two terms in the cost function should be balanced based on the SNR of each dataset {cite:p}`cohenJointTensorCompression2016`.
 
@@ -101,7 +101,7 @@ with $P_k$ a left-orthogonal matrix. Therefore, all the slices have the same ran
 My earliest contribution on joint factorization models was to consider a generalization of CMTF that allows for more complicated coupled relationships {cite:p}`cabralfariasExploringMultimodalData2016`. If CMTF supposes that the same factor matrix can be extracted from several datasets, Linearly-Coupled CMTF (LC-CMTF) assumes that the shared components are linked through a linear relationship. For the particular case of a joint matrix and tensor decomposition, LC-CMTF can be formalized as the optimization problem
 
 $$
-\argmin{A_1, B, C, A_2, D, A} \|T - I_r \times_1 A_1 \times_2 B \times_3 C \|_F^2 + \|M-A_2D^T\|_F^2. \\
+\armin{A_1, B, C, A_2, D, A} \|T - I_r \times_1 A_1 \times_2 B \times_3 C \|_F^2 + \|M-A_2D^T\|_F^2. \\
 \text{s.t.}~ \vec{A_1} = H_1 \vec{A} \text{ and } \vec{A_2} = H_2 \vec{A}
 $$
 for known linear coupling matrices $H_1$ and $H_2$ and a shared, unknown latent factor matrix $A$ which size may differ from $A_1$ and $A_2$.

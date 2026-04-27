@@ -20,14 +20,14 @@ kernelspec:
 Consider the ridge NMF problem with Frobenius loss:
 
 (eq:ridge-NMF)=
-$$ \argmin{X_1\geq 0, X_2\geq 0} \|M - X_1X_2^T\|_F^2 + \lambda_1 \|X_1\|_F^2 + \lambda_2 \|X_2\|_F^2. $$
+$$ \armin{X_1\geq 0, X_2\geq 0} \|M - X_1X_2^T\|_F^2 + \lambda_1 \|X_1\|_F^2 + \lambda_2 \|X_2\|_F^2. $$
 with $M\in\mathbb{R}_{+}^{m_1\times m_2}$ and the nonnegative rank is $r$.
 
 Such a ridge-regularized model could be preferred by a user on the basis of ridge-regression: avoiding overfitting (in the case of NMF, this would translate as choosing a particular solution with low variance) or improving the numerical stability of the optimization algorithm (the optimization problem is strictly bi-convex when $\lambda_i>0$). 
 
 It turns out that, maybe surprisingly at first, the ridge-regularized NMF problem is equivalent (in the sense that the minimizers are related by a trivial mapping) to a variant of the nuclear-norm low-rank sensing problem with nonnegativity constraints,
 
-$$ \argmin{X_1\geq 0, X_2\geq 0} \|M -  X_1X_2^T\|_F^2 + \frac{\sqrt{\lambda_1\lambda_2}}{2} \sum_{q=1}^{r} \|X_1[:,q]\otimes X_2[:,q]\|_F $$
+$$ \armin{X_1\geq 0, X_2\geq 0} \|M -  X_1X_2^T\|_F^2 + \frac{\sqrt{\lambda_1\lambda_2}}{2} \sum_{q=1}^{r} \|X_1[:,q]\otimes X_2[:,q]\|_F $$
 
 This second formulation is insightful in many ways.
   - The regularization in the second, implicit formulation, takes the form of a group-sparse regularization of the rank-one terms in NMF. Without nonnegativity constraints, this constraint is exactly the nuclear norm of the low-rank matrix $X_1X_2^T$. The ridge penalty on each factor matrix, therefore, implies rank-minimization implicitly.
@@ -49,7 +49,7 @@ Consider the following optimization problem
 
 ```{math}
 :label: eq:hrsi-pb
- \argmin{\forall i\leq n,\; X_i\in\mathbb{R}^{m_i\times r}}f(\{X_i\}_{i\leq n}) + \sum_{i=1}^{n} \mu_{i} \sum_{q=1}^{r} g_i(X_i[:,q]), 
+ \armin{\forall i\leq n,\; X_i\in\mathbb{R}^{m_i\times r}}f(\{X_i\}_{i\leq n}) + \sum_{i=1}^{n} \mu_{i} \sum_{q=1}^{r} g_i(X_i[:,q]), 
 ``` 
 
 where $f$ is a continuous map from the Cartesian product $\times_{i=1}^{n} \mathbb{R}^{m_i\times r} \cap \text{dom}(g_i)$ to $\mathbb{R}_+$, $\{\mu_i\}_{i\leq n}$ is a set of positive regularization hyperparameters, and $\{g_i\}_{i\leq n}$ is a set of lower semicontinous regularization maps from $\mathbb{R}^{m_i}$ to $\mathbb{R}_+$. We assume that the total cost is coercive, ensuring the existence of a minimizer. Furthermore, we assume the following assumptions hold:
@@ -90,7 +90,7 @@ $$ \beta_q = \left(\prod_{i\leq n} \left(p_i\mu_ig_i(X^\ast_i[:,q])\right)^{\fra
 
 Moreover, the solutions to the HRSI problem are, up to scaling, solutions to the implicit HRSI problem
 
-$$   \argmin{\forall i\leq n,\; X_i\in\mathbb{R}^{m_i\times r}}f(\{X_i\}_{i\leq n}) + \tilde{\mu} \sum_{q=1}^{r}  \left(\prod_{i=1}^{n} g_i(X_{i}[:,q])^{\frac{1}{p_i}}\right)^{\frac{1}{\sum_{i=1}^{n} \frac{1}{p_i}}}, $$
+$$   \armin{\forall i\leq n,\; X_i\in\mathbb{R}^{m_i\times r}}f(\{X_i\}_{i\leq n}) + \tilde{\mu} \sum_{q=1}^{r}  \left(\prod_{i=1}^{n} g_i(X_{i}[:,q])^{\frac{1}{p_i}}\right)^{\frac{1}{\sum_{i=1}^{n} \frac{1}{p_i}}}, $$
     
 where $\tilde{\mu} = \left(\prod_{i=1}^{n}(p_i\mu_i)^{\frac{1}{p_i}}
     \right)^{\frac{1}{\sum_{i=1}^{n} \frac{1}{p_i}}}\left(\sum_{i=1}^{n}\frac{1}{p_i}\right).$ 
@@ -110,11 +110,11 @@ To make our main result {prf:ref}`th:HRSI` more explicit, let us instantiate the
 
 Define the ridge nCPD formally as the optimization problem
 
-$$ \argmin{X_i\geq 0}  \| \mathcal{T} - \mathcal{I}_r \times_1 X_1 \times_2 X_2 \times_3 X_3 \|^2_F +  \mu \left(\|X_1\|_F^2 + \|X_2\|_F^2 + \|X_3\|_F^2\right). $$
+$$ \armin{X_i\geq 0}  \| \mathcal{T} - \mathcal{I}_r \times_1 X_1 \times_2 X_2 \times_3 X_3 \|^2_F +  \mu \left(\|X_1\|_F^2 + \|X_2\|_F^2 + \|X_3\|_F^2\right). $$
 
 The implicit HRSI problem shows that ridge-regularization yields a componentwise group-sparsity implicit regularization,
 
-$$ \argmin{\{\mathcal{L}_q\}_{q\leq r},~\text{rank}(\mathcal{L}_q)\leq 1}  \|\mathcal{T} -\sum_{q=1}^{r} \mathcal{L}_q \|_F^2 + 3\mu \sum_{q=1}^{r} \|\mathcal{L}_q\|_F^{\frac{2}{3}} $$
+$$ \armin{\{\mathcal{L}_q\}_{q\leq r},~\text{rank}(\mathcal{L}_q)\leq 1}  \|\mathcal{T} -\sum_{q=1}^{r} \mathcal{L}_q \|_F^2 + 3\mu \sum_{q=1}^{r} \|\mathcal{L}_q\|_F^{\frac{2}{3}} $$
 
 where tensors $\mathcal{L}_q$ are rank-one tensors $X_1[:,q]\otimes X_2[:,q] \otimes X_3[:,q]$. We experimentally validate in [the experiments subsection](#balanced-and-non-euclidean-algorithms-for-regularized-lra) that tuning the regularization hyperparameter $\mu$ indeed helps us to select the rank of the nCPD factorization automatically. Moreover, the optimal solution of ridge nCPD verifies the balancing equation
 
@@ -126,11 +126,11 @@ This balancing identity will be used in [the experiments subsection](#balanced-a
 
 Another interesting case of an implicit regularization effect concerns the (double) sparse NMF model
 
-$$\argmin{X_1\geq 0, X_2\geq 0} \|M - X_1X_2^T\|_F^2 + \mu \left( \|X_1\|_1 + \|X_2\|_1 \right). $$
+$$\armin{X_1\geq 0, X_2\geq 0} \|M - X_1X_2^T\|_F^2 + \mu \left( \|X_1\|_1 + \|X_2\|_1 \right). $$
 
 Intuitively, a practitioner using sparse NMF with $\ell_1$ penalizations on both factors would expect sparse entries in both matrices, leveraging the usual behavior of the $\ell_1$ norm in regression problems. The implicit formulation 
 
-$$ \argmin{L_q\in\mathbb{R}_+^{m_1\times m_2},\; \text{rank}(L_q)\leq 1} \|M - \sum_{q=1}^{r}L_q\|_F^2 + 2\sqrt{\mu_1\mu_2}\sum_{q=1}^{r} \sqrt{\|L_q\|_1}$$
+$$ \armin{L_q\in\mathbb{R}_+^{m_1\times m_2},\; \text{rank}(L_q)\leq 1} \|M - \sum_{q=1}^{r}L_q\|_F^2 + 2\sqrt{\mu_1\mu_2}\sum_{q=1}^{r} \sqrt{\|L_q\|_1}$$
 
 shows that, while both factors are indeed penalized to be sparse, there is another group-sparse effect that prunes entire components. The problem with this formulation is that both effects (elementwise sparsity and componentwise sparsity) are not controlled individually but rather by the same regularization hyperparameter. This yields unexpected component pruning as shown in the simulation below with mixtures of Gaussians. It is also unclear from the implicit formulation whether both factors will be sparse elementwise.
 
@@ -286,11 +286,11 @@ Observe in particular that the sparsity level of the components does not evolve 
 
 The explicit $\ell_1$-$\ell_2$ sparse NMF model writes
 
-$$\argmin{X_1\geq 0, X_2\geq 0} \|M - X_1X_2^T\|_F^2 + \mu \left( \|X_1\|_1 + \|X_2\|^2_2 \right). $$
+$$\armin{X_1\geq 0, X_2\geq 0} \|M - X_1X_2^T\|_F^2 + \mu \left( \|X_1\|_1 + \|X_2\|^2_2 \right). $$
 
 The implicit HRSI formulation of sparse NMF can be easily derived:
 
-$$ \argmin{L_q\in\mathbb{R}_+^{m_1\times m_2},\; \text{rank}(L_q)\leq 1} \|M - \sum_{q=1}^{r}L_q\|_F^2 + \frac{3}{2^\frac{2}{3}}\mu\sum_{q=1}^{r} \|L_q\|^{\frac{2}{3}}_{1,2}.$$
+$$ \armin{L_q\in\mathbb{R}_+^{m_1\times m_2},\; \text{rank}(L_q)\leq 1} \|M - \sum_{q=1}^{r}L_q\|_F^2 + \frac{3}{2^\frac{2}{3}}\mu\sum_{q=1}^{r} \|L_q\|^{\frac{2}{3}}_{1,2}.$$
 
 where the mixed matrix norm is defined as $\|L_q\|_{1,2} = \sqrt{\sum_{j} \left( \sum_i L_q[i,j] \right)^2} $ and we used the identity 
 
@@ -300,7 +300,7 @@ that holds for any two vectors $x$ and $y$. One may observe that the implicit re
 
 It is still open to fully characterize the link between the regularized formulation and the constrained formulation
 
-$$\argmin{X_1\geq 0, X_2\geq 0} \|M - X_1X_2^T\|_F^2 + \mu \|X_1\|_1  \text{ s.t. } \|X_2[:,q]\|_2 = 1 \; \forall q\leq r. $$
+$$\armin{X_1\geq 0, X_2\geq 0} \|M - X_1X_2^T\|_F^2 + \mu \|X_1\|_1  \text{ s.t. } \|X_2[:,q]\|_2 = 1 \; \forall q\leq r. $$
 
 Interestingly, Marmin, Goulard, and Févotte show equivalence between the constrained formulation and the implicit HRSI formulation of sparse NMF, hinting towards the equivalence between the three formulations {cite:p}`marminMajorizationMinimizationSparseNonnegative2023`. 
 
@@ -434,7 +434,7 @@ The simulation below illustrates the importance of balancing initial (and someti
 Recall the ridge-regularized nCPD problem
 
 $$
- \argmin{X_i\geq 0}  \| \mathcal{T} - \mathcal{I}_r \times_1 X_1 \times_2 X_2 \times_3 X_3 \|^2_F + \mu \left(\|X_1\|_F^2 + \|X_2\|_F^2 + \|X_3\|_F^2\right). 
+ \armin{X_i\geq 0}  \| \mathcal{T} - \mathcal{I}_r \times_1 X_1 \times_2 X_2 \times_3 X_3 \|^2_F + \mu \left(\|X_1\|_F^2 + \|X_2\|_F^2 + \|X_3\|_F^2\right). 
 $$
 
 The reader can play around with the regularization value: high values lead to more component pruning, but the effect of balancing is less pronounced; low values lead to no component pruning, but the importance of balancing is more visible, even after the optimization algorithm has converged.
@@ -442,7 +442,7 @@ The reader can play around with the regularization value: high values lead to mo
 Also note that balancing only optimizes the factor scales with respect to the regularization terms. To scale the factors also according to the data fitting term and therefore start the algorithm at the best scaled position, it can be useful to scale the initial guess by solving the polynomial minimization problem 
 
 $$
-    \argmin{\lambda\geq 0} \| \mathcal{T} - \lambda^3 \mathcal{I}_r \times_1 X_1 \times_2 X_2 \times_3 X_3 \|^2_F +  \mu\lambda^2 \left(\|X_1\|_F^2 + \|X_2\|_F^2 + \|X_3\|_F^2\right),
+    \armin{\lambda\geq 0} \| \mathcal{T} - \lambda^3 \mathcal{I}_r \times_1 X_1 \times_2 X_2 \times_3 X_3 \|^2_F +  \mu\lambda^2 \left(\|X_1\|_F^2 + \|X_2\|_F^2 + \|X_3\|_F^2\right),
 $$
 
 which amounts to evaluating the cost at all the positive roots of the polynomial

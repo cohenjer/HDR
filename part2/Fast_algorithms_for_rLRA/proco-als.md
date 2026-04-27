@@ -22,7 +22,7 @@ kernelspec:
 
 ## Projected least squares for solving NNLS
 
-In the [NNLS](../../part1/nnls.md) section, we overlooked one possible naive idea for computing an approximate solution: first compute the unconstrained least squares solution, then project it onto the nonnegative orthant. Given a NNLS problem $\argmin{x\geq 0} \|b - Ax\|_2^2$, the following two lines of code compute this estimate:
+In the [NNLS](../../part1/nnls.md) section, we overlooked one possible naive idea for computing an approximate solution: first compute the unconstrained least squares solution, then project it onto the nonnegative orthant. Given a NNLS problem $\armin{x\geq 0} \|b - Ax\|_2^2$, the following two lines of code compute this estimate:
 ```python
     x_hat = tl.solve(A,b)
     x_hat[x_hat<0] = 0

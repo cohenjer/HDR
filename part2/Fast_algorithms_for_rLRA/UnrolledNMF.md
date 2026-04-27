@@ -26,7 +26,7 @@ Low-rank approximation models such as NMF are designed to perform unsupervised l
 A simple way to make use of this additional data $M$ is to modify the LRA cost to incorporate this data. This procedure has been named "Supervised LRA" in the literature, see {cite:p}`lockSupervisedMultiwayFactorization2018` and references therein. For NMF, linear regression from a matrix $W$ to additional data $M$ can, for instance, drive the supervision task. The "supervised" NMF problem formulation is then given by
 
 $$
-  \argmin{W\geq 0,\; H\geq 0,\; \theta} \mathcal{D}\left(Y, WH^T\right) + \lambda \|W - M\theta\|_F^2
+  \armin{W\geq 0,\; H\geq 0,\; \theta} \mathcal{D}\left(Y, WH^T\right) + \lambda \|W - M\theta\|_F^2
 $$
 
 for a regularization hyperparameters $\lambda>0$, a data fitting term $\mathcal{D}$ such as the squared Frobenius norm $\|Y-WH^T\|_F^2$, and regression parameters $\theta$ trained jointly with the NMF factors.
@@ -36,19 +36,19 @@ One could argue that this approach does not really leverage training data to tra
 A modification of this supervised LRA framework can be considered, in which the parameters $\theta$ are shared across $p$ LRA problems. In the above example of supervised NMF with linear regression, given a collection of data matrices $\{(Y_i,M_i)\}_{i\leq p}$, parameters $\theta$ are trained to reconstruct matrix $M_i$ from the jointly estimated matrix $W_i$:
 
 $$
-  \argmin{\forall i \leq p,~ W_i\geq 0, H_i\geq 0, \theta}\sum_{i=1}^{p} \mathcal{D}\left(Y_i, W_iH_i^T\right) + \lambda \|W_i - M_i\theta\|_F^2.
+  \armin{\forall i \leq p,~ W_i\geq 0, H_i\geq 0, \theta}\sum_{i=1}^{p} \mathcal{D}\left(Y_i, W_iH_i^T\right) + \lambda \|W_i - M_i\theta\|_F^2.
 $$
 
 Parameters $\theta^\ast$, trained on the training dataset consisting of pairs $(Y_i,M_i)$, could then be used at inference time when only a single matrix $Y$ is known to estimate matrix $M:=\theta^\ast W^{\dagger}$ after obtaining matrix $W$ with NMF, or by solving the NMF and the regression problem
 
 $$
-  \argmin{W\geq 0, H\geq 0, M} \mathcal{D}\left(Y, WH\right) + \lambda \|W - M\theta^\ast\|_F^2.
+  \armin{W\geq 0, H\geq 0, M} \mathcal{D}\left(Y, WH\right) + \lambda \|W - M\theta^\ast\|_F^2.
 $$
 
 We can still go further. In the formulations of supervised LRA above, while the post-processing parameters $\theta$ and the parameter matrices are optimized jointly and move the solution of the supervised LRA problem away from the best low-rank approximation, the model applied to $Y$ is still a low-rank approximation. Modern-day machine learning often relies on black-box models based on neural network architectures that lack strong inductive biases, such as bilinearity and low-rankness. Therefore, it is tempting to also train the model, in some sense, to better fit the training data. Formally, we may assume that the forward model is a map $\mathcal{M}(W,H,\theta)$ and solve the optimization problem
 
 $$
-  \argmin{\forall i \leq p,~ W_i\geq 0, H_i\geq 0, \theta}\sum_{i=1}^{p} \mathcal{D}\left(Y_i, \mathcal{M}(W_i,H_i,\theta)\right) + \lambda \|W_i - M_i\theta\|_F^2.
+  \armin{\forall i \leq p,~ W_i\geq 0, H_i\geq 0, \theta}\sum_{i=1}^{p} \mathcal{D}\left(Y_i, \mathcal{M}(W_i,H_i,\theta)\right) + \lambda \|W_i - M_i\theta\|_F^2.
 $$ (eq:supNMFvar)
 
 
@@ -63,13 +63,13 @@ Bilevel formulations address the trade-off between model inference and parameter
 There is, however, not a single canonical bilevel formulation for unrolling LRA. On the above example of supervised NMF, a naive formulation that separates the model computation (forward pass) and the actual training of the model (backward pass, *i.e.*, updating model parameters $\theta$ to reduce a training loss) writes
 
 $$
-    \argmin{\theta} \sum_{i=1}^{p} \|M_i - W^\ast_i\theta\|_F^2 \quad \text{such that} \quad H_i^\ast, W_i^\ast = \argmin{W_i\geq 0, H_i\geq 0}\mathcal{D}(Y_i,W_iH_i^T).
+    \armin{\theta} \sum_{i=1}^{p} \|M_i - W^\ast_i\theta\|_F^2 \quad \text{such that} \quad H_i^\ast, W_i^\ast = \armin{W_i\geq 0, H_i\geq 0}\mathcal{D}(Y_i,W_iH_i^T).
 $$
 
 Such a bilevel optimization problem is not particularly interesting because the two optimization problems are essentially decoupled and can be solved sequentially. We are back to simply post-processing the estimated parameter matrices of NMF. Following data-driven or task-driven dictionary learning {cite:p}`mairal2011task,sprechmannSupervisedNoneuclideanSparse2014a`, the symmetry between matrices $W$ and $H$ may be broken. We then solve a bilevel problem of the form
 
 $$
-    \argmin{\theta,\; W} \sum_{i=1}^{p} \mathcal{L}(M_i, H_i^\ast(W), \theta) \quad \text{such that} \quad H_i^\ast(W) = \argmin{H_i\geq 0}\mathcal{D}(Y_i,WH_i^T).
+    \armin{\theta,\; W} \sum_{i=1}^{p} \mathcal{L}(M_i, H_i^\ast(W), \theta) \quad \text{such that} \quad H_i^\ast(W) = \armin{H_i\geq 0}\mathcal{D}(Y_i,WH_i^T).
 $$
 
 Hence, the dictionary $W$ is now trained to reduce the training loss $\mathcal{L}$ while only the scores $H_i$ are computed at the inner level. Updating matrix $W$ means computing gradients through minimizers $H_i^\ast(W)$, which is tractable analytically depending on the choice of the model, loss $\mathcal{D}$, and in the presence of regularizations such as sparsity {cite:p}`mairal2011task`. It is, however, not obvious how to form these gradients for NMF.
@@ -77,7 +77,7 @@ Hence, the dictionary $W$ is now trained to reduce the training loss $\mathcal{L
 The core idea of unrolling is to replace the inner optimization problem with a numerical algorithm that computes solutions to this problem:
 
 $$
-    \argmin{\theta, \; W} \sum_{i=1}^{p} \mathcal{L}(M_i, H_i^\ast(W), \theta) \quad \text{such that} \quad H_i^\ast(W,\theta) = \mathcal{A}(Y_i,W,\theta),
+    \armin{\theta, \; W} \sum_{i=1}^{p} \mathcal{L}(M_i, H_i^\ast(W), \theta) \quad \text{such that} \quad H_i^\ast(W,\theta) = \mathcal{A}(Y_i,W,\theta),
 $$
 where $\mathcal{A}$ is a parametric algorithm to compute approximately a solution to NMF. Algorithm $\mathcal{A}$ is chosen to be a fixed number of iterations of a truncated iterative algorithm. Note that the forward model / unrolled algorithm $\mathcal{A}$ may depend on parameters $\theta$ for greater flexibility.
 
@@ -92,7 +92,7 @@ It is also possible to generate a synthetic training dataset in which one can pr
 We therefore propose to formulate data-driven NMF where both matrices $W$ and $H$ are outputs of the parametric algorithm, solving
 
 $$
-    \argmin{\theta} \sum_{i=1}^{p}\mathcal{L}(W_i^{gt}, H^{gt}_i, H_i(\theta),W_i(\theta)) \quad \text{such that} \quad \forall i\leq p,~ H_i(\theta),W_i(\theta) = \mathcal{A}(Y_i,\theta).
+    \armin{\theta} \sum_{i=1}^{p}\mathcal{L}(W_i^{gt}, H^{gt}_i, H_i(\theta),W_i(\theta)) \quad \text{such that} \quad \forall i\leq p,~ H_i(\theta),W_i(\theta) = \mathcal{A}(Y_i,\theta).
 $$
 
 The main design choices for the unrolled algorithm are 

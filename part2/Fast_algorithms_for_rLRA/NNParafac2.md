@@ -162,7 +162,7 @@ In our first work with Rasmus Bro, we proposed to use a flexible constraint form
 Nonnegative PARAFAC2 then boils down to the optimization problem
 
 $$
-    \argmin{A\geq 0,~B_k \geq 0,~C\geq 0 } \|X[:,:,k] - A\text{Diag}(C[k,:])B_k^T \|_F^2 \text{  s.t.  } \{B_k\}_{k\leq K}\in\mathcal{C}_{\text{P2}}.
+    \armin{A\geq 0,~B_k \geq 0,~C\geq 0 } \|X[:,:,k] - A\text{Diag}(C[k,:])B_k^T \|_F^2 \text{  s.t.  } \{B_k\}_{k\leq K}\in\mathcal{C}_{\text{P2}}.
 $$
 
 This problem can be handled by AO-ADMM with splitting, provided we can project onto the set of sets of matrices satisfying the PARAFAC2 constraint. We explore this projection next.
@@ -180,24 +180,24 @@ $$
 Projection on the PARAFAC2 constraint therefore means finding a matrix $B$ such that the total distance between each point $B_k$ and the orbit $\mathcal{O}(B)$ is as small as possible:
 
 $$
- \argmin{B} \sum_{k\leq K} d(B,B_k).
+ \armin{B} \sum_{k\leq K} d(B,B_k).
 $$
 
 The distance $d$ we propose to use is the Euclidean distance to the closest point $P_kB$ on $\mathcal{O}(B)$ to $B_k$, that is
 
 $$
-d(B,B_k) = \argmin{P_k \text{ orthogonal}} \|B_k - P_kB\|_F^2.
+d(B,B_k) = \armin{P_k \text{ orthogonal}} \|B_k - P_kB\|_F^2.
 $$
 
 Projection on the PARAFAC2 constraint, therefore, boils down to solving
 
 $$
-\argmin{B, P_k \text{ orthogonal }} \sum_{k\leq K} \|B_k - P_kB \|_F^2.
+\armin{B, P_k \text{ orthogonal }} \sum_{k\leq K} \|B_k - P_kB \|_F^2.
 $$ (eq:P2proj)
 
 From the point of view of algorithm design, we seek a procedure to compute exact solutions to the problem {eq}`eq:P2proj` and plug them into the AO-ADMM algorithm. Maybe surprisingly, the following simple alternating algorithm typically converges in a few iterations:
 1. Compute orthogonal matrices $P_k$ solving $K$ orthogonal Procrustes problems.
-2. Compute the geodesic mean $B$ as $\argmin{B} \sum_{k} \|P_k^TB_k-B\|_F^2 = \frac{1}{K}\sum_{k} P_k^TB_k $. 
+2. Compute the geodesic mean $B$ as $\armin{B} \sum_{k} \|P_k^TB_k-B\|_F^2 = \frac{1}{K}\sum_{k} P_k^TB_k $. 
 
 We can observe the procedure's fast convergence empirically in the experiment below.
 
