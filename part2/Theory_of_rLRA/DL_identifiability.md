@@ -53,7 +53,7 @@ This is maybe better understood with a visualisation. First, note that we may no
 
 ```{figure} ../../Figures/ex1.*
 ---
-width: 600px
+width: 500px
 align: center
 name: DL_identifiability_ex1
 ---
@@ -62,7 +62,7 @@ Two points per facet.
 
 ```{figure} ../../Figures/ex3.*
 ---
-width: 600px
+width: 500px
 align: center
 name: DL_identifiability_ex3
 ---
@@ -71,7 +71,7 @@ Four points per facet.
 
 ```{figure} ../../Figures/ex2.*
 ---
-width: 600px
+width: 500px
 align: center
 name: DL_identifiability_ex2
 ---

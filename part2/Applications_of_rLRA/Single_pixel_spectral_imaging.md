@@ -29,7 +29,7 @@ Although the idea of compressive acquisitions in computational optics precedes t
 
 ```{figure} ../../Figures/schema_spc.png
 ---
-width: 650px
+width: 350px
 align: center
 name: singlepixel_camera
 ---
@@ -108,7 +108,7 @@ where $H$ here denotes a Hadamard matrix, and $[x]^- \geq 0$ is the negative par
 
 ```{figure} ../../Figures/hadamard.png
 ---
-width: 350px
+width: 250px
 align: center
 name: hadamard
 ---
@@ -167,7 +167,7 @@ tl.set_backend("pytorch")
 x = torch.sum(torchvision.io.read_image("../../tensorly_hdr/dataset/cat.jpg"), axis=0)
 x = x/torch.max(x)  # normalize to [0,1], this is realistic
 
-plt.figure(figsize=(12,10))
+plt.figure(figsize=(6,4))
 plt.imshow(x, cmap='gray')
 plt.colorbar()
 plt.title("A 64x64 cat image")
@@ -256,7 +256,7 @@ Note that the pseudo-inverse reconstruction gives essentially the same result as
 We can also show the error map for the pseudo-inverse reconstruction, to observe that the residual is not evidently spatially correlated, despite the misfit between the noise model and the reconstruction loss. 
 
 ```{code-cell}ipython3
-plt.figure(figsize=(12,10))
+plt.figure(figsize=(6,4))
 plt.imshow(torch.abs(x - x_rec), cmap='gray')
 plt.colorbar()
 plt.axis('off')
@@ -271,7 +271,7 @@ If we consider the model $y \sim \mathcal{N}(\alpha Ax, \sigma)$, which accordin
 
 ```{code-cell}ipython3
 :tags: [hide-input]
-plt.figure(figsize=(12,10))
+plt.figure(figsize=(6,4))
 plt.hist(y)
 plt.title("Histogram of the measurements")
 plt.xlabel("Measurement value")
@@ -591,7 +591,7 @@ def adjoint(y):
 X_rec = torch.linalg.lstsq(Anz, Ynz.T).solution.T
 
 # Show cat reconstructed with all wavelengths
-plt.figure(figsize=(12,10))
+plt.figure(figsize=(6,4))
 plt.imshow(np.rot90(torch.sum(X_rec, dim=0).reshape(64,64), 2), cmap='gray')
 plt.title("Reconstructed image at all wavelengths")
 plt.colorbar()
@@ -668,7 +668,7 @@ if rank>3:
             abundance_map_rgb[:,:,2] += A_est[5,:].reshape(n,n)
 # Clip values to [0,1]
 abundance_map_rgb = torch.clamp(abundance_map_rgb, 0, 1)
-plt.figure(figsize=(12,10))
+plt.figure(figsize=(6,4))
 plt.imshow(np.rot90(abundance_map_rgb.cpu().numpy(), k=2))
 plt.title("Superimposed estimated abundance maps")
 # add color legends

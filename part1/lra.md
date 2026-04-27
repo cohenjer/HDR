@@ -146,7 +146,7 @@ The algorithmic development for LRA is only briefly described in this section. T
 
 ```{figure} ../Figures/nmfmatrix.png
 ---
-width: 700px
+width: 600px
 align: center
 name: fig:nmfmatrix
 ---
@@ -180,7 +180,7 @@ NMF can be interpreted geometrically as a linear dimensionality reduction techni
 
 ```{figure} ../Figures/Nmfr3d3.png
 ---
-width: 700px
+width: 550px
 align: center
 name: fig:nmfr3d3
 ---
@@ -235,7 +235,7 @@ where $\mathcal{K}$ is a subset of $r$ indices in $[1,n_2]$. Separable NMF allow
 
 ```{figure} ../Figures/Sepnmf.png
 ---
-width: 700px
+width: 600px
 align: center
 name: fig:sepnmf
 ---
@@ -291,7 +291,7 @@ M = M / np.sum(M, axis=0)
 Me = Me / np.sum(Me, axis=0)
 
 # b. 3d plotting
-fig = plt.figure(figsize=(12,10))
+fig = plt.figure(figsize=(8,6))
 ax = fig.add_subplot(projection='3d', elev=20, azim=10)
 # 3d data
 for i in range(n2):
@@ -319,7 +319,7 @@ Me_snpa = We_snpa@He_snpa.T
 print(f"Final mean reconstruction error with SNPA, {np.linalg.norm(M-Me_snpa)/n1/n2}")
 
 # Plotting the 3d data points, true W positions as triangles and estimated W positions with SNPA
-fig = plt.figure(figsize=(12,10))
+fig = plt.figure(figsize=(8,6))
 ax = fig.add_subplot(projection='3d', elev=20, azim=10)
 # 3d data
 for i in range(n2):

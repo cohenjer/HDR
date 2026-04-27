@@ -22,9 +22,7 @@ Except for the picture above, generative AI has been used in this manuscript onl
 
 %TODOlist:
 %- Latex build fork ?
-  %- Gif hadamard
   %- argmin argmax
-  %- theorem numbering in AO not working
   %- H+ H-
   %- taille figures notamment AMT
   %------- Envoi 2 (pdf) ----

@@ -67,7 +67,7 @@ Essential uniqueness is the uniqueness up to permutations and scaling ambiguitie
 
 ```{figure} ../Figures/Hsi_nmf.png
 ---
-width: 700px
+width: 600px
 align: center
 name: fig:HSI_nmf
 ---
@@ -78,7 +78,7 @@ An extension of matrix LRA is tensor LRA, which applies to input data with more 
 
 ```{figure} ../Figures/Cpd_simple.png
 ---
-width: 700px
+width: 500px
 align: center
 name: fig:cpd_simple
 ---
@@ -92,7 +92,7 @@ which is essentially NMF where the matrix $V$ is fixed. The cost with respect to
 
 ```{figure} ../Figures/nnlsU.png
 ---
-width: 700px
+width: 500px
 align: center
 name: fig:nnlsU
 ---
@@ -137,7 +137,7 @@ One of the most impactful work that I chose not to detail is related to the PhD 
 
 ```{figure} ../Figures/NNTucker_Music.png
 ---
-width: 700px
+width: 650px
 align: center
 name: fig:NNTucker_music
 ---

@@ -149,7 +149,7 @@ Usnmf1, VTsnmf1 = barebone_aNNLS_sNMF(image, tl.copy(U), tl.copy(VTdense), rank,
 ```{code-cell} ipython3
 :tags: [hide-input]
 
-fig, axs = plt.subplots(4, rank, figsize=(16, 8.5))
+fig, axs = plt.subplots(4, rank, figsize=(8, 6))
 row_names = ["Dense", "SNPA + sNNLS", "sNMF (k=2)", "sNMF (k=1)"]
 
 for i in range(rank):
@@ -178,7 +178,7 @@ for r, name in enumerate(row_names):
     y = bbox.y0 + bbox.height / 2
     fig.text(x, y, name, va="center", ha="right", fontsize=12)
 
-fig2, ax2 = plt.subplots(3, 1, figsize=(10, 9), sharex=True)
+fig2, ax2 = plt.subplots(3, 1, figsize=(8, 5), sharex=True)
 component_labels = [f"Component {j+1}" for j in range(rank)]
 
 # Plot dense spectra first to define the component colors

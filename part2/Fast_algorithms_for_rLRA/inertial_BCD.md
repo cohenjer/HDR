@@ -163,7 +163,7 @@ out2 = non_negative_parafac_hals(T, rank, init=deepcopy(init_cp), callback=err_r
 :tags: [hide-input]
 
 import matplotlib.pyplot as plt
-plt.figure(figsize=(8, 6))
+plt.figure(figsize=(6, 4))
 plt.semilogy(err, label='HER-ANLS')
 plt.semilogy(err_hals, label='HALS')
 plt.xlabel('Iteration')

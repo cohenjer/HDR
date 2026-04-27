@@ -51,7 +51,7 @@ where $T$ is a $r\times r$ invertible matrix. The trick to Borgen plots is to no
 
 ```{figure} ../Figures/Borgen_plots.png
 ---
-width: 650px
+width: 450px
 align: center
 name: fig:borgen_plots
 ---

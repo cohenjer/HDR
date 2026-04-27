@@ -52,7 +52,7 @@ which is exactly the orthogonal projection on $\cp{W}$. Depending on the matrix 
 
 ```{figure} ../Figures/Nnlsproj2.png
 ---
-width: 650px
+width: 500px
 align: center
 name: nnlsproj
 ---
@@ -275,7 +275,7 @@ Lipschitz-smoothness allows us to majorize the cost function $f$ by an isotropic
 
 ```{figure} ../Figures/Lipschitz.png
 ---
-width: 650px
+width: 500px
 align: center
 name: fig:lipschitz
 ---
@@ -517,7 +517,7 @@ for any column index $i\leq n$. The minimum of a scalar quadratic function under
 
 ```{figure} ../Figures/nnls1d.png
 ---
-width: 550px
+width: 500px
 align: center
 name: fig:nnls1d
 ---
@@ -586,7 +586,7 @@ HTest = hals_nnls(W.T@Y, W.T@W, n_iter_max=100, tol=1e-6, callback=callback_err)
 print(f"Relative Reconstruction error: {np.linalg.norm(Y - W@HTest)/np.linalg.norm(Y)}")
 print(f"Root mean squared error on H: {np.linalg.norm(HTtrue - HTest)/np.sqrt(r*n)}")
 
-plt.figure(figsize=(6,6))
+plt.figure(figsize=(6,3))
 plt.semilogy(errs)
 plt.xlabel("Iteration")
 plt.ylabel("Relative Reconstruction Error")
@@ -665,7 +665,7 @@ MM is often introduced without requiring that the tangent of the cost and the ma
 
 ```{figure} ../Figures/Mmprinciple.png
 ---
-width: 650px
+width: 550px
 align: center
 name: fig:mm
 ---

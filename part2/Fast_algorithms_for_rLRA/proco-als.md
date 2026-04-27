@@ -216,7 +216,7 @@ x_NNLS = tl.solvers.nnls.active_set_nnls(A.T@b,A.T@A)
 
 ```{code-cell}ipython
 :tags: [hide-input]
-plt.figure(figsize=(9,6))
+plt.figure(figsize=(6,4))
 # Plot 
 for i in range(grid_z.shape[0]):
     for j in range(grid_z.shape[1]):

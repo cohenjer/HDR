@@ -258,7 +258,7 @@ print("Selected Pure Pixels based on Multiple-Dictionary NMF", Kee)
 ```{code-cell} ipython3
 :tags: [hide-input]
 
-fig, axs = plt.subplots(rank, 4, figsize=(9,9))
+fig, axs = plt.subplots(rank, 4, figsize=(6,5))
 for i in range(rank):
     axs[i, 0].plot(ABest[1][0][:,i], color=colors[i])
     axs[i, 1].imshow(tl.reshape(ABest[1][1][:,i], [n1, n2]))

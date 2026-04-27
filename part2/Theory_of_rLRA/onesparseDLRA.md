@@ -64,7 +64,7 @@ K = convert_to_index(Kx, Ky, image_t.shape[1])
 :tags: [hide-input]
 
 # Show the hyperspectral image at a given band
-plt.figure(figsize=(12,10))
+plt.figure(figsize=(8,6))
 print("Showing the hyperspectral image at band indexed by", band)
 print("Red crosses signal the position of the hand-picked pure pixels")
 plt.imshow(image_t[:,:,band], cmap="Greys")
@@ -216,7 +216,7 @@ If one runs the experiment several times, one might observe that the ground trut
 :tags: []
 
 Kxe, Kye = convert_to_pixel(out[2], image_t.shape[1])
-plt.figure(figsize=(12,10))
+plt.figure(figsize=(8,6))
 plt.imshow(image_t[:,:,band], cmap="Greys")
 # Also showing the pixels we hand-pick as pure
 plt.scatter(Kxe, Kye, s=200, c='green', marker='x')
