@@ -106,7 +106,7 @@ $$ A = \left[ \begin{array}{c} [H]^+ \\ [H]^- \end{array}\right] $$
 where $H$ here denotes a Hadamard matrix, and $[x]^- \geq 0$ is the negative part of a vector or matrix $x$. Matrix $[H]^-$ contains a row of zeros that is usually removed. 
 
 
-```{figure} ../../Figures/hadamard.gif
+```{figure} ../../Figures/hadamard.png
 ---
 width: 350px
 align: center
