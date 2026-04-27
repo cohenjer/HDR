@@ -106,17 +106,17 @@ sphinx:
     mathjax3_config:
       tex:
         #packages: {'[+]': ['ams']}  # Load AMS extensions
-        macros:
-          "llbracket": ["⟦"]
-          "rrbracket": ["⟧"]
-          "argmin": ["\\underset{#1}{\\text{argmin}}~",1]
-          "argmax": ["\\underset{#1}{\\text{argmax}}~",1]
-          "amin": ["\\underset{#1}{\\text{min}}~",1]
-          "R": ["\\mathbb{R}^{#1}",1]
-          "vec": ["\\text{vec}\\left(#1\\right)",1]
-          "KL": ["\\mathcal{D}_{\\text{KL}}\\left(#1\\right)",1]
-          "cp": ["\\text{col}_{+}\\left(#1\\right)",1]
-          "rank": ["\\text{rank}\\left(#1\\right)",1]
+        #macros:
+          #"llbracket": ["⟦"]
+          #"rrbracket": ["⟧"]
+          #"argmin": ["\\underset{#1}{\\text{argmin}}~",1]
+          #"argmax": ["\\underset{#1}{\\text{argmax}}~",1]
+          #"amin": ["\\underset{#1}{\\text{min}}~",1]
+          #"R": ["\\mathbb{R}^{#1}",1]
+          #"vec": ["\\text{vec}\\left(#1\\right)",1]
+          #"KL": ["\\mathcal{D}_{\\text{KL}}\\left(#1\\right)",1]
+          #"cp": ["\\text{col}_{+}\\left(#1\\right)",1]
+          #"rank": ["\\text{rank}\\left(#1\\right)",1]
   extra_extensions:
     - sphinx_proof
 
