@@ -1,0 +1,12 @@
+:root {
+  --r-main-font-size: 34px;
+}
+
+.reveal h1,
+.reveal h2 {
+  letter-spacing: 0.01em;
+}
+
+.reveal section ul {
+  margin-top: 0.4em;
+}

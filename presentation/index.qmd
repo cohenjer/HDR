@@ -1,0 +1,114 @@
+---
+title: "Interactive HDR Defense Slides"
+subtitle: "Quarto Skeleton"
+author: "Jérémie Cohen"
+date: today
+format: revealjs
+---
+
+# Title slide
+
+::: {.r-fit-text}
+**Habilitation à Diriger des Recherches**
+:::
+
+## Context and positioning
+
+- Research perimeter
+- Scientific trajectory
+- Main contributions
+
+## Agenda
+
+1. Motivation and vision
+2. Core scientific contributions
+3. Impact and applications
+4. Perspectives
+
+# Motivation and vision
+
+## Problem landscape
+
+- Why this topic matters
+- Scientific and societal drivers
+- Key open challenges
+
+## Research questions
+
+- **RQ1:** Placeholder
+- **RQ2:** Placeholder
+- **RQ3:** Placeholder
+
+# Core contributions
+
+## Part I — Theoretical foundations
+
+- Contribution A
+- Contribution B
+- Main takeaways
+
+## Part II — Methods and models
+
+- Methodological innovation
+- Experimental setup
+- Reproducibility notes
+
+## Part III — Systems and applications
+
+- Real-world use cases
+- Deployment constraints
+- Lessons learned
+
+# Results and discussion
+
+## Quantitative highlights
+
+- Key metric 1
+- Key metric 2
+- Comparative baseline
+
+## Qualitative insights
+
+- Interpretability
+- Failure cases
+- Robustness discussion
+
+# Interactive segment
+
+## Live demo / interactive exploration
+
+- Demo objective
+- What to watch
+- Backup plan
+
+## Audience interaction
+
+- Question prompt 1
+- Question prompt 2
+- Discussion anchor
+
+# Perspectives
+
+## Future research directions
+
+- Short-term
+- Mid-term
+- Long-term
+
+## HDR supervision and leadership plan
+
+- Team structuring
+- Collaboration strategy
+- Training and mentoring
+
+# Conclusion
+
+## Key messages
+
+1. Scientific coherence
+2. Original contributions
+3. Clear future trajectory
+
+## Thank you
+
+**Questions?**

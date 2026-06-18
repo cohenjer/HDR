@@ -1,0 +1,19 @@
+project:
+  type: default
+  output-dir: _site
+
+execute:
+  echo: false
+  warning: false
+
+format:
+  revealjs:
+    theme: default
+    css: styles.css
+    transition: fade
+    slide-number: c/t
+    incremental: true
+    center: false
+    controls: true
+    progress: true
+    code-copy: true
