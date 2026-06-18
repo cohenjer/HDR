@@ -2,6 +2,11 @@
   --r-main-font-size: 34px;
 }
 
+/* .reveal .progress {
+    color: #003366;
+    height: 8px;
+} */
+
 .reveal h1,
 .reveal h2 {
   letter-spacing: 0.01em;
@@ -9,4 +14,59 @@
 
 .reveal section ul {
   margin-top: 0.4em;
+}
+
+
+#section-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    min-height: 40px;
+    padding: 4px 14px;
+
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+
+    align-items: center;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+
+    background: white;
+
+    border-bottom: 1px solid #dddddd;
+
+    z-index: 1000;
+
+    font-size: 0.45em;
+    font-weight: 500;
+}
+
+#section-nav .section-nav-item {
+    border: 0;
+    background: transparent;
+    white-space: nowrap;
+    cursor: pointer;
+    color: #888888;
+    transition: all 0.3s;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+#section-nav .section-nav-item:hover {
+    color: #003366;
+    background: #eef3f8;
+}
+
+#section-nav .section-nav-item.active {
+    color: #003366;
+    font-weight: bold;
+    background: #e8f0fa;
+}
+
+.reveal .slides {
+    margin-top: 30px;
 }

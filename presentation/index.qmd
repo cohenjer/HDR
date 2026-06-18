@@ -12,20 +12,22 @@ format: revealjs
 **Habilitation à Diriger des Recherches**
 :::
 
-## Context and positioning
+# Context and positioning {data-section="intro"}
+
+## slide 1
 
 - Research perimeter
 - Scientific trajectory
 - Main contributions
 
-## Agenda
+## slide 2
 
 1. Motivation and vision
 2. Core scientific contributions
 3. Impact and applications
 4. Perspectives
 
-# Motivation and vision
+# Motivation and vision {data-section="motivation"}
 
 ## Problem landscape
 

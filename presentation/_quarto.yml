@@ -9,11 +9,18 @@ execute:
 format:
   revealjs:
     theme: default
-    css: styles.css
-    transition: fade
-    slide-number: c/t
-    incremental: true
     center: false
-    controls: true
-    progress: true
     code-copy: true
+    controls: true
+    css: styles.css
+    incremental: false
+    progress: true
+    slide-number: c/t
+    transition: fade
+
+    include-in-header:
+      - text: |
+          <nav id="section-nav" aria-label="Section navigation"></nav>
+
+    include-after-body:
+      - js/nav.js
