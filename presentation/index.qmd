@@ -12,7 +12,7 @@ format: revealjs
 **Habilitation à Diriger des Recherches**
 :::
 
-# Context and positioning {data-section="intro"}
+# Context and positioning
 
 ## slide 1
 
@@ -27,7 +27,7 @@ format: revealjs
 3. Impact and applications
 4. Perspectives
 
-# Motivation and vision {data-section="motivation"}
+# Motivation and vision
 
 ## Problem landscape
 

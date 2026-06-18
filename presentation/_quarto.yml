@@ -1,6 +1,8 @@
 project:
   type: default
   output-dir: _site
+  resources:
+    - js/nav.js
 
 execute:
   echo: false
@@ -14,13 +16,12 @@ format:
     controls: true
     css: styles.css
     incremental: false
-    progress: true
+    progress: false
     slide-number: c/t
     transition: fade
 
     include-in-header:
       - text: |
           <nav id="section-nav" aria-label="Section navigation"></nav>
-
-    include-after-body:
-      - js/nav.js
+      - text: |
+          <script src="js/nav.js"></script>
