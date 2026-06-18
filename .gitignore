@@ -4,3 +4,5 @@ tensorly_hdr/build
 .vscode
 code-workspace
 *.log
+/.quarto/
+**/*.quarto_ipynb
