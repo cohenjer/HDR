@@ -1,41 +1,116 @@
 ---
-title: "HDR Defense"
-subtitle: "Regularized low-rank approximation: theory, algorithms, and perspectives"
-author: "Jérémy Cohen"
-date: today
 format: revealjs
+title-slide: false
 ---
 
-# Title slide
+# Approximations de rang faible régularisées
 
-::: r-fit-text
-**Habilitation à Diriger des Recherches**
+**Théorie, algorithmes et applications**
+
+Jérémy Cohen, CR CNRS, CREATIS
+
+30 Juin 2026
+
+:::: box
+::: smaller
+- Sophie Achard *(DR CNRS, LJK, Grenoble)* — examinatrice
+- Sébastien Bourguignon *(Professeur, LS2N, Nantes)* — rapporteur
+- Cédric Févotte *(DR CNRS, IRIT, Toulouse)* — rapporteur
+- Simon Masnou *(Professeur, ICJ, Lyon)* — examinateur
+- Joseph Salmon *(DR Inria, Université de Montpellier)* — rapporteur
+:::
+::::
+
+## CV
+
+:::::::::::::: columns
+::::::: {.column width="30%"}
+:::: box-titled
+
+::: box-title
+Encadrement
 :::
 
-::: r-fit-text
-**Regularized low-rank approximation**\
-theory, algorithms, and perspectives
+::: smaller
+- 4 PhD encadrés (2 en cours)
+- 5 PhD suivis (1 en cours)
+- 2 postdocs (1 en cours)
+- 1 ingénieur
+- 12 master (M1 et M2)
+
 :::
 
-# Roadmap
+::::
 
-1.  **Introduction to regularized LRA**
-2.  **Contributions to rLRA**
-3.  **Research perspectives**
+:::: box-titled
+::: box-title
+Services
+:::
 
-# 1. Introduction to regularized LRA
+::: smaller
+- Membre élu CoNRS 03
+- Organisation sessions spéciales
+- Organisation journées scientifiques
+:::
 
-## Why low-rank models?
+::::
+:::::::
+
+::::::: {.column width="30%"}
+:::: box-titled
+::: box-title
+Publications
+:::
+
+::: smaller
+Depuis 2020, 
+
+- ~10 R.I. (SIMODS, TMLR...)
+- ~15 C.I. (EUSIPCO...)
+:::
+
+::::
+
+:::: box-titled
+::: box-title
+Valorisation
+:::
+
+::: smaller
+-  Open source (Tensorly)
+-  Projets (ANR JCJC)
+-  Vulgarisation
+   - Podcasts
+   - Conf. grand public
+:::
+
+::::
+:::::::
+
+::: {.column width="40%"}
+![](figures/Europe_map.png){}
+:::
+::::::::::::::
+
+# 1. Introduction à l'approximation de faible rang régularisée
+
+## Des données aux modèles
+
+- En traitement du signal et en apprentissage, deux objectifs reviennent sans cesse :
+  - **extraire de l'information** ;
+  - **compresser les données**.
+- Ces deux objectifs se rejoignent souvent : un bon résumé des données conserve leur structure utile.
+- C'est le rôle de la **réduction de dimension**.
+
+## Pourquoi le faible rang ?
 
 ::::: columns
 ::: {.column width="55%"}
-- Low-rank models seek a compact representation of complex data:
-  $$Y \approx UV^T.$$
-- They can be read in two complementary ways:
-  - as **dimensionality reduction**;
-  - as a **decomposition into elementary patterns**.
-- In many applications, the factors are not only numerical parameters: they represent spectra, abundance maps, temporal activations, dictionaries, or latent sources.
-- This is why low-rank approximation naturally becomes an **inverse problem**.
+- Un modèle de faible rang cherche une écriture compacte : $$Y \approx UV^T.$$
+- Cette écriture se lit de deux façons :
+  - comme une **réduction de dimension** ;
+  - comme une **décomposition en motifs élémentaires**.
+- Dans de nombreuses applications, les facteurs portent un sens physique.
 :::
 
 ::: {.column width="45%"}
@@ -43,29 +118,29 @@ theory, algorithms, and perspectives
 :::
 :::::
 
-## From LRA to rLRA
+## Pourquoi régulariser ?
 
-- In practice, unconstrained low-rank factorizations are rarely interpretable enough.
-- Regularization incorporates prior knowledge directly into the model:
+- Une factorisation de faible rang non contrainte est rarement suffisamment interprétable.
+- On introduit donc des a priori dans le modèle :
 
 $$\min_{U,V} f(Y,UV^T) + g_U(U) + g_V(V).$$
 
-- The terms $g_U$ and $g_V$ may enforce:
-  - nonnegativity,
-  - sparsity,
-  - smoothness,
-  - coupling across modalities,
-  - cardinality or structural constraints.
-- Regularized LRA is therefore the point where **linear algebra, optimization, inverse problems, and machine learning** meet.
+- Les termes de régularisation peuvent imposer :
+  - la nonnégativité,
+  - la parcimonie,
+  - la régularité,
+  - des couplages structurés.
 
-## Why nonnegative models play a central role
+## Pourquoi les modèles nonnégatifs ?
 
 ::::: columns
 ::: {.column width="52%"}
-- In many sensing problems, the quantities of interest are additive and physically nonnegative.
-- This makes **nonnegative matrix factorization** and related models especially natural.
-- The model is attractive because it often yields **part-based and interpretable decompositions**.
-- Typical examples include spectral unmixing, computational imaging, chemometrics, and audio analysis.
+- Dans beaucoup de problèmes de mélange, les quantités sont **additives** et **nonnégatives**.
+- La NMF devient alors un modèle naturel.
+- Elle fournit souvent des décompositions :
+  - **par parties** ;
+  - **physiquement interprétables**.
+- Exemples : démélange spectral, chimiométrie, audio, imagerie computationnelle.
 :::
 
 ::: {.column width="48%"}
@@ -73,42 +148,40 @@ $$\min_{U,V} f(Y,UV^T) + g_U(U) + g_V(V).$$
 :::
 :::::
 
-## Main scientific challenges in rLRA
+## Défis scientifiques
 
-- **Identifiability:** when do the recovered factors correspond, up to trivial ambiguities, to meaningful physical objects?
-- **Solution characterization:** what properties are actually induced by a regularized model, beyond the user's intuition?
-- **Modeling with side information:** how should dictionaries, supervision, or multimodal couplings be introduced without losing interpretability?
-- **Rank and structure selection:** how should one choose the latent dimension and the right structural prior?
+1.  **Identifiabilité** : quand les facteurs ont-ils un sens physique ?
+2.  **Caractérisation des solutions** : que produit réellement une régularisation ?
+3.  **Information auxiliaire** : comment intégrer dictionnaires, supervision, multimodalité ?
+4.  **Choix du rang** : quelle structure latente faut-il retenir ?
 
-## Main computational challenges in rLRA
+## Défis algorithmiques
 
-- rLRA optimization problems are typically **multi-block, nonconvex, and often nonsmooth**.
-- Efficient algorithms must exploit structure rather than rely on generic solvers.
-- There is no universally best method: the right algorithm depends on the loss, the constraints, the size of the data, and its sparsity.
-- Some losses are especially delicate. This is the case of the **KL-divergence**, which is singular near zero and asymptotically flat at large intensities.
-- Finally, scientific progress in rLRA also depends on **software, reproducibility, and benchmark design**.
+1.  Les problèmes sont souvent **non convexes**, **multi-blocs**, **non lisses**.
+2.  Il n'existe pas d'algorithme universellement optimal.
+3.  Les performances dépendent fortement du type de perte et de la structure des données.
+4.  Le progrès passe aussi par le **logiciel**, les **benchmarks** et la **reproductibilité**.
 
-# 2. Contributions to rLRA
+# 2. Contributions à la rLRA
 
-## Research trajectory and scientific intent
+## Fil directeur
 
-- My trajectory is not a juxtaposition of disconnected topics.
-- It follows a coherent progression:
-  1.  **applications and source separation**, where interpretability is the first concern;
-  2.  **theory**, to understand when factor matrices are meaningful;
-  3.  **algorithm design**, to compute these models efficiently and flexibly;
-  4.  **data-driven and non-Euclidean optimization**, with a growing emphasis on KL-based problems.
-- The common objective is constant: **design low-rank models whose outputs can be interpreted, trusted, and computed at scale**.
+- Ma trajectoire n'est pas une succession de thèmes isolés.
+- Elle suit un enchaînement assez naturel :
+  1.  applications et séparation de sources ;
+  2.  théorie de l'interprétabilité ;
+  3.  conception algorithmique ;
+  4.  optimisation non euclidienne et problèmes à divergence de KL.
+- Mon objectif reste le même : **concevoir des modèles de faible rang interprétables et calculables efficacement**.
 
-## A first axis: making factors identifiable
+## Axe 1 — Identifiabilité
 
 ::::: columns
 ::: {.column width="55%"}
-- A central question in inverse problems is whether the recovered factors are unique in a meaningful sense.
-- In complete dictionary learning, data are modeled as sparse combinations of unknown atoms.
-- My contribution was to derive **deterministic sufficient conditions** for essential uniqueness.
-- The key idea is geometric: sparse data populate specific facets, and these facets can be used to recover the atoms.
-- This work also clarified and corrected earlier claims in the literature.
+- Une question centrale est celle de l'unicité des facteurs.
+- En apprentissage de dictionnaire complet, j'ai obtenu des **conditions suffisantes déterministes** d'unicité essentielle.
+- L'idée clé est géométrique : les données parcimonieuses peuplent certaines facettes, qui permettent de retrouver les atomes.
+- Ce travail a aussi clarifié plusieurs points de la littérature.
 :::
 
 ::: {.column width="45%"}
@@ -116,26 +189,24 @@ $$\min_{U,V} f(Y,UV^T) + g_U(U) + g_V(V).$$
 :::
 :::::
 
-## A second axis: understanding what regularization really does
+## Axe 2 — Comprendre l'effet réel de la régularisation
 
-- A regularized model does not necessarily behave as suggested by the explicit penalty written in the objective.
-- With Valentin Leplat, I studied a broad class of **homogeneous regularized scale-invariant models**.
-- The main message is that scale ambiguity transforms explicit penalties on the factors into an **implicit regularization on rank-one components**.
-- This yields three important consequences:
-  - regularization may induce **component pruning**;
-  - only specific combinations of hyperparameters truly matter;
-  - optimal solutions satisfy a **balancing property** across factors.
-- This contribution is important to me because it moves from algorithmic folklore to a principled understanding of regularized low-rank models.
+- Une pénalisation explicite n'induit pas toujours l'effet attendu.
+- Avec Valentin Leplat, j'ai étudié les modèles régularisés homogènes invariants par changement d'échelle.
+- Résultat principal : l'ambiguïté d'échelle induit une **régularisation implicite sur les composantes de rang un**.
+- Cela explique notamment :
+  - la suppression de composantes,
+  - le rôle réel des hyperparamètres,
+  - l'équilibrage optimal entre facteurs.
 
-## A third axis: designing faster optimization methods
+## Axe 3 — Concevoir des algorithmes plus rapides
 
 ::::: columns
 ::: {.column width="55%"}
-- A large part of my work concerns algorithms rather than models alone.
-- The guiding principle is to exploit the geometry of nonnegative optimization problems.
-- Recent work on **mSOM** proposes tight diagonal second-order majorants for nonnegative optimization.
-- The goal is not only to accelerate convergence, but also to prepare the ground for more difficult losses such as the KL-divergence.
-- More broadly, this line of work reflects my intention to contribute to numerical optimization beyond a single application domain.
+- Une part importante de mon travail porte sur les algorithmes.
+- Le principe est d'exploiter la géométrie des problèmes nonnégatifs.
+- Les travaux récents sur **mSOM** proposent des majorants diagonaux d'ordre deux plus serrés.
+- Cet axe prépare aussi le terrain pour des pertes plus difficiles, comme la divergence de KL.
 :::
 
 ::: {.column width="45%"}
@@ -143,56 +214,159 @@ $$\min_{U,V} f(Y,UV^T) + g_U(U) + g_V(V).$$
 :::
 :::::
 
-## Flexibility, multimodality, and learned algorithms
+## Axe 4 — Flexibilité, multimodalité, apprentissage
 
-- Another part of my trajectory concerns **flexible algorithms** for structured factorizations.
-- In coupled matrix-tensor factorization and nonnegative PARAFAC2, I contributed to frameworks able to handle:
-  - multimodal data,
-  - linear couplings,
-  - nonnegativity and additional constraints.
-- More recently, with Christophe Kervazo and collaborators, I explored **unrolled multiplicative updates** for NMF.
-- The intent is clear: preserve the interpretability of low-rank models while allowing them to benefit from training data and modern learning tools.
+- J'ai aussi travaillé sur des algorithmes **flexibles** pour des factorisations structurées.
+- Dans les modèles couplés et PARAFAC2 nonnégatif :
+  - données multimodales,
+  - couplages linéaires,
+  - contraintes multiples.
+- Plus récemment : **dépliage des mises à jour multiplicatives** pour la NMF.
+- L'idée générale est de préserver l'interprétabilité tout en profitant des données d'entraînement.
 
-## A synthesis of the contribution set
+## Lecture d'ensemble
 
-- The detailed contributions are diverse, but they obey a simple scientific logic:
-  1.  **understand** the meaning of the factors and of the regularization;
-  2.  **compute** the models with fast and flexible algorithms;
-  3.  **validate** the methodology on demanding applications.
-- Spectral imaging and music information retrieval have been, for me, more than application fields: they have been **test benches for theory and algorithm design**.
+- Ces contributions suivent une logique simple :
+  1.  **comprendre** les modèles ;
+  2.  **calculer** efficacement leurs solutions ;
+  3.  **valider** sur des applications exigeantes.
+- L'imagerie spectrale et l'information musicale ont servi de **bancs d'essai** pour cette démarche.
 
-# 3. Research perspectives
+# 3. Perspectives de recherche
 
-## Why focus on KL-divergence problems?
+## Pourquoi la divergence de KL ?
 
-- The KL-divergence arises naturally from **Poisson likelihood models**.
-- It is therefore central to counting data, low-photon imaging, spectral acquisition, and many nonnegative inverse problems.
-- It is also a natural loss for several NMF problems, notably in audio and spectroscopy.
-- This focus is a natural continuation of my previous work:
-  - nonnegative optimization,
-  - regularized inverse problems,
-  - interpretable matrix and tensor factorizations.
+- Elle apparaît naturellement dans les **modèles de Poisson**.
+- Elle est donc centrale pour :
+  - les données de comptage,
+  - l'imagerie en faible flux,
+  - l'acquisition spectrale,
+  - plusieurs modèles nonnégatifs.
+- Pour moi, c'est la suite naturelle de mes travaux sur l'optimisation nonnégative et les problèmes inverses.
 
-## Why KL-divergence is mathematically difficult
+## Pourquoi est-ce difficile ?
 
-- Near zero, its gradient may become arbitrarily large: the loss is **not Lipschitz-smooth**.
-- Far from zero, the loss becomes almost linear: this produces **flat directions** and slow convergence.
-- In practice, we also need to handle:
-  - nonnegativity constraints,
-  - sparsity or structural priors,
-  - possibly learned regularizers.
-- As a result, KL-based optimization is precisely the place where **theory, algorithm design, and applications** must be developed together.
+- Au voisinage de zéro, la divergence de KL n'est **pas Lipschitz-lisse**.
+- Loin de zéro, elle devient presque linéaire : la géométrie devient plus plate, donc plus difficile à optimiser.
+- En pratique, il faut en plus intégrer :
+  - des contraintes,
+  - des régularisations,
+  - parfois des approches apprises.
 
-## A research program centered on KL-based inverse problems
+## Démo interactive — géométrie de la divergence de KL en dimension 2
+
+Pour un vecteur observé $y=(y_1,y_2)$ fixé, on visualise $$D_{\mathrm{KL}}(y,x)=\sum_{i=1}^2 y_i \log\!\left(\frac{y_i}{x_i}\right)+x_i-y_i,
+\qquad x \in \mathbb{R}_{++}^2.$$
+
+```{python}
+#| echo: false
+#| warning: false
+import numpy as np
+import plotly.graph_objects as go
+
+eps = 0.05
+x1 = np.linspace(eps, 4.5, 120)
+x2 = np.linspace(eps, 4.5, 120)
+X1, X2 = np.meshgrid(x1, x2)
+
+y1 = 1.0
+y2_values = [0.4, 1.0, 2.0, 3.5]
+
+def kl2(y1, y2, X1, X2):
+    return y1 * np.log(y1 / X1) + X1 - y1 + y2 * np.log(y2 / X2) + X2 - y2
+
+Z0 = kl2(y1, y2_values[0], X1, X2)
+
+fig = go.Figure()
+
+fig.add_trace(
+    go.Contour(
+        x=x1,
+        y=x2,
+        z=Z0,
+        colorscale="Viridis",
+        contours=dict(showlabels=True),
+        colorbar=dict(title="D_KL"),
+        hovertemplate="x₁=%{x:.2f}<br>x₂=%{y:.2f}<br>KL=%{z:.3f}<extra></extra>",
+        name="Perte",
+    )
+)
+
+fig.add_trace(
+    go.Scatter(
+        x=[y1],
+        y=[y2_values[0]],
+        mode="markers",
+        marker=dict(color="red", size=12, symbol="x"),
+        name="Minimum",
+        hovertemplate="minimum : (%{x:.2f}, %{y:.2f})<extra></extra>",
+    )
+)
+
+frames = []
+for y2 in y2_values:
+    Z = kl2(y1, y2, X1, X2)
+    frames.append(
+        go.Frame(
+            name=f"{y2}",
+            data=[
+                go.Contour(
+                    x=x1,
+                    y=x2,
+                    z=Z,
+                    colorscale="Viridis",
+                    contours=dict(showlabels=True),
+                    colorbar=dict(title="D_KL"),
+                ),
+                go.Scatter(
+                    x=[y1],
+                    y=[y2],
+                    mode="markers",
+                    marker=dict(color="red", size=12, symbol="x"),
+                ),
+            ],
+            traces=[0, 1],
+        )
+    )
+
+fig.frames = frames
+
+fig.update_layout(
+    title="Courbes de niveau de la divergence de KL — le minimum est atteint en x = y",
+    height=520,
+    margin=dict(l=20, r=20, t=70, b=20),
+    xaxis_title="x₁",
+    yaxis_title="x₂",
+    sliders=[
+        dict(
+            active=0,
+            currentvalue={"prefix": "Valeur de y₂ : "},
+            pad={"t": 30},
+            steps=[
+                dict(
+                    label=str(y2),
+                    method="animate",
+                    args=[[f"{y2}"], {"mode": "immediate", "frame": {"duration": 0, "redraw": True}, "transition": {"duration": 0}}],
+                )
+                for y2 in y2_values
+            ],
+        )
+    ],
+)
+
+fig
+```
+
+## Programme de recherche
 
 ::::: columns
 ::: {.column width="58%"}
-- My perspective is to build a coherent program around **NN-KL** and **NMF-KL**.
-- The scientific objective is not merely to produce another solver, but to understand:
-  - which geometry should be exploited;
-  - which local approximations are useful;
-  - how to integrate regularization and learning while keeping convergence under control.
-- This is the main direction along which I now want to structure my future research.
+- Je souhaite structurer un programme cohérent autour de **NN-KL** et **NMF-KL**.
+- L'objectif n'est pas seulement de proposer un nouvel algorithme.
+- Il s'agit de comprendre :
+  - quelle géométrie exploiter ;
+  - quelles approximations locales utiliser ;
+  - comment intégrer régularisation et apprentissage.
 :::
 
 ::: {.column width="42%"}
@@ -200,43 +374,35 @@ $$\min_{U,V} f(Y,UV^T) + g_U(U) + g_V(V).$$
 :::
 :::::
 
-## Perspective 1: benchmark and software
+## Perspective 1 — benchmark et logiciel
 
-- For NMF-KL, the field still lacks a clear **benchmarking culture**.
-- It remains difficult to answer simple practical questions:
-  - which algorithm should be used;
-  - on which type of data;
-  - with which implementation choices?
-- One priority is therefore to build:
-  - a reproducible benchmark,
-  - a clean software platform,
-  - and a common evaluation language for the community.
+- Pour NMF-KL, il manque encore une culture claire du **benchmark**.
+- Une priorité est donc de construire :
+  - un benchmark reproductible,
+  - une plateforme logicielle propre,
+  - un langage d'évaluation partagé.
 
-## Perspective 2: new optimization tools for NN-KL and NMF-KL
+## Perspective 2 — nouveaux outils d'optimisation
 
-- A key direction is the design of **local second-order majorants** tighter than classical global surrogates.
-- Another promising idea is to exploit the connection between KL minimization and **linear programming structure**, especially for sparse data.
-- I also want to understand how these ideas can be combined with:
-  - alternating optimization,
-  - mirror-type methods,
-  - and regularized or data-driven formulations.
-- The long-term objective is a family of methods that are simultaneously **fast, robust, and principled**.
+- Deux directions me paraissent particulièrement prometteuses :
+  1.  des **majorants locaux d'ordre deux** plus serrés ;
+  2.  l'exploitation du lien avec la **programmation linéaire**, surtout en données creuses.
+- L'objectif de long terme : des méthodes à la fois **rapides, robustes et principiellement fondées**.
 
-## Perspective 3: computational imaging and interpretable learning
+## Perspective 3 — imagerie computationnelle et apprentissage interprétable
 
-- The most immediate application field is **computational imaging**, especially spectral single-pixel imaging.
-- In such settings, KL-divergence is not only a mathematical curiosity: it is tied to the physics of the measurements.
-- The broader question is the following: **when is a dedicated KL-based method truly necessary, and when can simpler Gaussian approximations suffice?**
-- I also want to extend these tools toward interpretable learned methods, including Plug-and-Play and unrolled approaches, while remaining anchored in inverse-problem methodology.
+- Terrain d'application immédiat : **imagerie spectrale single-pixel**.
+- Question méthodologique centrale : **quand faut-il vraiment une méthode dédiée KL ?**
+- Je souhaite aussi étendre ces outils à des approches apprises, tout en gardant l'ancrage problème inverse.
 
 # Conclusion
 
-## Take-home messages
+## Messages à retenir
 
-1.  **Regularized low-rank approximation** is a coherent research theme at the intersection of linear algebra, optimization, inverse problems, and machine learning.
-2.  My contributions follow a clear trajectory: **meaning of the models, efficiency of the algorithms, and relevance for applications**.
-3.  The next stage of this program is centered on **KL-divergence-based nonnegative inverse problems**, where I believe significant theoretical and algorithmic progress remains to be made.
+1.  **La rLRA** est un thème cohérent, à l'intersection de plusieurs champs.
+2.  Mes contributions suivent un fil clair : **comprendre, calculer, valider**.
+3.  La prochaine étape se concentre sur les **problèmes inverses nonnégatifs à divergence de KL**.
 
-## Thank you
+## Merci
 
-**Questions?**
+**Questions ?**

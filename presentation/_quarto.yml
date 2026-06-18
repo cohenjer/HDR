@@ -1,8 +1,6 @@
 project:
   type: default
   output-dir: _site
-  resources:
-    - js/nav.js
 
 execute:
   echo: false
@@ -10,18 +8,101 @@ execute:
 
 format:
   revealjs:
-    theme: default
+    theme: white
     center: false
     code-copy: true
     controls: true
     css: styles.css
     incremental: false
     progress: false
-    slide-number: c/t
+    slide-number: true
+    # slide-number: c/t
     transition: fade
 
     include-in-header:
       - text: |
-          <nav id="section-nav" aria-label="Section navigation"></nav>
+          <div id="section-nav"></div>
+
+    include-after-body:
       - text: |
-          <script src="js/nav.js"></script>
+          <script>
+          var slideNoMap = null;
+
+          function buildNav() {
+            var nav = document.getElementById("section-nav");
+            var slides = Reveal.getSlides();
+            slideNoMap = new Map(slides.map(function(slide, idx) { return [slide, idx + 1]; }));
+            nav.innerHTML = "";
+            var navContainer = document.createElement("div");
+            navContainer.className = "nav-container";
+            var navList = document.createElement("div");
+            navList.className = "nav-list";
+            document.querySelectorAll(".reveal .slides > section").forEach(function(wrapper, h) {
+              var level1 = wrapper.querySelector(":scope > section.slide.level1");
+              var h1 = level1 && level1.querySelector("h1");
+              if (!h1) return;
+
+              var numbers = Array.from(wrapper.querySelectorAll(":scope > section.slide"))
+                .map(function(slide) { return slideNoMap.get(slide) || 0; })
+                .filter(Boolean);
+              if (!numbers.length) return;
+
+              var group = document.createElement("div");
+              group.className = "nav-section-group";
+              group.dataset.sectionStart = String(Math.min.apply(null, numbers));
+              group.dataset.sectionEnd = String(Math.max.apply(null, numbers));
+
+              var title = document.createElement("span");
+              title.className = "nav-section-title";
+              title.textContent = h1.textContent;
+              title.onclick = function() { Reveal.slide(h, 0); };
+              group.appendChild(title);
+
+              var bullets = document.createElement("div");
+              bullets.className = "nav-bullets";
+              wrapper.querySelectorAll(":scope > section.slide.level2").forEach(function(level2, v) {
+                var n = slideNoMap.get(level2);
+                if (!n) return;
+                var bullet = document.createElement("span");
+                bullet.className = "nav-bullet";
+                bullet.dataset.slideNo = String(n);
+                bullet.onclick = function() { Reveal.slide(h, v + 1); };
+                bullets.appendChild(bullet);
+              });
+
+              group.appendChild(bullets);
+              navList.appendChild(group);
+            });
+
+            navContainer.appendChild(navList);
+            nav.appendChild(navContainer);
+            updateNav();
+          }
+
+          function updateNav() {
+            if (!slideNoMap) return;
+            var currentNo = slideNoMap.get(Reveal.getCurrentSlide());
+            if (!currentNo) return;
+
+            document.querySelectorAll(".nav-section-group").forEach(function(g) {
+              g.classList.remove("active");
+              var start = parseInt(g.dataset.sectionStart, 10);
+              var end = parseInt(g.dataset.sectionEnd, 10);
+              if (!Number.isNaN(start) && !Number.isNaN(end) && currentNo >= start && currentNo <= end) {
+                g.classList.add("active");
+              }
+            });
+
+            document.querySelectorAll(".nav-bullet").forEach(function(b) {
+              b.classList.remove("active");
+              var slideNo = parseInt(b.dataset.slideNo, 10);
+              if (!Number.isNaN(slideNo) && slideNo === currentNo) b.classList.add("active");
+            });
+          }
+
+          if (typeof Reveal !== "undefined") {
+            Reveal.on("ready", buildNav);
+            Reveal.on("slidechanged", updateNav);
+            Reveal.on("resize", updateNav);
+          }
+          </script>
