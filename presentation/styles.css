@@ -66,14 +66,25 @@
   font-size: 1.1em;
 }
 
+/* Center legends */
+.caption{
+   text-align: center;
+}
 
+/* callout important larger text */
+.reveal .slides section div.callout-important{
+  font-size: 1.2em;
+}
 
-
+/* bullet second level color */
+.reveal .slides section ul li ul li::marker {
+  color: #1f77b4;
+}
 /* Column spacing */
 
 
 /* Navigation */
-#section-nav {
+/* #section-nav {
   position: fixed;
   top: 0;
   left: 0;
@@ -212,4 +223,4 @@
   .reveal {
     top: 60px;
   }
-}
+} */

@@ -1,9 +1,13 @@
----
-format: revealjs
-title-slide: false
----
+# Approximations de rang faible régularisées
 
 # Approximations de rang faible régularisées
+
+::: {.columns}
+
+::: {.column width="40%" }
+
+<br>
+<br>
 
 **Théorie, algorithmes et applications**
 
@@ -11,15 +15,32 @@ Jérémy Cohen, CR CNRS, CREATIS
 
 30 Juin 2026
 
-:::: box
-::: smaller
+:::
+
+::: {.column width="60%" }
+
+
+![](./figures/Pca.png){width="100%"}
+
+:::
+
+:::
+
+
+
+
+
+::: {.callout}
+### Jury
+
 - Sophie Achard *(DR CNRS, LJK, Grenoble)* — examinatrice
 - Sébastien Bourguignon *(Professeur, LS2N, Nantes)* — rapporteur
 - Cédric Févotte *(DR CNRS, IRIT, Toulouse)* — rapporteur
 - Simon Masnou *(Professeur, ICJ, Lyon)* — examinateur
 - Joseph Salmon *(DR Inria, Université de Montpellier)* — rapporteur
+
+
 :::
-::::
 
 ## CV
 
@@ -94,53 +115,326 @@ Valorisation
 
 # 1. Introduction à l'approximation de faible rang régularisée
 
-## Des données aux modèles
+## La réduction de dimension
 
-- En traitement du signal et en apprentissage, deux objectifs reviennent sans cesse :
-  - **extraire de l'information** ;
+- En apprentissage machine, deux objectifs reviennent souvent :
+  - **extraire de l'information utile de données** ;
   - **compresser les données**.
-- Ces deux objectifs se rejoignent souvent : un bon résumé des données conserve leur structure utile.
+- Ces deux objectifs se rejoignent souvent : un bon résumé des données conserve l'information utile.
 - C'est le rôle de la **réduction de dimension**.
 
-## Pourquoi le faible rang ?
 
-::::: columns
-::: {.column width="55%"}
-- Un modèle de faible rang cherche une écriture compacte : $$Y \approx UV^T.$$
-- Cette écriture se lit de deux façons :
-  - comme une **réduction de dimension** ;
-  - comme une **décomposition en motifs élémentaires**.
-- Dans de nombreuses applications, les facteurs portent un sens physique.
+::: {.columns}
+
+::: {.column width="30%"}
+
+<br>
+<br>
+<br>
+
+Exemple: la vision par l'oeil humain en RGB (simplifié)
+
 :::
 
-::: {.column width="45%"}
-![](figures/Pca.png){width="100%"}
+::: {.column width="70%"}
+
+
+::: {style="text-align:center;"}
+![source: http://hyperphysics.phy-astr.gsu.edu/](figures/eye_rgb.png){width="70%"}
 :::
-:::::
+
+:::
+
+:::
+
+
+
+
+
+
+
+## Réduction de dimension et images RBG
+
+```{python}
+
+import numpy as np
+
+# definir les filtres RGB (simplifies)
+def rgb_filters(wavelengths):
+    r_filter = np.exp(-0.5 * ((wavelengths - 575) / 50) ** 2)
+    g_filter = np.exp(-0.5 * ((wavelengths - 535) / 50) ** 2)
+    b_filter = np.exp(-0.5 * ((wavelengths - 445) / 30) ** 2)
+    return np.vstack([r_filter, g_filter, b_filter])
+
+
+# generer un faux spectre de reflectance
+def generate_spectrum(c1, n_wavelengths=31):
+    wavelengths = np.linspace(400, 700, n_wavelengths)
+    width = 30
+    amplitude = 1
+    spectrum = np.exp(-0.5 * ((wavelengths - c1) / width) ** 2) * amplitude
+
+    filters = rgb_filters(wavelengths)
+    rgb_raw = filters @ spectrum
+    rgb = 2*rgb_raw / np.sum(filters[1]) # bricolage
+    #np.max(rgb_raw) if np.max(rgb_raw) > 0 else rgb_raw
+
+    patch = np.tile(np.clip((255 * rgb), 0, 255).astype(np.uint8), (90, 90, 1))
+    return wavelengths, spectrum, filters, rgb, patch
+
+import plotly
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
+# use white theme plotly
+plotly.io.templates.default = "plotly_white"
+
+center_values = np.linspace(430, 650, 10)
+wavelengths, spectrum, filters, rgb, patch = generate_spectrum(center_values[0])
+
+fig = make_subplots(
+  rows=1,
+  cols=3,
+  column_widths=[0.62, 0.2, 0.18],
+  specs=[[{"type": "xy"}, {"type": "xy"}, {"type": "image"}]],
+  subplot_titles=("", "Projection RGB", "Couleur reconstruite"),
+  horizontal_spacing=0.08,
+)
+
+# remove grid on the first subplot
+fig.update_xaxes(showgrid=False, row=1, col=1)
+fig.update_yaxes(showgrid=False, row=1, col=1)
+# trace 0: spectre mobile
+fig.add_trace(
+  go.Scatter(
+    x=wavelengths,
+    y=spectrum,
+    mode="lines",
+    name="Spectre (haute dimension)",
+    line=dict(color="black", width=3),
+  ),
+  row=1,
+  col=1,
+)
+# traces 1..3: filtres fixes
+fig.add_trace(
+  go.Scatter(x=wavelengths, y=filters[0], mode="lines", name="Filtre R", line=dict(color="red", dash="dash"), opacity=0.35),
+  row=1,
+  col=1,
+)
+fig.add_trace(
+  go.Scatter(x=wavelengths, y=filters[1], mode="lines", name="Filtre G", line=dict(color="green", dash="dash"), opacity=0.35),
+  row=1,
+  col=1,
+)
+fig.add_trace(
+  go.Scatter(x=wavelengths, y=filters[2], mode="lines", name="Filtre B", line=dict(color="blue", dash="dash"), opacity=0.35),
+  row=1,
+  col=1,
+)
+
+# trace 4: barres RGB
+fig.add_trace(
+  go.Bar(x=["R", "G", "B"], y=rgb, marker_color=["red", "green", "blue"], showlegend=False),
+  row=1,
+  col=2,
+)
+# trace 5: patch couleur
+fig.add_trace(
+  go.Image(z=patch, hovertemplate="R=%{z[0]}<br>G=%{z[1]}<br>B=%{z[2]}<extra></extra>"),
+  row=1,
+  col=3,
+)
+
+frames = []
+for c1 in center_values:
+  wavelengths, spectrum, filters, rgb, patch = generate_spectrum(c1)
+  frames.append(
+    go.Frame(
+      name=f"{c1:.0f}",
+      data=[
+        go.Scatter(x=wavelengths, y=spectrum),
+        go.Bar(x=["R", "G", "B"], y=rgb),
+        go.Image(z=patch),
+      ],
+      # Update only traces 0 (spectre), 4 (barres), 5 (image)
+      traces=[0, 4, 5],
+    )
+  )
+
+fig.frames = frames
+
+fig.update_xaxes(title_text="Longueur d'onde (nm)", row=1, col=1)
+fig.update_yaxes(title_text="Intensite", row=1, col=1)
+fig.update_yaxes(range=[0, 1.1], row=1, col=2)
+fig.update_xaxes(showgrid=False, visible=False, row=1, col=3)
+fig.update_yaxes(showgrid=False, visible=False, row=1, col=3)
+
+fig.update_layout(
+  height=420,
+  margin=dict(l=20, r=20, t=70, b=20),
+  legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="left", x=0),
+  sliders=[
+    dict(
+      active=0,
+      currentvalue={"prefix": "Centre spectre : "},
+      pad={"t": 20},
+      steps=[
+        dict(
+          label=f"{c1:.0f} nm",
+          method="animate",
+          args=[
+            [f"{c1:.0f}"],
+            {
+              "mode": "immediate",
+              "frame": {"duration": 0, "redraw": True},
+              "transition": {"duration": 0},
+            },
+          ],
+        )
+        for c1 in center_values
+      ],
+    )
+  ],
+)
+
+fig
+```
+
+
+## Approximation de rang faible (LRA) ?
+
+
+::: {.columns}
+
+:::: {.column width="50%"}
+
+
+- Un modèle de rang faible est une réduction de dimension pour des tableaux (matrices, tenseurs) 
+$$\underbrace{M}_{\text{données}} \in \mathbb{R}^{n_1 \times n_2},\;\; M \approx WH^T $$
+
+::::
+
+:::: {.column width="50%"}
+
+- $W\in\mathbb{R}^{n_1 \times r}$ et $H\in\mathbb{R}^{n_2 \times r}$ sont des <span style="color:red;">matrices inconnues</span>.
+
+- Le nombre de paramètres est réduit de $n_1 n_2$ à $r(n_1+n_2)$.
+
+::::
+
+:::
+
+::::{.columns}
+:::{.column width="70%" .fragment}
+::: {style="text-align:center;"}
+![Exemple d'approximation de rang faible d'une image hyperspectrale](figures/Hsi_nmf.png){width="90%"}
+:::
+:::
+
+:::{.column width="30%" .fragment}
+Formulation variationelle, avec $f$ une fonction de perte : 
+
+$$ (W^\ast, H^\ast) = \underset{W,H}{\arg\min} f(M,WH^T) $$
+
+- Problème non convexe, multi-bloc
+- Solution directe avec la SVD
+
+:::
+::::
+
+## LRA, des applications en séparation de sources aveugle
+
+::: {style="text-align:center;"}
+![](figures/SourceSep_drawing_ChatGPT.png){width="70%"}
+:::
+
+::: {.callout-important}
+### Enjeu
+Pouvoir donner un sens physique aux résultats du LRA.
+
+:::
+::: {.columns}
+
+::: {.column width="60%"}
+
+- Imagerie spectrale
+  - Biopsie optique pour chirurgie guidée par l'imagerie
+  - Imagerie satellite pour la surveillance de l'environnement
+  - Imagerie astronomique pour l'étude de l'univers 
+
+
+:::
+
+::: {.column width="40%"}
+
+
+- Chimiométrie: analyse de composés chimiques
+- Informatique musicale: séparation de sources musicales, transcription automatique
+
+
+:::
+
+:::
+
+
+
+
+
+
 
 ## Pourquoi régulariser ?
 
-- Une factorisation de faible rang non contrainte est rarement suffisamment interprétable.
-- On introduit donc des a priori dans le modèle :
 
-$$\min_{U,V} f(Y,UV^T) + g_U(U) + g_V(V).$$
+- LRA n'est pas **identifiable**:
 
-- Les termes de régularisation peuvent imposer :
-  - la nonnégativité,
-  - la parcimonie,
-  - la régularité,
-  - des couplages structurés.
+$$ M = WH^T = (WA)(A^{-1}H^T), \quad \forall A \in \mathbb{R}^{r\times r} \text{ inversible}.$$
 
-## Pourquoi les modèles nonnégatifs ?
+Il existe une infinité de solutions équivalentes, mais une seule (pour simplifier) nous intéresse: celle qui correspond à la réalité physique du problème.
+
+- Solution: introduire des régularisations (rLRA)
+
+$$\min_{W,H} f(M,WH^T) + g_W(W) + g_H(H).$$
+
+
+::: {.columns}
+
+::: {.column width="47%"}
+
+- Les termes de régularisation peuvent imposer
+  - la nonnégativité, $g_W(W) = 0$ si $W \geq 0$, $+\infty$ sinon,
+  - la parcimonie, $g_W(W) = ||W||_1$,
+  - ...
+
+
+:::
+
+::: {.column width="53%" .fragment}
+
+
+::: {.callout-important}
+
+Les régularisation changent drastiquement les propriétés du modèle !
+
+
+:::
+
+
+:::
+
+:::
+
+
+
+
+## Nonnégativité
 
 ::::: columns
 ::: {.column width="52%"}
 - Dans beaucoup de problèmes de mélange, les quantités sont **additives** et **nonnégatives**.
-- La NMF devient alors un modèle naturel.
-- Elle fournit souvent des décompositions :
+- La nonnégativité devient alors une régularisation naturelle.
+- Elle fournit des décompositions :
   - **par parties** ;
   - **physiquement interprétables**.
-- Exemples : démélange spectral, chimiométrie, audio, imagerie computationnelle.
 :::
 
 ::: {.column width="48%"}
@@ -148,110 +442,408 @@ $$\min_{U,V} f(Y,UV^T) + g_U(U) + g_V(V).$$
 :::
 :::::
 
-## Défis scientifiques
+:::{style ="text-align:center;"}
+::: {.callout-important}
+### LRA nonnégative
 
-1.  **Identifiabilité** : quand les facteurs ont-ils un sens physique ?
+LRA + nonnégativité = **Nonnegative Matrix Factorization (NMF)**
+
+$$ \underset{W\geq 0, H\geq 0}{\arg\min} f(M,WH^T) $$
+
+:::
+:::
+
+::: {.fragment}
+
+J'utiliserai l’anglicisme "nonnégatif" au lieu de "positif ou nul".
+:::
+
+
+
+## NMF en imagerie hyperspectrale
+
+
+:::{style="text-align:center"}  
+```{python}
+import torch
+import matplotlib.pyplot as plt
+import tensorly as tl
+import numpy as np
+from tensorly_hdr.sep_nmf import snpa
+tl.set_backend("pytorch")
+
+#load with torch
+img_size = 64
+data = np.load("../tensorly_hdr/dataset/cat_HSI_reconstructed.npz")
+# convert to pytorch tensor
+X_rec = torch.tensor(data["X_rec"], dtype=torch.float32)
+wavelengths_nz = data["wavelengths"]
+
+# make a mapping between hyperspectral and RGB values, for visualization only
+
+def rgb_filters(wavelengths):
+    r_filter = torch.exp(-0.5 * ((wavelengths - 575) / 50) ** 2)
+    g_filter = torch.exp(-0.5 * ((wavelengths - 535) / 50) ** 2)
+    b_filter = torch.exp(-0.5 * ((wavelengths - 445) / 50) ** 2)
+    return torch.stack([r_filter, g_filter, b_filter])
+
+# RGB cube
+filters = rgb_filters(torch.tensor(wavelengths_nz, dtype=torch.float32))
+rgb_cube = filters @ X_rec  # shape (3, N**2)
+# Make into RGB image
+rgb_image = rgb_cube.reshape((3, img_size, img_size))
+rgb_image = rgb_image / torch.max(rgb_image)  # normalize for visualization
+# make shape N N 3
+rgb_image = np.transpose(rgb_image, (1, 2, 0))
+# Show cat in fake three colors from the hyperspectral cube X_rec
+plt.figure(figsize=(7,7))
+plt.imshow(np.rot90(rgb_image, 2))
+plt.axis('off')
+plt.show()
+```
+:::
+
+## NMF en imagerie hyperspectrale — résultats
+```{python}
+#|echo: true
+# Processing with NMF
+rank = 2
+Kset, W, H = snpa(X_rec, rank, verbose=False)
+```
+
+```{python}
+Hnorms = [torch.max(H[i,:]) for i in range(rank)]
+color = ["red","gold"]
+# show hypercube at some wavelengths and some spectra
+plt.figure(figsize=(10,5))
+for i in range(rank):
+    plt.subplot(rank,2,2*i+1)
+    plt.plot(wavelengths_nz, Hnorms[i]*W[:,i].cpu().numpy(), color=color[i])
+    plt.title(f"Spectre {i+1}")
+    plt.xlabel("Longueur d'onde (nm)")
+    plt.ylabel("Intensité") 
+    plt.subplot(rank,2,2*i+2)
+    plt.imshow(np.rot90(H[i,:].reshape(64,64), 2), cmap='gray')
+    plt.title(f"Carte d'abondance {i+1}")
+    plt.colorbar(fraction=0.046, pad=0.04)
+    plt.axis('off')
+    plt.tight_layout()
+plt.show()
+```
+
+
+## NMF, modèle géométrique
+
+
+::: {.columns}
+
+::: {.column width="30%"}
+
+
+<br>
+<br>
+<br>
+<br>
+
+NMF in Frobenius norm
+$$ \underset{W\geq 0, H\geq 0}{\arg\min} \|M - WH^T\|^2_F $$
+:::
+
+::: {.column width="70%"}
+
+:::{style="text-align:center;"}
+![](figures/Nmfr3d3.png){width="90%"}
+:::
+
+:::
+
+:::
+
+
+
+
+
+## NMF, modèle géométrique et identifiabilité
+
+
+:::{style="text-align:center;"}
+<!-- ![](figures/Nmfr2.png){width="90%"} -->
+![](figures/Nmfsimplex.png){width="90%"}
+:::
+
+<!-- If time: slide on NMF and optimization -->
+## rLRA: Défis scientifiques
+
+### Modélisation - interprétabilité
+
+1.  **Identifiabilité** : quand peut-on faire confiance aux résultats ?
 2.  **Caractérisation des solutions** : que produit réellement une régularisation ?
 3.  **Information auxiliaire** : comment intégrer dictionnaires, supervision, multimodalité ?
-4.  **Choix du rang** : quelle structure latente faut-il retenir ?
+4.  **Choix du rang** : combien de composantes utiliser ?
+ 
 
-## Défis algorithmiques
+### Optimisation numérique: comment calculer les LRA
 
-1.  Les problèmes sont souvent **non convexes**, **multi-blocs**, **non lisses**.
-2.  Il n'existe pas d'algorithme universellement optimal.
-3.  Les performances dépendent fortement du type de perte et de la structure des données.
-4.  Le progrès passe aussi par le **logiciel**, les **benchmarks** et la **reproductibilité**.
+Les rLRA sont **non convexes**, **multi-blocs**, **non lisses**. Les algorithmes dépendent fortement de la **fonction de perte** $f$.
 
-# 2. Contributions à la rLRA
+1. **Rapidité des algorithmes**: avoir une bonne solution le plus rapidement possible.
+2. **Flexibilité**: les algorithmes doivent pouvoir intégrer des contraintes et régularisations variées.
 
-## Fil directeur
 
-- Ma trajectoire n'est pas une succession de thèmes isolés.
-- Elle suit un enchaînement assez naturel :
-  1.  applications et séparation de sources ;
-  2.  théorie de l'interprétabilité ;
-  3.  conception algorithmique ;
-  4.  optimisation non euclidienne et problèmes à divergence de KL.
-- Mon objectif reste le même : **concevoir des modèles de faible rang interprétables et calculables efficacement**.
+:::: box-titled
 
-## Axe 1 — Identifiabilité
-
-::::: columns
-::: {.column width="55%"}
-- Une question centrale est celle de l'unicité des facteurs.
-- En apprentissage de dictionnaire complet, j'ai obtenu des **conditions suffisantes déterministes** d'unicité essentielle.
-- L'idée clé est géométrique : les données parcimonieuses peuplent certaines facettes, qui permettent de retrouver les atomes.
-- Ce travail a aussi clarifié plusieurs points de la littérature.
+::: box-title
+Le code, un aspect souvent négligé
 :::
 
-::: {.column width="45%"}
-![](figures/ex3.svg){width="100%"}
+
+Le progrès scientifique passe aussi par le **logiciel** et les **benchmarks** de qualité, et la **reproductibilité** des résultats.
+
+::::
+
+
+
+# 2. Contributions aux rLRA: théorie, algorithmes et applications
+
+## Contributions scientifiques
+
+### Modélisation - interprétabilité
+
+1.  **Identifiabilité** : <span style="font-size:70%"> C. & Leplat (SIMODS 2025),
+ C. & Gillis (SIMODS 2019), C. et al. (LVA/ICA 2017) </span>
+2.  **Caractérisation des solutions** : 
+<span style="font-size:70%">
+   <span style="color:#d62728">C. & Leplat (SIMODS 2025)</span>
+   </span>
+  </span>
+3.  **Information auxiliaire** : <span style="font-size:70%">
+   C. & Gillis (IEEE TSP & TGRSL 2018), C. (Applied Mathematics and Statistics 2022), Kervazo et al. (EUSIPCO 2024)
+   </span>
+
+<br>
+
+### Optimisation numérique: comment calculer les LRA
+
+1. **Rapidité des algorithmes**: <span style="font-size:70%">
+   Nadisic et al. (ICASSP 2020), Pham et al. (TMLR 2026)
+   </span>
+2. **Flexibilité**: <span style="font-size:70%">
+   Schenker et al. (IEEE JSTSP 2020), Roald et al. (SIMODS 2022)
+   </span>
+
+<br>
+
+### Applications spécifiques
+
+1. **Imagerie hyperspectrale microscopique** : 
+<span style="font-size:70%">
+   Harriga et al. (EUSIPCO 2024), Carreda et al. (Biomedical Optics Express 2023)
+ </span>
+3. **Informatique musicale**: <span style="font-size:70%">
+   Marmoret et al. (ISMIR 2020), <span style="color:#d62728">Wu et al. (SMC 2022)</span>, Marmoret et al. (TISMIR 2023)
+   </span> 
+
+
+# Zoom sur une contribution: régularisation implicite et rLRA
+
+## Un problème mal compris avec rLRA
+
+Pour rendre la NMF "plus identifiable", considère souvent la NMF parcimonieuse
+
+$$ \underset{W\geq 0, H\geq 0}{\arg\min} \|M - WH^T\|^2_F + \lambda \|W\|_1 + \lambda \|H\|_1. $$
+
+
+```{python}
+import numpy as np
+import plotly.graph_objects as go
+import tensorly as tl
+import matplotlib
+import matplotlib.pyplot as plt
+tl.set_backend("numpy")
+
+# Generating toy image
+n1 = 30
+n2 = 40
+r = 3
+sig = 0.2  # 0.15 # 0.05
+
+# Components will be Gaussian distributions, here is the macro to generate them
+def gauss(x, m, sig, thresh=0.1):
+    # max is 1
+    out = np.exp(-(x-m)**2/sig**2)
+    out[out < thresh] = 0
+    return out
+
+# Generating the data as a mixture of separable Gaussians
+x = np.linspace(0, n1-1, n1) # 1D abcisse
+y = np.linspace(0, n2-1, n2)
+W = np.zeros([n1, r])
+W[:,0] = gauss(x, 5, 3)
+W[:,1] = gauss(x, 15, 5)
+W[:,2] = gauss(x, 25, 10)
+H = np.zeros([n2, r])
+H[:, 0] = gauss(y, 10, 5)
+H[:, 1] = gauss(y, 20, 6)
+H[:, 2] = gauss(y, 25, 5)
+trueNMF = (None, [W, H])
+
+Y = W@H.T  # NMF model
+rng = np.random.default_rng(1246)
+Yn = Y + sig*rng.random((n1, n2))  # corruption with gaussian noise
+
+# initialization 
+W0 = 0*W + 0.5*rng.random(W.shape)
+H0 = 0*H + 0.5*rng.random(H.shape)
+
+# Storing output factors for various regularization in dictionaries
+We = dict()
+He = dict()
+
+# Chose the grid values for the hyperparameter 
+lambset = [0, 0.05, 0.1, 0.15, 0.2, 0.3, 0.4, 0.6, 0.7, 0.75, 0.78, 0.8, 1, 1.2, 1.5, 2, 3, 4, 5, 5.2, 6, 20]
+
+import copy
+for lamb in lambset:
+    # Computing the sparse NMF with tensorly (the algorithm is HALS, which is the state of the art for this problem)
+    out = tl.decomposition.non_negative_parafac_hals(Yn, r, sparsity_coefficients=[lamb, lamb], init=copy.deepcopy((None, [W0, H0])))
+    # Estimated factors
+    We[lamb] = out[1][0]
+    He[lamb] = out[1][1]
+    # Set estimates as new initialization for the next iteration (warm start)
+    W0 = We[lamb]
+    H0 = He[lamb]
+    
+    # rescale We so that when a column of W is 0, so is the corresponding column of H
+    norms = tl.max(We[lamb], axis=0)
+    for q in range(r):
+        if norms[q] > 1e-8:
+            We[lamb][:, q] = We[lamb][:, q]/norms[q]
+            He[lamb][:, q] = He[lamb][:, q]*norms[q]
+        else:
+            We[lamb][:, q] = We[lamb][:, q]*0
+            He[lamb][:, q] = He[lamb][:, q]*0
+
+
+# --------------------------------------------------
+# Pack all computed factors into one array
+# shape = (n_lambda, n1, r)
+# --------------------------------------------------
+
+Wall = np.stack([We[lam] for lam in lambset])
+
+colors = ["blue", "green", "red"]
+
+# --------------------------------------------------
+# Initial traces (lambda = lambset[0])
+# --------------------------------------------------
+
+fig = go.Figure()
+
+for q in range(r):
+    fig.add_trace(
+        go.Scatter(
+            x=x,
+            y=Wall[0, :, q],
+            mode="lines",
+            name=f"Component  W_{q+1}",
+            line=dict(color=colors[q]),
+        )
+    )
+
+# --------------------------------------------------
+# Slider steps
+# --------------------------------------------------
+
+steps = []
+
+for k, lam in enumerate(lambset):
+
+    step = dict(
+        method="update",
+        args=[
+            {
+                "y": [
+                    Wall[k, :, 0],
+                    Wall[k, :, 1],
+                    Wall[k, :, 2],
+                ]
+            },
+            {
+                "title": f"Regularization λ = {lam}"
+            }
+        ],
+        label=str(lam),
+    )
+
+    steps.append(step)
+
+# --------------------------------------------------
+# Layout
+# --------------------------------------------------
+
+fig.update_layout(
+    title=f"Regularization λ = {lambset[0]}",
+    width=1000,
+    height=350,
+    xaxis_title="Index",
+    yaxis_title="Amplitude",
+    template="simple_white",
+    sliders=[
+        dict(
+            active=0,
+            currentvalue={
+                "prefix": "λ = ",
+                "font": {"size": 16},
+            },
+            pad={"t": 40},
+            steps=steps,
+        )
+    ],
+    legend=dict(
+        x=0.01,
+        y=0.99,
+    ),
+)
+
+fig
+``` 
+
+
+::: {style="font-size:120%"}
+::: {.callout-warning}
+
+Peu de résultats sont connus sur l'ensemble des solutions de ce problème, notamment si les régularisations $\ell_1$ induisent vraiment de la parcimonie dans $W$ et $H$.
+
 :::
-:::::
-
-## Axe 2 — Comprendre l'effet réel de la régularisation
-
-- Une pénalisation explicite n'induit pas toujours l'effet attendu.
-- Avec Valentin Leplat, j'ai étudié les modèles régularisés homogènes invariants par changement d'échelle.
-- Résultat principal : l'ambiguïté d'échelle induit une **régularisation implicite sur les composantes de rang un**.
-- Cela explique notamment :
-  - la suppression de composantes,
-  - le rôle réel des hyperparamètres,
-  - l'équilibrage optimal entre facteurs.
-
-## Axe 3 — Concevoir des algorithmes plus rapides
-
-::::: columns
-::: {.column width="55%"}
-- Une part importante de mon travail porte sur les algorithmes.
-- Le principe est d'exploiter la géométrie des problèmes nonnégatifs.
-- Les travaux récents sur **mSOM** proposent des majorants diagonaux d'ordre deux plus serrés.
-- Cet axe prépare aussi le terrain pour des pertes plus difficiles, comme la divergence de KL.
 :::
 
-::: {.column width="45%"}
-![](figures/Mmprinciple.png){width="100%"}
-:::
-:::::
+## L'ambiguïté d'échelle induit une régularisation implicite
 
-## Axe 4 — Flexibilité, multimodalité, apprentissage
 
-- J'ai aussi travaillé sur des algorithmes **flexibles** pour des factorisations structurées.
-- Dans les modèles couplés et PARAFAC2 nonnégatif :
-  - données multimodales,
-  - couplages linéaires,
-  - contraintes multiples.
-- Plus récemment : **dépliage des mises à jour multiplicatives** pour la NMF.
-- L'idée générale est de préserver l'interprétabilité tout en profitant des données d'entraînement.
+# Zoom sur une contribution: Transcription automatique de musique
 
-## Lecture d'ensemble
+##
 
-- Ces contributions suivent une logique simple :
-  1.  **comprendre** les modèles ;
-  2.  **calculer** efficacement leurs solutions ;
-  3.  **valider** sur des applications exigeantes.
-- L'imagerie spectrale et l'information musicale ont servi de **bancs d'essai** pour cette démarche.
+## Autres travaux
 
-# 3. Perspectives de recherche
+Mettre juste des images ?
 
-## Pourquoi la divergence de KL ?
+Parler rapidement du principe de DLRA
+L0
 
-- Elle apparaît naturellement dans les **modèles de Poisson**.
-- Elle est donc centrale pour :
-  - les données de comptage,
-  - l'imagerie en faible flux,
-  - l'acquisition spectrale,
-  - plusieurs modèles nonnégatifs.
-- Pour moi, c'est la suite naturelle de mes travaux sur l'optimisation nonnégative et les problèmes inverses.
+## suite
 
-## Pourquoi est-ce difficile ?
+Deep Unrolling 
+Accélération
+Coupled decomposition
 
-- Au voisinage de zéro, la divergence de KL n'est **pas Lipschitz-lisse**.
-- Loin de zéro, elle devient presque linéaire : la géométrie devient plus plate, donc plus difficile à optimiser.
-- En pratique, il faut en plus intégrer :
-  - des contraintes,
-  - des régularisations,
-  - parfois des approches apprises.
+## Applis
+
+HSI single pixel
+Structure estimation
+Brain imaging
+
+# Perspectives de recherche
 
 ## Démo interactive — géométrie de la divergence de KL en dimension 2
 

@@ -7,4 +7,4 @@ code-workspace
 /presentation/.quarto/
 /presentation/_site/
 **/*.quarto_ipynb
-
+*.jupyter_cache/
