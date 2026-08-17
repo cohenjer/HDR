@@ -21,32 +21,12 @@ Except for the picture above, generative AI has been used in this manuscript onl
 ```
 
 %TODOlist:
-%- Latex build fork ?
-  %- Moving margin notes
-  %- Gif hadamard
-  %- taille figures notamment AMT
-  %- pas de proof index
-  %------- Envoi 2 (pdf) ----
 
 % Before soutenance:
-  %- better bibliography
-  %- Binder build
   %- Precise Version and package dependence
+  %- remerciements
+  %- rqs jury
 
-%- Maybe later:
-  %- Figure inline integration with glue and environments
-  %- Local installation instructions ?
-  %- Better proofread project
-  %- precise pages in books refs
-  %- Figures
-    %- CMTF models [CMTF.md] --> main
-    %- PARAFAC2 projections
-    %- projection cone dual [proco-als.md] (utile?) --> main
-    %- rank r matrix factorization [lra.md] --> main
-
-
-%## Note to self about figures:
-%On peut cacher le print avec plt.close(). Sinon pour le dev, utiliser remove-output dans les tags de la cellule de code; glue permet de garder en mémoire des variables, on peut alors cacher les cellules où on fait ca. [TODO remove]
 
 ```{tableofcontents}
 ```

@@ -2,6 +2,34 @@
 
 # Approximations de rang faible régularisées
 
+<!-- 
+Rqs
+Diapo 2:
+Merci aux membres du jury d'avoir accepté de participer à cette soutenance, et à vous tous d'être présents aujourd'hui.
+
+diapo 3: préparer (PhD encadrés vs suivis)
+Puisque ca fait partie de l'exercice, je vous montre rapidement mon CV. Globalement j'ai une activité d'encadrement dynamique avec plusieurs doctorants encadrés au quotidien et d'autres d'un peu plus loin, des publication régulières, de l'animation scientifique et des activité de valorisation. 
+
+diapo 5:
+Un concept central dans mes travaux de recherche est la réduction de dimension, qui cherche à extraire de l'information utile de données et à compresser les données. Ces deux objectifs se rejoignent souvent : un bon résumé des données conserve l'information utile.
+
+Un exemple dans la vie de tous les jours est la perception des couleurs par l'homme. Vous savez peut-être que les matériaux renvoyent plus ou moins la lumière selon la longueur d'onde; c'est ce qui fait leur couleur. Le spectre de réflectance d'un matériau décrit ce phénomène de facon précise, avec une courbe en haute dimension, comme celle en noir sur l'écran.
+Si la couleur d'un matériau permet parfois de le reconnaitre, le spectre est beaucoup plus riche, et constitue une véritable empreinte digitale du matériau.
+
+On ne voit pas tout le spectre à l'oeil nu, mais seulement les portions du spectre superposées à chaque cône RBG de l'oeil. La dimension infinie du spectre est réduite vers 3 coefficients RGB. 
+
+Si on modifie le spectre vers la droite, on voit que les coefficients rouges dominent. Ici la réduction de dimension RGB est un résumé utile mais incomplet de l'information contenue dans le spectre.
+
+attention discours slide 7, bien rester général sur la figure
+
+slide 9 + court; image hyperspectrale comme image RGB mais avec ++ de couleurs/longueurs d'ondes (e.g. 2048). Chaque ligne est une image lvl gris, chaque colonne un spectre par pixel. LRA extrait des signatures spectrales des matériaux présents sur la scène (W) et des cartes de répartitions de ces matériaux (H).
+
+slide 18: expliquer ce qu'on voit (courbes : colonnes de W, estimées par un algo, avec un certain choix de lambda).
+
+slide 20: marginalisation le dire
+
+ -->
+
 ::: {.columns}
 
 ::: {.column width="40%" }
@@ -30,7 +58,7 @@ Jérémy Cohen, CR CNRS, CREATIS
 
 
 
-::: {.callout}
+::: {.callout-tip style="font-size: 120%;"}
 ### Jury
 
 - Sophie Achard *(DR CNRS, LJK, Grenoble)* — examinatrice
@@ -41,6 +69,11 @@ Jérémy Cohen, CR CNRS, CREATIS
 
 
 :::
+
+<aside class="notes">
+
+Merci aux membres du jury d'avoir accepté de participer à cette soutenance, et à vous tous d'être présents aujourd'hui.
+</aside>
 
 ## CV
 
@@ -113,49 +146,28 @@ Valorisation
 :::
 ::::::::::::::
 
-# 1. Introduction à l'approximation de faible rang régularisée
+<aside class="notes">
+Puisque ca fait partie de l'exercice, je vous montre rapidement mon CV.
+
+Globalement j'ai une activité d'encadrement dynamique avec plusieurs doctorants encadrés au quotidien et d'autres d'un peu plus loin, des publication régulières, de l'animation scientifique et des activité de valorisation. 
+
+Image collabs. rouge, jaune.
+</aside>
+
+
+# 1. Introduction aux approximations de rang faible régularisées
 
 ## La réduction de dimension
-
-- En apprentissage machine, deux objectifs reviennent souvent :
-  - **extraire de l'information utile de données** ;
-  - **compresser les données**.
+- La **réduction de dimension** cherche à
+  - extraire de l'information utile de données;
+  - compresser des données.
 - Ces deux objectifs se rejoignent souvent : un bon résumé des données conserve l'information utile.
-- C'est le rôle de la **réduction de dimension**.
 
 
-::: {.columns}
-
-::: {.column width="30%"}
-
-<br>
-<br>
-<br>
-
-Exemple: la vision par l'oeil humain en RGB (simplifié)
-
-:::
-
-::: {.column width="70%"}
-
-
-::: {style="text-align:center;"}
-![source: http://hyperphysics.phy-astr.gsu.edu/](figures/eye_rgb.png){width="70%"}
-:::
-
-:::
-
-:::
-
-
-
-
-
-
-
-## Réduction de dimension et images RBG
+Exemple: la perception des couleurs par l'oeil humain
 
 ```{python}
+#| echo: false
 
 import numpy as np
 
@@ -172,7 +184,7 @@ def generate_spectrum(c1, n_wavelengths=31):
     wavelengths = np.linspace(400, 700, n_wavelengths)
     width = 30
     amplitude = 1
-    spectrum = np.exp(-0.5 * ((wavelengths - c1) / width) ** 2) * amplitude
+    spectrum = np.exp(-0.5 * ((wavelengths - c1) / width) ** 2) * amplitude + np.exp(-0.5 * ((wavelengths - (c1 + 100)) / width) ** 2) * amplitude / 2
 
     filters = rgb_filters(wavelengths)
     rgb_raw = filters @ spectrum
@@ -196,7 +208,7 @@ fig = make_subplots(
   cols=3,
   column_widths=[0.62, 0.2, 0.18],
   specs=[[{"type": "xy"}, {"type": "xy"}, {"type": "image"}]],
-  subplot_titles=("", "Projection RGB", "Couleur reconstruite"),
+  subplot_titles=("", "Coefficients RGB", "Couleur perçue"),
   horizontal_spacing=0.08,
 )
 
@@ -217,17 +229,17 @@ fig.add_trace(
 )
 # traces 1..3: filtres fixes
 fig.add_trace(
-  go.Scatter(x=wavelengths, y=filters[0], mode="lines", name="Filtre R", line=dict(color="red", dash="dash"), opacity=0.35),
+  go.Scatter(x=wavelengths, y=filters[0], mode="lines", name="cônes R", line=dict(color="red", dash="dash"), opacity=0.35),
   row=1,
   col=1,
 )
 fig.add_trace(
-  go.Scatter(x=wavelengths, y=filters[1], mode="lines", name="Filtre G", line=dict(color="green", dash="dash"), opacity=0.35),
+  go.Scatter(x=wavelengths, y=filters[1], mode="lines", name="cônes G", line=dict(color="green", dash="dash"), opacity=0.35),
   row=1,
   col=1,
 )
 fig.add_trace(
-  go.Scatter(x=wavelengths, y=filters[2], mode="lines", name="Filtre B", line=dict(color="blue", dash="dash"), opacity=0.35),
+  go.Scatter(x=wavelengths, y=filters[2], mode="lines", name="cônes B", line=dict(color="blue", dash="dash"), opacity=0.35),
   row=1,
   col=1,
 )
@@ -301,46 +313,57 @@ fig
 ```
 
 
-## Approximation de rang faible (LRA) ?
+<aside class="notes">
+Vous savez peut-être que les matériaux renvoyent plus ou moins la lumière selon la longueur d'onde; c'est ce qui fait leur couleur. Le spectre de réflectance d'un matériau décrit ce phénomène de facon précise, avec une courbe en haute dimension, comme celle en noir sur l'écran.
+Si la couleur d'un matériau permet parfois de le reconnaitre, le spectre est beaucoup plus riche, et constitue une véritable empreinte digitale du matériau.
+
+Alors l'oeil humain ne voit pas tout le spectre, mais seulement des parties du spectre propres à chaque cône RBG de l'oeil dont on voit ici la sensibilité en fonction de la longueur d'onde. L'oeil mesure la similarité entre les courbes r g b et le spectre en soir. La dimension infinie du spectre est réduite vers 3 coefficients RGB. 
+
+Si on modifie le spectre vers la droite, il est percu comme jaune puis rouge, on voit que les coefficients verts puis rouges dominent. Ici la réduction de dimension RGB est un résumé utile mais incomplet de l'information contenue dans le spectre.
+</aside>
+
+
+## Approximation de rang faible (Low Rank Approximation, LRA)
+
+
+- Un modèle de rang faible est une réduction de dimension pour des tableaux (matrices, tenseurs) 
 
 
 ::: {.columns}
 
-:::: {.column width="50%"}
+::: {.column width="50%"}
 
+<br>
+<br>
 
-- Un modèle de rang faible est une réduction de dimension pour des tableaux (matrices, tenseurs) 
 $$\underbrace{M}_{\text{données}} \in \mathbb{R}^{n_1 \times n_2},\;\; M \approx WH^T $$
 
-::::
+:::
 
-:::: {.column width="50%"}
+::: {.column width="50%"}
 
-- $W\in\mathbb{R}^{n_1 \times r}$ et $H\in\mathbb{R}^{n_2 \times r}$ sont des <span style="color:red;">matrices inconnues</span>.
 
-- Le nombre de paramètres est réduit de $n_1 n_2$ à $r(n_1+n_2)$.
-
-::::
+:::{style="text-align:center;"}
+![](./figures/lramatrix.png){width="90%"}
+:::
 
 :::
 
-::::{.columns}
-:::{.column width="70%" .fragment}
-::: {style="text-align:center;"}
-![Exemple d'approximation de rang faible d'une image hyperspectrale](figures/Hsi_nmf.png){width="90%"}
-:::
 :::
 
-:::{.column width="30%" .fragment}
-Formulation variationelle, avec $f$ une fonction de perte : 
+- $W\in\mathbb{R}^{n_1 \times r}$ et $H\in\mathbb{R}^{n_2 \times r}$ sont des <span style="color:#d00000;">matrices inconnues</span>.
 
-$$ (W^\ast, H^\ast) = \underset{W,H}{\arg\min} f(M,WH^T) $$
 
-- Problème non convexe, multi-bloc
-- Solution directe avec la SVD
+- Le nombre de paramètres est réduit de $n_1 n_2$ à $r(n_1+n_2)$ avec $r\ll \min(n_1,n_2)$.
+ 
+- Formulation variationelle, avec $f$ une fonction de perte : 
 
-:::
-::::
+$$ (W^\ast, H^\ast) = \underset{W,H}{\arg\min}~ f(M,WH^T) $$
+
+
+<!-- - Problème non convexe, multi-bloc
+- Solution directe avec la SVD -->
+
 
 ## LRA, des applications en séparation de sources aveugle
 
@@ -348,11 +371,7 @@ $$ (W^\ast, H^\ast) = \underset{W,H}{\arg\min} f(M,WH^T) $$
 ![](figures/SourceSep_drawing_ChatGPT.png){width="70%"}
 :::
 
-::: {.callout-important}
-### Enjeu
-Pouvoir donner un sens physique aux résultats du LRA.
 
-:::
 ::: {.columns}
 
 ::: {.column width="60%"}
@@ -376,9 +395,20 @@ Pouvoir donner un sens physique aux résultats du LRA.
 
 :::
 
+::: {style="font-size: 140%;"}
+::: {.callout-important}
+### Enjeu
+Pouvoir donner un sens physique aux résultats du LRA.
+:::
+:::
 
+## LRA en imagerie hyperspectrale, principe
 
+$$ M = WH^T $$
 
+::: {style="text-align:center;"}
+![Exemple d'approximation de rang faible d'une image hyperspectrale](figures/Hsi_nmf.png){width="100%"}
+:::
 
 
 
@@ -391,31 +421,36 @@ $$ M = WH^T = (WA)(A^{-1}H^T), \quad \forall A \in \mathbb{R}^{r\times r} \text{
 
 Il existe une infinité de solutions équivalentes, mais une seule (pour simplifier) nous intéresse: celle qui correspond à la réalité physique du problème.
 
-- Solution: introduire des régularisations (rLRA)
+- Pour fixer les ambiguïtés, introduire des régularisations **(rLRA)**
 
 $$\min_{W,H} f(M,WH^T) + g_W(W) + g_H(H).$$
 
 
 ::: {.columns}
 
-::: {.column width="47%"}
+::: {.column width="65%"}
 
 - Les termes de régularisation peuvent imposer
-  - la nonnégativité, $g_W(W) = 0$ si $W \geq 0$, $+\infty$ sinon,
+  - <span style="color:#d62728"> la nonnégativité</span>, $g_W(W) = 0$ si $W \geq 0$, $+\infty$ sinon,
   - la parcimonie, $g_W(W) = ||W||_1$,
   - ...
 
 
+::: {.fragment fragment-index=2}
+
+J'utiliserai l’anglicisme "nonnégatif" au lieu de "positif ou nul".
+:::
 :::
 
-::: {.column width="53%" .fragment}
+::: {.column width="35%" .fragment fragment-index=1}
 
 
+:::{style ="font-size: 130%;"}
 ::: {.callout-important}
 
-Les régularisation changent drastiquement les propriétés du modèle !
+Les régularisations changent drastiquement les propriétés du modèle !
 
-
+:::
 :::
 
 
@@ -433,7 +468,7 @@ Les régularisation changent drastiquement les propriétés du modèle !
 - Dans beaucoup de problèmes de mélange, les quantités sont **additives** et **nonnégatives**.
 - La nonnégativité devient alors une régularisation naturelle.
 - Elle fournit des décompositions :
-  - **par parties** ;
+  - par parties,
   - **physiquement interprétables**.
 :::
 
@@ -442,122 +477,19 @@ Les régularisation changent drastiquement les propriétés du modèle !
 :::
 :::::
 
-:::{style ="text-align:center;"}
+:::{style ="text-align:center; font-size: 130%;"}
 ::: {.callout-important}
 ### LRA nonnégative
 
 LRA + nonnégativité = **Nonnegative Matrix Factorization (NMF)**
 
-$$ \underset{W\geq 0, H\geq 0}{\arg\min} f(M,WH^T) $$
+$$ \underset{W\geq 0, H\geq 0}{\arg\min}~ f(M,WH^T) $$
+
+[Paatero 1997, Lee & Seung 1999]
 
 :::
 :::
 
-::: {.fragment}
-
-J'utiliserai l’anglicisme "nonnégatif" au lieu de "positif ou nul".
-:::
-
-
-
-## NMF en imagerie hyperspectrale
-
-
-:::{style="text-align:center"}  
-```{python}
-import torch
-import matplotlib.pyplot as plt
-import tensorly as tl
-import numpy as np
-from tensorly_hdr.sep_nmf import snpa
-tl.set_backend("pytorch")
-
-#load with torch
-img_size = 64
-data = np.load("../tensorly_hdr/dataset/cat_HSI_reconstructed.npz")
-# convert to pytorch tensor
-X_rec = torch.tensor(data["X_rec"], dtype=torch.float32)
-wavelengths_nz = data["wavelengths"]
-
-# make a mapping between hyperspectral and RGB values, for visualization only
-
-def rgb_filters(wavelengths):
-    r_filter = torch.exp(-0.5 * ((wavelengths - 575) / 50) ** 2)
-    g_filter = torch.exp(-0.5 * ((wavelengths - 535) / 50) ** 2)
-    b_filter = torch.exp(-0.5 * ((wavelengths - 445) / 50) ** 2)
-    return torch.stack([r_filter, g_filter, b_filter])
-
-# RGB cube
-filters = rgb_filters(torch.tensor(wavelengths_nz, dtype=torch.float32))
-rgb_cube = filters @ X_rec  # shape (3, N**2)
-# Make into RGB image
-rgb_image = rgb_cube.reshape((3, img_size, img_size))
-rgb_image = rgb_image / torch.max(rgb_image)  # normalize for visualization
-# make shape N N 3
-rgb_image = np.transpose(rgb_image, (1, 2, 0))
-# Show cat in fake three colors from the hyperspectral cube X_rec
-plt.figure(figsize=(7,7))
-plt.imshow(np.rot90(rgb_image, 2))
-plt.axis('off')
-plt.show()
-```
-:::
-
-## NMF en imagerie hyperspectrale — résultats
-```{python}
-#|echo: true
-# Processing with NMF
-rank = 2
-Kset, W, H = snpa(X_rec, rank, verbose=False)
-```
-
-```{python}
-Hnorms = [torch.max(H[i,:]) for i in range(rank)]
-color = ["red","gold"]
-# show hypercube at some wavelengths and some spectra
-plt.figure(figsize=(10,5))
-for i in range(rank):
-    plt.subplot(rank,2,2*i+1)
-    plt.plot(wavelengths_nz, Hnorms[i]*W[:,i].cpu().numpy(), color=color[i])
-    plt.title(f"Spectre {i+1}")
-    plt.xlabel("Longueur d'onde (nm)")
-    plt.ylabel("Intensité") 
-    plt.subplot(rank,2,2*i+2)
-    plt.imshow(np.rot90(H[i,:].reshape(64,64), 2), cmap='gray')
-    plt.title(f"Carte d'abondance {i+1}")
-    plt.colorbar(fraction=0.046, pad=0.04)
-    plt.axis('off')
-    plt.tight_layout()
-plt.show()
-```
-
-
-## NMF, modèle géométrique
-
-
-::: {.columns}
-
-::: {.column width="30%"}
-
-
-<br>
-<br>
-<br>
-<br>
-
-NMF in Frobenius norm
-$$ \underset{W\geq 0, H\geq 0}{\arg\min} \|M - WH^T\|^2_F $$
-:::
-
-::: {.column width="70%"}
-
-:::{style="text-align:center;"}
-![](figures/Nmfr3d3.png){width="90%"}
-:::
-
-:::
-
-:::
 
 
 
@@ -566,21 +498,67 @@ $$ \underset{W\geq 0, H\geq 0}{\arg\min} \|M - WH^T\|^2_F $$
 ## NMF, modèle géométrique et identifiabilité
 
 
+
 :::{style="text-align:center;"}
 <!-- ![](figures/Nmfr2.png){width="90%"} -->
-![](figures/Nmfsimplex.png){width="90%"}
+![](figures/Nmfsimplex_pres.png){width="90%"}
+:::
+
+
+## Optimisation numérique et rLRA
+
+
+- On estime souvent les paramètres $W$ et $H$ par un algorithme alterné.
+
+- Un algorithme classique mais théorique: Alternating Nonnegative Least Squares (régularisés)
+
+
+
+::: {.columns}
+
+::: {.column width="50%"}
+
+
+
+
+
+$$ \begin{cases}
+W^{(k+1)} = \underset{W\geq 0}{\arg\min} ~f(M,WH^{(k)T}) + g_W(W) \\[2mm]
+H^{(k+1)} = \underset{H\geq 0}{\arg\min} ~f(M,W^{(k+1)}H^T) + g_H(H)
+\end{cases} 
+$$
+
+- De nombreux résultats de convergence existent pour ce type de procédures alternées  <span style="font-size:70%">  [Bertsekas 1999, Grippo Scriandrone 2000, Razaviyan et al. 2013, Beck 2017...]. </span>
+- De nombreux algorithmes existent pour résoudre chaque sous-problème.
+
+
+
+
+:::
+
+::: {.column width="50%"}
+
+::: {style="text-align:center;"}
+![](./figures/AO_majorization.png){width="100%"}
+:::
+
+
+:::
+
 :::
 
 <!-- If time: slide on NMF and optimization -->
 ## rLRA: Défis scientifiques
 
-### Modélisation - interprétabilité
+### Théorie
 
 1.  **Identifiabilité** : quand peut-on faire confiance aux résultats ?
 2.  **Caractérisation des solutions** : que produit réellement une régularisation ?
 3.  **Information auxiliaire** : comment intégrer dictionnaires, supervision, multimodalité ?
 4.  **Choix du rang** : combien de composantes utiliser ?
  
+
+<br>
 
 ### Optimisation numérique: comment calculer les LRA
 
@@ -590,26 +568,15 @@ Les rLRA sont **non convexes**, **multi-blocs**, **non lisses**. Les algorithmes
 2. **Flexibilité**: les algorithmes doivent pouvoir intégrer des contraintes et régularisations variées.
 
 
-:::: box-titled
-
-::: box-title
-Le code, un aspect souvent négligé
-:::
-
-
-Le progrès scientifique passe aussi par le **logiciel** et les **benchmarks** de qualité, et la **reproductibilité** des résultats.
-
-::::
-
 
 
 # 2. Contributions aux rLRA: théorie, algorithmes et applications
 
 ## Contributions scientifiques
 
-### Modélisation - interprétabilité
+### Théorie
 
-1.  **Identifiabilité** : <span style="font-size:70%"> C. & Leplat (SIMODS 2025),
+1.  **Identifiabilité** : <span style="font-size:70%"> 
  C. & Gillis (SIMODS 2019), C. et al. (LVA/ICA 2017) </span>
 2.  **Caractérisation des solutions** : 
 <span style="font-size:70%">
@@ -644,13 +611,13 @@ Le progrès scientifique passe aussi par le **logiciel** et les **benchmarks** d
    </span> 
 
 
-# Zoom sur une contribution: régularisation implicite et rLRA
+## Zoom sur une contribution: régularisation implicite et rLRA
 
 ## Un problème mal compris avec rLRA
 
-Pour rendre la NMF "plus identifiable", considère souvent la NMF parcimonieuse
+Pour rendre la NMF "plus identifiable", on considère souvent la NMF parcimonieuse [Eggert Korner 2004, Papalexakis et al. 2013]
 
-$$ \underset{W\geq 0, H\geq 0}{\arg\min} \|M - WH^T\|^2_F + \lambda \|W\|_1 + \lambda \|H\|_1. $$
+$$ \underset{W\geq 0, H\geq 0}{\arg\min}~ \|M - WH^T\|^2_F + \lambda \|W\|_1 + \lambda \|H\|_1. $$
 
 
 ```{python}
@@ -817,52 +784,1225 @@ Peu de résultats sont connus sur l'ensemble des solutions de ce problème, nota
 :::
 :::
 
-## L'ambiguïté d'échelle induit une régularisation implicite
+## Un autre problème: le marais de l'échelle
+
+$$ f(x_1,x_2) = (y - x_1x_2)^2 + \lambda (x_1^2 + x_2^2). $$
 
 
-# Zoom sur une contribution: Transcription automatique de musique
+::: {.columns}
 
-##
+::: {.column width="50%"}
 
-## Autres travaux
 
-Mettre juste des images ?
+```{python}
+#| echo: true 
 
-Parler rapidement du principe de DLRA
-L0
+from matplotlib import axes
+import numpy as np
+import matplotlib.pyplot as plt
 
-## suite
+# A barebone implementation of ALS
+def ALS(y,x1,x2, lamb, itermax=200):
+    loss = [(y - x1*x2)**2 + lamb * (x1**2 + x2**2)]
+    x1_store = [x1]
+    x2_store = [x2]
+    for k in range(itermax):
+        x1 = x2*y/(x2**2+lamb)
+        x2 = x1*y/(x1**2+lamb)
+        loss.append((y - x1*x2)**2 + lamb*(x1**2 + x2**2))
+        x1_store.append(x1)
+        x2_store.append(x2)
+    return x1, x2, loss, x1_store, x2_store
 
-Deep Unrolling 
-Accélération
-Coupled decomposition
+# Problem setup
+y = 1
+lamb = 0.001
 
-## Applis
+# Initialization
+x1 = 0.2
+x2 = 5
 
-HSI single pixel
-Structure estimation
-Brain imaging
+# Run ALS
+x1, x2, loss, x1store, x2store = ALS(y, x1, x2, lamb)
 
-# Perspectives de recherche
+```
 
-## Démo interactive — géométrie de la divergence de KL en dimension 2
+:::
 
-Pour un vecteur observé $y=(y_1,y_2)$ fixé, on visualise $$D_{\mathrm{KL}}(y,x)=\sum_{i=1}^2 y_i \log\!\left(\frac{y_i}{x_i}\right)+x_i-y_i,
-\qquad x \in \mathbb{R}_{++}^2.$$
+::: {.column width="50%" .fragment}
 
 ```{python}
 #| echo: false
-#| warning: false
+#| output: true 
+fig, axes = plt.subplots(2, 1, figsize=(5, 5))
+axes[0].plot(x1store, label='$x_1$')
+axes[0].plot(x2store, label='$x_2$')
+axes[0].set_xlabel('Itérations')
+axes[0].set_title('Valeurs de $x_1$ et $x_2$')
+# add horizontal line at y=sqrt(y-lamb)
+axes[0].axhline(np.sqrt(y-lamb), color='red', linestyle='--', label='$\sqrt{y-\lambda}$')
+axes[0].legend()
+axes[1].semilogy(loss, label='$f$')
+axes[1].set_xlabel('Itérations')
+axes[1].set_title('Valeurs de $f$')
+plt.tight_layout()
+plt.show()
+
+``` 
+
+:::
+
+:::
+
+## L'ambiguïté d'échelle induit une régularisation implicite
+
+La NMF parcimonieuse
+$$ \underset{W\geq 0, H\geq 0}{\arg\min}~ \|M - WH^T\|^2_F + \lambda_W \|W\|_1 + \lambda_H \|H\|_1. $$
+
+a les mêmes solutions, à échelle près, que le problème suivant:
+
+$$ \underset{W\geq 0, H\geq 0}{\arg\min}~ \|M - WH^T\|^2_F + 2\sqrt{\lambda_W\lambda_H} \sum_{q=1}^r \sqrt{\|W[:,q]H[:,q]^T\|_1}. $$
+
+
+::: {style="font-size:130%"}
+::: {.callout-important .fragment}
+### Conséquences
+
+- La double régularisation $\ell_1$ induit une parcimonie de groupe sur les sources.
+- Les paramètres $\lambda_W$ et $\lambda_H$ ne sont pas indépendants : il faut les choisir conjointement.
+- Les solutions sont équilibrées: <span style="color:#d62728">$\|W^\ast[:,q]\|_1 = \|H^\ast[:,q]\|_1$ </span> si $\lambda_W = \lambda_H$.
+
+:::
+:::
+
+## Equilibrage des solutions pour sortir des marais
+
+On équilibre les valeurs initiales d'un algorithme classique pour la NMF (tensorielle).
+
+
+::: {.columns}
+
+::: {.column width="80%"}
+
+
+```{python}
+
+import numpy as np
+import tensorly as tl
+import matplotlib.pyplot as plt
+
+from copy import deepcopy
+
+from tensorly.solvers.penalizations import scale_factors_fro
+from tensorly.decomposition import non_negative_parafac_hals
+
+
+# ============================================================
+# Balancing routine
+# ============================================================
+
+def optimal_balancing(factors):
+    rank = factors[0].shape[1]
+
+    beta = []
+    for q in range(rank):
+        beta.append(
+            tl.prod(
+                [
+                    tl.norm(factor[:, q]) ** (1 / len(factors))
+                    for factor in factors
+                ]
+            )
+        )
+
+    balanced_factors = []
+
+    for i in range(len(factors)):
+        balanced_factor = factors[i].copy()
+
+        for q in range(rank):
+            balanced_factor[:, q] = (
+                factors[i][:, q]
+                * beta[q]
+                / tl.norm(factors[i][:, q])
+            )
+
+        balanced_factors.append(balanced_factor)
+
+    return balanced_factors
+
+
+# ============================================================
+# Problem setup
+# ============================================================
+
+rank = 3
+dims = [10, 11, 12]
+ndims = len(dims)
+
+noise = 0.1
+itermax = 100
+
+np.random.seed(22)
+
+true_factors = [
+    tl.tensor(np.random.rand(dims[i], rank))
+    for i in range(ndims)
+]
+
+CPtensor = tl.cp_tensor.CPTensor(
+    ([10 ** (-i) for i in range(ndims)], true_factors)
+)
+
+data = (
+    CPtensor.to_tensor()
+    + noise * tl.tensor(np.random.randn(*dims))
+)
+
+# ============================================================
+# Initialization
+# ============================================================
+
+rank_e = rank + 3
+
+init = [
+    10 ** (-i) * tl.tensor(np.random.rand(dims[i], rank_e))
+    for i in range(ndims)
+]
+
+CPinit = tl.cp_tensor.CPTensor((None, init))
+
+# ============================================================
+# Lambda values to compare
+# ============================================================
+
+lambda_values = [1e-4, 1.4e-1]
+
+results = {}
+
+# ============================================================
+# Run experiments
+# ============================================================
+
+for ridge_reg in lambda_values:
+
+
+    # Scaling
+    CPinit_scaled, scale = scale_factors_fro(
+        CPinit,
+        data,
+        [ridge_reg] * ndims,
+        [0] * ndims,
+        nonnegative=True,
+    )
+
+    init_scaled = CPinit_scaled.factors
+
+    # Balancing
+    balanced_scaled_init = optimal_balancing(init_scaled)
+
+    CPinit_scaled_balanced = tl.cp_tensor.CPTensor(
+        (None, balanced_scaled_init)
+    )
+
+    # ========================================================
+    # Unscaled initialization
+    # ========================================================
+
+    callback_loss = []
+
+    def callback(factors, unnormalized_rec_errors):
+        loss = (
+            (unnormalized_rec_errors ** 2) / 2
+            + sum(
+                ridge_reg * tl.norm(factors[1][i]) ** 2
+                for i in range(ndims)
+            )
+        )
+        callback_loss.append(float(loss))
+
+    non_negative_parafac_hals(
+        data,
+        rank_e,
+        n_iter_max=itermax,
+        tol=0,
+        init=deepcopy(CPinit),
+        verbose=False,
+        ridge_coefficients=ridge_reg,
+        callback=callback,
+    )
+
+    loss_unscaled = np.asarray(callback_loss)
+
+    # ========================================================
+    # Scaled + balanced initialization
+    # ========================================================
+
+    callback_loss = []
+
+    non_negative_parafac_hals(
+        data,
+        rank_e,
+        n_iter_max=itermax,
+        tol=0,
+        init=deepcopy(CPinit_scaled_balanced),
+        verbose=False,
+        ridge_coefficients=ridge_reg,
+        callback=callback,
+    )
+
+    loss_scaled_balanced = np.asarray(callback_loss)
+
+    results[ridge_reg] = {
+        "loss": loss_unscaled,
+        "loss_scaled_balanced": loss_scaled_balanced,
+    }
+
+
+fig, axes = plt.subplots(
+    1, 2,
+    figsize=(10, 4),
+    sharey=True,
+    constrained_layout=True
+)
+#plt.rcParams.update({
+    #"font.size": 16,
+    #"axes.titlesize": 18,
+    #"axes.labelsize": 16,
+    #"legend.fontsize": 14,
+#})
+
+for ax, lam in zip(axes, lambda_values):
+
+    loss = results[lam]["loss"]
+    loss_scaled_balanced = results[lam]["loss_scaled_balanced"]
+
+    ax.semilogy(
+        loss,
+        "-.",
+        linewidth=2,
+        label="Without scaling or balancing"
+    )
+
+    ax.semilogy(
+        loss_scaled_balanced,
+        linewidth=2,
+        label="With scaling + balancing"
+    )
+
+    ax.set_title(rf"$\lambda = {lam:.1e}$")
+    ax.set_xlabel("Itérations")
+    ax.grid(True, alpha=0.3)
+
+axes[0].set_ylabel("Coût $f$")
+
+handles, labels = axes[0].get_legend_handles_labels()
+fig.legend(
+    handles,
+    labels,
+    loc="center right",
+    #ncol=2,
+    bbox_to_anchor=(1,0.80)
+)
+axes[0].set_title(r"$\lambda = 10^{-4}$ (faible régularisation)")
+axes[1].set_title(r"$\lambda = 1.4\times10^{-1}$ (forte régularisation)")
+
+plt.show()
+
+```
+
+:::
+
+::: {.column width="20%"}
+
+<br>
+<br>
+
+- problème NCPD 
+- régularisation $\ell_2$
+- dimensions [10,11,12]
+- rang réel 3
+- rang estimé 6
+
+:::
+
+:::
+
+
+## Remarques sur ce travail
+
+On montre en fait des résultats plus généraux, qui tiennent pour
+
+- La plupart des fonctions de coût $f$ usuelles (KL-divergence, Frobenius, etc.).
+- Toute régularisation homogène de degré arbitraire.
+- Des décompositions de rang faible matricielles et tensorielles (NMF, CPD, Tucker, etc.).
+
+:::: {style="font-size:120%"}
+::: {.callout-tip}
+### Proposition
+
+Les solutions du problème explicite
+
+$$  \underset{\forall i\leq n,\; X_i\in\mathbb{R}^{m_i\times r}}{\arg\min}~f(\{X_i\}_{i\leq n}) + \sum_{i=1}^{n} \mu_{i} \sum_{q=1}^{r} g_i(X_i[:,q]) $$
+
+sont essentiellement identiques à celles du problème implicite
+
+$$   \underset{\forall i\leq n,\; X_i\in\mathbb{R}^{m_i\times r}}{\arg\min}~f(\{X_i\}_{i\leq n}) + \tilde{\mu} \sum_{q=1}^{r}  \left(\prod_{i=1}^{n} g_i(X_{i}[:,q])^{\frac{1}{p_i}}\right)^{\frac{1}{\sum_{i=1}^{n} \frac{1}{p_i}}}. $$
+
+où $p_i$ est le degré d'homogénéité de $g_i$ et $\tilde{\mu}$ dépend explicitement de $\mu_i$.
+
+:::
+::::
+
+## Contributions scientifiques
+
+### Théorie
+
+1.  **Identifiabilité** : <span style="font-size:70%"> 
+ C. & Gillis (SIMODS 2019), C. et al. (LVA/ICA 2017) </span>
+2.  **Caractérisation des solutions** : 
+<span style="font-size:70%">
+   <span style="color:#d62728">C. & Leplat (SIMODS 2025)</span>
+   </span>
+  </span>
+3.  **Information auxiliaire** : <span style="font-size:70%">
+   C. & Gillis (IEEE TSP & TGRSL 2018), C. (Applied Mathematics and Statistics 2022), Kervazo et al. (EUSIPCO 2024)
+   </span>
+
+<br>
+
+### Optimisation numérique: comment calculer les LRA
+
+1. **Rapidité des algorithmes**: <span style="font-size:70%">
+   Nadisic et al. (ICASSP 2020), Pham et al. (TMLR 2026)
+   </span>
+2. **Flexibilité**: <span style="font-size:70%">
+   Schenker et al. (IEEE JSTSP 2020), Roald et al. (SIMODS 2022)
+   </span>
+
+<br>
+
+### Applications spécifiques
+
+1. **Imagerie hyperspectrale microscopique** : 
+<span style="font-size:70%">
+   Harriga et al. (EUSIPCO 2024), Carreda et al. (Biomedical Optics Express 2023)
+ </span>
+3. **Informatique musicale**: <span style="font-size:70%">
+   Marmoret et al. (ISMIR 2020), <span style="color:#d62728">Wu et al. (SMC 2022)</span>, Marmoret et al. (TISMIR 2023)
+   </span> 
+
+
+
+
+## Zoom sur une contribution: Transcription automatique de musique
+
+<br>
+
+avec Axel Marmoret (MCF, IMT Atlantique, ancien doctorant) 
+
+et Haoran Wu (Syneron Technology (Chine), ancien stagiaire de master)
+
+## Transcription automatique ?
+
+:::{style="text-align:center;"}
+![](./figures/transcription.png)
+:::
+
+
+- Peut se faire "à la main".
+- L'état de l'art actuel est réalisé par des réseaux de neurones entraînés de facon supervisée. <span style="font-size:70%"> [Hawthorne et al. 2018, Kong et al. 2020, Bittner et al. 2022] </span>
+- Notre travail est de montrer que l'on peut atteindre des performances comparables avec des méthodes faiblement supervisées, basées sur la NMF.
+
+
+## Notes isolées et séparation de sources
+
+Analyse temps-fréquence d'un A4 (la milieu de clavier) joué au piano.
+
+::: {style="text-align:center"}
+
+```{python}
+from cmath import phase
+import matplotlib.pyplot as plt
+import soundfile as sf
+import numpy as np
+import scipy.signal as signal
+
+A4_wav, sr = sf.read('../tensorly_hdr/dataset/MAPS_ISOL_LG_M_S0_M69_ENSTDkAm.wav')
+A4_wav = A4_wav / np.max(np.abs(A4_wav)) # audio normalization
+A4_wav = A4_wav[:,0] # use only one channel if stereo
+A4_wav = A4_wav[sr//3:sr*4] # cut to avoid the hammer action
+
+# Compute spectrogram
+frequencies, times, Sxx = signal.stft(A4_wav, fs=sr, nperseg=4096, nfft=4096, noverlap=4096 - 882)
+half_freqs = len(frequencies) // 2
+frequencies = frequencies[:half_freqs]
+Sxx = Sxx[:half_freqs, :] # keep only lower half
+Sphase = np.angle(Sxx)
+Sxx_dB = 20 * np.log10(np.abs(Sxx) + 1e-10)  # convert to dB scale
+Sxx_abs = np.abs(Sxx)
+
+# Best rank-one approximation of magnitude spectrogram in the Frobenius sense
+U,s,V = np.linalg.svd(Sxx_abs)
+r1_approx = s[0]*np.outer(U[:,0],V[0,:])
+# in dB
+r1_approx_dB = 20 * np.log10(r1_approx + 1e-10)
+# Same in KL sense with NMF
+ukl = np.sum(Sxx_abs, axis=1)/np.sqrt(np.sum(Sxx_abs))
+vkl = np.sum(Sxx_abs, axis=0)/np.sqrt(np.sum(Sxx_abs))
+r1_approx_kl = np.outer(ukl, vkl)
+
+r1_approx_kl_dB = 20 * np.log10(r1_approx_kl + 1e-10)
+
+
+# Plotting rank-one approximation
+plt.figure(figsize=(10, 6))
+#plt.rcParams.update({
+    #"font.size": 16,
+    #"axes.titlesize": 18,
+    #"axes.labelsize": 16,
+    #"legend.fontsize": 14,
+#})
+ax1=plt.subplot(2, 2, 4)
+plt.imshow(r1_approx_kl_dB, aspect='auto', origin='lower', extent=[times[0], times[-1], frequencies[0], frequencies[-1]])
+plt.title('NMF-KL à 1 composante (rang 1)')
+plt.xlabel('Temps (s)')
+# colorbar with the same min and max as previous
+plt.clim(np.min(r1_approx_dB), np.max(r1_approx_dB))
+plt.colorbar()
+ax2=plt.subplot(2, 2, 1)
+plt.imshow(Sxx_dB, aspect='auto', origin='lower', extent=[times[0], times[-1], frequencies[0], frequencies[-1]])
+plt.title('Spectrogramme original A4')
+plt.xlabel('Temps (s)')
+plt.colorbar(label='Intensité [dB]')
+
+# plot the rank one KL components
+ax3=plt.subplot(2, 2, 3)
+plt.plot(frequencies, ukl, color='red')
+plt.title('Composante spectrale $W$')
+plt.xlabel('Fréquence (Hz)')
+ax4=plt.subplot(2, 2, 2)
+plt.plot(times, vkl, color='blue')
+plt.xlim(times[0], times[-1])   # <-- add this
+plt.title('Composante temporelle $H^T$')
+plt.xlabel('Temps (s)')
+
+plt.tight_layout()
+
+target_width = ax1.get_position().width
+for ax in (ax3, ax4):
+    pos = ax.get_position()
+    ax.set_position([
+        pos.x0,
+        pos.y0,
+        target_width,
+        pos.height
+    ])
+
+
+plt.show()
+
+```
+
+:::
+
+## NMF-KL d'un enregistrement de piano
+
+:::{style="text-align:center"}
+![](./figures/partition.png){width=100%}
+:::
+
+## NMF-KL d'un extrait simple (vert)
+
+
+:::{style="text-align:center"}
+```{python}
+from cmath import phase
+import matplotlib.pyplot as plt
+import soundfile as sf
+import numpy as np
+import scipy.signal as signal
+
+
+# Load song
+song, sr = sf.read('../tensorly_hdr/dataset/MAPS_MUS-muss_1_ENSTDkAm.wav')
+song = song / np.max(np.abs(song)) # audio normalization
+song = song[:,0] # use only one channel if stereo
+# The song has six different single notes until 6s, then chords
+# We cut the song after 6s (rectangular window for simplicity)
+t_1 = 0*sr
+t_2 = 6*sr
+song = song[t_1:t_2]
+
+# Compute spectrogram
+frequencies, times, Sxx = signal.stft(song, fs=sr, nperseg=4096, nfft=4096, noverlap=4096 - 882)
+half_freqs = len(frequencies) // 2
+frequencies = frequencies[:half_freqs]
+Sxx = Sxx[:half_freqs, :] # keep only lower half
+Sxx_dB = 20 * np.log10(np.abs(Sxx) + 1e-10)  # convert to dB scale
+Sxx_abs = np.abs(Sxx)
+
+# NMF with KL divergence (function taken from paper with Quyen, using alternating MU, code from tensorly_hdr)
+# Could also use spa or snpa on the rows
+from tensorly_hdr.nmf_kl import Lee_Seung_KL
+rank = 7
+np.random.seed(0)  # for reproducibility
+W_init = np.abs(np.random.randn(Sxx.shape[0], rank))
+H_init = np.abs(np.random.randn(Sxx.shape[1], rank)).T
+crit, W_kl, H_kl, toc, cnt = Lee_Seung_KL(Sxx_abs, W_init, H_init, NbIter=20, verbose=False, print_it=20)
+# Normalize W columnwise and put the norm in H
+W_kl_norms = np.max(W_kl, axis=0)
+W_kl = W_kl / W_kl_norms
+H_kl = H_kl.T * W_kl_norms
+
+# Permuting spectra in increasing fundamental frequency
+from tensorly_hdr.image_utils import permute_spectra
+perm = permute_spectra(W_kl)
+W_kl = W_kl[:, perm]
+H_kl = H_kl[:, perm]
+
+notes = ["F3", "G3", "Bb3", "Hammer", "C4", "D4", "F4"]
+# Plots
+plt.figure(figsize=(12, 7))
+for i in range(rank):
+    plt.subplot(rank, 2, 2*i + 1)
+    plt.plot(frequencies, W_kl[:, i])
+    plt.ylabel(notes[i])
+    if i==0:
+        plt.title(f'Profils fréquentiels NMF-KL')
+    if i==rank-1:
+        plt.xlabel('Fréquence (Hz)')
+    else:
+        plt.xticks([])
+    
+    plt.subplot(rank, 2, 2*i + 2)
+    plt.plot(times, H_kl[:, i])
+    plt.ylim(0, np.max(H_kl))
+    if i==0:
+        plt.title(f'Activations temporelles NMF-KL')
+    if i==rank-1:
+        plt.xlabel('Temps (s)')
+    else:
+        plt.xticks([])
+
+plt.show()
+
+```
+:::
+
+## NMF-KL d'un extrait complexe (rouge)
+
+:::{style="text-align:center"}
+```{python}
+# Load song
+song, sr = sf.read('../tensorly_hdr/dataset/MAPS_MUS-muss_1_ENSTDkAm.wav')
+song = song / np.max(np.abs(song)) # audio normalization
+song = song[:,0] # use only one channel if stereo
+# Use short time window (rectangular window for simplicity)
+t_1 = 0*sr
+t_2 = 8*sr
+song = song[t_1:t_2]
+# The song has six different single notes until 6s, then chords
+
+# Compute spectrogram
+frequencies, times, Sxx = signal.stft(song, fs=sr, nperseg=4096, nfft=4096, noverlap=4096 - 882) #8192
+half_freqs = len(frequencies) // 2
+frequencies = frequencies[:half_freqs]
+Sxx = Sxx[:half_freqs, :] # keep only lower half
+Sxx_dB = 20 * np.log10(np.abs(Sxx) + 1e-10)  # convert to dB scale
+Sxx_abs = np.abs(Sxx)
+
+# NMF with KL divergence (function taken from paper with Quyen, using alternating MU, code from tensorly_hdr)
+# Could also use spa or snpa on the rows
+from tensorly_hdr.nmf_kl import Lee_Seung_KL
+rank = 15
+W_init = np.abs(np.random.randn(Sxx.shape[0], rank))
+H_init = np.abs(np.random.randn(Sxx.shape[1], rank)).T
+crit, W_kl, H_kl, toc, cnt = Lee_Seung_KL(Sxx_abs, W_init, H_init, NbIter=20, verbose=False, print_it=20)
+# Normalize W columnwise and put the norm in H
+W_kl_norms = np.max(W_kl, axis=0)
+W_kl = W_kl / W_kl_norms
+H_kl = H_kl.T * W_kl_norms
+
+# Permuting spectra in increasing fundamental frequency
+perm = permute_spectra(W_kl)
+W_kl = W_kl[:, perm]
+H_kl = H_kl[:, perm]
+
+# Plots
+plt.figure(figsize=(12, 7))
+for i in range(rank):
+    plt.subplot(rank, 2, 2*i + 1)
+    plt.plot(frequencies, W_kl[:, i])
+    plt.yticks([])
+    if i==0:
+        plt.title(f'Profils fréquentiels NMF-KL')
+    if i==rank-1:
+        plt.xlabel('Fréquence (Hz)')
+    else:
+        plt.xticks([])
+    
+    plt.subplot(rank, 2, 2*i + 2)
+    plt.plot(times, H_kl[:, i])
+    plt.ylim(0, np.max(H_kl))
+    plt.yticks([])
+    if i==0:
+        plt.title(f'Activations temporelles NMF-KL')
+    if i==rank-1:
+        plt.xlabel('Temps (s)')
+    else:
+        plt.xticks([])
+```
+:::
+
+## Une brique essentielle: la NMF convolutive
+
+$$ M = \sum_{q=1}^{r} \sum_{\tau=0}^{T-1} W[f,\tau,q] H[q,t-\tau]. $$
+
+- Les templates fréquentiels dépendent aussi du temps (modélisation de l'attaque et de la décroissance des notes).
+-  Proposé par [Smaragdis, 2006], algorithme efficace par [Fagot et al., 2019].
+
+:::{style="text-align:center"}
+![](./figures/CNMFvsNMF.png){width=80%}
+:::
+
+## Notre contribution: NMF convolutive semi-supervisée
+
+
+:::{style="text-align:center"}
+```{python}
+
+A4_wav, sr = sf.read('../tensorly_hdr/dataset/MAPS_ISOL_LG_M_S0_M69_ENSTDkAm.wav')
+A4_wav = A4_wav / np.max(np.abs(A4_wav)) # audio normalization
+A4_wav = A4_wav[:,0] # use only one channel if stereo
+# Work on the first few seconds to avoid learning the recording noise around 10s
+A4_wav = A4_wav[sr//3:sr*4]
+# Compute spectrogram up to 10kHz
+frequencies, times, Sxx = signal.stft(A4_wav, fs=sr, nperseg=4096, nfft=4096, noverlap=4096 - 882) #8192
+# Cut for speed
+half_freqs = len(frequencies) // 2
+Sxx_dB = 20 * np.log10(np.abs(Sxx[:half_freqs,:]))  # convert to dB scale for display
+Sxx_abs = np.abs(Sxx[:half_freqs,:])
+# normalization
+Sxx_abs = Sxx_abs / np.max(Sxx_abs)
+
+# Testing rank-1 CNMF
+T = 20
+from tensorly_hdr.cnmf import convolutive_nmf
+W_r1, H_r1, err_r1 = convolutive_nmf(
+    Sxx_abs, rank=1, T=T, itmax=10, eps=1e-16, tol=0,
+    print_it=1, n_iter_inner=10, init="separable", verbose=False
+    )
+W_cnmf=W_r1[:, :, 0]
+h_cnmf = H_r1[0, :]
+
+from tensorly_hdr.cnmf import shift_m
+import matplotlib.pyplot as plt
+
+fig, axs = plt.subplots(
+    2, 2,
+    figsize=(12, 5.2),
+    layout="constrained"
+)
+
+# Reconstructed rank-1 approximation
+Sxx_cnmf_approx = W_cnmf @ shift_m(h_cnmf, T)
+Sxx_cnmf_approx_dB = 20 * np.log10(Sxx_cnmf_approx)
+
+# --- Top left: reconstructed spectrogram ---
+im1 = axs[1, 1].imshow(
+    Sxx_cnmf_approx_dB,
+    aspect='auto',
+    origin='lower',
+    extent=[times[0], times[-1], frequencies[0], frequencies[half_freqs]],
+    interpolation='none'
+)
+axs[1, 1].set_title('CNMF rang 1 (dB)')
+axs[1, 1].set_xlabel('Temps (s)')
+fig.colorbar(im1, ax=axs[1, 1])
+im1.set_clim(np.min(Sxx_dB), np.max(Sxx_dB))
+
+
+# --- Top right: data spectrogram ---
+im2 = axs[0, 0].imshow(
+    Sxx_dB,
+    aspect='auto',
+    origin='lower',
+    extent=[times[0], times[-1], frequencies[0], frequencies[half_freqs]],
+    interpolation='none'
+)
+axs[0, 0].set_title('Spectrogramme A4 (dB)')
+axs[0, 0].set_ylabel('Fréquence (Hz)')
+axs[0, 0].set_xlabel('Temps (s)')
+fig.colorbar(im2, ax=axs[0, 0])
+
+
+# --- Bottom left: CNMF template ---
+W_cnmf_db = 20 * np.log10(W_cnmf)
+
+im3 = axs[1, 0].imshow(
+    W_cnmf_db,
+    aspect=0.005,
+    interpolation='none',
+    origin='lower',
+    extent=[0, T, frequencies[0], frequencies[half_freqs]]
+)
+
+# Center the image inside the subplot box
+
+axs[1, 0].set_title('Template fréquentiel W de la CNMF (dB)')
+axs[1, 0].set_xlabel('Indice de convolution')
+axs[1, 0].set_ylabel('Fréquence (Hz)')
+fig.colorbar(im3, ax=axs[1, 0])
+axs[1, 0].set_anchor('C')
+im3.set_clim(np.min(Sxx_dB), np.max(Sxx_dB))
+
+
+# --- Bottom right: activation ---
+axs[0, 1].plot(times, h_cnmf)
+axs[0, 1].set_title('Activation temporelle H de la CNMF')
+axs[0, 1].set_xlabel('Temps (s)')
+
+
+plt.show()
+
+``` 
+
+::: {.callout-tip style="font-size:140%"}
+### Idée: apprentissage semi-supervisé
+
+Apprendre les templates fréquentiels sur des notes isolées (dataset MAPS) par des CNMF de rang 1.
+
+:::
+
+:::
+
+## Des résultats prometteurs...
+
+- Pour chaque piano (EN1, EN2, AkB1, AkB2, AkC, AkS), on apprend les templates fréquentiels sur des notes isolées (dataset MAPS [Emiya et al. 2010]) par des CNMF de rang 1.
+- Puis on calcule les activations temporelles sur un morceau de musique (dataset MAPS) par une CNMF.
+- On effectue un seuillage sur les activations temporelles.
+
+| Méthode | $\tau$|  EN1  | EN2  | AkB1  | AkB2  | AkC  | AkS  | Sp  | St  |
+|---|---|---|---|---|---|---|---|---|---|
+|  CNMF | 5 | 82 | 74 | 90 | 80 | 87 | 84 | 86 | 81 |
+|  | 10 | **88** | **80** | **95** | **90** | 94 | **90** | **93** | 89 |
+|  | 20 | 85 | 78 | **95** | **90** | **94** | 89 | 92 | **89** |
+| AD* | — | 82 | 69 | 68 | 73 | 61 | 69 | 66 | 70 |
+ | DNN | — | **89** | 77 | **98** | **95** | **98** | 87 | **97** | **95** |
+
+**Tableau :** Performances en F mesure de CNMF, AD et du réseau profond de ByteDance. Tolérance de 50 ms.
+AD: [Cheng et al. 2016], DNN par ByteDance [Kong et al. 2020].
+
+## ...mais des problèmes pour généraliser
+
+<br>
+<br>
+
+| Pianos |AkC| EN1| EN2 | AkB1 | AkB2 | AkS | Sp | St |
+|---|---|---|---|---|---|---|---|---|
+| Entraînement sur AkC | **94** | . |  74 | 77 | 77 | 70 | 74 | 77 |
+| Entraînement sur EN1 | . | **88** | 76 | 67 | 68 | 69 | 67 | 69 |
+
+**Tableau :** Scores de transcription pour CNMF, avec un décalage entre les données d'apprentissage et de test.
+
+## Retour aux contributions scientifiques
+
+### Théorie
+
+1.  **Identifiabilité** : <span style="font-size:70%"> 
+ C. & Gillis (SIMODS 2019), C. et al. (LVA/ICA 2017) </span>
+2.  **Caractérisation des solutions** : 
+<span style="font-size:70%">
+   <span style="color:#d62728">C. & Leplat (SIMODS 2025)</span>
+   </span>
+  </span>
+3.  **Information auxiliaire** : <span style="font-size:70%">
+   C. & Gillis (IEEE TSP & TGRSL 2018), C. (Applied Mathematics and Statistics 2022), Kervazo et al. (EUSIPCO 2024)
+   </span>
+
+<br>
+
+### Optimisation numérique: comment calculer les LRA
+
+1. **Rapidité des algorithmes**: <span style="font-size:70%">
+   Nadisic et al. (ICASSP 2020), Pham et al. (TMLR 2026)
+   </span>
+2. **Flexibilité**: <span style="font-size:70%">
+   Schenker et al. (IEEE JSTSP 2020), Roald et al. (SIMODS 2022)
+   </span>
+
+<br>
+
+### Applications spécifiques
+
+1. **Imagerie hyperspectrale microscopique** : 
+<span style="font-size:70%">
+   Harriga et al. (EUSIPCO 2024), Carreda et al. (Biomedical Optics Express 2023)
+ </span>
+3. **Informatique musicale**: <span style="font-size:70%">
+   Marmoret et al. (ISMIR 2020), <span style="color:#d62728">Wu et al. (SMC 2022)</span>, Marmoret et al. (TISMIR 2023)
+   </span> 
+
+
+
+# Perspectives de recherche
+
+## La divergence KL en traitement du signal
+
+Pour un vecteur observé $y\in\mathbb{R}^d$ fixé, on pose $$D_{\mathrm{KL}}(y,x)=\sum_{i=1}^d y_i \log\!\left(\frac{y_i}{x_i}\right)+x_i-y_i,
+\qquad x \in \mathbb{R}_{++}^d.$$
+
+- Fonction de coût pour les données issues du comptage
+    - Comptage de photon (tomographie, caméra médicales, astronomie...)
+    - Comptage de mots dans des textes (topic modeling)
+- Adaptés aux données à fortes dynamiques (spectrogrammes)
+
+
+::: {.callout-important style="font-size:140%"}
+
+Ne se réduit pas à une distance $\ell_2$ si on compte peu d'objets, ou si les données sont très creuses.
+
+:::
+
+
+## Géométrie de la divergence de KL en dimension 1
+
+
+$$ D_{\mathrm{KL}}(y,x)= y \log\!\left(\frac{y}{x}\right)+x-y, \qquad x \in \mathbb{R}_{++}^d. $$
+
+::: {.columns}
+
+::: {.column width="3%"}
+
+:::
+
+::: {.column width="57%"}
+
+```{python}
 import numpy as np
 import plotly.graph_objects as go
 
-eps = 0.05
-x1 = np.linspace(eps, 4.5, 120)
-x2 = np.linspace(eps, 4.5, 120)
+# Domain
+x = np.linspace(1e-5, 40, 500)
+
+def kl_divergence(y, x):
+    return y * np.log(y / x) + x - y
+
+# Slider values
+y_values = np.arange(0.01, 8.0, 0.8)
+
+# Create figure
+fig = go.Figure()
+
+# Add one trace per slider position
+for i, y in enumerate(y_values):
+    z = kl_divergence(y, x)
+
+    fig.add_trace(
+        go.Scatter(
+            x=x,
+            y=z,
+            mode="lines",
+            line=dict(width=2),
+            name=f"y={y:.1f}",
+            visible=(i == len(y_values) // 2)  # initially show y=2.5
+        )
+    )
+
+# Slider steps
+steps = []
+for i, y in enumerate(y_values):
+    visible = [False] * len(y_values)
+    visible[i] = True
+
+    steps.append(
+        dict(
+            method="update",
+            args=[
+                {"visible": visible},
+            ],
+            label=f"{y:.1f}"
+        )
+    )
+
+# Slider
+sliders = [
+    dict(
+        active=np.argmin(np.abs(y_values - 2.5)),
+        currentvalue={"prefix": "Reference distribution (y): "},
+        pad={"t": 30},
+        steps=steps,
+    )
+]
+
+fig.update_layout(
+    sliders=sliders,
+    xaxis_title="x",
+    yaxis_title="KL(y, x)",
+    width=550,
+    height=400,
+)
+
+fig.show()
+```
+
+
+:::
+
+::: {.column width="40%"}
+
+<br>
+<br>
+
+::: {.callout-important style="font-size:140%"}
+
+La divergence KL est une fonction difficile à optimiser:
+
+- son gradient est non lisse (Lipschitz).
+- elle n'est pas fortement convexe et pas coercive (si présence de zéros). 
+
+:::
+
+:::
+
+:::
+
+## Pourquoi étudier l'optimisation de modèles rLRA + KL ?
+
+- Les algorithmes de régression avec une fonction de perte KL sont souvent indisponibles ou peu performants.
+ 
+    - Par exemple la régression TV avec une perte KL a été étudiée seulement récemment [Maxim et al. 2023]
+$$ \underset{h\geq 0}{\arg\min }~ \mathcal{D}_{KL}(m, Wh) + \lambda  \|h\|_{TV}. $$
+
+    - Les recherches actuelles se concentrent sur des l'utilisation de divergence Bregman, sachant que $\mathcal{D}_{KL}$ est de gradient lisse dans la géométrie induite par l'entropie de Burg [Bauschke et al. 2017].
+
+- l'état de l'art **non régularisé** est dominé par MLEM/MU et ses variantes [Lucy 1974, Dempster 1977].
+$$ h^{(k+1)} = h^{(k)} \ast \frac{W^T \left(\frac{m}{Wh^{(k)}}\right)}{W^T \mathbf{1}} $$
+
+
+## Burg vs MLEM en régression KL
+
+
+::: {.callout-important style="font-size:130%"}
+### Hypothèse de travail
+
+Il est possible de construire des algorithmes plus rapides que MLEM, et de les adapter pour des régularisations complexes.
+
+:::
+
+- Avec **Damien Lesens** et Bora Ucar (LIP), nous sommes en train de montrer que 
+    - MLEM est toujours plus proche du coût que Burg,
+    - MLEM est la meilleure majorante séparable de KL.
+
+
+
+
+::: {.callout-tip style="font-size:130%"}
+
+### Idées
+
+- Proposer des approximations locales (gradient préconditionné, Newton)
+- S'inspirer de littératures voisines (points interieurs, programmation linéaire)
+
+
+:::
+
+
+
+
+## Programme de recherche
+
+<!-- ::::: columns
+::: {.column width="58%"}
+- Je souhaite structurer un programme cohérent autour de **NN-KL** et **NMF-KL**.
+- L'objectif n'est pas seulement de proposer un nouvel algorithme.
+- Il s'agit de comprendre :
+  - quelle géométrie exploiter ;
+  - quelles approximations locales utiliser ;
+  - comment intégrer régularisation et apprentissage.
+::: -->
+
+::: {style="text-align:center;"}
+![](figures/KarpCoi_principe.png){width="110%"}
+:::
+
+
+## Perspective 1 — benchmark et logiciel
+
+::: {.columns}
+
+::: {.column width="50%"}
+
+- Pour NN-KL et NMF-KL, il manque encore une culture du **benchmark**.
+- Une priorité est donc de construire :
+  - un benchmark reproductible,
+  - une liste d'algorithmes/implémentations de référence,
+  - des jeux de données ouverts pour effectuer les évaluations,
+  - un article de survey sur NN-KL et NMF-KL.
+
+
+
+
+::: {style="text-align:center;"}
+![](./figures/logo_benchopt.png){width=50%}
+:::
+
+:::
+
+::: {.column width="50%"}
+
+::: {style="text-align:center;"}
+![](./figures/benchmark_nmf_repo.png){width=100%}
+:::
+
+
+:::
+
+:::
+
+
+
+## Perspective 2 — nouveaux outils d'optimisation
+
+- NN-KL, des directions prometteuses :
+  1.  des approxmations locales d'ordre deux plus serrés.
+  2.  l'exploitation du lien avec la **programmation linéaire**, surtout en données creuses.
+- NMF-KL: explorer également les algorithmes non-alternés [Fagot et al. 2019]
+- Objectif à long terme : des méthodes à la fois **rapides et bien comprises**.
+
+En collaboration avec Mai Quyen Pham (IMT Atlantique, Brest) et Damien Lesens et Bora Ucar (LIP, Lyon)
+
+## Perspective 3 — Problèmes inverses en imagerie computationnelle 
+
+- Terrain d'application immédiat : **imagerie spectrale single-pixel**.
+- Question méthodologique centrale : **quand faut-il vraiment une méthode dédiée KL ?**
+  - en fonction du modèle d'acquisition
+  - en fonction du niveau de bruit Poisson vs Gaussien
+
+Je souhaite explorer notamment les résultats autour des transformations de réduction de variance (type [Anscombe, 1948, Foy 2011]).
+
+- Développer des outils basés apprentissage profond, en lien avec la thèse de **Séréna Hariga**.
+  - Thèse de Guilhem Dupuis à partir de octobre 2026 avec Valentin Debarnot.
+
+Collaborations: en local à CREATIS + ICJ (Nicolas Ducros, Voichita Maxim, Elie Bretin, Valentin Debarnot...) et à l'international.
+
+## Perspective 4 - Transcription automatique avec NMF-KL et apprentissage profond
+
+1. Utiliser un algorithme déroulé pour entrainer une NMF-KL convolutive.
+2. Se baser sur les travaux de Magenta pour proposer un modèle hybride non-supervisé [Engel et al. 2020].
+
+::: {style="text-align:center;"}
+![](./figures/ddsp_tone_transfer.png){width=70%}
+:::
+
+# Conclusion
+
+## L'avenir des rLRA ?
+
+
+::: {.columns}
+
+::: {.column width="50%"}
+
+::: {style="text-align:center; font-size:140%"}
+**$+$**
+:::
+
+::: {.plus-list}
+
+- Des méthodes non-supervisés interprétables.
+- Des garanties théoriques assez bien établies.
+- Une modélisation physique au coeur des modèles.
+- L'intérêt scientifique du travail sur l'optimisation numérique.
+  
+:::
+
+:::
+
+::: {.column width="50%"}
+
+
+::: {style="text-align:center; font-size:140%"}
+**$-$**
+:::
+
+
+::: {.minus-list}
+
+- Les performances état de l'art sont obtenues par des méthodes non-interprétables (réseaux profonds).
+- Les méthodes non-supervisées sont souvent trop lentes pour être utilisées dans des applications temps réel.
+  
+:::
+
+:::
+
+:::
+
+Pour l'avenir, les rLRA pourront 
+
+- être utilisés comme **briques de construction** dans des modèles hybrides, combinant interprétabilité et performance.
+- servir de baselines pour l'évaluations de modèles boîte noire.
+
+::: {style="text-align:center;" .fragment}
+### Merci pour votre attention
+:::
+
+## Résumé des contributions scientifiques
+
+### Théorie
+
+1.  **Identifiabilité** : <span style="font-size:70%">
+ C. & Gillis (SIMODS 2019), C. et al. (LVA/ICA 2017) </span>
+2.  **Caractérisation des solutions** : 
+<span style="font-size:70%">
+   <span style="color:#d62728">C. & Leplat (SIMODS 2025)</span>
+   </span>
+  </span>
+3.  **Information auxiliaire** : <span style="font-size:70%">
+   C. & Gillis (IEEE TSP & TGRSL 2018), C. (Applied Mathematics and Statistics 2022), Kervazo et al. (EUSIPCO 2024)
+   </span>
+
+<br>
+
+### Optimisation numérique: comment calculer les LRA
+
+1. **Rapidité des algorithmes**: <span style="font-size:70%">
+   Nadisic et al. (ICASSP 2020), Pham et al. (TMLR 2026)
+   </span>
+2. **Flexibilité**: <span style="font-size:70%">
+   Schenker et al. (IEEE JSTSP 2020), Roald et al. (SIMODS 2022)
+   </span>
+
+<br>
+
+### Applications spécifiques
+
+1. **Imagerie hyperspectrale microscopique** : 
+<span style="font-size:70%">
+   Harriga et al. (EUSIPCO 2024), Carreda et al. (Biomedical Optics Express 2023)
+ </span>
+3. **Informatique musicale**: <span style="font-size:70%">
+   Marmoret et al. (ISMIR 2020), <span style="color:#d62728">Wu et al. (SMC 2022)</span>, Marmoret et al. (TISMIR 2023)
+   </span> 
+
+
+# Backup
+
+## KL-div 2D
+
+
+```{python}
+import numpy as np
+import plotly.graph_objects as go
+
+eps = 1e-8
+x1 = np.linspace(eps, 5.5, 100)
+x2 = np.linspace(eps, 5.5, 100)
 X1, X2 = np.meshgrid(x1, x2)
 
 y1 = 1.0
-y2_values = [0.4, 1.0, 2.0, 3.5]
+y2_values = [1e-8, 0.5, 1, 2]
 
 def kl2(y1, y2, X1, X2):
     return y1 * np.log(y1 / X1) + X1 - y1 + y2 * np.log(y2 / X2) + X2 - y2
@@ -871,16 +2011,23 @@ Z0 = kl2(y1, y2_values[0], X1, X2)
 
 fig = go.Figure()
 
+levels = np.r_[0, np.logspace(-3, 1, 20)]
+
 fig.add_trace(
     go.Contour(
         x=x1,
         y=x2,
         z=Z0,
+        autocontour=False,
         colorscale="Viridis",
-        contours=dict(showlabels=True),
-        colorbar=dict(title="D_KL"),
+        contours=dict(
+            start=levels[0],
+            end=levels[-1],
+            size=None,
+            showlabels=True,
+        ),
         hovertemplate="x₁=%{x:.2f}<br>x₂=%{y:.2f}<br>KL=%{z:.3f}<extra></extra>",
-        name="Perte",
+        colorbar=dict(title="D_KL"),
     )
 )
 
@@ -945,56 +2092,325 @@ fig.update_layout(
         )
     ],
 )
+fig.show()
 
-fig
 ```
 
-## Programme de recherche
 
-::::: columns
-::: {.column width="58%"}
-- Je souhaite structurer un programme cohérent autour de **NN-KL** et **NMF-KL**.
-- L'objectif n'est pas seulement de proposer un nouvel algorithme.
-- Il s'agit de comprendre :
-  - quelle géométrie exploiter ;
-  - quelles approximations locales utiliser ;
-  - comment intégrer régularisation et apprentissage.
+
+
+
+
+## NMF, modèle géométrique
+
+
+::: {.columns}
+
+::: {.column width="30%"}
+
+
+<br>
+<br>
+<br>
+<br>
+
+NMF exacte
+$$ M = WH^T$$
 :::
 
-::: {.column width="42%"}
-![](figures/KarpCoi_principe.png){width="100%"}
+::: {.column width="70%"}
+
+:::{style="text-align:center;"}
+![](figures/Nmfr3d3.png){width="90%"}
 :::
-:::::
 
-## Perspective 1 — benchmark et logiciel
+:::
 
-- Pour NMF-KL, il manque encore une culture claire du **benchmark**.
-- Une priorité est donc de construire :
-  - un benchmark reproductible,
-  - une plateforme logicielle propre,
-  - un langage d'évaluation partagé.
+:::
 
-## Perspective 2 — nouveaux outils d'optimisation
 
-- Deux directions me paraissent particulièrement prometteuses :
-  1.  des **majorants locaux d'ordre deux** plus serrés ;
-  2.  l'exploitation du lien avec la **programmation linéaire**, surtout en données creuses.
-- L'objectif de long terme : des méthodes à la fois **rapides, robustes et principiellement fondées**.
 
-## Perspective 3 — imagerie computationnelle et apprentissage interprétable
+## Spectre et oeil humain
 
-- Terrain d'application immédiat : **imagerie spectrale single-pixel**.
-- Question méthodologique centrale : **quand faut-il vraiment une méthode dédiée KL ?**
-- Je souhaite aussi étendre ces outils à des approches apprises, tout en gardant l'ancrage problème inverse.
 
-# Conclusion
+::: {.columns}
 
-## Messages à retenir
+::: {.column width="50%"}
 
-1.  **La rLRA** est un thème cohérent, à l'intersection de plusieurs champs.
-2.  Mes contributions suivent un fil clair : **comprendre, calculer, valider**.
-3.  La prochaine étape se concentre sur les **problèmes inverses nonnégatifs à divergence de KL**.
 
-## Merci
 
-**Questions ?**
+```{python}
+import numpy as np
+import matplotlib.pyplot as plt
+
+def generate_spectrum_simple(c1, n_wavelengths=31):
+    wavelengths = np.linspace(400, 700, n_wavelengths)
+    width = 30
+    amplitude = 1
+    spectrum = np.exp(-0.5 * ((wavelengths - c1) / width) ** 2) * amplitude + np.exp(-0.5 * ((wavelengths - (c1 + 100)) / width) ** 2) * amplitude / 2
+    return wavelengths, spectrum
+
+# generate
+c1 = 500
+wavelength, spectrum = generate_spectrum_simple(c1, 100)
+
+# Print a simple spectrum with matplotlib
+plt.figure(figsize=(6,4))
+plt.plot(wavelength, spectrum, color='black', linewidth=2)
+plt.xlabel("Longueur d'onde (nm)")
+plt.ylabel("Réflectance")
+plt.title("Example typique de spectre")
+plt.show()
+
+```
+
+:::
+
+::: {.column width="50%"}
+
+<br>
+
+::: {style="text-align:center;"}
+![source: http://hyperphysics.phy-astr.gsu.edu/](figures/eye_rgb.png){width="100%"}
+:::
+
+:::
+
+:::
+
+
+
+
+
+
+## Autres travaux 
+
+## Dictionary-based LRA
+
+$$ \min_{B\in\Omega_B,\; X\in\Omega_X,\; \|X[:,i]\|_0\leq k\; \forall i\leq r} \|Y - DXB^T \|_F^2, $$
+
+- Etude cas $k=1$: unicité du problème matriciel, existence solution problème tensoriel, algorithme glouton.
+- Etude du cas $k>1$: algorithmes itératifs avec pénalisation $\ell_1$, étude théorique de l'algorithme glouton, conditions d'unicité.
+
+:::{style="text-align:center;"}
+![](./figures/DLRA.png){width="90%"}
+:::
+
+## LRA nonnégative avec contraintes $\ell_0$
+
+- Algorithme de Branch and Bound, application à la NMF séparable parcimonieuse.
+- Parcimonie locale ou globale.
+
+:::{style="text-align:center;"}
+![](./figures/BaB.png){width="100%"}
+:::
+
+
+## Deep Unrolling NMF
+
+- Dérouler l'algorithme MU en NMF pour 
+  - l'accélérer (moins d'itérations),
+  - apprendre à partir de données étiquetées.
+
+$$
+    \underset{\theta}{\arg\min} ~\sum_{i=1}^{p}\mathcal{L}\left(W_i^{gt}, H^{gt}_i, H_i(\theta),W_i(\theta)\right) \quad \text{such that} \quad \forall i\leq p,~ H_i(\theta),W_i(\theta) = \mathcal{A}(Y_i,\theta).
+$$
+
+où l'algorithme $\mathcal{A}_i$ est un MU paramétrique (en loss $\ell_2$):
+
+
+$$
+  W^{k+1} = W^{k} \ast \theta^{k}_W \ast \frac{YH^k}{W^k{H^k}^TH^k} \text{ et } H^{k+1} \leftarrow H^k \ast \theta^k_H \ast \frac{Y^TW^{k+1}}{H^{k+1}{W^k}^TW^k}.
+$$
+
+
+## Décompositions couplées flexibles
+
+- Framework ADMM flexible pour factorisations couplées tenseurs-matrices avec couplage linéaire.
+- Adaptation pour le modèle PARAFAC2.
+
+Example typique: CMTF régularisée.
+
+$$ \underset{W,H,A, B,C}{\arg\min} \|T - \left(A\otimes B \otimes C\right) \mathcal{I}_r \|_F^2 + \|M - WH^T\|_F^2 + g_H(H) +  g_W(W) + g_A(A) +  g_B(B) +  g_C(C) $$ \text{ s.t. } $$\mathcal{L}(A,W)=0 $$
+
+- Utile en fusion de données en imagerie spectrale, métabolomique, imagerie médicale, etc.
+
+## Algorithme mSOM pour la NMF
+
+- Idée: utiliser le fait pour une matrice symétrique $B$ nonnégative, pour tout vector positif $u$,
+
+$$ \text{diag}\left(\frac{Bu}{u}\right) \succcurlyeq B. $$
+
+- On a alors une façon de construire une approximation quadratique d'un coût ($\ell_2$, $\beta$-div).
+  - Pas une majoration hors cas $\ell_2$,
+  - majorisation de la Hessienne dans tous les cas.
+
+Formule de mise à jour ($u=1$, optimal):
+
+$$
+    x^{(k+1)} = \Pi_{\mathcal{C}}\left(x^{(k)} -\frac{\nabla f(x)}{\nabla^2 f(x) 1_n}\right).
+$$ 
+
+- Conditions de convergence
+    - globale en $\ell-2$,
+    - locale en $\beta$-div, $\beta\geq 1$.
+
+## LRA en imagerie hyperspectrale
+
+
+
+::: {.columns}
+
+::: {.column width="50%"}
+
+![crédits: S. Hariga, N. Ducros et L. Mahieu-Williame](./figures/single-pixel.png){width="100%"}
+
+:::
+
+::: {.column width="50%"}
+
+
+
+
+:::{style="text-align:center"}  
+```{python}
+import torch
+import matplotlib.pyplot as plt
+import tensorly as tl
+import numpy as np
+from tensorly_hdr.sep_nmf import snpa
+tl.set_backend("pytorch")
+
+#load with torch
+img_size = 64
+data = np.load("../tensorly_hdr/dataset/cat_HSI_reconstructed.npz")
+# convert to pytorch tensor
+X_rec = torch.tensor(data["X_rec"], dtype=torch.float32)
+wavelengths_nz = data["wavelengths"]
+
+# make a mapping between hyperspectral and RGB values, for visualization only
+
+def rgb_filters(wavelengths):
+    r_filter = torch.exp(-0.5 * ((wavelengths - 575) / 50) ** 2)
+    g_filter = torch.exp(-0.5 * ((wavelengths - 535) / 50) ** 2)
+    b_filter = torch.exp(-0.5 * ((wavelengths - 445) / 50) ** 2)
+    return torch.stack([r_filter, g_filter, b_filter])
+
+# RGB cube
+filters = rgb_filters(torch.tensor(wavelengths_nz, dtype=torch.float32))
+rgb_cube = filters @ X_rec  # shape (3, N**2)
+# Make into RGB image
+rgb_image = rgb_cube.reshape((3, img_size, img_size))
+rgb_image = rgb_image / torch.max(rgb_image)  # normalize for visualization
+# make shape N N 3
+rgb_image = np.transpose(rgb_image, (1, 2, 0))
+# Show cat in fake three colors from the hyperspectral cube X_rec
+plt.figure(figsize=(7,7))
+plt.imshow(np.rot90(rgb_image, 2))
+plt.axis('off')
+plt.show()
+```
+:::
+
+
+
+
+:::
+
+:::
+
+## LRA en imagerie hyperspectrale — résultats
+
+::: {style="text-align:center;"}
+```{python}
+# Processing with NMF
+rank = 2
+Kset, W, H = snpa(X_rec, rank, verbose=False)
+```
+
+```{python}
+Hnorms = [torch.max(H[i,:]) for i in range(rank)]
+color = ["red","gold"]
+# show hypercube at some wavelengths and some spectra
+plt.figure(figsize=(10,5))
+for i in range(rank):
+    plt.subplot(rank,2,2*i+1)
+    plt.plot(wavelengths_nz, Hnorms[i]*W[:,i].cpu().numpy(), color=color[i])
+    plt.title(f"Spectre {i+1}")
+    plt.xlabel("Longueur d'onde (nm)")
+    plt.ylabel("Intensité") 
+    plt.subplot(rank,2,2*i+2)
+    plt.imshow(np.rot90(H[i,:].reshape(64,64), 2), cmap='gray')
+    plt.title(f"Carte d'abondance {i+1}")
+    plt.colorbar(fraction=0.046, pad=0.04)
+    plt.axis('off')
+    plt.tight_layout()
+plt.show()
+```
+:::
+
+
+## Estimation de la structure musicale
+
+:::{style="text-align:center"}
+![](./figures/NNTucker_Music.png){width="100%"}
+:::
+
+## Burg vs MU
+
+```{python}
+#|echo: true
+#| output-location: column
+
+from matplotlib.pylab import f
+import numpy as np
+
+# Hyperparameters
+m, n = 100, 20  # number of samples and features
+alpha = 100 # Poisson signal level
+
+hgt = np.maximum(np.random.randn(n),0)
+W = np.random.rand(m,n)
+y = np.random.poisson(alpha * W @ hgt)
+
+def loss(h):  # KL divergence
+    return np.sum(W@h-y) + np.sum(y * np.log((y+1e-10)/(W @ h)))
+
+def MU(y, W, h, itermax=1000, epsilon=1e-10):
+    Wtsum = W.T @ np.ones_like(y)  # suboptimal but ok
+    hout = np.copy(h)
+    loss_val = [loss(hout)]
+    for i in range(itermax):
+        hout = np.maximum(epsilon, hout * (W.T @ (y / (W @ hout ))) / (Wtsum))
+        loss_val.append(loss(hout))
+    return hout, loss_val
+
+def BurgMU(y, W, h, itermax=1000, epsilon=1e-10):  # NoLIPS by Bauschke et al
+    Wtsum = W.T @ np.ones_like(y)
+    lamb = 1/2/np.sum(y)
+    hout = np.copy(h)
+    loss_val = [loss(hout)]
+    for i in range(itermax):
+        hout = np.maximum(epsilon, hout / ( 1 + lamb* hout * ( Wtsum - W.T @ (y / (W @ hout )))))
+        loss_val.append(loss(hout))
+    return hout, loss_val 
+
+
+hmu, loss_mu = MU(y, W, alpha*np.ones(n), itermax=5000)
+hburg, loss_burg = BurgMU(y, W, alpha*np.ones(n), itermax=5000)
+
+
+# Printing the final estimation error
+print(f"Final loss MU: {loss_mu[-1]}, Burg MU: {loss_burg[-1]}")
+print(f"Estimation error MU: {np.linalg.norm(hmu - alpha*hgt)/np.linalg.norm(alpha*hgt)}, Burg MU: {np.linalg.norm(hburg - alpha*hgt)/np.linalg.norm(alpha*hgt)}")
+
+import matplotlib.pyplot as plt
+plt.figure(figsize=(10,4))
+plt.semilogy(loss_mu, label='MU')
+plt.semilogy(loss_burg, label='Burg MU')
+plt.title('Loss convergence for Poisson regression NN-KL')
+plt.xlabel('Iteration')
+plt.ylabel('Loss (KL divergence)')
+plt.legend()
+plt.show()
+```
