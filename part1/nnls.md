@@ -352,6 +352,10 @@ There is a vast literature on optimization algorithms for solving NNLS, NNKL, or
 
 ## Active-set (NNLS only)
 
+```margin
+The AS algorithm introduced in the following is a rather straightforward application of the AS framework for NNLS. AS have seen many rafinements over the years, see for instance the works of Guestrin and Johnson {cite:p}`pmlr-v37-johnson15` and {cite}`pmlr-v70-johnson17a`
+```
+
 A workhorse algorithm to solve NNLS is the AS algorithm proposed by Lawson and Hanson in 1974 {cite:p}`lawsonSolvingLeastSquares1974,Bro1997fast`. It is based on the observation that, knowing the support of the solution $S(x^\ast)$, the solution itself can be computed using the unconstrained least squares estimate restricted to this support. AS therefore iteratively searches for the support of the solution. It works similarly to the OMP algorithm {cite:p}`Pati1993Orthogonal`, where a candidate index is first added to the current estimation of the solution support, and the unconstrained least squares estimate restricted to the current support estimate is then computed. However, unlike greedy sparse approximation algorithms, AS includes a third step that thins the support. Below is a pseudo-code for AS and a simple example. We then describe each step in more detail. We will see that any step taken by the AS algorithm has to decrease the cost function.
 
 ```{code-cell}ipython3
@@ -791,11 +795,15 @@ $ \KL{y,Wx} \leq \KL{y,Wx^{(k)}} + \langle \nabla_x\KL{y,Wx^{(k)}}, x - x^{(k)} 
 
 that yields, after simple derivations found in {cite:p}`bauschkeDescentLemmaLipschitz2017`
 
-$ \KL{y,Wx} \leq \KL{y,Wx^{(k)}} + \langle W^T\left(1_n-\frac{y}{Wx^{(k)}}\right), x - x^{(k)} \rangle + \frac{1}{2\|y\|_1} \sum_{j\leq n} \frac{x[j] - x^{(k)}[j]}{x^{(k)}[j]} - \log\frac{x[j]-x^{(k)}[j]}{x^{(k)}[j]}.$
+$$ \begin{align*}
+ \KL{y,Wx} \leq & ~ \KL{y,Wx^{(k)}} + \langle W^T\left(1_n-\frac{y}{Wx^{(k)}}\right), x - x^{(k)} \rangle \\
+ & + \frac{1}{2\|y\|_1} \sum_{j\leq n} \frac{x[j] - x^{(k)}[j]}{x^{(k)}[j]} - \log\frac{x[j]-x^{(k)}[j]}{x^{(k)}[j]}.
+ \end{align*}
+ $$
 
 Minimizing this upper-bound leads to unusual multiplicative updates 
 
-$ x = x \ast \frac{1}{1+\frac{1}{\|y\|_1}x \odot \left(W^T1_n - W^T\frac{y}{Wx}\right)}. $
+$$ x = x \ast \frac{1}{1+\frac{1}{\|y\|_1}x \odot \left(W^T1_n - W^T\frac{y}{Wx}\right)}. $$
 
 Since these updates allow the use of (Bregman) proximal operators while ensuring convergence, they have been used in regularized NNKL problems {cite:p}`huraultConvergentBregmanPlugandPlay2023b`. However, it is unclear how these updates compare to the classical MU {eq}`eq:MU-NNKL` and its convergence rate is unknown.
 
