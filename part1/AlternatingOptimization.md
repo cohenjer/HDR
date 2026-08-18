@@ -393,7 +393,7 @@ Hinit = np.random.rand(shape[1], rank)
 results = {}
 
 for n_inner in [1, 2, 3, 5, 10, 20, 100]:
-    West, Hest, loss, time_ = BCD_hals(Y, Winit=Winit, Hinit=Hinit, n_inner=n_inner, n_outer=100)
+    West, Hest, loss, time_ = BCD_hals(Y, Winit=Winit, Hinit=Hinit, n_inner=n_inner, n_outer=200)
     results[n_inner] = (loss, time_)
 
 ```
@@ -403,10 +403,11 @@ for n_inner in [1, 2, 3, 5, 10, 20, 100]:
 
 # Iteration plot
 import matplotlib.pyplot as plt
+blues = plt.get_cmap("Blues", len(results)+1)
 plt.figure(figsize=(10,5))
 plt.subplot(1,2,1)
-for n_inner, (loss, time_) in results.items():
-    plt.semilogy(loss, label=f"n_inner={n_inner}")
+for color_index, (n_inner, (loss, time_)) in enumerate(results.items()):
+  plt.semilogy(loss, label=f"n_inner={n_inner}", color=blues(color_index+1))
 plt.xlabel("Iteration")
 plt.ylabel("Loss")
 plt.title("BCD-HALS Convergence for different n_inner")
@@ -416,8 +417,8 @@ plt.grid()
 # Time plot
 #plt.figure(figsize=(6,6))
 plt.subplot(1,2,2)
-for n_inner, (loss, time_) in results.items():
-    plt.loglog(time_, loss, label=f"n_inner={n_inner}")
+for color_index, (n_inner, (loss, time_)) in enumerate(results.items()):
+    plt.loglog(time_, loss, label=f"n_inner={n_inner}", color=blues(color_index+1))
 plt.xlabel("Time (s)")
 plt.ylabel("Loss")
 plt.title("BCD-HALS Convergence for different n_inner")
