@@ -53,7 +53,7 @@ $$ \underset{v\in\mathbb{R}_+^{r}}{\min} \|y - Uv\|_2^2 \;\; \text{such that} \;
 
 Considering equation {eq}`split_sNNLS`, we could solve the (vector) sNNLS problem by computing $r \choose k$ NNLS problems of size $k$. This brute force approach is tractable for small $k$ and $r$ and has the advantage of computing the global solution to sNNLS. Nevertheless, let us consider a more subtle approach that still solves sNNLS globally.
 
-The key observation is that the cost function $\|y - Uv\|_2^2$ at optimality decreases with the sparisty constraint $k$. Formally, if $S_1 \subset S_2 \subset [1,r]$ are two supports with $S_1$ strictly included in $S_2$ (corresponding to a sparser solution $v^\ast_1$), then
+The key observation is that the cost function $\|y - Uv\|_2^2$ at optimality decreases with the sparsity constraint $k$. Formally, if $S_1 \subset S_2 \subset [1,r]$ are two supports with $S_1$ strictly included in $S_2$ (corresponding to a sparser solution $v^\ast_1$), then
 
 $$ \underset{v\geq 0}{\min} \|y - U[:, S_1]v\|_2^2 \geq \underset{v\geq 0}{\min} \|y - U[:, S_2]v\|_2^2. $$
 
@@ -66,7 +66,7 @@ width: 700px
 align: center
 name: fig:BaB
 ---
-A tree representation of the Branch and Bound algorithm for solving sNNLS with $r=2$ and $k=4$. The deeper the node the sparser the solution, and the higher the cost. The leafs are the $k$ choose $n$ solutions. OMP is a heuristic that selects one particular leaf, which loss is larger than the loss at the optimal sNNLS solution, while any node in the tree has a loss lower than all its children.
+A tree representation of the Branch and Bound algorithm for solving sNNLS with $r=4$ and $k=2$. The deeper the node the sparser the solution, and the higher the cost. The leafs are the $k$ choose $r$ solutions. OMP is a heuristic that selects one particular leaf, which loss is larger than the loss at the optimal sNNLS solution, while any node in the tree has a loss lower than all its children.
 ```
 
 We named the proposed BaB algorithm for solving sNNLS `arborescent`.

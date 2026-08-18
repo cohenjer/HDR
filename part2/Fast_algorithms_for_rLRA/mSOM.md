@@ -62,23 +62,24 @@ $$
 The quadratic function $\psi_x$ is separable, therefore finding the minimum of $\psi_x$ is cheap even under the presence of constraints:
 
 $$
- \argmin{y\in\mathcal{C}} \psi_x(y) = \argmin{y\in\mathcal{C}} \sum_{i=1}^{n} \nabla f(x)[i] y[i] + \frac{1}{2} A[i,i] (y[i]-x[i])^2
+ \argmin{y\in\mathcal{C}} \psi_x(y) = \argmin{y\in\mathcal{C}} \sum_{i=1}^{n} \nabla f(x)[i] y[i] + \frac{1}{2} A[i,i] (y[i]-x[i])^2.
 $$
 
-where $\Pi_{\mathcal{C}}$ denotes the projection on the convex set $\mathcal{C}$. For many constraint sets, including nonnegativity and cardinality constraints (more generally, for any separable prior, stable by elementwise nonnegative scaling), the solution is given in closed form as
+For many constraint sets, including nonnegativity and cardinality constraints (more generally, for any separable prior, stable by elementwise nonnegative scaling), the solution is given in closed form as
 
 $$
-    \Pi_{\mathcal{C}} \left( x - \frac{\nabla f(x)}{\text{diag}\left(A(x)\right)} \right).
+    \Pi_{\mathcal{C}} \left( x - \frac{\nabla f(x)}{\text{diag}\left(A(x)\right)} \right)
 $$
 
-The core design choice is the construction of the diagonal matrix $A(x)$. Inspired by the proof technique of Lee and Seung for the convergence of MU, we observed with Mai Quyen Pham that for any positive vector $u\in\mathbb{R}^n$ and for elementwise nonnegative Hessian matrices, any matrix of the form 
+where $\Pi_{\mathcal{C}}$ denotes the projection on the convex set $\mathcal{C}$. 
+The core design choice is the construction of the diagonal matrix $A(x)$. Inspired by the proof technique of Lee and Seung for the convergence of MU, we observed with Mai Quyen Pham that for any positive vector $u\in\mathbb{R}_+^n$ and for elementwise nonnegative Hessian matrices, any matrix of the form 
 
 $$
 A_u(x) = \text{Diag}\left(\frac{\nabla^2 f(x) u}{u}\right)
 $$
 
 ```{margin}
-For a quadratic loss function $f$, the SOM algorithm is guaranteed to converge since each iteration decreases the cost. However, this form of convergence is very weak: we only know that the values of the cost function will stagnate asymptotically, but the estimated minimizer need not be the true minimizer. This result can be refined with the [SUM framework](../../part1/AlternatingOptimization.md) {cite:p}`razaviyaynUnifiedConvergenceAnalysis2013`. Moreover, the convergence rate of SOM in the general case is unknown. In our work, we prove linear convergence of the iterates for the specific problem of NMF with beta-divergence loss. 
+For a quadratic loss function $f$, the SOM algorithm is guaranteed to converge in loss since each iteration decreases the cost. However, this form of convergence is very weak: we only know that the values of the cost function will stagnate asymptotically, but the estimated minimizer need not be the true minimizer. This result can be refined with the [SUM framework](../../part1/AlternatingOptimization.md) {cite:p}`razaviyaynUnifiedConvergenceAnalysis2013`. Moreover, the convergence rate of SOM in the general case is unknown. In our work, we prove linear convergence of the iterates for the specific problem of NMF with beta-divergence loss. 
 ```
 
 is a majorant of the Hessian, namely $A_u(x) - \nabla^2 f$ is positive semi-definite. The proof is straightforward and can be found in {cite:p}`phamSecondOrderMajorantAlgorithm2025`. If matrix $A(x)$ is a majorant of the Hessian, we obtain a majorization minimization algorithm as long as $f$ is a quadratic function, because the truncated second-order Taylor expansion is exact. When $f$ is not quadratic, the proposed procedure, which, as far as we know, has not been explored in the optimization literature (at least for computing NMF), is coined Second-Order Majorant (SOM), because we minimize a majorant of a separable second-order approximation of the cost function. 
@@ -240,7 +241,7 @@ $$
 
 ## Alternating mSOM for NMF
 
-Equipped with the mSOM solver for nonnegative convex problems, one may factorize NMF using an alternating optimization strategy, with mSOM as the inner solver. The following code implements the resulting Alternating mSOM (AmSOM) for NMF with the Frobenius loss and compares it with Alternating MU (AMU) and Alternating Projected Gradient Descent (APGD) on a toy synthetic dataset. The AmSOM updates rules for this problem formalized as $\argmin{W,H\geq \epsilon} \|Y-WH^T\|_F^2$ are
+Equipped with the mSOM solver for nonnegative convex problems, one may compute NMF using an alternating optimization strategy, with mSOM as the inner solver. The following code implements the resulting Alternating mSOM (AmSOM) for NMF with the Frobenius loss and compares it with Alternating MU (AMU) and Alternating Projected Gradient Descent (APGD) on a toy synthetic dataset. The AmSOM updates rules for this problem formalized as $\argmin{W,H\geq \epsilon} \|Y-WH^T\|_F^2$ are
 
 $$
     H \leftarrow \max\left(H - \gamma\frac{1}{1_{n\times r}W^TW}\left(HW^TW - Y^TW \right) , \epsilon \right), \\

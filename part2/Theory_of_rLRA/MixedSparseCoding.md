@@ -43,7 +43,7 @@ Since MSC and sparse coding are not the same problem, it is relevant to propose 
 
 ### A retrospective look at MC-ALS
 
-A naive heuristic for solving MSC assumes noise is absent. In that case, introducing the right pseudo-inverse of $B$ as matrix $C$, we known that 
+A naive heuristic for solving MSC assumes noise is absent. In that case, introducing the right pseudo-inverse of $B$ as matrix $C$, we know that 
 
 $$ YC = DX $$
 

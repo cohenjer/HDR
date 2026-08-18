@@ -36,7 +36,7 @@ We build the rest of this section as follows. First, common assumptions are quic
   
 ## Summary of assumptions and convergence results
 
-This section collects useful assumptions for the convergence results of AO and BCD. The definitions of convexity, differentiability, Lipschitz-smoothness, and related optimization concepts are not recalled and can be found, for instance, in {cite:p}`beck2017first`. The shorthand notation $x = (x_1,\ldots,x_d)$ is used.
+This section collects useful assumptions for the convergence results of AO and BCD. The definitions of convexity, differentiability, Lipschitz-smoothness, and related optimization concepts are not recalled and can be found, for instance, in {cite:p}`beck2017first`. The shorthand notation $x = (x_1,\ldots,x_d)$ is used to partition vector $x$ into $d$ blocks.
 
 
 Here is a list of the assumptions required for proving the convergence of AO and BCD:
@@ -57,7 +57,7 @@ A few remarks on these assumptions:
 - (A7): $f$ is continuously differentiable.
 - (A8): $f$ is globally Lipschitz-smooth.
 - (A9): $f$ is block Lipschitz-smooth, meaning that the restrictions of function $f$ on each block are Lipschitz-smooth.
-- (A10): $f$ admits directional differentials defined at $x$ along direction $d$ as $f'(x,d) = \underset{\lambda \to 0}{\lim\inf}\frac{f(x\lambda d) - f(x)}{\lambda}$ (notice that $\lambda$ is positive). This includes nonsmooth functions such as the $\ell_1$ norm.
+- (A10): $f$ admits directional differentials defined at $x$ along direction $d$ as $f'(x,d) = \underset{\lambda \to 0}{\lim\inf}\frac{f(x+\lambda d) - f(x)}{\lambda}$ (notice that $\lambda$ is positive). This includes nonsmooth functions such as the $\ell_1$ norm.
 - (A11): The block updates $\argmin{x_k\in\mathcal{X}_k} f(x_1,\ldots,x_k,\ldots,x_d)$ have a unique minimizer.
 - (A12(p)): $f$ is block strictly quasiconvex with respect to $p$ blocks. Quasiconvexity of the function $f$ is equivalent to the assumption that any level set $I_f(z)$ is convex.
 - (A13): $f$ is non-increasing on the update path.
@@ -350,6 +350,10 @@ From the convergence properties summarized above, it is far from obvious whether
 Let us discuss a concrete example of NMF with the Frobenius loss; see [](./lra.md) and [](./nnls.md) for details on the NMF model and classical solvers. The solver we consider is [HALS](./nnls.md#hals-nnls-only). Denoting $W$ and $H$ the two factors of the NMF $Y\approx WH^T$, HALS can be seen as a BCD algorithm where the blocks are the columns of matrices $W$ and $H$. Each block update is computed in closed form. 
 
 The HALS updates for the columns of matrix $H$ involve computing the quantities $W^TW$ and $W^TY$. In fact, in high-dimensional settings, these operations are the computational bottleneck of HALS. Because these quantities are independent of matrix $H$, it is more efficient in terms of computation cost to update the columns of matrix $H$ several times, sequentially, before switching to matrix $W$. The number of times $n_{inner}$ the columns of matrix $H$ (and similarly for $W$) are updated is thus a hyperparameter of HALS. The outer iterations are incremented once both matrices have been updated.
+
+```{margin}
+We denote by approximate AO a BCD algorithm with many inner iterations. In cases where closed-form updates are not available, such BCD algorithms approximate the behavior of AO algorithms that are intractable.
+```
 
 If the number of inner iterations $n_{inner}$ is set to a large number, the HALS algorithm is essentially an (approximate) AO algorithm, ANLS, solving the NNLS problem for matrices $W$ and $H$ alternatively. One may wonder if setting the number of inner iterations $n_{inner}$ to a low number leads to a sharper decrease of the cost **per outer iteration**, meaning that BCD has an advantage over AO in terms of convergence speed, and if this translates into a computation time advantage as well. Let us test the performance of HALS with various inner iterations $n_{inner}$ numerically in a noiseless setting. The HALS implementation is taken from tensorly.
 

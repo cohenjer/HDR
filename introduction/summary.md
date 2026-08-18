@@ -63,7 +63,11 @@ Regularizations typically apply to each factor $U$ and $V$ independently. Indeed
 Essential uniqueness is the uniqueness up to permutations and scaling ambiguities inherent to LRA models, see [](../part1/lra.md) for more details.
 ```
 
-PCA is a constrained LRA model: factors are imposed to be orthogonal matrices. This allows us to obtain a model with essentially unique factors (under the mild condition that singular values must be distinct {cite:p}`Golub1989Matrix`), but orthogonality is often not a physically meaningful constraint. In the context of inverse problems, this means that the estimated matrices $U$ and $V$ may be poor approximations of the ground truth matrices $U^\ast$ and $V^\ast$. On the other hand, Nonnegative Matrix Factorization (NMF), obtained by setting $g_U$ and $g_V$ to characteristic functions of the nonnegative orthant, can be unique {cite:p}`gillisNonnegativeMatrixFactorization2020` while using more realistic assumptions. In many applications, elementwise nonnegativity is a natural assumption, which makes NMF particularly suited as a source separation/pattern mining model. A typical example of NMF usage is in spectral unmixing for remote sensing, as illustrated in {numref}`fig:HSI_nmf`, see also [](../part2/Applications_of_rLRA/intro.md).
+```{margin}
+It is also possible to interpret the orthogonality of the factors in PCA as a by-product of the inference algorithm, SVD, used to solve the unconstrained LRA problem.
+```
+
+PCA can be understood as a constrained LRA model where factors are imposed to be orthogonal matrices. This allows us to obtain a model with essentially unique factors (under the mild condition that singular values must be distinct {cite:p}`Golub1989Matrix`), but orthogonality is often not a physically meaningful constraint. In the context of inverse problems, this means that the estimated matrices $U$ and $V$ may be poor approximations of the ground truth matrices $U^\ast$ and $V^\ast$. On the other hand, Nonnegative Matrix Factorization (NMF), obtained by setting $g_U$ and $g_V$ to characteristic functions of the nonnegative orthant, can be unique {cite:p}`gillisNonnegativeMatrixFactorization2020` while using more realistic assumptions. In many applications, elementwise nonnegativity is a natural assumption, which makes NMF particularly suited as a source separation/pattern mining model. A typical example of NMF usage is in spectral unmixing for remote sensing, as illustrated in {numref}`fig:HSI_nmf`, see also [](../part2/Applications_of_rLRA/intro.md).
 
 ```{figure} ../Figures/Hsi_nmf.png
 ---
@@ -181,7 +185,7 @@ An optimization problem that I believe is particularly interesting is the so-cal
 
 $$ \argmin{x\geq 0} \KL{y, Wx},$$
 where $\KL{y,z} = \sum_{i} y[i]\log(\frac{y[i]}{z[i]}) + z[i] - y[i] $ is the KL-divergence. This optimization problem is quite challenging for at least two reasons:
-- The cost function is not Lipschitz-smooth at zero. Lipschitz-smoothness is a key property of cost functions leveraged in most convergence proofs of first-order methods. In practice, choosing a step-size for first-order methods can be challenging without Lipschitz-smoothness.
+- The cost function is not Lipschitz-smooth with respect to $x$ at zero. Lipschitz-smoothness is a key property of cost functions leveraged in most convergence proofs of first-order methods. In practice, choosing a step-size for first-order methods can be challenging without Lipschitz-smoothness.
 - When $y[i]$ is significantly smaller than $z[i]$, the loss is almost linear (the logarithmic term vanishes). This means that the cost function is not strongly convex, another important property that guarantees the practical speed of first-order methods.
 
 ```{code-cell}ipython3

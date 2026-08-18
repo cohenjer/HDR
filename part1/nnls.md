@@ -38,7 +38,7 @@ $$ \text{Find}\; x^\ast\in\argmin{x\geq 0} \|y - Wx\|_2^2.$$
 
 In general, the projected unconstained least squares estimate, $\left[W^{\dagger}y\right]^+$, is **not** a solution to NNLS, see [](../part2/Fast_algorithms_for_rLRA/proco-als.md) for more details.
 
-The cost function of NNLS is coercive (with respect to $z$) and continuous and the set of admissible solutions is non-empty, which ensures the existence of a solution. If matrix $W\in\mathbb{R}^{m\times n}$ is full column rank, which is often the case in low-rank approximation problems, then the cost is also strongly convex (and Lipschitz-smooth), ensuring the NNLS solution is unique. When the matrix $W$ is not full column rank, the discussion on the uniqueness is more difficult. One of the interests of NNLS over ordinary least squares, however, is that the solution for underdetermined systems can still be unique, see the [NNLS KKT conditions](subsec:nnls-kkt) below.
+The cost function of NNLS is coercive (with respect to $x$) and continuous and the set of admissible solutions is non-empty, which ensures the existence of a solution. If matrix $W\in\mathbb{R}^{m\times n}$ is full column rank, which is often the case in low-rank approximation problems, then the cost is also strongly convex (and Lipschitz-smooth), ensuring the NNLS solution is unique. When the matrix $W$ is not full column rank, the discussion on the uniqueness is more difficult. One of the interests of NNLS over ordinary least squares, however, is that the solution for underdetermined systems can still be unique, see the [NNLS KKT conditions](subsec:nnls-kkt) below.
 
 ### Geometric interpretation
 
@@ -322,13 +322,13 @@ This rule is similar to the projection on the cone $\cp{W}$ found in the KKT con
 A last but important observation on NNKL is that the solution $Wx^\ast$ must satisfy a simple scaling condition. Indeed, consider the optimal scaling problem
 
 $$
-\argmin{\lambda\geq 0} \KL{y,\lambda Wx} = -\log(\lambda)\sum_{i=1}^{m}y[i] + \lambda \sum_{i=1}^{m}W[i,:]x + \text{cst}(\lambda)
+\argmin{\alpha\geq 0} \KL{y,\alpha Wx} = -\log(\alpha)\sum_{i=1}^{m}y[i] + \alpha \sum_{i=1}^{m}W[i,:]x + \text{cst}(\alpha)
 $$
 
 Supposing the unconstrained solution can be positive, the Fermat rule from the KKT conditions gives
 
 $$
-\lambda^\ast = \frac{\sum_{i}y[i]}{\sum_{i}W[i,:]x},
+\alpha^\ast = \frac{\sum_{i}y[i]}{\sum_{i}W[i,:]x},
 $$
 
 showing that an optimal solution $x^\ast$ must satisfy $\sum_{i,j} W[i,j]x[j] = \sum_{i} y[i]$. We find that $\sum_{j} \left(\sum_{i}W[i,j]\right) x[j] = \sum_{i} y[i]$. By scaling the columns of matrix $W$ to sum to one, we find that the marginals of $x$ and $y$ must match. Therefore, an algorithm that solves NNKL can be refined by scaling the initial and output estimates $x$.
@@ -805,7 +805,7 @@ Minimizing this upper-bound leads to unusual multiplicative updates
 
 $$ x = x \ast \frac{1}{1+\frac{1}{\|y\|_1}x \odot \left(W^T1_n - W^T\frac{y}{Wx}\right)}. $$
 
-Since these updates allow the use of (Bregman) proximal operators while ensuring convergence, they have been used in regularized NNKL problems {cite:p}`huraultConvergentBregmanPlugandPlay2023b`. However, it is unclear how these updates compare to the classical MU {eq}`eq:MU-NNKL` and its convergence rate is unknown.
+Since these updates allow the use of (Bregman) proximal operators while ensuring convergence, they have been used in regularized NNKL problems {cite:p}`huraultConvergentBregmanPlugandPlay2023b`. However, it is unclear how these updates compare to the classical MU {eq}`eq:MU-NNKL` in practice, although its convergence rate is also globally sublinear.
 
 Recently, a formal link was established between the EM algorithm for the  exponential family {cite:p}`kunstnerHomeomorphicInvarianceEMNonAsymptotic2021` and mirror descent with Bregman divergences. It allows, in particular, the derivation of linear convergence rates for EM, and therefore for the usual MU in the NNKL problem. This also shows that other choices of potential, besides Burg entropy, lead to interesting update rules for NNKL. This was brought to my attention by [Thibaut Modrzyk](https://github.com/Tmodrzyk), who is currently investigating this observation. The relationship between MU and mirror gradient descent was also partially discussed in {cite:p}`hienAlgorithmsNonnegativeMatrix2021a` . Linear convergence of NNKL explains why the MU algorithm is an efficient method for solving NNKL.
 

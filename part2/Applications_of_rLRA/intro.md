@@ -89,7 +89,7 @@ width: 650px
 align: center
 name: fig:linear-mixing-model_WH
 ---
-An illustration of the linear mixing model. Each pixels (squares in the top left grid) have different abundances of each material. This translates into an additive mixture of the spectra contained in matrix $W$, weighted by these abundances pixelwise.
+An illustration of the linear mixing model. Each pixel (squares in the top left grid) have different abundances of each material. This translates into an additive mixture of the spectra contained in matrix $W$, weighted by these abundances pixelwise.
 ```
 
 To conclude this introduction to spectral unmixing, we can now answer the question above: Is it possible to mix paints additively to produce white? The answer is nuanced. It is impossible to mix paint to produce pure white. Mixing paints intimately will result in a filtering effect that attenuates the ambient light spectrum across all wavelengths, leading to black. However, we can produce grey by juxtaposing paints on a surface and looking from afar. Spatial juxtaposition will result in additive filtering of the filtered white light, as in the linear mixing model. If three paints red, blue, and green are used in equal proportions, the resulting spectrum is the sum of blue, red, and green light but with reduced intensity, and the object will appear gray. Screens can produce white because they can emit red, blue, and green spectra at full intensity, which is not possible with reflectance spectra.

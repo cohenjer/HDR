@@ -23,7 +23,7 @@ cDL is a sparse matrix factorization model, where $n$ vectors $M[:,i]$ of dimens
 
 $$ \text{Find } D\in\mathbb{R}^{p\times r} \text{ and } B\in\mathbb{R}^{r\times n} \text{ such that } M = DB \; \text{and } \forall i \leq n,~ \|B[:,i]\|_0\leq k, $$ 
 
-where matrix $B$ is the coefficients matrix. We consider the blind setup where both $D$ and $B$ are unknown. In short, the goal of cDL is to estimate the dictionary $D$ and the coefficients matrix $B$ solely from the knowledge of $X$, the number of atoms $r$, and the sparsity level $k$. In what follows, we set the dimensions such that $p\leq r$ and suppose that $D$ has full column rank. This means that the dictionary is not over-complete (which is a usual setup of interest, but harder to study), thus the name cDL. In this setup, without loss of generality in the noiseless setting, we can assume $p=r$ and will do so in the following.
+where matrix $B$ is the coefficients matrix. We consider the blind setup where both $D$ and $B$ are unknown. In short, the goal of cDL is to estimate the dictionary $D$ and the coefficients matrix $B$ solely from the knowledge of $X$, the number of atoms $r$, and the sparsity level $k$. In what follows, we set the dimensions such that $p\geq r$ and suppose that $D$ has full column rank. This means that the dictionary is not over-complete (which is a usual setup of interest, but harder to study), thus the name cDL. In this setup, without loss of generality in the noiseless setting, we can assume $p=r$ and will do so in the following.
 
 ## Identifying $r-1$ dimensional facets
 
