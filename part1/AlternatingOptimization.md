@@ -115,7 +115,7 @@ we get that
 
 $$f(x_1,x_2(x^{(i)}_1))\geq f(x_1, x_2(x_1)).$$
 
-Two blocks AO is exactly the computation of, first, $x_2(x_1^{(i)})$, and then the minimization of the majorant $f(x_1,x_2(x_1^{(i)}))$. This majoration can be loose for arbitrary functions without inter-block regularity, which can intuitively explain the slow convergence discussed in [](#different-flavours-of-convergence-of-ao-iterates).
+Two-blocks AO is exactly the computation of, first, $x_2(x_1^{(i)})$, and then the minimization of the majorant $f(x_1,x_2(x_1^{(i)}))$. This majoration can be loose for arbitrary functions without inter-block regularity, which can intuitively explain the slow convergence discussed in [](#different-flavours-of-convergence-of-ao-iterates).
 
 ```{figure} ../Figures/AO_majorization.png
 ---

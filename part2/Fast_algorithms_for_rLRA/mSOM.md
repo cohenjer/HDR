@@ -142,7 +142,7 @@ import matplotlib.pyplot as plt
 np.random.seed(0)
 [n,m] = [3,4]
 W = np.random.rand(m, n)
-# worse conditionning makes mSOM and Gradient descent more visibly distinct
+# worse conditioning makes mSOM and Gradient descent more visibly distinct
 W[:,2] = 0.1*W[:,2]+0.45*W[:,0] + 0.45*W[:,1]  # col 3 is col 1 + col 2
 xmin = np.random.rand(n)
 y = W@xmin

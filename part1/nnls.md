@@ -61,7 +61,7 @@ A graphical illustration of the projection of data vector $y$ on the cone $\cp{W
 
 From this geometric interpretation, we can deduce a few results:
 - If the measurement vector $y$ lies inside the cone $\cp{W}$, then an exact reconstruction is possible. We show with the [KKT conditions](#kkt-conditions-and-the-night-sky-theorem) that the least squares estimate $W^{\dagger}y$ is a NNLS solution. The solution may be non-unique.
-- If matrix $W$ has more columns than rows, but these columns are in general position, and vector $y$ lies outside $\cp{W}$, then in general the NNLS solution is unique.
+- If matrix $W$ has more columns than rows, but these columns are in general position (in particular, there are no columns located strictly inside a facet of $\cp{W}$), and vector $y$ lies outside $\cp{W}$, then in general the NNLS solution is unique.
 - When vector $y$ lies outside the cone $\cp{W}$, the projection solution $z^\ast = Wx^\ast$ is located on a facet of the cone. In fact, it is the orthogonal projection of $y$ on this facet. Hence, $x^\ast$ may be sparse.
 
 These results can be formalized using the KKT conditions.
@@ -75,7 +75,7 @@ $$
 \mathcal{L}(x, \lambda) = \|y - Wx\|_2^2 - \langle \lambda , x\rangle
 $$
 
-and the optimality conditions are:
+and the optimality conditions for an optimal primal-dual pair $(x^\ast, \lambda^\ast)$ are:
 - Primal feasibility: $x^\ast\geq 0$.
 - Dual feasibility: $\lambda^\ast \geq 0$
 - Complementary slackness: $\lambda^\ast[i]x^\ast[i]=0$ for all $i\leq n$.
@@ -94,7 +94,7 @@ with $r = y - W[:,S^\ast]x[S^\ast]$ the residual of the projection of $y$ on the
 
 
 ```{margin}
-The spark of a matrix $W$ indicates the smallest number of columns from $W$ that are linearly dependent. If the spark of a matrix is larger than $n$, then any $n$-sparse solution to linear systems involving $W$ is obtained by the well-defined left pseudo-inverse of $W$ restricted to the support of that solution.
+The spark of a matrix $W$ indicates the smallest number of columns from $W$ that are linearly dependent {cite:p}`donohoOptimallySparseRepresentation2003,Tropp2004Greed`. If the spark of a matrix is larger than $n$, then any $n$-sparse solution to linear systems involving $W$ is obtained by the well-defined left pseudo-inverse of $W$ restricted to the support of that solution.
 ```
 
 If there is no group of $m$ columns of matrix $W$ that are linearly dependent, that is, if $\text{spark}(W)>m$, then there can be only a single subset of at most $m-1$ linearly independent columns of matrix $W$ in $r^⟂$. This can happen even if matrix $W$ has more columns than rows; we only require here that no subset of $m$ columns is linearly dependent (and in particular cannot belong to $r^\perp$). With this observation, we can conclude that $S^\ast$ has size at most $m-1$, *i.e.*, NNLS solutions, under some conditions, are generally sparse. Moreover, the Fermat rule gives $x^\ast[S^\ast] = W[:, S^\ast]^\dagger y$: knowing the support of the solution is enough to find the solution itself (up to solving a linear system).
@@ -255,7 +255,7 @@ Compared to NNLS, which is a quadratic program, NNKL is, in general, significant
 #### Smoothness issue
 
 ```{margin}
-The true definition of Lipschitz-smoothness and the descent lemma do not require the function $f$ to be twice-differentiable, see, *e.g.*, {cite:p}`beck2017first`.
+Alternative definitions of Lipschitz-smoothness and the descent lemma do not require the function $f$ to be twice-differentiable, see, *e.g.*, {cite:p}`beck2017first`.
 ```
 
 Maybe the most commented-on difficulty for NNKL is the lack of Lipschitz-smoothness of the KL-divergence at zero. Lipschitz-smoothness is a crucial property in numerical optimization, used to derive descent conditions for first-order algorithms. In a nutshell, a function $f$ which is twice differentiable over a convex set is $l$-Lipschitz-smooth if its Hessian can be bounded by $lI$. This implies, using the second-order Taylor expansion and majorizing the second-order terms and remainder {cite:p}`beck2017first`, that for any vector $x$ and local perturbation $z$ the following descent lemma holds: 
@@ -284,13 +284,13 @@ A globally Lipschitz-smooth function can be bounded globally by a local quadrati
 #### Convexity issue
 
 ```{margin}
-KL-divergence also does not satisfy the global Polyak-Lojasiewicz inequality, a more relaxed assumption than strong convexity {cite:p}`karimiLinearConvergenceGradient2020`. It is unclear to me at the time of writing whether KL-divergence satisfies the Kurdyka-Lojasiewicz condition globally, or a local variant of the Polyak-Lojasiewicz condition useful for studying the convergence of first-order methods in nonconvex problems {cite:p}`attouchConvergenceProximalAlgorithm2009,bolte2014proximal`. 
+KL-divergence also does not satisfy the global Polyak-Lojasiewicz inequality, a more relaxed assumption than strong convexity {cite:p}`karimiLinearConvergenceGradient2020`. KL-divergence does not satisfies a global Kurdyka-Lojasiewicz condition because it is assymptotically linear, but at every point a local Kurdyka-Łojasiewicz constant can be found. This type of condition can be useful for studying the convergence of first-order methods in nonconvex problems {cite:p}`attouchConvergenceProximalAlgorithm2009,bolte2014proximal`. 
 ```
 
 Another important issue with the KL-divergence is that, although it is strictly convex, it is not strongly convex. Indeed, the KL-divergence is asymptotically linear when $z$ is much larger than $y$. This causes problems in particular when the data measurement $y$ is sparse or exhibits large dynamics. Strong convexity guarantees linear convergence rates for gradient descent; when the cost function is not strongly convex, first-order algorithms might converge sub-linearly {cite:p}`beck2017first`. In the extreme case where $y$ has many zeros, a significant part of the cost is linear, and convex first-order optimization techniques are, in general, ill-suited for linear programming.
 
 
-Smoothness and convexity issues combined imply that there may not exist a safe stepsize and a linear convergence rate for gradient descent applied to NNKL. [In the following](#multiplicative-updates), we explore preconditionned first-order algorithms that partially avoid these issues.
+Smoothness and convexity issues combined imply that there may not exist a safe stepsize and a linear convergence rate for gradient descent applied to NNKL. [In the following](#multiplicative-updates), we explore preconditioned first-order algorithms that partially avoid these issues.
 
 #### Support issue
 
@@ -315,7 +315,7 @@ $$
 W[:,S]^T\text{diag}\left(Wx^\ast\right)^{-1}\left(y - Wx^\ast\right) = 0.
 $$
 
-This rule is similar to the projection on the cone $\cp{W}$ found in the KKT conditions for NNLS, with a preconditioning $\text{diag}\left(Wx^\ast\right)^{-1}$. We may therefore interpret NNKL as a non-orthogonal projection on the cone $\cp{W}$. If we further assume that $Wx^\ast \approx y$ and $y>0$, NNKL is approximately the projection of $y$ on the preconditionned cone $\cp{\text{diag}(y)^{-1}W}$. This point of view sheds light on why algorithms for solving NNKL often rely on a combination of preconditioning and first-order methods.
+This rule is similar to the projection on the cone $\cp{W}$ found in the KKT conditions for NNLS, with a preconditioning $\text{diag}\left(Wx^\ast\right)^{-1}$. We may therefore interpret NNKL as a non-orthogonal projection on the cone $\cp{W}$. If we further assume that $Wx^\ast \approx y$ and $y>0$, NNKL is approximately the projection of $y$ on the preconditioned cone $\cp{\text{diag}(y)^{-1}W}$. This point of view sheds light on why algorithms for solving NNKL often rely on a combination of preconditioning and first-order methods.
 
 ### Optimal scaling
 
@@ -504,7 +504,7 @@ $$
 
 Indeed, the AS algorithm would search for the optimal support of each column of the unknown matrix $H^T$. These supports can all be different. The costly operation in AS is solving the least squares systems restricted to the current support estimate, and for matrix NNLS, these operations must be performed independently for each column. The fast AS algorithm {cite:p}`Bro1997fast` improves on this issue by precomputing the grammians $W^TW$ and $W^TY$ in the case where $W$ is a tall matrix.
 
-For matrix NNLS, it is, however, useful to design an algorithm that can update all columns $H^T[:,i]$ simultaneously. This is the rationale behind the HALS algorithm. HALS updates each row of matrix $H$ sequentially, and this update is known in closed form. Indeed, notice that for any nonzero vector $a\in\mathbb{R}^{m}$ and any matrix $Z\in\mathbb{R}^{m\times n}$,
+For matrix NNLS, it is, however, useful to design an algorithm that can update all columns $H^T[:,i]$ simultaneously. This is the rationale behind the HALS algorithm {cite:p}`cichockiHierarchicalALSAlgorithms2007a`. HALS updates each row of matrix $H$ sequentially, and this update is known in closed form. Indeed, notice that for any nonzero vector $a\in\mathbb{R}^{m}$ and any matrix $Z\in\mathbb{R}^{m\times n}$,
 
 $$
    \argmin{h\in\mathbb{R}_+^{n}} \|Z - ah^T  \|^2_2 = \left[\frac{a^TZ}{\|a\|_2^2} \right]^+.
@@ -623,7 +623,7 @@ $$
 x^{(k+1)} = x^{(k)} \ast \frac{W^T\frac{y}{Wx^{(k)}}}{W1_n}.
 $$ (eq:MU-NNKL)
 
-These updates can be derived from several frameworks, as already underlined for the quadratic case in Gillis's book on NMF {cite:p}`gillisNonnegativeMatrixFactorization2020`. However, for NNKL, it is important to note that MU is a special case of the EM algorithm; this fact is known to experts in NMF but not to practitioners in computational imaging, where EM for NNKL was originally derived. Below, I therefore provide a brief explanation of how to obtain MU from these various frameworks and the implications of these derivations. 
+These updates can be derived from several frameworks, as already underlined for the quadratic case in Gillis's book on NMF {cite:p}`gillisNonnegativeMatrixFactorization2020`. However, for NNKL, it is important to note that MU is a special case of the EM algorithm; this fact is known to experts in NMF but, sometimes, not to practitioners in computational imaging, where EM for NNKL was originally derived. Below, I therefore provide a brief explanation of how to obtain MU from these various frameworks and the implications of these derivations. 
 
 ### As a gradient ratio
 A simple way to obtain MU is to note that the multiplicative term is the ratio of the negative to the positive parts of the gradient. The gradients are easily computed as 
@@ -636,7 +636,7 @@ $$
 \end{cases}
 $$
 
-Note that the terms $W^TWx, W^Ty, W^T\frac{y}{Wx}$ and $W^T1_n$ are all nonnegative. Denoting $\nabla_x^{+}$ the positive terms in the gradient computation and similarly for $\nabla_x^{-}$, we may write rewrite the MU updates as
+Note that the terms $W^TWx, W^Ty, W^T\frac{y}{Wx}$ and $W^T1_n$ are all nonnegative. Denoting $\nabla_x^{+}$ the positive terms in the gradient computation and similarly for $\nabla_x^{-}$, we may write the MU updates as
 
 $$
 x^{(k+1)} = x^{(k)}\ast\frac{ \nabla_x^- f\left(y,x\right) }{\nabla_x^+ f\left(y,x\right)}.
@@ -651,7 +651,7 @@ MU for NNLS can be cast exactly as a preconditioned descent algorithm with a dia
 ### As a majorization-minimization algorithm
 
 ```{margin}
-$\beta$-divergences are a family of separable divergences that contain, in particular, the Euclidean distance ($\beta=2$) and the (symmetrized) KL-divergence ($\beta=1$). The general formula, prolonged by continuity for $\beta$ in $\{0,1\}$ is given by
+$\beta$-divergences are a family of separable divergences that contain, in particular, the Euclidean distance ($\beta=2$) and the (symmetrized) KL-divergence ($\beta=1$) {cite:p}`basuRobustEfficientEstimation1998`. The general formula, prolonged by continuity for $\beta$ in $\{0,1\}$ is given by
 
 $$
 \mathcal{D}_{\beta} = \frac{1}{\beta(\beta-1)}\left( x^\beta + (\beta-1) y^\beta - \beta x y^{\beta-1} \right).
@@ -831,7 +831,7 @@ $$
 \xi(x, x^{(k)}) = \sum_{i\leq m} \mathbb{E}_{Z[i,:] | y[i], x^{k}}\left[- \log p(y[i] ~|~ z[i,:], x) - \sum_{j\leq n}\log p(z[i,j] ~|~ x[j]) \right].
 $$
 
-The conditional likelihood $p(y[i] ~|~ z[i,:], x)$ has a particular shape. Because we defined the latent variables $Z$ such that $Y[i] = \sum_j Z[i,j]$, conditionned on $Z$, $Y$ is deterministic. To simplify, we thereafter treat this first term in the majorant as a constraint imposing that the latent variables indeed sum up to the observations, $y[i] = \sum_j Z[i,j]$ (otherwise the logarithm goes to $-\infty$), and ignore it in the definition of the cost. Therefore,
+The conditional likelihood $p(y[i] ~|~ z[i,:], x)$ has a particular shape. Because we defined the latent variables $Z$ such that $Y[i] = \sum_j Z[i,j]$, conditioned on $Z$, $Y$ is deterministic. To simplify, we thereafter treat this first term in the majorant as a constraint imposing that the latent variables indeed sum up to the observations, $y[i] = \sum_j Z[i,j]$ (otherwise the logarithm goes to $-\infty$), and ignore it in the definition of the cost. Therefore,
 
 $$
 \xi(x, x^{(k)}) &= \sum_{i\leq m, j\leq n} \mathbb{E}_{Z[i,:] | y[i], x^{k}}\left[- \log p(z[i,j] ~|~ x[j]) \right] \text{ such that } \forall i\leq m,~\sum_j Z[i,j] = y[i] \\
@@ -854,9 +854,9 @@ The last term involving the factorial of the latent variables is constant with r
 
 The following Lemma allows us to conclude, its proof is simple {cite:p}`vanoostenEMalgorithmPoissonData2014`.
 
-```{prf:lemma} Distribution of Poisson variables conditionned by their sum
+```{prf:lemma} Distribution of Poisson variables conditioned by their sum
 :label: lemma_sum_poisson
-Let $Z_1, Z_2$ be two random variables distributed respectively as $\mathcal{P}(\lambda_1)$ and $\mathcal{P}(\lambda_2)$. Then the conditionned random variable $Z_1 | Z_1+Z_2$ follows a Binomial distribution $\text{Bin}(Z_1+Z_2,\frac{\lambda_1}{\lambda_1+\lambda_2})$.
+Let $Z_1, Z_2$ be two random variables distributed respectively as $\mathcal{P}(\lambda_1)$ and $\mathcal{P}(\lambda_2)$. Then the conditioned random variable $Z_1 | Z_1+Z_2$ follows a Binomial distribution $\text{Bin}(Z_1+Z_2,\frac{\lambda_1}{\lambda_1+\lambda_2})$.
 ```
 
 Applying {prf:ref}`lemma_sum_poisson` with $Z_1 = Z[i,j]$ and $Z_2 = y[i] - Z[i,j]$ yields

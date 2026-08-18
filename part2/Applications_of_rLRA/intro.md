@@ -48,7 +48,7 @@ width: 650px
 align: center
 name: fig:light_dispersion_prism
 ---
-[From Wikipedia, credits Lucas Vieira] An illustration of the dispersion property of a prism. Incomming white light is decomposed as a sum of monochromatic light beams with increasing wavelength.
+[From Wikipedia, credits Lucas Vieira] An illustration of the dispersion property of a prism. Incoming white light is decomposed as a sum of monochromatic light beams with increasing wavelength.
 ```
 
 ### Spectral mixing and unmixing
