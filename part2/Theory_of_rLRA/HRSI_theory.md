@@ -127,7 +127,7 @@ This balancing identity will be used in [the experiments subsection](#balanced-a
 
 ### Sparse NMF L1-L1
 
-Another interesting case of an implicit regularization effect concerns the (double) sparse NMF model
+Another interesting case of an implicit regularization effect concerns the (double) sparse NMF model discussed in {cite:p}`Papalexakis2013From`,
 
 $$\argmin{X_1\geq 0, X_2\geq 0} \|M - X_1X_2^T\|_F^2 + \mu \left( \|X_1\|_1 + \|X_2\|_1 \right). $$
 

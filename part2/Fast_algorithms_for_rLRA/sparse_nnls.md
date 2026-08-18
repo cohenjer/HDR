@@ -26,7 +26,7 @@ An important variant of NNLS is the sparse NNLS problem (sNNLS), in which the co
 
 
 $$ \underset{V\in\mathbb{R}_+^{n\times r}}{\min} \|Y - UV^T\|_2^2 \;\; \text{such that } \;\; \forall q\leq n,\; \|V[q,:]\|_0\leq k $$
-for a known fixed sparsity level $k<r$. Geometrically, sNNLS is the projection of a data vector $y$ on the facets of the cone spanned by columns of $U$. Data points can lie on exterior facets of the cone $\cp(U)$, or on interior facets.
+for a known fixed sparsity level $k<r$. Geometrically, sNNLS is the projection of a data vector $y$ on the facets of the cone spanned by columns of $U$. Data points can lie on exterior facets of the cone $\cp{U}$, or on interior facets.
 
 Note that, unlike matrix NNLS, for which we can design algorithms such as HALS using matrix-matrix products which leverage the native parallelism of these operations, we have not found a better solution for sNNLS than applying a vector sNNLS solver looping over all columns. Therefore, we may simply study the following (vector) sNNLS problem,
 
