@@ -21,7 +21,7 @@ The content of the manuscript was defended on June 30th, in front of the followi
 - MASNOU Simon, Professor, Université Lyon 1, Examinateur
 - SALMON Joseph, DR Inria, Université de Montpelier, Rapporteur
 
-The presentation, produced with `quatro`, can be found in html [here](https://github.com/cohenjer/HDR/blob/main/presentation/_site/index.html).
+The presentation, produced with `quatro`, can be found in html [here](https://github.com/cohenjer/HDR/blob/main/presentation/_site/index.html) or in pdf [here](https://github.com/cohenjer/HDR/blob/main/presentation/presentation-pdf-final.pdf).
 
 The scientific content of the book is summarized in the [](./introduction/summary.md). Here is the table of content for quick access.
  
