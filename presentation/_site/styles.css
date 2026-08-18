@@ -1,0 +1,92 @@
+:root {
+  --r-main-font-size: 24px;
+}
+
+.reveal h1,
+.reveal h2 {
+  letter-spacing: 0.01em;
+}
+.reveal .slides section > h1,
+.reveal .slides section > h2 {
+  border-bottom: 3px solid #d00000;
+  padding-bottom: 0.1em;
+}
+.reveal h1{
+  font-size: 2.5em;
+}
+/* Less top padding on all slides */
+.reveal .slides section {
+  padding-top: 0.25em !important; /* adjust as needed */
+}
+
+.reveal section ul {
+  margin-top: 0.1em;
+}
+
+.smaller {
+  font-size: 0.85em;
+  line-height: 1.2em;
+  color: #555;
+}
+
+/* Boxes */
+.box-titled {
+  position: relative;
+  border: 2px solid #9ca1a8;
+  border-radius: 10px;
+  padding: 2em 0.5em 0.8em 1.2em; /* extra top padding */
+  background: #f8fbff;
+  box-shadow: 0 2px 8px rgba(0,0,0,.08);
+  margin: 0.5em 0.5em 1em 1em;
+}
+
+.box {
+  position: relative;
+  border: 2px solid #9ca1a8;
+  border-radius: 10px;
+  padding: 1em 1.2em 0.8em 1.2em; /* extra top padding */
+  background: #f8fbff;
+  box-shadow: 0 2px 8px rgba(0,0,0,.08);
+  margin: 0.5em 0.5em 1em 1em;
+}
+
+
+.box-title {
+  position: absolute;
+  top: -0.2em;               /* no negative offset */
+  left: -.1em;
+  padding: 0em 0.4em;
+  /* background: #f8fbff;  /* same as box background */
+  color: #4a5568;
+  font-weight: 700;
+  font-size: 1.1em;
+}
+
+/* Center legends */
+.caption{
+   text-align: center;
+}
+
+/* bullet second level color */
+.reveal .slides section ul li ul li::marker {
+  color: #1f77b4;
+}
+
+/* lists */
+
+
+.plus-list li::marker {
+  color: green;
+}
+
+.minus-list li::marker {
+  color: #d00000;
+}
+
+
+/* .img-small{width:40%;}
+.img-medium{width:65%;}
+.img-large{width:90%;}
+.full-width{width:100%;}
+.mt-small{margin-top:.5em;}
+.mt-large{margin-top:1.2em;} */

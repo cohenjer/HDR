@@ -14,6 +14,15 @@ name: fig:moi
 
 The book contains code snippets with barebone implementations of algorithms, numerical simulations and visualisations. This was done so that most results shown in the manuscript are easily reproduced by the reader. The book is available in .pdf upon request, but it is advised to read the content from this website to get the best interface experience. The philosophy of the book design is further discussed in [](./Howtouse/howtoread.md).
 
+The content of the manuscript was defended on June 30th, in front of the following jury members
+- ACHARD Sophie, DR CNRS, LJK, Présidente
+- BOURGUIGNON Sébastien, Professor, LS2N et Ecole Centrale de Nantes, Rapporteur
+- FEVOTTE Cédric, DR CNRS, IRIT, Rapporteur
+- MASNOU Simon, Professor, Université Lyon 1, Examinateur
+- SALMON Joseph, DR Inria, Université de Montpelier, Rapporteur
+
+The presentation, produced with `quatro`, can be found [here]().
+
 The scientific content of the book is summarized in the [](./introduction/summary.md). Here is the table of content for quick access.
  
 ```{Admonition} Use of AI tools

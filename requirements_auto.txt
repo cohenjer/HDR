@@ -137,6 +137,8 @@ python-json-logger==4.2.0
 PyWavelets==1.9.0
 PyYAML==6.0.3
 pyzmq==27.1.0
+quarto==0.1.0
+quarto-cli==1.10.18
 referencing==0.37.0
 requests==2.34.2
 requests-toolbelt==1.0.0
@@ -177,7 +179,7 @@ sympy==1.14.0
 tabulate==0.10.0
 tensorly @ git+https://github.com/cohenjer/tensorly@7ce2eaa2bbc5a308e5b5d4bf5b0e1a3c0a3c9fcd
 tensorly-viz==0.1.8
--e git+ssh://git@github.com/cohenjer/HDR.git@bf679ac1514f8aadcc025e46475376c71650aa84#egg=tensorly_hdr&subdirectory=tensorly_hdr
+-e git+ssh://git@github.com/cohenjer/HDR.git@12ebbeb8febb213a0d51947ffee056a4672e063d#egg=tensorly_hdr&subdirectory=tensorly_hdr
 terminado==0.18.1
 tinycss2==1.5.1
 tomli==2.4.1

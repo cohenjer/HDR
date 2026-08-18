@@ -45,3 +45,16 @@ Then you can render the book locally (which will trigger all the notebooks inter
 ```bash
 jupyter-book build .
 ```
+
+To build the presentation as well, one may simply install the quarto-cli with `pip`:
+
+```bash
+pip install quarto-cli
+```
+
+then go in the presentation folder and run quarto
+
+```bash
+cd presentation
+quarto render index.qmd
+```

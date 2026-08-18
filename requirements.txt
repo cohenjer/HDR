@@ -42,3 +42,6 @@ jupyter-book==1.0.0
 jupyter
 jupytext
 ghp-import
+
+# For the presentation
+quarto-cli==1.10.18

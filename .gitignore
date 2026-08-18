@@ -5,6 +5,6 @@ tensorly_hdr/build
 code-workspace
 *.log
 /presentation/.quarto/
-/presentation/_site/
+
 **/*.quarto_ipynb
 *.jupyter_cache/
