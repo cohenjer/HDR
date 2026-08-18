@@ -123,7 +123,7 @@ VTsparse = ksparse_nnls(U.T@image, U.T@U, imagetimage, VTsparse, k)
 
 ```
 
-We can also implement a bare-bones alternating algorithm for NMF with k-sparse coefficients as follows. This algorithm is guaranteed to converge since it is an exact alternating algorithm with unique and attained subproblem solutions (supposing full-rank factors at each iteration), see [](../../part1/AlternatingOptimization.md).
+We can also implement a bare-bones alternating algorithm for NMF with $k$-sparse coefficients as follows. This algorithm is guaranteed to converge since it is an exact alternating algorithm with unique and attained subproblem solutions (supposing full-rank factors at each iteration), see [](../../part1/AlternatingOptimization.md).
 
 ```{code-cell} ipython3
 :tags: [hide-output]
