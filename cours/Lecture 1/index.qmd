@@ -88,7 +88,7 @@ execute:
 
 ---
 
-![](../../Figures/Pca.png){fig-align="center" width="75%"}
+![](../figures/Pca.png){fig-align="center" width="75%"}
 
 ## PCA as a projection model
 
@@ -435,7 +435,7 @@ Unlike unconstrained LRA, exact or approximate NMF does not generally admit clos
 
 ---
 
-![](../../Figures/nmfmatrix.png){fig-align="center" width="70%"}
+![](../figures/nmfmatrix.png){fig-align="center" width="70%"}
 
 ## NMF geometry
 
@@ -457,7 +457,7 @@ In many applications, the factor matrices have a physical interpretation.
 
 ## The hyperspectral example
 
-![](../../Figures/Hsi_nmf.png){fig-align="center" width="80%"}
+![](../figures/Hsi_nmf.png){fig-align="center" width="80%"}
 
 NMF performs spectral unmixing on hyperspectral images, identifying spectra and abundance maps.
 
