@@ -1,0 +1,1425 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<script src="index_files/libs/clipboard/clipboard.min.js"></script>
+<script src="index_files/libs/quarto-html/tabby.min.js"></script>
+<script src="index_files/libs/quarto-html/popper.min.js"></script>
+<script src="index_files/libs/quarto-html/tippy.umd.min.js"></script>
+<link href="index_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="index_files/libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="index_files/libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.10.18">
+
+  <meta name="author" content="Jérémy Cohen">
+  <meta name="dcterms.date" content="2026-01-01">
+  <title>Masterclass on Nonnegative Low-Rank Approximations</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="index_files/libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="index_files/libs/revealjs/dist/reveal.css">
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: 1.5em;}
+    div.column{flex: auto;}
+    @media screen {
+    div.columns{gap: min(4vw, 1.5em);}
+    div.column{overflow-x: auto;}
+    }
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+      vertical-align: middle;
+    }
+  </style>
+  <link rel="stylesheet" href="index_files/libs/revealjs/dist/theme/quarto-03ee58d93aa56ae2ee8298346d0b2a97.css">
+  <link rel="stylesheet" href="styles.css">
+  <link href="index_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="index_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="index_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="index_files/libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <style type="text/css">
+    .reveal div.sourceCode {
+      margin: 0;
+      overflow: auto;
+    }
+    .reveal div.hanging-indent {
+      margin-left: 1em;
+      text-indent: -1em;
+    }
+    .reveal .slide:not(.center) {
+      height: 100%;
+    }
+    .reveal .slide.scrollable {
+      overflow-y: auto;
+    }
+    .reveal .footnotes {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide .absolute {
+      position: absolute;
+      display: block;
+    }
+    .reveal .footnotes ol {
+      counter-reset: ol;
+      list-style-type: none; 
+      margin-left: 0;
+    }
+    .reveal .footnotes ol li:before {
+      counter-increment: ol;
+      content: counter(ol) ". "; 
+    }
+    .reveal .footnotes ol li > p:first-child {
+      display: inline-block;
+    }
+    .reveal .slide ul,
+    .reveal .slide ol {
+      margin-bottom: 0.5em;
+    }
+    .reveal .slide ul li,
+    .reveal .slide ol li {
+      margin-top: 0.4em;
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide ul[role="tablist"] li {
+      margin-bottom: 0;
+    }
+    .reveal .slide ul li > *:first-child,
+    .reveal .slide ol li > *:first-child {
+      margin-block-start: 0;
+    }
+    .reveal .slide ul li > *:last-child,
+    .reveal .slide ol li > *:last-child {
+      margin-block-end: 0;
+    }
+    .reveal .slide .columns:nth-child(3) {
+      margin-block-start: 0.8em;
+    }
+    .reveal blockquote {
+      box-shadow: none;
+    }
+    .reveal .tippy-content>* {
+      margin-top: 0.2em;
+      margin-bottom: 0.7em;
+    }
+    .reveal .tippy-content>*:last-child {
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide > img.stretch.quarto-figure-center,
+    .reveal .slide > img.r-stretch.quarto-figure-center {
+      display: block;
+      margin-left: auto;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-left,
+    .reveal .slide > img.r-stretch.quarto-figure-left  {
+      display: block;
+      margin-left: 0;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-right,
+    .reveal .slide > img.r-stretch.quarto-figure-right  {
+      display: block;
+      margin-left: auto;
+      margin-right: 0; 
+    }
+  </style>
+</head>
+<body class="quarto-light">
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" class="quarto-title-block center">
+  <h1 class="title">Masterclass on Nonnegative Low-Rank Approximations</h1>
+  <p class="subtitle">Lecture 1 — Nonnegative matrix and tensor low-rank approximations</p>
+
+<div class="quarto-title-authors">
+<div class="quarto-title-author">
+<div class="quarto-title-author-name">
+Jérémy Cohen
+</div>
+</div>
+</div>
+
+  <p class="date">2026-01-01</p>
+</section>
+<section id="masterclass-on-nonnegative-lra" class="slide level2 center">
+<h2>Masterclass on nonnegative LRA</h2>
+<div class="columns">
+<div class="column" style="width:55%;">
+<h3 id="lecture-1">Lecture 1</h3>
+<p><strong>Nonnegative matrix and tensor low-rank approximations</strong></p>
+<ul>
+<li>theory of regularized low-rank models</li>
+<li>source separation viewpoint</li>
+<li>NMF, nonnegative CP, and nonnegative Tucker</li>
+</ul>
+<p><br></p>
+<p>Jérémy Cohen<br>
+CREATIS, CNRS</p>
+</div><div class="column" style="width:45%;">
+<p><img data-src="../../Figures/Pca.png" style="width:100.0%"></p>
+</div></div>
+</section>
+<section id="regularized-low-rank-approximation" class="slide level2 center">
+<h2>Regularized low-rank approximation</h2>
+<p>Low-rank models appear in many inverse problems and source-separation tasks.</p>
+<p><span class="math display">\[
+\min_{W,H} f(M,WH^\top) + g_W(W) + g_H(H)
+\]</span></p>
+<p>Typical choices:</p>
+<ul>
+<li><span class="math inline">\(f(M,WH^\top)=\|M-WH^\top\|_F^2\)</span></li>
+<li><span class="math inline">\(g_W,g_H\)</span> enforce nonnegativity, sparsity, or structure</li>
+</ul>
+</section>
+<section id="matrix-low-rank-models" class="slide level2 center">
+<h2>Matrix low-rank models</h2>
+<p>Two equivalent viewpoints:</p>
+<p><span class="math display">\[
+M = UV^\top = \sum_{q=1}^r U[:,q]V[:,q]^\top
+\]</span></p>
+<ul>
+<li>subspace view: <span class="math inline">\(U\)</span> spans a low-dimensional subspace</li>
+<li>atomic view: <span class="math inline">\(M\)</span> is a sum of <span class="math inline">\(r\)</span> rank-one matrices</li>
+</ul>
+</section>
+<section id="from-observations-to-latent-components" class="slide level2 center">
+<h2>From observations to latent components</h2>
+<div class="columns">
+<div class="column" style="width:62%;">
+<ul>
+<li>We observe mixtures, not isolated sources</li>
+<li>We seek a small number of latent patterns</li>
+<li>We explain each observation as combinations of these patterns</li>
+</ul>
+<p>This is the common structure behind hyperspectral imaging, chemometrics, music, and biomedical data.</p>
+</div><div class="column" style="width:38%;">
+<p><img data-src="../../Figures/SourceSep_drawing_ChatGPT.png" style="width:100.0%"></p>
+</div></div>
+</section>
+<section id="spectra-as-a-compressed-observation-model" class="slide level2 center">
+<h2>Spectra as a compressed observation model</h2>
+<div class="columns">
+<div class="column" style="width:56%;">
+<ul>
+<li>a spectrum <span class="math inline">\(s(\lambda)\)</span> lives in a high-dimensional function space</li>
+<li>RGB is a 3-dimensional compression of <span class="math inline">\(s\)</span></li>
+<li>the compression is linear but lossy</li>
+</ul>
+</div><div class="column" style="width:44%;">
+<p><img data-src="../../Figures/eye_rgb.png" style="width:100.0%"></p>
+</div></div>
+<p><span class="math display">\[
+c_j = \int_{\Lambda} \phi_j(\lambda)s(\lambda)\,d\lambda \approx \Phi_j s
+\]</span></p>
+<p>for <span class="math inline">\(j \in \{R,G,B\}\)</span>.</p>
+</section>
+<section id="additive-vs-subtractive-mixtures" class="slide level2 center">
+<h2>Additive vs subtractive mixtures</h2>
+<ul>
+<li><strong>Additive mixture:</strong> superposition of several light sources</li>
+<li><strong>Subtractive mixture:</strong> sequential filtering of one source</li>
+<li>Additive mixtures are often well approximated by <strong>linear models</strong></li>
+<li>Linear mixture models lead naturally to low-rank factorizations</li>
+</ul>
+</section>
+<section id="linear-mixing-model" class="slide level2 center">
+<h2>Linear mixing model</h2>
+<div class="columns">
+<div class="column" style="width:48%;">
+<p>For a spectral image:</p>
+<p><span class="math display">\[
+Y[:,i] \approx \sum_{k=1}^{K} W[:,k] H[k,i]
+\]</span></p>
+<ul>
+<li><span class="math inline">\(W[:,k]\)</span>: spectrum of material <span class="math inline">\(k\)</span></li>
+<li><span class="math inline">\(H[k,i]\)</span>: abundance of material <span class="math inline">\(k\)</span> in pixel <span class="math inline">\(i\)</span></li>
+</ul>
+<p>Globally:</p>
+<p><span class="math display">\[
+Y \approx WH
+\]</span></p>
+</div><div class="column" style="width:52%;">
+<p><img data-src="../../Figures/Hsi_nmf.png" style="width:100.0%"></p>
+</div></div>
+</section>
+<section id="source-separation-viewpoint" class="slide level2 center">
+<h2>Source separation viewpoint</h2>
+<div class="columns">
+<div class="column" style="width:58%;">
+<ul>
+<li>columns of <span class="math inline">\(W\)</span>: latent sources / templates</li>
+<li>columns of <span class="math inline">\(H^\top\)</span>: activations / mixing coefficients</li>
+<li>low rank = small number of sources</li>
+</ul>
+<p>With <span class="math inline">\(r\)</span> sources:</p>
+<p><span class="math display">\[
+M \approx WH^\top,\qquad W\in\mathbb{R}_+^{n_1\times r},\;H\in\mathbb{R}_+^{n_2\times r}.
+\]</span></p>
+</div><div class="column" style="width:42%;">
+<p><img data-src="../../Figures/linear-mixing-model_WH.png" style="width:100.0%"></p>
+</div></div>
+</section>
+<section>
+<section id="matrix-model-details" class="title-slide slide level1 center">
+<h1>Matrix model details</h1>
+
+</section>
+<section id="matrix-as-a-collection-of-vectors" class="slide level2 center">
+<h2>Matrix as a collection of vectors</h2>
+<div class="columns">
+<div class="column" style="width:52%;">
+<p>Let <span class="math inline">\(M \in \mathbb{R}^{n_1 \times n_2}\)</span>.</p>
+<ul>
+<li>each column of <span class="math inline">\(M\)</span> is a vector in <span class="math inline">\(\mathbb{R}^{n_1}\)</span></li>
+<li>if all columns lie in a subspace of dimension <span class="math inline">\(r\)</span>, then</li>
+</ul>
+<p><span class="math display">\[
+M = UV^\top
+\]</span></p>
+<p>with <span class="math inline">\(U \in \mathbb{R}^{n_1 \times r}\)</span> and <span class="math inline">\(V \in \mathbb{R}^{n_2 \times r}\)</span>.</p>
+</div><div class="column" style="width:48%;">
+<p><img data-src="../../Figures/lramatrix.png" style="width:92.0%"></p>
+</div></div>
+</section>
+<section id="low-rank-as-dimensionality-reduction" class="slide level2 center">
+<h2>Low rank as dimensionality reduction</h2>
+<ul>
+<li><span class="math inline">\(U\)</span> stores a basis of a low-dimensional subspace</li>
+<li>each row of <span class="math inline">\(V\)</span> stores coordinates in that basis</li>
+<li>if <span class="math inline">\(r \ll \min(n_1,n_2)\)</span>, the data admits a compact representation</li>
+</ul>
+<p>This is the linear-algebra view of low rank.</p>
+</section>
+<section id="low-rank-as-a-sum-of-rank-one-atoms" class="slide level2 center">
+<h2>Low rank as a sum of rank-one atoms</h2>
+<p>The same model can be written as</p>
+<p><span class="math display">\[
+M[i,j] = \sum_{q=1}^{r} U[i,q]V[j,q]
+\]</span></p>
+<p>or equivalently</p>
+<p><span class="math display">\[
+M = \sum_{q=1}^{r} U[:,q]V[:,q]^\top.
+\]</span></p>
+</section>
+<section id="why-rank-one-atoms-matter" class="slide level2 center">
+<h2>Why rank-one atoms matter</h2>
+<ul>
+<li>rank-one matrices are simple building blocks</li>
+<li>a low-rank matrix uses only a few such atoms</li>
+<li>low rank is therefore a notion of <strong>model complexity</strong></li>
+</ul>
+<p>This atomic viewpoint will transfer nicely to tensors.</p>
+</section>
+<section id="parameter-counting" class="slide level2 center">
+<h2>Parameter counting</h2>
+<ul>
+<li>full matrix: <span class="math inline">\(n_1 n_2\)</span> parameters</li>
+<li>rank-<span class="math inline">\(r\)</span> factorization: <span class="math inline">\((n_1+n_2)r\)</span> parameters</li>
+</ul>
+<p>When <span class="math inline">\(r\)</span> is small, low-rank models can both</p>
+<ul>
+<li>compress data</li>
+<li>reveal latent structure</li>
+</ul>
+</section>
+<section id="exact-factorization-vs-approximation" class="slide level2 center">
+<h2>Exact factorization vs approximation</h2>
+<p>In applications, the data is usually <strong>not exactly</strong> low rank.</p>
+<p>We therefore seek a rank-<span class="math inline">\(r\)</span> approximation:</p>
+<p><span class="math display">\[
+\min_{\operatorname{rank}(N)\le r} \|M-N\|_F^2
+\]</span></p>
+<p>or, in factorized form,</p>
+<p><span class="math display">\[
+\min_{U,V} \|M-UV^\top\|_F^2.
+\]</span></p>
+</section>
+<section id="the-eckart-young-theorem" class="slide level2 center">
+<h2>The Eckart-Young theorem</h2>
+<p>If <span class="math inline">\(M = ASB^\top\)</span> is an SVD, then the best rank-<span class="math inline">\(r\)</span> approximation in Frobenius norm is given by the truncated SVD:</p>
+<p><span class="math display">\[
+M_r = A_{:,1:r} S_{1:r,1:r} B_{:,1:r}^\top.
+\]</span></p>
+<p>This is one of the rare nonconvex problems with a direct optimal solution.</p>
+</section>
+<section id="pca-as-a-low-rank-approximation" class="slide level2 center">
+<h2>PCA as a low-rank approximation</h2>
+<p><img data-src="../../Figures/Pca.png" style="width:82.0%"></p>
+</section>
+<section id="why-this-result-is-exceptional" class="slide level2 center">
+<h2>Why this result is exceptional</h2>
+<ul>
+<li>It relies on
+<ul>
+<li>Frobenius (or spectral) norm</li>
+<li>no extra constraints</li>
+<li>orthogonality hidden in the SVD</li>
+</ul></li>
+<li>As soon as we change the loss or add constraints, closed forms usually disappear</li>
+</ul>
+</section>
+<section id="when-svd-is-not-enough" class="slide level2 center">
+<h2>When SVD is not enough</h2>
+<p>In source separation, the factors must often satisfy physical properties:</p>
+<ul>
+<li>nonnegativity</li>
+<li>sparsity</li>
+<li>simplex constraints</li>
+<li>structural coupling across modes</li>
+</ul>
+<p>Then “best approximation” is no longer the full story.</p>
+</section>
+<section id="why-are-data-matrices-often-approximately-low-rank" class="slide level2 center">
+<h2>Why are data matrices often approximately low-rank?</h2>
+<p>Three recurring explanations:</p>
+<ol type="1">
+<li>latent-variable models often generate approximately low-rank matrices</li>
+<li>separable multivariate phenomena produce rank-one terms</li>
+<li>mixtures of a few sources naturally lead to small-rank models</li>
+</ol>
+</section>
+<section id="reason-1-latent-variables" class="slide level2 center">
+<h2>Reason 1: latent variables</h2>
+<ul>
+<li>many generative models depend on a small number of hidden variables</li>
+<li>observed features become correlated</li>
+<li>the data matrix is then well approximated in a low-dimensional subspace</li>
+</ul>
+</section>
+<section id="reason-2-separable-maps" class="slide level2 center">
+<h2>Reason 2: separable maps</h2>
+<p>Rank-one matrices correspond to separable functions:</p>
+<p><span class="math display">\[
+f(x,y)=f_1(x)f_2(y).
+\]</span></p>
+<p>Sums of a few separable terms are ubiquitous in physics and signal processing.</p>
+</section>
+<section id="reason-3-source-separation" class="slide level2 center">
+<h2>Reason 3: source separation</h2>
+<ul>
+<li>a few sources are mixed in varying proportions</li>
+<li>templates stay mostly fixed</li>
+<li>activations vary across samples</li>
+</ul>
+<p>Hence</p>
+<p><span class="math display">\[
+M \approx UV^\top
+\]</span></p>
+<p>with a rank equal to the number of sources.</p>
+</section>
+<section id="but-do-the-factors-mean-anything" class="slide level2 center">
+<h2>But do the factors mean anything?</h2>
+<p>Approximation quality alone is not enough.</p>
+<p>We also care about:</p>
+<ol type="1">
+<li><strong>identifiability</strong>: are the factors essentially unique?</li>
+<li><strong>robustness</strong>: are they stable in the presence of noise?</li>
+</ol>
+</section>
+<section id="rotation-ambiguity" class="slide level2 center">
+<h2>Rotation ambiguity</h2>
+<p>If</p>
+<p><span class="math display">\[
+M = U_1V_1^\top = U_2V_2^\top,
+\]</span></p>
+<p>then in general</p>
+<p><span class="math display">\[
+U_1 = U_2Q,\qquad V_1 = V_2Q^{-\top}
+\]</span></p>
+<p>for some invertible matrix <span class="math inline">\(Q\)</span>.</p>
+</section>
+<section id="consequence-of-rotation-ambiguity" class="slide level2 center">
+<h2>Consequence of rotation ambiguity</h2>
+<ul>
+<li>the subspace may be identifiable</li>
+<li>the individual factors are generally <strong>not</strong></li>
+<li>this is a major obstacle for source separation</li>
+</ul>
+<p>So we need <strong>regularization</strong> or a richer model.</p>
+</section></section>
+<section>
+<section id="nonnegative-matrix-factorization" class="title-slide slide level1 center">
+<h1>Nonnegative Matrix Factorization</h1>
+
+</section>
+<section id="definition-of-nmf" class="slide level2 center">
+<h2>Definition of NMF</h2>
+<p>For a nonnegative matrix <span class="math inline">\(M\)</span>,</p>
+<p><span class="math display">\[
+M \approx WH
+\]</span></p>
+<p>with</p>
+<p><span class="math display">\[
+W \in \mathbb{R}_+^{n_1 \times r}, \qquad H \in \mathbb{R}_+^{r \times n_2}.
+\]</span></p>
+</section>
+<section id="why-nonnegativity" class="slide level2 center">
+<h2>Why nonnegativity?</h2>
+<p>Nonnegativity is natural when factors represent:</p>
+<ul>
+<li>spectra</li>
+<li>concentrations</li>
+<li>images</li>
+<li>abundances</li>
+<li>energies</li>
+<li>probabilities or counts</li>
+</ul>
+</section>
+<section id="nmf-as-a-constrained-approximation-problem" class="slide level2 center">
+<h2>NMF as a constrained approximation problem</h2>
+<p>Typical formulation in Frobenius norm:</p>
+<p><span class="math display">\[
+\min_{W \ge 0,\; H \ge 0} \|M-WH\|_F^2
+\]</span></p>
+<ul>
+<li>no general closed form</li>
+<li>nonconvex</li>
+<li>still tractable in practice</li>
+</ul>
+</section>
+<section id="what-changes-compared-to-svd" class="slide level2 center">
+<h2>What changes compared to SVD?</h2>
+<ul>
+<li>better interpretability</li>
+<li>physically plausible factors</li>
+<li>potentially improved identifiability</li>
+</ul>
+<p>but also</p>
+<ul>
+<li>harder optimization</li>
+<li>no exact analogue of truncated SVD</li>
+<li>rank selection becomes more difficult</li>
+</ul>
+</section>
+<section id="how-do-we-fit-nmf" class="slide level2 center">
+<h2>How do we fit NMF?</h2>
+<p>High-level idea:</p>
+<ol type="1">
+<li>fix <span class="math inline">\(H\)</span>, update <span class="math inline">\(W\)</span></li>
+<li>fix <span class="math inline">\(W\)</span>, update <span class="math inline">\(H\)</span></li>
+<li>repeat until convergence</li>
+</ol>
+<p>This is the core principle behind many alternating algorithms.</p>
+</section>
+<section id="alternating-optimization-at-a-glance" class="slide level2 center">
+<h2>Alternating optimization at a glance</h2>
+<div class="columns">
+<div class="column" style="width:52%;">
+<p>At a high level, we cycle between simple subproblems:</p>
+<p><span class="math display">\[
+\begin{cases}
+W^{(k+1)} = \arg\min_{W \ge 0} f(M,WH) + g_W(W) \\
+H^{(k+1)} = \arg\min_{H \ge 0} f(M,W^{(k+1)}H) + g_H(H)
+\end{cases}
+\]</span></p>
+<ul>
+<li>one block is updated at a time</li>
+<li>each step is simpler than the full problem</li>
+<li>this philosophy extends to nCP and NTD</li>
+</ul>
+</div><div class="column" style="width:48%;">
+<p><img data-src="../../Figures/AO_majorization.png" style="width:100.0%"></p>
+</div></div>
+</section>
+<section id="fitting-nmf-in-practice" class="slide level2 center">
+<h2>Fitting NMF in practice</h2>
+<p>Common choices include:</p>
+<ul>
+<li>Alternating Nonnegative Least Squares (ANLS)</li>
+<li>Hierarchical Alternating Least Squares (HALS)</li>
+<li>multiplicative updates</li>
+</ul>
+<p>Lecture 2 will explain why NNLS is the central subproblem.</p>
+</section>
+<section id="the-rank-question" class="slide level2 center">
+<h2>The rank question</h2>
+<ul>
+<li>in SVD, singular values help a lot</li>
+<li>in NMF, deflation is not so simple</li>
+<li>several ranks are often tried in practice</li>
+<li>the smallest exact feasible rank is the <strong>nonnegative rank</strong></li>
+</ul>
+</section>
+<section id="nmf-geometry-conic-viewpoint" class="slide level2 center">
+<h2>NMF geometry: conic viewpoint</h2>
+<p>Each column of <span class="math inline">\(M\)</span> belongs to the cone generated by the columns of <span class="math inline">\(W\)</span>:</p>
+<p><span class="math display">\[
+M[:,j] \in \operatorname{cone}(W).
+\]</span></p>
+<p>NMF is therefore a geometric problem in the nonnegative orthant.</p>
+</section>
+<section id="a-conic-interpretation-of-nmf" class="slide level2 center">
+<h2>A conic interpretation of NMF</h2>
+<p><img data-src="../../Figures/Nmfr3d3.png" style="width:78.0%"></p>
+</section>
+<section id="why-nmf-is-often-non-unique" class="slide level2 center">
+<h2>Why NMF is often non-unique</h2>
+<p>Even with nonnegativity, many cones may contain the same data cloud.</p>
+<ul>
+<li>low reconstruction error does not imply factor uniqueness</li>
+<li>good source separation needs stronger geometric information</li>
+</ul>
+</section>
+<section id="a-simple-picture-of-non-uniqueness" class="slide level2 center">
+<h2>A simple picture of non-uniqueness</h2>
+<p><img data-src="../../Figures/Nmfr2.png" style="width:80.0%"></p>
+</section>
+<section id="normalizing-onto-the-simplex" class="slide level2 center">
+<h2>Normalizing onto the simplex</h2>
+<p>If columns are <span class="math inline">\(\ell_1\)</span>-normalized, we can project the geometry onto the simplex.</p>
+<p>Then:</p>
+<ul>
+<li>data become points in a polytope</li>
+<li>columns of <span class="math inline">\(W\)</span> become vertices or extreme rays</li>
+<li>columns of <span class="math inline">\(H^\top\)</span> describe convex combinations</li>
+</ul>
+</section>
+<section id="exact-nmf-on-the-simplex" class="slide level2 center">
+<h2>Exact NMF on the simplex</h2>
+<p><img data-src="../../Figures/Nmfsimplex_pres.png" style="width:88.0%"></p>
+</section>
+<section id="geometric-lesson-from-the-simplex-view" class="slide level2 center">
+<h2>Geometric lesson from the simplex view</h2>
+<p>For low-dimensional exact NMF:</p>
+<ul>
+<li>uniqueness becomes possible when data touch the boundary</li>
+<li>if data remain strictly inside, many factorizations may coexist</li>
+</ul>
+<p>So the data geometry matters as much as the loss function.</p>
+</section>
+<section id="a-key-identifiability-idea-sufficiently-scattered" class="slide level2 center">
+<h2>A key identifiability idea: sufficiently scattered</h2>
+<ul>
+<li>data should spread widely inside the cone / simplex</li>
+<li>points should get close to extreme directions</li>
+<li>the feasible cone around the data becomes much tighter</li>
+</ul>
+<p>This explains why sparse or extreme observations are very valuable.</p>
+</section>
+<section id="three-major-regularization-families-for-nmf" class="slide level2 center">
+<h2>Three major regularization families for NMF</h2>
+<ol type="1">
+<li><strong>Separable NMF</strong></li>
+<li><strong>Sparse NMF</strong></li>
+<li><strong>Minimum-volume / maximum-volume NMF</strong></li>
+</ol>
+<p>All aim at ruling out unrealistic factorizations.</p>
+</section>
+<section id="separable-nmf" class="slide level2 center">
+<h2>Separable NMF</h2>
+<p>Assumption:</p>
+<p><span class="math display">\[
+M = M[:,\mathcal{K}] H
+\]</span></p>
+<p>for some subset of columns <span class="math inline">\(\mathcal{K}\)</span>.</p>
+<p>Interpretation: the templates are present in the data themselves.</p>
+</section>
+<section id="geometry-of-separable-nmf" class="slide level2 center">
+<h2>Geometry of separable NMF</h2>
+<p><img data-src="../../Figures/Sepnmf.png" style="width:88.0%"></p>
+</section>
+<section id="why-separable-nmf-is-useful" class="slide level2 center">
+<h2>Why separable NMF is useful</h2>
+<ul>
+<li>strong interpretability</li>
+<li>efficient algorithms exist</li>
+<li>excellent initialization for generic NMF solvers</li>
+</ul>
+<p>Limitation:</p>
+<ul>
+<li>it fails when no nearly pure data point is observed</li>
+</ul>
+</section>
+<section id="sparse-nmf" class="slide level2 center">
+<h2>Sparse NMF</h2>
+<p>Typical idea:</p>
+<p><span class="math display">\[
+\min_{W,H \ge 0} \|M-WH\|_F^2 + \lambda\,\Omega(W,H)
+\]</span></p>
+<p>with <span class="math inline">\(\Omega\)</span> promoting zeros in <span class="math inline">\(W\)</span> and/or <span class="math inline">\(H\)</span>.</p>
+<p>Sparsity often pushes solutions toward more identifiable geometries.</p>
+</section>
+<section id="minimum-volume-nmf" class="slide level2 center">
+<h2>Minimum-volume NMF</h2>
+<ul>
+<li>choose the cone generated by <span class="math inline">\(W\)</span> as tight as possible around the data</li>
+<li>relaxes the pure-pixel assumption of separability</li>
+<li>often linked to maximizing the spread of coefficients in <span class="math inline">\(H\)</span></li>
+</ul>
+<p>Very relevant when mixtures are real but pure sources are absent.</p>
+</section>
+<section id="nmf-what-to-remember" class="slide level2 center">
+<h2>NMF: what to remember</h2>
+<ul>
+<li>NMF is much more interpretable than unconstrained LRA</li>
+<li>but nonnegativity alone does <strong>not</strong> solve everything</li>
+<li>identifiability depends on geometry and regularization</li>
+<li>optimization deserves dedicated methods</li>
+</ul>
+</section>
+<section id="short-pause-before-tensors" class="slide level2 center">
+<h2>Short pause before tensors</h2>
+<p>Matrices model mixtures indexed by two axes.</p>
+<p>But many datasets are naturally indexed by:</p>
+<ul>
+<li>frequency × time × bar</li>
+<li>wavelength × row × column</li>
+<li>feature × sample × condition</li>
+</ul>
+<p>This leads to tensors.</p>
+</section></section>
+<section>
+<section id="tensor-decompositions" class="title-slide slide level1 center">
+<h1>Tensor decompositions</h1>
+
+</section>
+<section id="why-tensors" class="slide level2 center">
+<h2>Why tensors?</h2>
+<ul>
+<li>multiway data carries richer structure than a flattened matrix</li>
+<li>flattening may destroy interactions between modes</li>
+<li>multilinear models preserve these interactions</li>
+</ul>
+</section>
+<section id="what-is-a-tensor" class="slide level2 center">
+<h2>What is a tensor?</h2>
+<p>Informally:</p>
+<ul>
+<li>a scalar is order 0</li>
+<li>a vector is order 1</li>
+<li>a matrix is order 2</li>
+<li>a tensor is order 3 or more</li>
+</ul>
+<p>In data science, tensors are often just multiway arrays.</p>
+</section>
+<section id="matrix-intuition-still-helps" class="slide level2 center">
+<h2>Matrix intuition still helps</h2>
+<p>Good news:</p>
+<ul>
+<li>many tensor ideas are extensions of matrix ideas</li>
+<li>rank-one building blocks still matter</li>
+<li>alternating algorithms still appear</li>
+</ul>
+<p>Bad news:</p>
+<ul>
+<li>uniqueness and optimization behave differently</li>
+</ul>
+</section>
+<section id="rank-one-tensors" class="slide level2 center">
+<h2>Rank-one tensors</h2>
+<p>For a third-order tensor,</p>
+<p><span class="math display">\[
+x \otimes y \otimes z
+\]</span></p>
+<p>is the tensor with entries</p>
+<p><span class="math display">\[
+(x \otimes y \otimes z)[i,j,k] = x[i]y[j]z[k].
+\]</span></p>
+</section>
+<section id="two-main-tensor-models-today" class="slide level2 center">
+<h2>Two main tensor models today</h2>
+<ol type="1">
+<li><strong>CP decomposition</strong>
+<ul>
+<li>sum of rank-one tensors</li>
+</ul></li>
+<li><strong>Tucker decomposition</strong>
+<ul>
+<li>multilinear dimensionality reduction with a core tensor</li>
+</ul></li>
+</ol>
+</section>
+<section id="cp-decomposition" class="slide level2 center">
+<h2>CP decomposition</h2>
+<p>For <span class="math inline">\(T \in \mathbb{R}^{n_1 \times n_2 \times n_3}\)</span>,</p>
+<p><span class="math display">\[
+T[i,j,k] = \sum_{q=1}^{r} A[i,q]B[j,q]C[k,q].
+\]</span></p>
+<p>It is the tensor analogue of decomposing data into rank-one atoms.</p>
+</section>
+<section id="cp-decomposition-as-a-picture" class="slide level2 center">
+<h2>CP decomposition as a picture</h2>
+<p><img data-src="../../Figures/Cpd.png" style="width:82.0%"></p>
+</section>
+<section id="why-cp-is-important" class="slide level2 center">
+<h2>Why CP is important</h2>
+<ul>
+<li>it can be essentially unique under generic conditions</li>
+<li>this is a major contrast with matrix factorizations</li>
+<li>it is both a source separation model and a dimensionality reduction tool</li>
+</ul>
+</section>
+<section id="where-does-cp-identifiability-come-from" class="slide level2 center">
+<h2>Where does CP identifiability come from?</h2>
+<p>Very informally:</p>
+<ul>
+<li>each slice must share the same latent factors</li>
+<li>this coupling removes rotation ambiguities</li>
+<li>the intersection of all compatible matrix factorizations becomes much smaller</li>
+</ul>
+</section>
+<section id="cp-as-coupled-matrix-factorization" class="slide level2 center">
+<h2>CP as coupled matrix factorization</h2>
+<p>For each slice <span class="math inline">\(k\)</span>,</p>
+<p><span class="math display">\[
+T[:,:,k] = A\,\operatorname{Diag}(C[k,:])\,B^\top.
+\]</span></p>
+<p>Same factors <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> are reused across all slices.</p>
+<p>That shared structure is the key.</p>
+</section>
+<section id="approximate-cp-decomposition" class="slide level2 center">
+<h2>Approximate CP decomposition</h2>
+<p>With Frobenius loss, we solve</p>
+<p><span class="math display">\[
+\min_{A,B,C} \|T-\llbracket A,B,C \rrbracket\|_F^2.
+\]</span></p>
+<p>This is again a nonconvex multiblock problem.</p>
+</section>
+<section id="how-is-cp-fitted" class="slide level2 center">
+<h2>How is CP fitted?</h2>
+<p>The classical algorithm is <strong>ALS</strong>:</p>
+<ol type="1">
+<li>update <span class="math inline">\(A\)</span></li>
+<li>update <span class="math inline">\(B\)</span></li>
+<li>update <span class="math inline">\(C\)</span></li>
+<li>repeat</li>
+</ol>
+<p>Each subproblem is linear least squares.</p>
+</section>
+<section id="a-caveat-cp-approximation-can-be-ill-posed" class="slide level2 center">
+<h2>A caveat: CP approximation can be ill-posed</h2>
+<ul>
+<li>the set of tensors of rank at most <span class="math inline">\(r\)</span> is not closed</li>
+<li>a best rank-<span class="math inline">\(r\)</span> approximation may fail to exist</li>
+<li>components can diverge while compensating each other</li>
+</ul>
+<p>This is very different from the matrix case.</p>
+</section>
+<section id="why-regularization-matters-again" class="slide level2 center">
+<h2>Why regularization matters again</h2>
+<p>Regularization for tensor models can help with:</p>
+<ul>
+<li>interpretability</li>
+<li>robustness</li>
+<li>optimization landscape</li>
+<li><strong>existence of a minimizer</strong></li>
+</ul>
+</section>
+<section id="nonnegative-cp-decomposition" class="slide level2 center">
+<h2>Nonnegative CP decomposition</h2>
+<p>For nonnegative tensor data,</p>
+<p><span class="math display">\[
+\min_{A \ge 0,\; B \ge 0,\; C \ge 0}
+\|T-\llbracket A,B,C \rrbracket\|_F^2
+\]</span></p>
+<p>This is the direct tensor analogue of NMF.</p>
+</section>
+<section id="why-nonnegative-cp-is-attractive" class="slide level2 center">
+<h2>Why nonnegative CP is attractive</h2>
+<ul>
+<li>factors remain physically meaningful</li>
+<li>nonnegativity prevents cancellation at infinity</li>
+<li>the approximation problem becomes well posed</li>
+</ul>
+<p>So nonnegativity helps both modeling <strong>and</strong> optimization.</p>
+</section>
+<section id="how-do-we-fit-nonnegative-cp" class="slide level2 center">
+<h2>How do we fit nonnegative CP?</h2>
+<ul>
+<li>alternating updates are still the default choice</li>
+<li>each factor update becomes a set of <strong>NNLS</strong> problems</li>
+<li>the method is often called <strong>ANLS</strong></li>
+</ul>
+<p>Again, Lecture 2 will provide the algorithmic engine.</p>
+</section></section>
+<section>
+<section id="tucker-and-nonnegative-tucker" class="title-slide slide level1 center">
+<h1>Tucker and nonnegative Tucker</h1>
+
+</section>
+<section id="tucker-decomposition" class="slide level2 center">
+<h2>Tucker decomposition</h2>
+<p>For a third-order tensor,</p>
+<p><span class="math display">\[
+T = \llbracket U,V,W;G \rrbracket
+\]</span></p>
+<p>with:</p>
+<ul>
+<li>factor matrices <span class="math inline">\(U,V,W\)</span></li>
+<li>a smaller core tensor <span class="math inline">\(G\)</span></li>
+</ul>
+</section>
+<section id="tucker-decomposition-as-a-picture" class="slide level2 center">
+<h2>Tucker decomposition as a picture</h2>
+<p><img data-src="../../Figures/Tucker.png" style="width:82.0%"></p>
+</section>
+<section id="tucker-as-multilinear-dimensionality-reduction" class="slide level2 center">
+<h2>Tucker as multilinear dimensionality reduction</h2>
+<p>The model writes</p>
+<p><span class="math display">\[
+T = G \times_1 U \times_2 V \times_3 W.
+\]</span></p>
+<ul>
+<li><span class="math inline">\(U,V,W\)</span> define low-dimensional subspaces</li>
+<li><span class="math inline">\(G\)</span> stores interactions in reduced coordinates</li>
+</ul>
+</section>
+<section id="multilinear-ranks" class="slide level2 center">
+<h2>Multilinear ranks</h2>
+<p>Instead of one rank <span class="math inline">\(r\)</span>, Tucker uses</p>
+<p><span class="math display">\[
+(r_1,r_2,r_3)
+\]</span></p>
+<p>with <span class="math inline">\(r_i \le n_i\)</span>.</p>
+<p>This gives much more flexibility than CP.</p>
+</section>
+<section id="tucker-vs-cp" class="slide level2 center">
+<h2>Tucker vs CP</h2>
+<p><strong>CP</strong></p>
+<ul>
+<li>diagonal core</li>
+<li>stronger compression</li>
+<li>stronger uniqueness properties</li>
+</ul>
+<p><strong>Tucker</strong></p>
+<ul>
+<li>dense core</li>
+<li>more flexible interactions</li>
+<li>closer to matrix subspace models</li>
+</ul>
+</section>
+<section id="tucker-is-not-identifiable-in-general" class="slide level2 center">
+<h2>Tucker is not identifiable in general</h2>
+<p>There are rotation ambiguities in each mode:</p>
+<p><span class="math display">\[
+U \mapsto UQ,\qquad G \mapsto G \times_1 Q^{-1}
+\]</span></p>
+<p>and similarly for the other modes.</p>
+<p>So Tucker is usually <strong>not</strong> unique without extra constraints.</p>
+</section>
+<section id="classical-tucker-regularization" class="slide level2 center">
+<h2>Classical Tucker regularization</h2>
+<p>The standard choice is <strong>orthogonality</strong>:</p>
+<ul>
+<li>orthogonal factors define principal multilinear subspaces</li>
+<li>HOSVD gives a strong computational baseline</li>
+</ul>
+<p>This is the tensor counterpart of PCA-style dimensionality reduction.</p>
+</section>
+<section id="nonnegative-tucker-decomposition-ntd" class="slide level2 center">
+<h2>Nonnegative Tucker decomposition (NTD)</h2>
+<p>For nonnegative data, we may instead seek</p>
+<p><span class="math display">\[
+T \approx \llbracket U,V,W;G \rrbracket
+\]</span></p>
+<p>with</p>
+<p><span class="math display">\[
+U,V,W,G \ge 0.
+\]</span></p>
+</section>
+<section id="why-nonnegative-tucker" class="slide level2 center">
+<h2>Why nonnegative Tucker?</h2>
+<ul>
+<li>preserves interpretability in every mode</li>
+<li>more flexible than nCP when interactions are not diagonal</li>
+<li>often very natural for count, spectrogram, or image-like tensors</li>
+</ul>
+</section>
+<section id="application-viewpoint-for-ntd" class="slide level2 center">
+<h2>Application viewpoint for NTD</h2>
+<div class="columns">
+<div class="column" style="width:55%;">
+<p>For music structure analysis, a tensor can index:</p>
+<ul>
+<li>frequency</li>
+<li>time within a bar</li>
+<li>bar index</li>
+</ul>
+<p>NTD then extracts recurring patterns jointly across these modes.</p>
+</div><div class="column" style="width:45%;">
+<p><img data-src="../../Figures/NNTucker_Music.png" style="width:100.0%"></p>
+</div></div>
+</section>
+<section id="how-do-we-fit-ntd" class="slide level2 center">
+<h2>How do we fit NTD?</h2>
+<p>Typical strategy:</p>
+<ol type="1">
+<li>fix all blocks except one</li>
+<li>solve a nonnegative least-squares type subproblem</li>
+<li>cycle over factor matrices and the core tensor</li>
+</ol>
+<p>This is again alternating optimization.</p>
+</section>
+<section id="ntd-is-algorithmically-close-to-nmf" class="slide level2 center">
+<h2>NTD is algorithmically close to NMF</h2>
+<ul>
+<li>same nonnegativity philosophy</li>
+<li>same NNLS building blocks</li>
+<li>same importance of initialization and scaling</li>
+<li>but more expensive tensor contractions</li>
+</ul>
+</section>
+<section id="the-main-open-question" class="slide level2 center">
+<h2>The main open question</h2>
+<p>For NTD, a major unresolved theme is:</p>
+<h3 id="when-is-the-decomposition-identifiable">when is the decomposition identifiable?</h3>
+<p>Compared with CP, the answer is still much less complete.</p>
+</section>
+<section id="why-this-matters" class="slide level2 center">
+<h2>Why this matters</h2>
+<p>If NTD is used only for compression, ambiguity may be acceptable.</p>
+<p>If NTD is used for:</p>
+<ul>
+<li>source separation</li>
+<li>pattern discovery</li>
+<li>scientific interpretation</li>
+</ul>
+<p>then ambiguity becomes a real issue.</p>
+</section>
+<section id="a-practical-summary-of-tensor-choices" class="slide level2 center">
+<h2>A practical summary of tensor choices</h2>
+<ul>
+<li>choose <strong>CP/nCP</strong> when rank-one latent components are expected</li>
+<li>choose <strong>Tucker/NTD</strong> when multilinear subspaces and interactions matter</li>
+<li>add regularization when interpretability is essential</li>
+</ul>
+</section></section>
+<section>
+<section id="wrap-up" class="title-slide slide level1 center">
+<h1>Wrap-up</h1>
+
+</section>
+<section id="what-we-learned-today" class="slide level2 center">
+<h2>What we learned today</h2>
+<ul>
+<li>low-rank models can be read as compression tools <strong>and</strong> source separation models</li>
+<li>unconstrained matrix LRA is powerful but not identifiable enough</li>
+<li>NMF introduces physically meaningful constraints</li>
+<li>tensors extend the story with CP and Tucker models</li>
+</ul>
+</section>
+<section id="the-recurring-theme" class="slide level2 center">
+<h2>The recurring theme</h2>
+<p>Across all these models, three questions keep coming back:</p>
+<ol type="1">
+<li><strong>What structure do we want?</strong></li>
+<li><strong>Is it identifiable?</strong></li>
+<li><strong>How do we optimize it efficiently?</strong></li>
+</ol>
+</section>
+<section id="looking-ahead-to-lecture-2" class="slide level2 center">
+<h2>Looking ahead to Lecture 2</h2>
+<p>Lecture 2 focuses on the optimization core behind these models:</p>
+<ul>
+<li>Nonnegative Least Squares (NNLS)</li>
+<li>KKT conditions</li>
+<li>HALS</li>
+<li>multiplicative updates</li>
+<li>KL-based variants</li>
+</ul>
+</section>
+<section id="take-home-message" class="slide level2 center">
+<h2>Take-home message</h2>
+<p>Low-rank approximation is easy to motivate.</p>
+<p>Interpretable low-rank approximation is the real challenge.</p>
+<p>That is precisely why <strong>nonnegativity, geometry, and optimization</strong> matter so much.</p>
+
+</section></section>
+    </div>
+  <div class="quarto-auto-generated-content" style="display: none;">
+<div class="footer footer-default">
+<p>Masterclass - Jérémy Cohen - 2026</p>
+</div>
+</div></div>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script>
+  <script src="index_files/libs/revealjs/dist/reveal.js"></script>
+  <!-- reveal.js plugins -->
+  <script src="index_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="index_files/libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="index_files/libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="index_files/libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="index_files/libs/revealjs/plugin/quarto-support/support.js"></script>
+  
+
+  <script src="index_files/libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="index_files/libs/revealjs/plugin/search/search.js"></script>
+  <script src="index_files/libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="index_files/libs/revealjs/plugin/math/math.js"></script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+'controlsAuto': false,
+'previewLinksAuto': false,
+'pdfSeparateFragments': false,
+'autoAnimateEasing': "ease",
+'autoAnimateDuration': 1,
+'autoAnimateUnmatched': true,
+'jumpToSlide': true,
+'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleScrollView(event)\"><kbd>r</kbd> Scroll View Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"5\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true},
+'smaller': false,
+ 
+        // Display controls in the bottom right corner
+        controls: true,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: false,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'edges',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: 'c/t',
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: true,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: true,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'linear',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: false,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'fade',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'none',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1000,
+
+        height: 750,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 0.15,
+
+        // Bounds for smallest/largest possible scale to apply to content
+        minScale: 0.5,
+
+        maxScale: 2,
+
+        math: {
+          mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, QuartoSupport,
+
+          RevealMath,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    <script id="quarto-html-after-body" type="application/javascript">
+      window.document.addEventListener("DOMContentLoaded", function (event) {
+        const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+        tabsets.forEach(function(tabset) {
+          const tabby = new Tabby('#' + tabset.id);
+        });
+        const isCodeAnnotation = (el) => {
+          for (const clz of el.classList) {
+            if (clz.startsWith('code-annotation-')) {                     
+              return true;
+            }
+          }
+          return false;
+        }
+        const onCopySuccess = function(e) {
+          // button target
+          const button = e.trigger;
+          // don't keep focus
+          button.blur();
+          // flash "checked"
+          button.classList.add('code-copy-button-checked');
+          var currentTitle = button.getAttribute("title");
+          button.setAttribute("title", "Copied!");
+          let tooltip;
+          if (window.bootstrap) {
+            button.setAttribute("data-bs-toggle", "tooltip");
+            button.setAttribute("data-bs-placement", "left");
+            button.setAttribute("data-bs-title", "Copied!");
+            tooltip = new bootstrap.Tooltip(button, 
+              { trigger: "manual", 
+                customClass: "code-copy-button-tooltip",
+                offset: [0, -8]});
+            tooltip.show();    
+          }
+          setTimeout(function() {
+            if (tooltip) {
+              tooltip.hide();
+              button.removeAttribute("data-bs-title");
+              button.removeAttribute("data-bs-toggle");
+              button.removeAttribute("data-bs-placement");
+            }
+            button.setAttribute("title", currentTitle);
+            button.classList.remove('code-copy-button-checked');
+          }, 1000);
+          // clear code selection
+          e.clearSelection();
+        }
+        const getTextToCopy = function(trigger) {
+          const outerScaffold = trigger.parentElement.cloneNode(true);
+          const codeEl = outerScaffold.querySelector('code');
+          for (const childEl of codeEl.children) {
+            if (isCodeAnnotation(childEl)) {
+              childEl.remove();
+            }
+          }
+          return codeEl.innerText;
+        }
+        const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+          text: getTextToCopy
+        });
+        clipboard.on('success', onCopySuccess);
+        if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+          const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+            text: getTextToCopy,
+            container: window.document.getElementById('quarto-embedded-source-code-modal')
+          });
+          clipboardModal.on('success', onCopySuccess);
+        }
+          var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+          var mailtoRegex = new RegExp(/^mailto:/);
+            var filterRegex = new RegExp('/' + window.location.host + '/');
+          var isInternal = (href) => {
+              return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+          }
+          // Inspect non-navigation links and adorn them if external
+         var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+          for (var i=0; i<links.length; i++) {
+            const link = links[i];
+            if (!isInternal(link.href)) {
+              // undo the damage that might have been done by quarto-nav.js in the case of
+              // links that we want to consider external
+              if (link.dataset.originalHref !== undefined) {
+                link.href = link.dataset.originalHref;
+              }
+            }
+          }
+        function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+          const config = {
+            allowHTML: true,
+            maxWidth: 500,
+            delay: 100,
+            arrow: false,
+            appendTo: function(el) {
+                return el.closest('section.slide') || el.parentElement;
+            },
+            interactive: true,
+            interactiveBorder: 10,
+            theme: 'light-border',
+            placement: 'bottom-start',
+          };
+          if (contentFn) {
+            config.content = contentFn;
+          }
+          if (onTriggerFn) {
+            config.onTrigger = onTriggerFn;
+          }
+          if (onUntriggerFn) {
+            config.onUntrigger = onUntriggerFn;
+          }
+            config['offset'] = [0,0];
+            config['maxWidth'] = 700;
+          window.tippy(el, config); 
+        }
+        const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+        for (var i=0; i<noterefs.length; i++) {
+          const ref = noterefs[i];
+          tippyHover(ref, function() {
+            // use id or data attribute instead here
+            let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+            try { href = new URL(href).hash; } catch {}
+            const id = href.replace(/^#\/?/, "");
+            const note = window.document.getElementById(id);
+            if (note) {
+              return note.innerHTML;
+            } else {
+              return "";
+            }
+          });
+        }
+        const findCites = (el) => {
+          const parentEl = el.parentElement;
+          if (parentEl) {
+            const cites = parentEl.dataset.cites;
+            if (cites) {
+              return {
+                el,
+                cites: cites.split(' ')
+              };
+            } else {
+              return findCites(el.parentElement)
+            }
+          } else {
+            return undefined;
+          }
+        };
+        var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+        for (var i=0; i<bibliorefs.length; i++) {
+          const ref = bibliorefs[i];
+          const citeInfo = findCites(ref);
+          if (citeInfo) {
+            tippyHover(citeInfo.el, function() {
+              var popup = window.document.createElement('div');
+              citeInfo.cites.forEach(function(cite) {
+                var citeDiv = window.document.createElement('div');
+                citeDiv.classList.add('hanging-indent');
+                citeDiv.classList.add('csl-entry');
+                var biblioDiv = window.document.getElementById('ref-' + cite);
+                if (biblioDiv) {
+                  citeDiv.innerHTML = biblioDiv.innerHTML;
+                }
+                popup.appendChild(citeDiv);
+              });
+              return popup.innerHTML;
+            });
+          }
+        }
+      });
+      </script>
+    
+
+</body></html>

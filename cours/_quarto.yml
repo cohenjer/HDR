@@ -1,0 +1,30 @@
+project:
+  type: default
+  output-dir: _site
+
+execute:
+  echo: false
+  warning: false
+  dpi: 150
+
+format:
+  revealjs:
+    theme: white
+    auto-stretch: false
+    css: styles.css
+    code-copy: true
+    center: true
+    controls: true
+    eval: true
+    history: true
+    incremental: false
+    progress: true
+    slide-number: true
+    transition: fade
+    title-slide: false
+    footer: "Masterclass - Jérémy Cohen - 2026"
+    margin: 0.15
+    width: 1000
+    height: 750
+    min-scale: 0.5
+    max-scale: 2
