@@ -1,928 +1,554 @@
 ---
-title: "Masterclass on Nonnegative Low-Rank Approximations"
-subtitle: "Lecture 1 — Nonnegative matrix and tensor low-rank approximations"
-author: "Jérémy Cohen"
-date: "2026"
+title: "Regularized Low-Rank Approximations"
+subtitle: "Lecture 1 — Introduction and matrix low-rank models"
+format:
+  revealjs:
+    theme: white
+    auto-stretch: false
+    css: ../styles.css
+    transition: fade
+    slide-number: true
+    center: true
+    controls: true
+    progress: true
+    footer: "Masterclass — Nonnegative LRA"
+    width: 1200
+    height: 750
+    margin: 0.12
+    incremental: false
+execute:
+  echo: false
+  warning: false
 ---
+
+# Regularized Low-Rank Approximations
 
 ## Masterclass on nonnegative LRA
 
-:::: {.columns}
-::: {.column width="55%"}
+### Lecture 1 — introduction and matrix low-rank models
 
-### Lecture 1
+---
 
-**Nonnegative matrix and tensor low-rank approximations**
+## Summary of HDR contents
 
-- theory of regularized low-rank models
-- source separation viewpoint
-- NMF, nonnegative CP, and nonnegative Tucker
+> I write this "Habilitation à Diriger des Recherches" (HDR) manuscript with the hope of demonstrating that regularized LRA (rLRA) is a rich topic with many exciting open questions. I also hope that fellow researchers who are willing to read through all this content will learn about some lesser-known results, tricks, and algorithmic details that can help them in their work on rLRA.
 
-<br>
+---
 
-Jérémy Cohen  
-CREATIS, CNRS
+## Some personal context
 
-:::
-::: {.column width="45%"}
+- At age six, I enjoyed guessing the notes my piano tutor was playing while I was turning my back.
+- I discovered that I could literally hear the label of the pitch class of individual notes.
+- It was only later that I realized that music transcription is hard for everyone.
+- In the end, the same mathematical concepts reappeared in low-rank approximations.
 
-![](../../Figures/Pca.png){width="100%"}
+---
 
-:::
-::::
+## Music, signal processing, and LRA
 
-## Regularized low-rank approximation
+- I grew interested in sound, music processing, the Fourier transform, and their links to human perception.
+- In my PhD, I realized that many problems in music information retrieval could be addressed using low-rank approximations.
+- The design of regularizations and constraints was key to performance.
+- This motivated my work on regularized LRA.
 
-Low-rank models appear in many inverse problems and source-separation tasks.
+---
 
-$$
-\min_{W,H} f(M,WH^\top) + g_W(W) + g_H(H)
-$$
+## A recurring theme
 
-Typical choices:
+- Low-rank approximations are ubiquitous and critical in unsupervised machine learning.
+- Though deep learning is stronger in some applications, LRA remains fundamental.
+- Many applications, such as automatic music transcription, can still be improved with better LRA-based models.
+- This is a field with exciting open questions.
 
-- $f(M,WH^\top)=\|M-WH^\top\|_F^2$
-- $g_W,g_H$ enforce nonnegativity, sparsity, or structure
+---
 
-## Matrix low-rank models
+## Why regularized low-rank approximations
 
-Two equivalent viewpoints:
+- LRA are workhorse methods in several unsupervised machine learning tasks.
+- They are used in dimensionality reduction and blind source separation.
+- The most prominent example is Principal Component Analysis (PCA).
 
-$$
-M = UV^\top = \sum_{q=1}^r U[:,q]V[:,q]^\top
-$$
+---
 
-- subspace view: $U$ spans a low-dimensional subspace
-- atomic view: $M$ is a sum of $r$ rank-one matrices
+## Dimensionality reduction
 
-## From observations to latent components
+- The reduction of dimension seeks to:
+  - extract useful information from data;
+  - compress data.
+- These objectives often coincide: a good summary preserves useful information.
 
-:::: {.columns}
-::: {.column width="62%"}
+---
 
-- We observe mixtures, not isolated sources
-- We seek a small number of latent patterns
-- We explain each observation as combinations of these patterns
+## Example: color perception by the human eye
 
-This is the common structure behind hyperspectral imaging, chemometrics, music, and biomedical data.
+- Materials reflect light with varying intensity across wavelengths.
+- The spectral reflectance is a high-dimensional description.
+- Human vision only sees three RGB channels.
+- The infinite-dimensional spectrum is reduced to three coefficients.
 
-:::
-::: {.column width="38%"}
+---
 
-![](../../Figures/SourceSep_drawing_ChatGPT.png){width="100%"}
+![](../../Figures/Pca.png){fig-align="center" width="75%"}
 
-:::
-::::
+## PCA as a projection model
 
-## Spectra as a compressed observation model
-
-:::: {.columns}
-::: {.column width="56%"}
-
-- a spectrum $s(\lambda)$ lives in a high-dimensional function space
-- RGB is a 3-dimensional compression of $s$
-- the compression is linear but lossy
-
-:::
-::: {.column width="44%"}
-
-![](../../Figures/eye_rgb.png){width="100%"}
-
-:::
-::::
+A centered data matrix $M$ lies in a low-dimensional subspace $\operatorname{col}(U)$.
 
 $$
-c_j = \int_{\Lambda} \phi_j(\lambda)s(\lambda)\,d\lambda \approx \Phi_j s
+M \approx U V^\top
 $$
 
-for $j \in \{R,G,B\}$.
+with $U$ encoding a basis and $V$ the coordinates.
 
-## Additive vs subtractive mixtures
+---
 
-- **Additive mixture:** superposition of several light sources
-- **Subtractive mixture:** sequential filtering of one source
-- Additive mixtures are often well approximated by **linear models**
-- Linear mixture models lead naturally to low-rank factorizations
+## More formally
 
-## Linear mixing model
-
-:::: {.columns}
-::: {.column width="48%"}
-
-For a spectral image:
+For matrix data, a real LRA problem is
 
 $$
-Y[:,i] \approx \sum_{k=1}^{K} W[:,k] H[k,i]
+\min_{U \in \mathbb{R}^{m\times r},\,V \in \mathbb{R}^{n\times r}} f(Y, U V^\top)
 $$
 
-- $W[:,k]$: spectrum of material $k$
-- $H[k,i]$: abundance of material $k$ in pixel $i$
+where $r$ is the rank of the approximation and $r \ll m,n$.
 
-Globally:
+Usually, $f(Y,X)=\|Y-X\|_F^2$.
 
-$$
-Y \approx WH
-$$
+---
 
-:::
-::: {.column width="52%"}
+## Matrix low-rank factorization
 
-![](../../Figures/Hsi_nmf.png){width="100%"}
-
-:::
-::::
-
-## Source separation viewpoint
-
-:::: {.columns}
-::: {.column width="58%"}
-
-- columns of $W$: latent sources / templates
-- columns of $H^\top$: activations / mixing coefficients
-- low rank = small number of sources
-
-With $r$ sources:
+A low-rank model describes the columns of $M$ if they live in a smaller subspace.
 
 $$
-M \approx WH^\top,\qquad W\in\mathbb{R}_+^{n_1\times r},\;H\in\mathbb{R}_+^{n_2\times r}.
+\exists\, U\in\mathbb{R}^{n_1\times r},\; V\in\mathbb{R}^{n_2\times r} \text{ such that } \forall j\le n_2,\; M[:,j] = UV^\top[:,j].
 $$
 
-:::
-::: {.column width="42%"}
+The columns of $U$ form a basis of the low-dimensional space.
 
-![](../../Figures/linear-mixing-model_WH.png){width="100%"}
+---
 
-:::
-::::
+## Matrix rank and subspace dimension
 
-# Matrix model details
+- If the subspace dimension is minimal, it is the rank of matrix $M$.
+- This is the smallest number $r$ such that $M$ is generated by $r$ basis vectors.
+- The low-rank model reduces the dimension whenever $r \le \min(n_1,n_2)$.
 
-## Matrix as a collection of vectors
+---
 
-:::: {.columns}
-::: {.column width="52%"}
+## A second interpretation: sum of rank-one matrices
 
-Let $M \in \mathbb{R}^{n_1 \times n_2}$.
-
-- each column of $M$ is a vector in $\mathbb{R}^{n_1}$
-- if all columns lie in a subspace of dimension $r$, then
+Another equivalent definition is
 
 $$
-M = UV^\top
+M[i,j] = \sum_{q=1}^r U[i,q] V[j,q].
 $$
 
-with $U \in \mathbb{R}^{n_1 \times r}$ and $V \in \mathbb{R}^{n_2 \times r}$.
-
-:::
-::: {.column width="48%"}
-
-![](../../Figures/lramatrix.png){width="92%"}
-
-:::
-::::
-
-## Low rank as dimensionality reduction
-
-- $U$ stores a basis of a low-dimensional subspace
-- each row of $V$ stores coordinates in that basis
-- if $r \ll \min(n_1,n_2)$, the data admits a compact representation
-
-This is the linear-algebra view of low rank.
-
-## Low rank as a sum of rank-one atoms
-
-The same model can be written as
+Equivalently,
 
 $$
-M[i,j] = \sum_{q=1}^{r} U[i,q]V[j,q]
+M = \sum_{q=1}^{r} u_q v_q^\top.
 $$
 
-or equivalently
+Each term is a rank-one matrix.
+
+---
+
+## Rank-one atoms
+
+The roles of $U$ and $V$ are symmetric.
+
+- $u_q$ and $v_q$ are the factors of the $q$-th rank-one component;
+- matrix $M$ is a sum of $r$ such simple atoms;
+- this is an atomic decomposition of the data.
+
+---
+
+## Rank as complexity
+
+The rank of a matrix is a measure of its complexity.
+
+- rank-one matrices are simple;
+- full-rank matrices are more complicated;
+- low-rank matrices can be summarized by a small number of atoms.
+
+The model uses $(n_1+n_2)r$ parameters instead of $n_1n_2$.
+
+---
+
+## Low-rank approximations
+
+In most real applications, data matrices are not exactly low-rank, but are well approximated by low-rank matrices.
+
+A rank-$r$ approximation is the optimization problem
 
 $$
-M = \sum_{q=1}^{r} U[:,q]V[:,q]^\top.
+\arg\min_{\operatorname{rank}(N)\le r} \|M-N\|_F^2.
 $$
 
-## Why rank-one atoms matter
-
-- rank-one matrices are simple building blocks
-- a low-rank matrix uses only a few such atoms
-- low rank is therefore a notion of **model complexity**
-
-This atomic viewpoint will transfer nicely to tensors.
-
-## Parameter counting
-
-- full matrix: $n_1 n_2$ parameters
-- rank-$r$ factorization: $(n_1+n_2)r$ parameters
-
-When $r$ is small, low-rank models can both
-
-- compress data
-- reveal latent structure
-
-## Exact factorization vs approximation
-
-In applications, the data is usually **not exactly** low rank.
-
-We therefore seek a rank-$r$ approximation:
+where
 
 $$
-\min_{\operatorname{rank}(N)\le r} \|M-N\|_F^2
+\|M-N\|_F^2 = \sum_{i,j} (M_{ij}-N_{ij})^2.
 $$
 
-or, in factorized form,
+---
+
+## Equivalent factorization form
+
+The approximation can be parameterized by two factors:
 
 $$
-\min_{U,V} \|M-UV^\top\|_F^2.
+\arg\min_{U\in\mathbb{R}^{n_1\times r},\;V\in\mathbb{R}^{n_2\times r}} \|M - UV^\top\|_F^2.
 $$
 
-## The Eckart-Young theorem
+This is the Burer-Montero factorization.
 
-If $M = ASB^\top$ is an SVD, then the best rank-$r$ approximation in Frobenius norm is given by the truncated SVD:
+---
+
+## Exact low-rank factorization
+
+The exact factorization problem is written as
 
 $$
-M_r = A_{:,1:r} S_{1:r,1:r} B_{:,1:r}^\top.
+\text{Find } U\in\mathbb{R}^{n_1\times r},\;V\in\mathbb{R}^{n_2\times r}\text{ such that } M = UV^\top.
 $$
 
-This is one of the rare nonconvex problems with a direct optimal solution.
+This is often used as a conceptual model even when exact equality is impossible in practice.
 
-## PCA as a low-rank approximation
+---
 
-![](../../Figures/Pca.png){width="82%"}
+## Frobenius norm and SVD
 
-## Why this result is exceptional
+The Frobenius norm is the most common loss for LRA because it yields a closed-form solution.
 
-- It relies on
-  - Frobenius (or spectral) norm
-  - no extra constraints
-  - orthogonality hidden in the SVD
-- As soon as we change the loss or add constraints, closed forms usually disappear
+Let
 
-## When SVD is not enough
+$$
+M = A S B^\top
+$$
 
-In source separation, the factors must often satisfy physical properties:
+be the singular value decomposition of $M$.
 
-- nonnegativity
-- sparsity
-- simplex constraints
-- structural coupling across modes
+Then the optimal rank-$r$ approximation is obtained by the truncated SVD.
 
-Then "best approximation" is no longer the full story.
+---
+
+## Eckart-Young theorem
+
+> Assume data matrix $M$ admits the singular value decomposition $M = A S B^\top$. Then
+>
+> $$
+> \arg\min_{\operatorname{rank}(N)\le r}\|M-N\|_F^2
+> $$
+>
+> admits the truncated SVD as a solution,
+>
+> $$
+> N^\ast = A_{:,1:r} S_{1:r,1:r} B_{:,1:r}^\top.
+> $$
+
+The residual is exactly $\sum_{q=r+1}^{\min(n_1,n_2)} S_{q,q}^2$.
+
+---
+
+## Why this is so useful
+
+- LRA in Frobenius norm is one of the rare nonconvex problems with a direct, efficient solution.
+- The truncated SVD gives the optimal low-rank approximation under squared loss.
+- This makes PCA and related models computationally attractive.
+
+---
+
+## But not all losses are the same
+
+The same result holds for the spectral norm with a different residual, but for arbitrary loss functions, truncated SVD is generally not the solution.
+
+A different loss often encountered in LRA is the KL divergence.
+
+---
 
 ## Why are data matrices often approximately low-rank?
 
-Three recurring explanations:
+After years of research, one recurring phenomenon is striking:
 
-1. latent-variable models often generate approximately low-rank matrices
-2. separable multivariate phenomena produce rank-one terms
-3. mixtures of a few sources naturally lead to small-rank models
+- Many data matrices found in practice are approximately low-rank.
+- There is no universal explanation, but several reasons exist.
 
-## Reason 1: latent variables
+---
 
-- many generative models depend on a small number of hidden variables
-- observed features become correlated
-- the data matrix is then well approximated in a low-dimensional subspace
+## Reason 1: nice latent-variable models are low-rank
+
+“Nice” latent variable models are often of low-rank form.
+
+- For many generative models, the resulting data matrix is well approximated by a low-rank matrix.
+- This observation is central in signal processing and machine learning.
+
+---
 
 ## Reason 2: separable maps
 
-Rank-one matrices correspond to separable functions:
+The entries of a rank-one matrix are samples of a separable map:
 
 $$
-f(x,y)=f_1(x)f_2(y).
+f(x,y) = f_1(x)f_2(y).
 $$
 
-Sums of a few separable terms are ubiquitous in physics and signal processing.
+This is common in physics because it gives a simple description of multivariate functions.
 
-## Reason 3: source separation
+---
 
-- a few sources are mixed in varying proportions
-- templates stay mostly fixed
-- activations vary across samples
+## Reason 3: source separation interpretation
 
-Hence
+Low-rank models can be interpreted as linear source separation models.
 
-$$
-M \approx UV^\top
-$$
+- rank is the number of underlying sources;
+- $U$ contains source templates;
+- $V$ contains mixing coefficients.
 
-with a rank equal to the number of sources.
+Nonlinearities, noise, and missing data corrupt the low-rank structure.
 
-## But do the factors mean anything?
+---
 
-Approximation quality alone is not enough.
+## Source-separation viewpoint
 
-We also care about:
+- In many applications, factor matrices have physical meaning.
+- Practitioners often want LRA to recover the true underlying factors.
+- This raises two central questions.
 
-1. **identifiability**: are the factors essentially unique?
-2. **robustness**: are they stable in the presence of noise?
+---
 
-## Rotation ambiguity
+## Two key questions
+
+1. Is the model essentially identifiable?
+2. Is the estimation robust in the presence of noise?
+
+These questions are essential when the factors are interpreted physically.
+
+---
+
+## Identifiability issue
+
+The answer to the first question is negative in general.
 
 If
 
 $$
-M = U_1V_1^\top = U_2V_2^\top,
+U_1 V_1^\top = U_2 V_2^\top,
 $$
 
-then in general
+then the two bases may represent the same subspace, with
 
 $$
-U_1 = U_2Q,\qquad V_1 = V_2Q^{-\top}
+U_1 = U_2 Q
 $$
 
 for some invertible matrix $Q$.
 
-## Consequence of rotation ambiguity
+This is a fundamental rotation ambiguity.
 
-- the subspace may be identifiable
-- the individual factors are generally **not**
-- this is a major obstacle for source separation
+---
 
-So we need **regularization** or a richer model.
+## Trivial ambiguities in LRA
 
-# Nonnegative Matrix Factorization
+The main ambiguities are:
 
-## Definition of NMF
+- scaling ambiguity: $ab^\top = \frac{1}{\lambda} a \cdot \lambda b^\top$;
+- permutation ambiguity: $UV^\top = U\Pi\, (V\Pi)^\top$.
 
-For a nonnegative matrix $M$,
+These are not harmful if we only care about the subspace.
 
-$$
-M \approx WH
-$$
+---
 
-with
+## Essential uniqueness
 
-$$
-W \in \mathbb{R}_+^{n_1 \times r}, \qquad H \in \mathbb{R}_+^{r \times n_2}.
-$$
+> Essential uniqueness means uniqueness up to permutations and scalings.
 
-## Why nonnegativity?
+This is the natural notion of identifiability for low-rank models.
 
-Nonnegativity is natural when factors represent:
+It is often the best one can hope for when interpreting factors.
 
-- spectra
-- concentrations
-- images
-- abundances
-- energies
-- probabilities or counts
+---
 
-## NMF as a constrained approximation problem
+## Why regularization matters
 
-Typical formulation in Frobenius norm:
+The factor matrices may not be meaningful approximations of the true pair $(U^\ast, V^\ast)$ unless additional structure is imposed.
+
+This motivates constrained or regularized LRA.
+
+---
+
+## Regularized LRA formulation
+
+Regularized LRA can be written as
 
 $$
-\min_{W \ge 0,\; H \ge 0} \|M-WH\|_F^2
+\min_{U, V} f(Y,UV) + g_U(U) + g_V(V).
 $$
 
-- no general closed form
-- nonconvex
-- still tractable in practice
+The regularizers $g_U$ and $g_V$ promote properties such as:
 
-## What changes compared to SVD?
+- smoothness,
+- sparsity,
+- nonnegativity,
+- physical constraints.
 
-- better interpretability
-- physically plausible factors
-- potentially improved identifiability
+---
 
-but also
+## Why regularization helps identifiability
 
-- harder optimization
-- no exact analogue of truncated SVD
-- rank selection becomes more difficult
-
-## How do we fit NMF?
-
-High-level idea:
-
-1. fix $H$, update $W$
-2. fix $W$, update $H$
-3. repeat until convergence
-
-This is the core principle behind many alternating algorithms.
-
-## Alternating optimization at a glance
-
-:::: {.columns}
-::: {.column width="52%"}
-
-At a high level, we cycle between simple subproblems:
+A regularization on each factor separately is important because
 
 $$
-\begin{cases}
-W^{(k+1)} = \arg\min_{W \ge 0} f(M,WH) + g_W(W) \\
-H^{(k+1)} = \arg\min_{H \ge 0} f(M,W^{(k+1)}H) + g_H(H)
-\end{cases}
+UV^\top = U P (V P)^\top
 $$
 
-- one block is updated at a time
-- each step is simpler than the full problem
-- this philosophy extends to nCP and NTD
+still describes the same subspace for invertible $P$.
 
-:::
-::: {.column width="48%"}
+A regularizer on the product $UV^\top$ would not break this ambiguity.
 
-![](../../Figures/AO_majorization.png){width="100%"}
+---
 
-:::
-::::
+## Nonnegative matrix factorization
 
-## Fitting NMF in practice
+A very important special case is NMF.
 
-Common choices include:
-
-- Alternating Nonnegative Least Squares (ANLS)
-- Hierarchical Alternating Least Squares (HALS)
-- multiplicative updates
-
-Lecture 2 will explain why NNLS is the central subproblem.
-
-## The rank question
-
-- in SVD, singular values help a lot
-- in NMF, deflation is not so simple
-- several ranks are often tried in practice
-- the smallest exact feasible rank is the **nonnegative rank**
-
-## NMF geometry: conic viewpoint
-
-Each column of $M$ belongs to the cone generated by the columns of $W$:
+The exact NMF model is
 
 $$
-M[:,j] \in \operatorname{cone}(W).
+\text{Find } W\in\mathbb{R}_+^{n_1\times r},\; H\in\mathbb{R}_+^{n_2\times r}\text{ such that } M = W H^\top.
 $$
 
-NMF is therefore a geometric problem in the nonnegative orthant.
+This is a natural constraint when factors represent concentrations, spectra, probabilities, or similar nonnegative quantities.
 
-## A conic interpretation of NMF
+---
 
-![](../../Figures/Nmfr3d3.png){width="78%"}
+## Approximate NMF
 
-## Why NMF is often non-unique
+With squared Frobenius loss, approximate NMF solves
 
-Even with nonnegativity, many cones may contain the same data cloud.
+$$
+\arg\min_{W\in\mathbb{R}_+^{n_1\times r},\;H\in\mathbb{R}_+^{n_2\times r}} \|M - W H^\top\|_F^2.
+$$
 
-- low reconstruction error does not imply factor uniqueness
-- good source separation needs stronger geometric information
+Unlike unconstrained LRA, exact or approximate NMF does not generally admit closed-form solutions.
 
-## A simple picture of non-uniqueness
+---
 
-![](../../Figures/Nmfr2.png){width="80%"}
+![](../../Figures/nmfmatrix.png){fig-align="center" width="70%"}
 
-## Normalizing onto the simplex
+## NMF geometry
 
-If columns are $\ell_1$-normalized, we can project the geometry onto the simplex.
+Nonnegative matrix factorization writes a nonnegative matrix as the product of two nonnegative factor matrices.
 
-Then:
+It is especially useful in source separation and pattern mining.
 
-- data become points in a polytope
-- columns of $W$ become vertices or extreme rays
-- columns of $H^\top$ describe convex combinations
+---
 
-## Exact NMF on the simplex
+## NMF and physical meaning
 
-![](../../Figures/Nmfsimplex_pres.png){width="88%"}
+In many applications, the factor matrices have a physical interpretation.
 
-## Geometric lesson from the simplex view
+- matrix $W$ often stores templates;
+- matrix $H$ stores activations or abundances;
+- the model can reveal latent sources in the data.
 
-For low-dimensional exact NMF:
+---
 
-- uniqueness becomes possible when data touch the boundary
-- if data remain strictly inside, many factorizations may coexist
+## The hyperspectral example
 
-So the data geometry matters as much as the loss function.
+![](../../Figures/Hsi_nmf.png){fig-align="center" width="80%"}
 
-## A key identifiability idea: sufficiently scattered
+NMF performs spectral unmixing on hyperspectral images, identifying spectra and abundance maps.
 
-- data should spread widely inside the cone / simplex
-- points should get close to extreme directions
-- the feasible cone around the data becomes much tighter
+---
 
-This explains why sparse or extreme observations are very valuable.
+## A central issue: can NMF be unique?
 
-## Three major regularization families for NMF
+- Inverse problems require uniqueness to be interpretable.
+- NMF is often not unique without additional structure.
+- This motivates regularized NMF.
 
-1. **Separable NMF**
-2. **Sparse NMF**
-3. **Minimum-volume / maximum-volume NMF**
+---
 
-All aim at ruling out unrealistic factorizations.
+## Regularized NMF
+
+There are at least three main regularization strategies.
+
+1. separable NMF;
+2. sparse NMF;
+3. minimum-volume or maximum-volume NMF.
+
+Each restricts the set of valid solutions.
+
+---
 
 ## Separable NMF
 
-Assumption:
+The columns of $W$ are required to come from the columns of the data matrix $M$:
 
 $$
-M = M[:,\mathcal{K}] H
+M = M[:,\mathcal{K}] H^\top,
 $$
 
-for some subset of columns $\mathcal{K}$.
+where $\mathcal{K}$ is a subset of indices.
 
-Interpretation: the templates are present in the data themselves.
+This drastically restricts the solution set and yields interpretable patterns.
 
-## Geometry of separable NMF
-
-![](../../Figures/Sepnmf.png){width="88%"}
-
-## Why separable NMF is useful
-
-- strong interpretability
-- efficient algorithms exist
-- excellent initialization for generic NMF solvers
-
-Limitation:
-
-- it fails when no nearly pure data point is observed
+---
 
 ## Sparse NMF
 
-Typical idea:
+A typical sparse NMF objective is
 
 $$
-\min_{W,H \ge 0} \|M-WH\|_F^2 + \lambda\,\Omega(W,H)
+\arg\min_{W\in\mathbb{R}_+^{n_1\times r},\,H\in\mathbb{R}_+^{n_2\times r}} \|Y-WH^\top\|_F^2 + \lambda(\|W\|_F^2 + \|H\|_1).
 $$
 
-with $\Omega$ promoting zeros in $W$ and/or $H$.
+Sparse regularization pushes entries of $H$ toward zero and can encourage identifiability.
 
-Sparsity often pushes solutions toward more identifiable geometries.
+---
 
 ## Minimum-volume NMF
 
-- choose the cone generated by $W$ as tight as possible around the data
-- relaxes the pure-pixel assumption of separability
-- often linked to maximizing the spread of coefficients in $H$
+The idea is to choose the matrix $W$ to be as close as possible to the convex hull of the data.
 
-Very relevant when mixtures are real but pure sources are absent.
-
-## NMF: what to remember
-
-- NMF is much more interpretable than unconstrained LRA
-- but nonnegativity alone does **not** solve everything
-- identifiability depends on geometry and regularization
-- optimization deserves dedicated methods
-
-## Short pause before tensors
-
-Matrices model mixtures indexed by two axes.
-
-But many datasets are naturally indexed by:
-
-- frequency × time × bar
-- wavelength × row × column
-- feature × sample × condition
-
-This leads to tensors.
-
-# Tensor decompositions
-
-## Why tensors?
-
-- multiway data carries richer structure than a flattened matrix
-- flattening may destroy interactions between modes
-- multilinear models preserve these interactions
-
-## What is a tensor?
-
-Informally:
-
-- a scalar is order 0
-- a vector is order 1
-- a matrix is order 2
-- a tensor is order 3 or more
-
-In data science, tensors are often just multiway arrays.
-
-## Matrix intuition still helps
-
-Good news:
-
-- many tensor ideas are extensions of matrix ideas
-- rank-one building blocks still matter
-- alternating algorithms still appear
-
-Bad news:
-
-- uniqueness and optimization behave differently
-
-## Rank-one tensors
-
-For a third-order tensor,
+A popular quantity is
 
 $$
-x \otimes y \otimes z
+\log \det(W^\top W),
 $$
 
-is the tensor with entries
+which measures the volume of the cone spanned by $W$.
 
-$$
-(x \otimes y \otimes z)[i,j,k] = x[i]y[j]z[k].
-$$
+---
 
-## Two main tensor models today
+## Practical lesson
 
-1. **CP decomposition**
-   - sum of rank-one tensors
-2. **Tucker decomposition**
-   - multilinear dimensionality reduction with a core tensor
+In many applications, regularized NMF should be considered instead of plain NMF.
 
-## CP decomposition
+- identifiability is not a minor technicality;
+- it is central to interpretation and scientific validity;
+- this matters especially in automatic transcription and other source-separation tasks.
 
-For $T \in \mathbb{R}^{n_1 \times n_2 \times n_3}$,
+---
 
-$$
-T[i,j,k] = \sum_{q=1}^{r} A[i,q]B[j,q]C[k,q].
-$$
+## Conclusion of Lecture 1
 
-It is the tensor analogue of decomposing data into rank-one atoms.
+- LRA is a central model in machine learning and signal processing.
+- Low-rank approximations are powerful because they compress and reveal structure.
+- PCA is the canonical example of a low-rank model with a closed-form solution.
+- Regularization is needed when the factors are intended to have a physical meaning.
+- Nonnegative LRA is a natural and important instance of this philosophy.
 
-## CP decomposition as a picture
+---
 
-![](../../Figures/Cpd.png){width="82%"}
+## Next lecture preview
 
-## Why CP is important
+The next step is to go beyond the introduction and study:
 
-- it can be essentially unique under generic conditions
-- this is a major contrast with matrix factorizations
-- it is both a source separation model and a dimensionality reduction tool
+- matrix and tensor decomposition models,
+- identifiability and ambiguity,
+- regularized low-rank optimization,
+- numerical algorithms for nonnegative and constrained LRA.
 
-## Where does CP identifiability come from?
-
-Very informally:
-
-- each slice must share the same latent factors
-- this coupling removes rotation ambiguities
-- the intersection of all compatible matrix factorizations becomes much smaller
-
-## CP as coupled matrix factorization
-
-For each slice $k$,
-
-$$
-T[:,:,k] = A\,\operatorname{Diag}(C[k,:])\,B^\top.
-$$
-
-Same factors $A$ and $B$ are reused across all slices.
-
-That shared structure is the key.
-
-## Approximate CP decomposition
-
-With Frobenius loss, we solve
-
-$$
-\min_{A,B,C} \|T-\llbracket A,B,C \rrbracket\|_F^2.
-$$
-
-This is again a nonconvex multiblock problem.
-
-## How is CP fitted?
-
-The classical algorithm is **ALS**:
-
-1. update $A$
-2. update $B$
-3. update $C$
-4. repeat
-
-Each subproblem is linear least squares.
-
-## A caveat: CP approximation can be ill-posed
-
-- the set of tensors of rank at most $r$ is not closed
-- a best rank-$r$ approximation may fail to exist
-- components can diverge while compensating each other
-
-This is very different from the matrix case.
-
-## Why regularization matters again
-
-Regularization for tensor models can help with:
-
-- interpretability
-- robustness
-- optimization landscape
-- **existence of a minimizer**
-
-## Nonnegative CP decomposition
-
-For nonnegative tensor data,
-
-$$
-\min_{A \ge 0,\; B \ge 0,\; C \ge 0}
-\|T-\llbracket A,B,C \rrbracket\|_F^2
-$$
-
-This is the direct tensor analogue of NMF.
-
-## Why nonnegative CP is attractive
-
-- factors remain physically meaningful
-- nonnegativity prevents cancellation at infinity
-- the approximation problem becomes well posed
-
-So nonnegativity helps both modeling **and** optimization.
-
-## How do we fit nonnegative CP?
-
-- alternating updates are still the default choice
-- each factor update becomes a set of **NNLS** problems
-- the method is often called **ANLS**
-
-Again, Lecture 2 will provide the algorithmic engine.
-
-# Tucker and nonnegative Tucker
-
-## Tucker decomposition
-
-For a third-order tensor,
-
-$$
-T = \llbracket U,V,W;G \rrbracket
-$$
-
-with:
-
-- factor matrices $U,V,W$
-- a smaller core tensor $G$
-
-## Tucker decomposition as a picture
-
-![](../../Figures/Tucker.png){width="82%"}
-
-## Tucker as multilinear dimensionality reduction
-
-The model writes
-
-$$
-T = G \times_1 U \times_2 V \times_3 W.
-$$
-
-- $U,V,W$ define low-dimensional subspaces
-- $G$ stores interactions in reduced coordinates
-
-## Multilinear ranks
-
-Instead of one rank $r$, Tucker uses
-
-$$
-(r_1,r_2,r_3)
-$$
-
-with $r_i \le n_i$.
-
-This gives much more flexibility than CP.
-
-## Tucker vs CP
-
-**CP**
-
-- diagonal core
-- stronger compression
-- stronger uniqueness properties
-
-**Tucker**
-
-- dense core
-- more flexible interactions
-- closer to matrix subspace models
-
-## Tucker is not identifiable in general
-
-There are rotation ambiguities in each mode:
-
-$$
-U \mapsto UQ,\qquad G \mapsto G \times_1 Q^{-1}
-$$
-
-and similarly for the other modes.
-
-So Tucker is usually **not** unique without extra constraints.
-
-## Classical Tucker regularization
-
-The standard choice is **orthogonality**:
-
-- orthogonal factors define principal multilinear subspaces
-- HOSVD gives a strong computational baseline
-
-This is the tensor counterpart of PCA-style dimensionality reduction.
-
-## Nonnegative Tucker decomposition (NTD)
-
-For nonnegative data, we may instead seek
-
-$$
-T \approx \llbracket U,V,W;G \rrbracket
-$$
-
-with
-
-$$
-U,V,W,G \ge 0.
-$$
-
-## Why nonnegative Tucker?
-
-- preserves interpretability in every mode
-- more flexible than nCP when interactions are not diagonal
-- often very natural for count, spectrogram, or image-like tensors
-
-## Application viewpoint for NTD
-
-:::: {.columns}
-::: {.column width="55%"}
-
-For music structure analysis, a tensor can index:
-
-- frequency
-- time within a bar
-- bar index
-
-NTD then extracts recurring patterns jointly across these modes.
-
-:::
-::: {.column width="45%"}
-
-![](../../Figures/NNTucker_Music.png){width="100%"}
-
-:::
-::::
-
-## How do we fit NTD?
-
-Typical strategy:
-
-1. fix all blocks except one
-2. solve a nonnegative least-squares type subproblem
-3. cycle over factor matrices and the core tensor
-
-This is again alternating optimization.
-
-## NTD is algorithmically close to NMF
-
-- same nonnegativity philosophy
-- same NNLS building blocks
-- same importance of initialization and scaling
-- but more expensive tensor contractions
-
-## The main open question
-
-For NTD, a major unresolved theme is:
-
-### when is the decomposition identifiable?
-
-Compared with CP, the answer is still much less complete.
-
-## Why this matters
-
-If NTD is used only for compression, ambiguity may be acceptable.
-
-If NTD is used for:
-
-- source separation
-- pattern discovery
-- scientific interpretation
-
-then ambiguity becomes a real issue.
-
-## A practical summary of tensor choices
-
-- choose **CP/nCP** when rank-one latent components are expected
-- choose **Tucker/NTD** when multilinear subspaces and interactions matter
-- add regularization when interpretability is essential
-
-# Wrap-up
-
-## What we learned today
-
-- low-rank models can be read as compression tools **and** source separation models
-- unconstrained matrix LRA is powerful but not identifiable enough
-- NMF introduces physically meaningful constraints
-- tensors extend the story with CP and Tucker models
-
-## The recurring theme
-
-Across all these models, three questions keep coming back:
-
-1. **What structure do we want?**
-2. **Is it identifiable?**
-3. **How do we optimize it efficiently?**
-
-## Looking ahead to Lecture 2
-
-Lecture 2 focuses on the optimization core behind these models:
-
-- Nonnegative Least Squares (NNLS)
-- KKT conditions
-- HALS
-- multiplicative updates
-- KL-based variants
-
-## Take-home message
-
-Low-rank approximation is easy to motivate.
-
-Interpretable low-rank approximation is the real challenge.
-
-That is precisely why **nonnegativity, geometry, and optimization** matter so much.
