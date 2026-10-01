@@ -26,17 +26,25 @@ execute:
 
 # Introduction: Regularized Low-Rank Approximations
 
+## Example NMF with hyperspectral imaging
+
+![](../figures/Hsi_nmf.png){fig-align="center" width="100%"}
+
+## Example NMF for piano transcription (Lecture 4)
+
+![](../figures/transcription_simple.png){fig-align="center" width="80%"}
+
 ## Low-rank approximations
 
 ::: {.columns}
 ::: {.column width="55%"}
 
 - **Workhorse methods** in unsupervised ML:
-  - Dimensionality reduction {cite:p}`Tucker1966Some, Golub1989Matrix, hotelling1992relations`
-  - Blind source separation {cite:p}`harshman1970foundations, Paatero1997weighted, Lee1999Learning`
-- **Principal Component Analysis (PCA)**:
+  - Dimensionality reduction [Tucker1966], [Golub1989], [Hotelling1992]
+  - Blind source separation [Harshman1970], [Paatero1997], [Lee1999]
+<!-- - **Principal Component Analysis (PCA)**:
   - Most prominent LRA method
-  - Efficiently computed via Singular Value Decomposition (SVD)
+  - Efficiently computed via Singular Value Decomposition (SVD) -->
 - **Formal LRA formulation**:
   $$ \min_{U\in\mathbb{R}^{m\times r},V\in\mathbb{R}^{n\times r}} f(Y, UV^T) $$
   - Rank $r \ll m,n$
@@ -45,10 +53,9 @@ execute:
 :::
 ::: {.column width="45%"}
 
-![](../figures/Pca.png){fig-align="center" width="100%"}
 ![](../figures/lramatrix.png){fig-align="center" width="100%"}
 
-attention notations
+TODO attention notations
 
 :::
 :::
@@ -89,7 +96,8 @@ A joint penalty $g(UV^T)$ cannot discriminate between rotated solutions $UP(VP)^
 Essential uniqueness is the uniqueness up to permutations and scaling ambiguities inherent to LRA models.
 ```
 
-## PCA as regularized LRA
+
+## Regularized LRA
 
 ::: {.columns}
 ::: {.column width="50%"}
@@ -97,7 +105,7 @@ Essential uniqueness is the uniqueness up to permutations and scaling ambiguitie
 ### PCA (Orthogonal LRA)
 
 - **Constraint**: Imposes orthogonality $U^T U = I, V^T V = I$
-- **Uniqueness**: Essentially unique factors (if singular values are distinct {cite:p}`Golub1989Matrix`)
+- **Uniqueness**: Essentially unique factors (if singular values are distinct)
 - **Limitation**: Orthogonality is often **not physically meaningful**
 - **Impact**: Estimated factors $(U,V)$ can be poor approximations of ground truth $(U^\ast, V^\ast)$
 
@@ -107,18 +115,14 @@ Essential uniqueness is the uniqueness up to permutations and scaling ambiguitie
 ### NMF (Nonnegative LRA)
 
 - **Constraint**: $g_U, g_V$ set to indicator functions of $\mathbb{R}_+$
-- **Uniqueness**: Unique under realistic conditions {cite:p}`gillisNonnegativeMatrixFactorization2020`
+- **Uniqueness**: Unique under realistic conditions [Gillis2020]
 - **Advantage**: Elementwise nonnegativity is a **natural physical prior**
 - **Use Cases**: Ideal for source separation, pattern mining, spectral unmixing
 
 :::
 :::
 
-TODO add: Topic of Lecture 1
-
-## Example NMF with hyperspectral imaging
-
-![](../figures/Hsi_nmf.png){fig-align="center" width="100%"}
+Topic of Lecture 1: "Regularized LRA".
 
 
 ## Tensor LRA
@@ -131,7 +135,7 @@ TODO add: Topic of Lecture 1
 - **Canonical Polyadic Decomposition (CPD)**:
   - Multilinear diagonalization into $r$ rank-one factor matrices $(A, B, C, \dots)$
 - **Inherent Identifiability**:
-  - Uniquely identifiable **without regularizations** under mild conditions {cite:p}`Kruskal1977Three`
+  - Uniquely identifiable **without regularizations** under mild conditions [Kruskal1977]
 - **Role of Regularization in Tensor LRA**:
   - Nonnegativity & sparsity still essential in practice
   - Enhances interpretability and robustness against noise
@@ -144,7 +148,7 @@ TODO add: Topic of Lecture 1
 :::
 :::
 
-TODO add: Topic of Lecture 1
+Topic of Lecture 1: "Regularized LRA".
 
 ## Optimization and LRA
 
@@ -170,44 +174,40 @@ TODO add: Topic of Lecture 1
 :::
 :::
 
-TODO add: topic of Lecture 2
+Topic of Lecture 2: "Nonnegative regressions".
 
 ## Challenges in rLRA
 
 ::: {.columns}
 ::: {.column width="50%"}
 
-- **Complex Optimization**:
+- **Numerical Optimization**:
   - Nonconvex, multi-block, and nonsmooth
-  - Leverages acceleration, Majorization-Minimization, AO
 
 - **Integrating Side Information**:
-  - Unsupervised $\rightarrow$ semi/fully-supervised
   - Template libraries, downstream tasks, deep priors, sparse bases
 
 - **Multimodality & Coupled rLRA**:
   - Joint processing across diverse sensors (e.g., EEG + fMRI)
-  - Differs in dynamics, noise, and data types
 
 :::
 ::: {.column width="50%"}
 
 - **Model Properties & Identifiability**:
-  - Elusive properties (e.g., Nonnegative Tucker {cite:p}`sahaIdentifiabilityNonnegativeTucker2025`)
+  - Elusive properties (e.g., Nonnegative Tucker [Saha2025])
   - Practical, verifiable guarantees are hard to obtain
 
 - **Scientific Software Ecosystem**:
-  - Tensor software is fragmented ($>70$ packages {cite:p}`psarrasLandscapeSoftwareTensor2022`)
+  - Tensor software is fragmented ($>70$ packages [Psarras2022])
   - Lack of large-scale contraction support & speed/memory trade-off caching
 
 :::
 :::
 
-- My HDR manuscript that contains the long version of this masterclass cite TODO
-Some other books to check:
-- Pierre Comon and Rasmus Bro {cite:p}`cohenTensorDecompositionsPrinciples2023`. 
-- The book of Golub and Van Loan provides a complete description of matrix low-rank models {cite:p}`Golub1989Matrix`. 
-- The recent book of Grey Ballard and Tammy Kolda provides a deeper introduction to tensor decompositions, with a focus on computational aspects {cite:p}`ballardTensorDecompositionsData2025`.
+- My HDR manuscript that contains the long version of this masterclass [[link]](https://cohenjer.github.io/HDR/intro.html). Some other books to check:
+  - Book chapter with Pierre Comon and Rasmus Bro.
+  - The book of Golub and Van Loan provides a complete description of matrix low-rank models. 
+  - The recent book of Grey Ballard and Tammy Kolda provides a deeper introduction to tensor decompositions, with a focus on computational aspects.
 
 
 
@@ -236,6 +236,9 @@ Some other books to check:
 :::
 ::: {.column width="45%"}
 
+<br>
+<br>
+
 ![](../figures/Pca.png){fig-align="center" width="100%"}
 
 :::
@@ -251,30 +254,51 @@ Some other books to check:
 - **Formulation**:
   $$ M = \sum_{q=1}^{r} U[:,q] V^T[q,:] $$
   $$ M[i,j] = \sum_{q=1}^{r} U[i,q]V[j,q] $$
-- **Symmetric Factor Matrices**:
   - Both $U \in \mathbb{R}^{n_1\times r}$ and $V \in \mathbb{R}^{n_2\times r}$ play symmetric roles
-- **Rank-One Outer Products**:
-  - $\mathcal{M}_1(n_1,n_2) = \{ ab^T \mid a \in \mathbb{R}^{n_1}, b \in \mathbb{R}^{n_2}, a,b \neq 0 \}$
-  - $\text{rank}(M)$ = minimal number of rank-one terms
+  - Compresses $n_1 n_2$ entries into $(n_1 + n_2)r$ parameters
+  - Naturally extends to **tensor decompositions**
 
 :::
 ::: {.column width="50%"}
 
 ### Atomic Decomposition View
 
-- **Dictionary of Atoms**:
-  - Atoms are rank-one matrices $\mathcal{M}_1(n_1,n_2)$
-- **Measure of Complexity**:
+- **Formulation**:
+  $$ M = \sum_{q=1}^{r} M_q, \; \text{rank}(M_q)\leq 1 $$
+  - Atoms are rank-one matrices 
+    $$M_q\in\{ ab^T \mid a \in \mathbb{R}^{n_1}, b \in \mathbb{R}^{n_2}, a,b \neq 0 \}$$
   - Rank measures matrix complexity
-  - Low-rank ($r \ll \min(n_1,n_2)$) compresses $n_1 n_2$ entries into $(n_1 + n_2)r$ parameters
-- **Key Bridge**:
   - Connects LRA directly to **inverse problems**
-  - Naturally extends to **tensor decompositions**
 
 :::
 :::
+
+:::{style ="text-align:center; font-size=130%;"}
+::: {.callout-important}
+
+$\text{rank}(M)$ = minimal number of rank-one terms
+
+:::
+:::
+
+## Why are data matrices often (approximately) low-rank?
+
+
+### Generative & Physical Reasons
+
+1. **Latent Variable Models**:
+   - Generative models produce low-rank matrices [Udell2019]
+2. **Separable Physical Maps**:
+   - $f(x,y) = f_1(x) f_2(y)$ ubiquitous in physics
+3. **Linear Source Separation**:
+   - $M = UV^T$: $U$ = templates, $V$ = mixing coefficients
+   - Corrupted by noise, missing data, non-linearities
+
+
 
 ## Low-rank approximations: formulation & SVD
+
+In the presence of noise, we are interested in low-rank approximations of a full-rank matrix.
 
 ::: {.columns}
 ::: {.column width="50%"}
@@ -288,9 +312,6 @@ Some other books to check:
 - **Burer-Montero Factorization**:
   $$ \min_{U\in\mathbb{R}^{n_1\times r}, V\in\mathbb{R}^{n_2\times r}} \|M - UV^T \|_F^2 $$
 
-- **Exact Factorization**:
-  $$ \text{Find } U, V \quad \text{s.t.} \quad M = UV^T $$
-
 :::
 ::: {.column width="50%"}
 
@@ -303,39 +324,25 @@ $$ N^\ast = A[:,:r] S[:r,:r] B^T[:r,:] $$
 is optimal in Frobenius (and spectral) norm.
 :::
 
-- **Residual Error**: $\sum_{q=r+1}^{\min(n_1,n_2)} S[q,q]^2$
-- **Uniqueness**: Unique if $r$-th singular value is distinct
-- **Significance**: One of the few non-convex problems with a closed-form global solution
+- Residual Error: $\sum_{q=r+1}^{\min(n_1,n_2)} S[q,q]^2$
+- Unique if $r$-th singular value is distinct
+- Remark: one of the few non-convex problems with a closed-form global solution
 
 :::
 :::
 
-## Why are data matrices often (approximately) low-rank?
+## Identifiability & Robustness
 
-::: {.columns}
-::: {.column width="50%"}
-
-### Generative & Physical Reasons
-
-1. **Latent Variable Models**:
-   - Generative models produce low-rank matrices {cite:p}`udellWhyAreBig2019`
-2. **Separable Physical Maps**:
-   - $f(x,y) = f_1(x) f_2(y)$ ubiquitous in physics
-3. **Linear Source Separation**:
-   - $M = UV^T$: $U$ = templates, $V$ = mixing coefficients
-   - Corrupted by noise, missing data, non-linearities
-
-:::
-::: {.column width="50%"}
-
-### Identifiability & Robustness
-
-- **Question 1: Identifiability?**
+- **Identifiability?**
   - **No!** $M = U_1 V_1^T = U_2 V_2^T \implies U_1 = U_2 Q$ for invertible $Q \in \mathbb{R}^{r\times r}$
   - Rotation ambiguity requires additional constraints/regularization
-- **Question 2: Robustness to Noise?**
+- **Robustness to Noise?**
   - Directly governed by the **condition number** of $M$
 
+
+:::{style="text-align:center; font-size:130%;"}
+::: {.callout-important}
+Regularized LRA = LRA + constraints/priors to promote uniqueness.
 :::
 :::
 
@@ -349,7 +356,7 @@ is optimal in Frobenius (and spectral) norm.
 - **Physical Motivation**:
   - Nonnegativity represents concentrations, spectra, probabilities, power, etc.
 - **Fitting NMF**:
-  - NP-hard problem {cite:p}`Vavasis2010complexity`
+  - NP-hard problem [Vavasis2010]
   - Solved via non-convex optimization (e.g., HALS, MU, CCD)
 - **Rank Selection**:
   - Truncated SVD deflation **does not apply** to NMF
@@ -362,6 +369,20 @@ is optimal in Frobenius (and spectral) norm.
 
 :::
 :::
+
+## History of NMF
+
+
+- **Early ideas**: nonnegative matrix factorization is rooted in older work on positive matrix decompositions and chemometrics, where nonnegativity was a natural physical assumption.
+- **1990s**: the modern NMF formulation emerged through the connection with source separation and latent-variable models; Lee and Seung popularized the problem in the machine learning community. [Lee & Seung1999]
+- **2000s**: NMF became a standard tool for document clustering, hyperspectral unmixing, and image analysis, with the famous multiplicative updates and the rise of interpretable factor models.
+- **2010s–present**: the field broadened to regularized NMF, sparse/volume-constrained variants, separable NMF, and tensor extensions, driven by identifiability and scientific applications.
+
+- NMF is now seen as a canonical example of a regularized low-rank model with strong physical meaning.
+
+## Applications of NMF
+
+![](../figures/applis.png){fig-align="center" width="70%"}
 
 ## Geometric interpretation and identifiability of exact NMF
 
@@ -384,7 +405,7 @@ is optimal in Frobenius (and spectral) norm.
 - Projection onto the unit simplex (e.g. $\ell_1$ normalization)
 - Data lives in a polytope inside the simplex
 - **Uniqueness condition**: Data points must touch the boundaries of the simplex
-- **Sufficiently Scattered Condition**: Guarantees uniqueness if columns of $H^T, W$ spread widely {cite:p}`gillisNonnegativeMatrixFactorization2020`
+- **Sufficiently Scattered Condition**: Guarantees uniqueness if columns of $H^T, W$ spread widely [Gillis2020]
 
 ![](../figures/Nmfsimplex.png){fig-align="center" width="90%"}
 
@@ -400,17 +421,28 @@ is optimal in Frobenius (and spectral) norm.
   - Columns of $W$ are selected directly from columns of $M$:
     $$ M = M[:,\mathcal{K}] H^T \quad \text{with } |\mathcal{K}| = r $$
 - **Advantages**:
-  - Drastically restricts solution space (combinatorial choices)
-  - Solvable in **polynomial time** (e.g., Successive Nonnegative Projection Algorithm - SNPA {cite:p}`gillisSuccessiveNonnegativeProjection2014`)
-  - Fast computation & excellent initialization for general NMF
+  - Drastically restricts solution space
+  - Solvable in **polynomial time** (e.g., Successive Nonnegative Projection Algorithm - SNPA [Gillis2014])
+  - Excellent initialization for other algorithms
   - High interpretability (extracts real data templates)
 - **Limitation**:
   - Fails if no "pure" data points exist (all data points are mixtures)
+  - Sensitive to noise and outliers
 
 :::
 ::: {.column width="50%"}
 
 ![](../figures/Sepnmf.png){fig-align="center" width="100%"}
+
+:::{style="font-size:130%;"}
+::: {.callout-note}
+
+- Rank-two exact separable NMF can be computed in closed form
+- Rank-one exact separable NMF is computed through SVD by the Perron-Frobenius theorem 
+
+
+:::
+:::
 
 :::
 :::
@@ -602,145 +634,236 @@ plt.show()
 :::
 :::
 
-## Tensor decompositions (TODO à continuer)
-
-Tensors are often loosely defined as multiway arrays, that is, extensions of matrices with more than two dimensions. In reality, there are several definitions of tensors in the world of applied mathematics that coincide:
-- Tensors can be seen as multiway arrays.
-- Tensors can be seen as representations of multilinear forms (like matrices represent bilinear forms).
-- Tensors can be seen as representations of multilinear maps (like matrices encode linear operators). The notion of covariant/contravariant spaces is defined in this context.
-- Tensors are vectors in a tensor space (like a matrix $M$ equals $\sum_{i,j} M[i,j]e_i e_j^T$ with $e_i$, $e_j$ canonical basis vectors), which is how I like to define them.
-  
-While for matrices, the coexistence of these concepts does not seem to pose significant issues in the scientific community, these definitions, while compatible, lead to serious misunderstandings between researchers of different scientific fields. In classical mechanics, tensors are generally regarded as multilinear maps, whereas in quantum mechanics, they are elements of tensor spaces of high order (one vector space per quantum particle in the system). In data science, they are generally considered multiway arrays, and in statistics, they are often used to describe higher-order moments. In algebra, tensors are used to represent higher-order polynomials and their associated multilinear form. This leads to confusing discussions, especially regarding the basis of representation for tensors, which is critical in the operator representation point of view but largely irrelevant in the multiway array point of view. These different views even gave birth to [a dedicated Wikipedia page that clarifies these various definitions](https://en.wikipedia.org/wiki/Tensor_(disambiguation)).
-
-In these fields, tensors are used for different reasons, have different characteristics, and represent data and operators. My personal advice to fellow researchers, when faced with scary tensor concepts and notation, is to go back to the matrix case that most of us are more familiar with and then extrapolate the concepts from matrices to tensors. Some authors have long advocated that tensors are a completely different object from matrices, and that their study requires specialized tools and mathematical intuition. While this statement is not false, in my opinion, it is in fact largely exaggerated. What is special is not often tensors but rather unconstrained LRA for matrices and the existence of SVD and the [Eckart-Young theorem](./lra.md#low-rank-approximations). Most problems encountered when working with NMF, such as identifiability, nonconvex optimization, or NP-hardness, hold for many tensor decompositions, both constrained and unconstrained. A particularity of tensors, however, is the necessity of efficient high-order contractions, that is, computing sums of multiway arrays across many indices as fast as possible; see, for instance, this Dagstuhl report to which I modestly contributed {cite:p}`bientinesiTensorComputationsApplications2022`.
-
-In the following, a minimal description of tensor decomposition is provided to understand the contributions summarized later in the manuscript. For a better reference on tensor decompositions, I advise reading either the recent book of Ballard and Kolda {cite:p}`ballardTensorDecompositionsData2025` for a quick practical understanding, or the book of Hackbush {cite:p}`Hackbusch2012Tensor` for a deep mathematical description of tensors. I also enjoyed reading an older reference from Laurent Schwartz {cite:p}`Schwartz1975` on tensor products.
-
-### Tensors and the tensor product
-
-#### The tensor product 
-We start by defining a tensor space in terms of linear algebra. Tensor spaces emerge as a way to provide a "nice" vector space for bilinear objects. Consider the couple $(x,y)\in E\times F$ with $E$ and $F$ two given real (or complex) vector spaces. The Cartesian product $E\times F$ is a vector space of dimension $\text{dim}(E) + \text{dim}(F)$, and scalar multiplication with a scalar $\lambda$ write $\lambda(x,y) = (\lambda x, \lambda y)$. The Cartesian product simply juxtaposes the vector spaces $E$ and $F$, but it does not allow much interaction between them. Notice, for instance, that there is no principled way in the Cartesian product to multiply each vector $x$ and $y$ by two different scalars. Vectors $x$ and $y$ in a Cartesian product are essentially living in two unrelated spaces.
-
-In data mining and low-rank approximations in particular, there is a clear interest in extracting patterns that span across the two dimensions of a matrix. Think how NMF extracts patterns (column of matrix $W$) for each dimension jointly with the activations (columns of matrix $H$). Therefore, we need an underlying vector space that contains interactions between the two vector spaces, larger than the Cartesian product. One way to do this is to consider multilinear maps, such as the scalar product,
-
-$$ \langle x,y \rangle = u(x,y),$$
-where $u$ is a multilinear map acting on the couple $(x,y)$. The core idea of tensor spaces and the tensor product is to find a canonical way to map the couple $(x,y)$ to a vector $\otimes(x,y):= x\otimes y$, where $\otimes$ is the tensor product, such that the multilinear map $u$ decomposes as a linear map $w_u$ acting on the tensor product:
-
-$$ u(x,y) = w_u(\otimes(x,y)) = w_u(x\otimes y).$$
-The tensor product is, therefore, a canonical multilinear map that can be used to make all multilinear maps linear. An important mathematical result, proved for instance in {cite:p}`Schwartz1975` and called the universality theorem, is that this canonical multilinear map $\otimes$ always exists and that for any multilinear map $u$ and fixed tensor product $\otimes$, there is a **unique** linear map $w_u$ such that $u(x,y) = w_u(x\otimes y)$. The set $E\otimes F:=\{x\otimes y, (x,y)\in E\times F\}$ is a vector space, coined the tensor product space. Its dimension is $\text{dim}(E)\text{dim}(F)$ and it is generated by basis elements $e_i\otimes f_j$ for two bases $\{e_i\}_i$ and $\{f_j\}_j$ of vector spaces $E$ and $F$ respectively.
-
-The tensor product itself is not unique. However, it can be shown that any two tensor products are related through an isomorphism. This fact is very well known to all data scientists. Take the outer product $xy^T$, and the Kronecker product $x\otimes_K y$. It turns out both are tensor products, related through a trivial isomorphism: row-first vectorization.
-
-For most practical use cases, **one may identify vector spaces $E$ and $F$ with $\mathbb{R}^{n_1}$ and $\R{n_2}$, and the tensor product with the outer product** 
-
-$$(x\otimes y)[i,j] = xy^T[i,j] = x[i] y[j].$$
-Going back to the scalar product example, with the outer product as a tensor product, the linear map associated with the bilinear scalar product is the trace operator:
-
-$$\langle x, y \rangle = \text{Tr}(xy^T).$$
-One interesting piece of multilinear algebra theory, however, is that, in finite dimensions, the vector space of linear maps acting on a tensor space is also a tensor space, of the form $\mathcal{L}(E) \otimes \mathcal{L}(F)$ {cite:p}`Hackbusch2012Tensor`. The natural tensor product in linear operator spaces for matrix representation is the Kronecker product, and this can be used to generalize tensor decompositions to linear operators quite naturally, as done in the PhD thesis of Cassio Fraga Dantas {cite:p}`dantasAcceleratingSparseInverse2019`. When considering linear operators acting on tensors, for instance $A$ acting on $x$ and $B$ acting on $y$, we simply write them in the form $(A\otimes B)(x\otimes y):= Ax\otimes By$.
-
-```{important}
-This discussion holds not only for two vector spaces $E$ and $F$, but for any number of vector spaces $E_i$, with $i\leq d$. A tensor is any element of the tensor space $E_1\otimes \cdots \otimes E_d$; we call the integer $d$ the order of the tensor, or the number of modes of the tensor. Mode $i$, or dimension $i$, denotes the particular vector space $E_i$.
-```
-
-#### Rank-one tensors are generators of the full tensor space
-
-We have seen by construction that any vector $x\otimes y$ for $(x,y)\in E\otimes F$ belongs to the tensor space $E\otimes F$. Since $E\otimes F$ is a vector space, we may add an arbitrary number of such vectors and stay inside $E\otimes F$. This means that any vector of the form
-
-$$ \sum_{i\leq p} x_i \otimes y_i $$
-with $p$ some finite integer is in $E\otimes F$. We call elements of $E\otimes F$ of the form $x\otimes y$ **rank-one tensors**.
-
-This construction raises two immediate questions of crucial importance
-1. Can all elements of $E\otimes F$ be described as a sum of rank-one tensors? If so, how large must $p$ be?
-2. Are all elements of $E\otimes F$ rank-one tensors, and if not, what is the smallest number of terms that describes a given tensor?
-
-```{margin}
-The fact that $\{e_i\otimes f_j\}_{i,j}$ is a basis of $E\otimes F$ is often a direct consequence of the construction of $E\otimes F$, while the universality theorem is derived as a corollary. The converse is also possible, as proposed by Schwarz.
-```
-
-The answer to the first question is positive: rank-one tensors are generators of the linear space $E\otimes F$. This is clear in finite dimension since for two bases $\{e_i\}_i$ and $\{f_j\}_j$ of respectively $E$ and $F$, the set $\{ e_i\otimes f_j\}_{i,j}$ is a basis for $E\otimes F$. With matrices and using the outer product, we are simply stating here that any matrix $M$ can be written in the canonical basis
-
-$$ M = \sum_{i,j} M[i,j] e_i f_j^T$$
-with $e_i$ and $f_j$ vectors null everywhere except in position respectively $i$ and $j$ where they contain one. This also shows that using more than $d=\text{dim}(E)\text{dim}(F)$ is not required.
-
-The answer to the second part of the second question is directly related to the canonical tensor decomposition described in the next section. Regarding the first half of the question, it is simple to exhibit a tensor that cannot be written as a rank-one tensor. Take $e_1 f_1^T + e_2 f_2^T$ with the previous bases notations. If there exists a rank-one tensor $xy^T$ such that $xy^T = e_1f_1^T + e_2 f_2^T$, then denoting $z_x$ an orthogonal vector to $x$,
-
-$$ z_x^T x y^T = 0$$
-for the left-hand side, while
-
-$$ z_x^T (e_1f_1^T + e_2 f_2^T) = \langle z_x, e_1\rangle f_1^T + \langle z_x, e_2\rangle f_2^T.$$
-Because $f_1$ and $f_2$ are linearly independent, the two equalities cannot happen simultaneously, and therefore $e_1 f_1^T + e_2 f_2^T$ cannot be written as a rank-one tensor (matrix). The counter-example holds for tensor spaces of higher order as well.
-
-### CP decomposition
-
-The Canonical Polyadic decomposition (CP decomposition or CPD), also called PARAFAC decomposition, is the decomposition of a given tensor into a sum of rank-one tensors with as few terms as possible {cite:p}`hitchcockExpressionTensorPolyadic1927,carrollAnalysisIndividualDifferences1970,harshman1970foundations`. This minimal number of terms is called the rank of a tensor, and is an extension of matrix rank. Indeed, matrix rank can be described, among all possible equivalent definitions, as 
-
-$$ \rank{M} = \min \{q\in\mathbb{N},\; M = \sum_{i\leq q} x_i\otimes y_i \text{ where } \; x_i\otimes y_i \in E\otimes F\}$$
-when $E$ and $F$ are real finite-dimensional vector spaces.
-
-Notice that the sum $\sum_{i\leq q} x_i\otimes y_i$ can be written in matrix format as $M=XY^T$, where matrices $X$ and $Y$ contain vectors $x_i$ and $y_i$ stacked columnwise. In the matrix case, the CP decomposition is therefore simply an exact unconstrained LRA model. Matrix CP decomposition is never unique, and can be computed efficiently with the SVD. An approximate CP decomposition, defined as an [approximate LRA model](./lra.md#low-rank-approximations), is also easy to compute with the truncated SVD.
-
-From numerical linear algebra and data science perspectives, the CP decomposition for tensors with more than two modes is fundamentally different: the CP decomposition for higher-order tensors is identifiable under mild assumptions, but its computation can be extremely challenging.
-
-#### CP decomposition for third-order tensor and identifiability
-
-Let us now discuss the tensor CP decomposition for real multiway arrays, with the outer product $(x\otimes y\otimes z)[i,j,k] = x[i]y[j]z[k]$ as the tensor product. For a third-order tensor $T$ in $\R{n_1\times n_2\times n_3}$, the CP decomposition of $T$ is a minimal decomposition
-
-$$ T[i,j,k] = \sum_{q=1}^{r} A[i,q]B[j,q]C[k,q] $$
-where matrices $A$, $B$, and $C$ are sometimes called the factor matrices of the CP decomposition, and the rank $r$ is as small as possible.
-
-```{figure} ../Figures/Cpd.png
----
-width: 700px
-align: center
-name: fig:cpd
----
-Canonical Polyadic Decomposition (CPD) of rank $r$ of a data tensor $T$. The CPD can be viewed as a multilinear diagonalization technique, with bases $A$, $B$ and $C$ respectively spanning the columns, rows and fibers of the tensor, or as an atomic decomposition into a sum of $r$ rank-one tensors.
-```
-
-The key property of the CP decomposition is that there is typically a unique set of rank-one tensors $A[:,q]\otimes B[:,q] \otimes C[:,q]$ that decomposes a given tensor $T$. If these factors can be computed numerically with guaranteed stability {cite:p}`Vannieuwenhoven2017condition` and if the CP decomposition matches a physically meaningful model, then the estimated factor matrices can be interpreted without the need for further regularization. This nice property can be contrasted with the matrix case, where regularizations, such as nonnegativity for NMF, are required to hope for identifiability. The most well-known identifiability conditions for the CP decomposition are probably the Kruskal condition; see, for instance, the accessible proof provided by  Stegeman and Sidiropoulos {cite:p}`stegemanKruskalUniquenessCondition2007`.
+## Tensors
 
 
-```{margin}
-The "proof", as reported by Harshman from Jenrich, is wrong as it assumes the uniqueness of the decomposition to prove the uniqueness of the decomposition itself. Jenrich's algorithm, however, provides a constructive proof of the uniqueness of CP decomposition when the factor matrices are of full rank. Jenrich was a collaborator of Harshman, who credited him with the Jenrich algorithm and the proof of uniqueness, but Jenrich did not co-sign Harshman's seminal work.
-```
+- **Multiway arrays**: tensors extend matrices to more than two modes
+  - Matrix: $M[i,j]$
+  - Third-order tensor: $T[i,j,k]$
+- **Modes** are the different dimensions of a tensor
+- **Order** $d$ is the number of modes
+- Example: $T \in \mathbb{R}^{n_1 \times n_2 \times n_3}$ is a third-order tensor
 
-```{admonition} Why is CP decomposition identifiable while matrix LRA is not
+![](../figures/Cpd_simple.png){fig-align="center" width="50%"}
+TODO update with only the tensor
 
-When the CP decomposition was studied by Richard Harshman in psychometrics in 1970 {cite:p}`harshman1970foundations`, he provided a simple proof from Jenrich of its parameter identifiability, albeit with strong assumptions. He had a very strong intuition for why the model could be identifiable. The core idea is that CP decomposition fixes rotation ambiguities observed in matrix LRA.
 
-To see this, observe that the CP decomposition of a third-order tensor can be written in terms of coupled matrix factorization as
+## Tensors: several compatible viewpoints
 
-$$ \forall k\leq n_3, \; T[:,:,k] = A\text{Diag}\left(C[:,k]\right)B^T. $$
-In other words, the CP decomposition is the joint diagonalization of each slice $T[:,:,k]$ of the tensor. Joint diagonalization means that the same bases for the column and row spaces $A$ and $B$ are used for all slices.
+::: {.columns}
+::: {.column width="50%"}
 
-To explain further why joint diagonalization fixes rotation ambiguities, let us assume that there are only two slices in the tensor, $n_3=2$, and assume these two slices admit an exact CP decomposition with full rank matrices $A$ and $B$ and nonzero entries in one of the two columns of matrix $C$. It is possible to estimate $A$ and $B$ directly from the tensor $T$ using Jenrich's algorithm. Observe that 
+### One object, several interpretations
 
-$$ T[:,:,1]T[:,:,2]^{\dagger} = A \text{Diag}(\frac{C[:,1]}{C[:,2]}) A^{\dagger}, $$
-which is exactly the nonzero part of the eigenvalue decomposition of the rank-deficient symmetric matrix $T[:,:,1]T[:,:,2]^{\dagger}$. It is unique up to scaling and permutations, provided the singular values are distinct. Similarly, matrix $B$ can be obtained from the eigenvalue decomposition of $T[:,:,1]^{\dagger}T[:,:,2]$. The estimation of matrix $C$ can be performed by solving an overdetermined linear system, with a unique solution since matrices $A$ and $B$ are full column rank.
+- **Multiway array**: a natural representation for data, tensors are elements of $\mathbb{R}^{n_1 \times n_2 \times \cdots \times n_d}$.
+- **Tensor-space vector**: an element of
+  $$ E_1 \otimes \cdots \otimes E_d $$
+  where $E_i$ are vector spaces such as $\mathbb{R}^{n_i}$.
+- **Multilinear map or form**: a higher-order generalization of matrices as linear operators.
+- **Higher-order moments**: common in statistics and machine learning
 
-Jenrinch's algorithm shows that in many practical applications, the CP decomposition is essentially unique, even with two slices; while a low-rank factorization of each slice has infinitely many solutions, the intersection of these solution sets is singular, up to permutations and scaling ambiguities.
-```
+:::
+::: {.column width="50%"}
 
-The CP decomposition model, like matrix LRA, has many applications such as in chemometrics {cite:p}`Bro1998Multi`, telecommunication {cite:p}`Sidiropoulos2000Parallel` and image and audio processing {cite:p}`Veganzones2016Nonnegative,marmoretNonnegativeTuckerDecomposition2022`. This is because multilinear maps are often encountered as simple yet efficient models in physics and mathematics for describing complex systems. The way tensor products are built on top of the multilinear tensor product ensures that the CP decomposition yields a sparse multilinear decomposition of the data. In other words, for each mode and for instance the first one, the map $A\mapsto T$ is linear. The CP decomposition is essentially the description of a tensor as a sum of a few simple, discrete multilinear maps, the discrete analogue of a decomposition
+### Why the distinction matters
 
-$$ f(x,y,z) = \sum_{q=1}^{r} f_{1,q}(x)f_{2,q}(y)f_{3,q}(z).$$
+- Different fields use different viewpoints
+- The viewpoints are mathematically compatible, but emphasize different operations
+- For tensor LRA, start from the matrix case and generalize
+- A tensor-specific challenge: efficient high-order contractions [Bientinesi2022]
 
-The number of parameters in the CP decomposition is $(n_1+n_2+n_3)r$, much smaller than the $n_1n_2n_3$ entries in the tensor $T$ when the rank is smaller than the product of any two dimensions. Therefore, CP decomposition can also be used purely as a dimensionality reduction tool.
+:::
+:::
 
-```{Note}
+## The tensor product
 
-There exist several shorthand notations for CP decomposition. Many authors use the so-called Kruskal notation $T=\llbracket A, B, C \rrbracket$, which I will also use in this manuscript {cite:p}`Kolda2009Tensor`. However, in some settings, I prefer working with the more rigorous notation
+::: {.columns}
+::: {.column width="50%"}
 
-$$ T = \left(A\otimes B\otimes C \right) I_{r}$$
-where $I_{r}[i,j,k] = \delta_{ir}\delta_{jr}\delta_{kr}$ is a diagonal tensor of ones. The tensor product $\otimes$ is here meant in the sense of linear operators. This is in practice equivalent to the multiway product notation
+### From multilinear to linear
 
-$$ T = A\times_1 B\times_2 C\times_3 I_r $$
-but also makes explicit the tensor structure of the linear operators acting on tensors in finite dimensions. 
+- Given vector spaces $E$ and $F$, the tensor product combines $x \in E$ and $y \in F$ into $x \otimes y$
+- It creates a space that contains interactions between the two spaces
+- Every bilinear map $u$ can be represented by a linear map $w_u$:
+  $$ u(x,y) = w_u(x \otimes y) $$
+- This is the **universality property** of the tensor product [Schwartz1975]
 
-```
+:::
+::: {.column width="50%"}
 
-#### Approximate CP decomposition computation
+### Tensor-product space
+
+- The tensor-product space is generated by products $e_i \otimes f_j$ where $\{e_i\}_i$ and $\{f_j\}_j$ are bases of $E$ and $F$, respectively.
+- In finite dimensions:
+  $$ \dim(E \otimes F) = \dim(E)\dim(F) $$
+- The construction generalizes to any order $d$:
+  $$ E_1 \otimes \cdots \otimes E_d $$
+
+:::
+:::
+
+## Tensor products in practice
+
+::: {.columns}
+::: {.column width="50%"}
+
+### Outer product representation
+
+- Identify $E$ and $F$ with Euclidean spaces
+- The tensor product becomes the outer product:
+  $$ (x \otimes y)[i,j] = x[i]y[j] $$
+  $$ x \otimes y = xy^T $$
+- For instance, for matrices, the linear map associated with the inner product is the trace:
+  $$ \langle x,y \rangle = \operatorname{Tr}(xy^T) $$
+
+:::
+::: {.column width="50%"}
+
+### Operators and Kronecker products
+
+- Linear operators acting on tensor spaces form tensor-product spaces too [Hackbusch2012]
+- The Kronecker product builds this tensor space of operators and acts modewise:
+  $$ (A \otimes B)(x \otimes y) = Ax \otimes By $$
+
+:::{style="text-align:center; font-size:130%;"}
+:::{.callout-tip}
+It is possible to perform matrix and tensor LRA with the Kronecker product instead of the outer product!
+:::
+:::
+
+:::
+:::
+
+## Rank-one tensors are generators of the full tensor space
+
+::: {.columns}
+::: {.column width="50%"}
+
+### Rank-one tensors
+
+- A tensor of the form
+  $$ x \otimes y $$
+  is called **rank one**
+- Rank-one tensors are the elementary building blocks of tensor spaces
+- Because tensor spaces are vector spaces, finite sums remain tensors:
+  $$ T = \sum_{q=1}^{p} x_q \otimes y_q $$
+
+:::
+::: {.column width="50%"}
+
+### Generating the tensor space
+
+- In finite dimensions, products of basis vectors generate the whole space:
+  $$ \{e_i \otimes f_j\}_{i,j} \text{ is a basis of } E \otimes F $$
+- Therefore, every tensor can be expressed as a finite sum of rank-one tensors
+- This is the tensor analogue of expanding a matrix in the canonical basis
+
+:::
+:::
+
+## Rank-one tensors and tensor rank
+
+::: {.columns}
+::: {.column width="50%"}
+
+### Not every tensor is rank one
+
+- A sum of rank-one tensors is generally not rank one
+- Matrix example:
+  $$ e_1 f_1^T + e_2 f_2^T $$
+- This matrix cannot be written as a single outer product $xy^T$
+- The same phenomenon occurs in higher-order tensor spaces
+
+:::
+::: {.column width="50%"}
+
+### Tensor rank
+
+- **Tensor rank** is the smallest number of rank-one terms needed:
+  $$ \operatorname{rank}(T) = \min \left\{p : T = \sum_{q=1}^{p} x_q \otimes y_q \right\} $$
+- For matrices, this recovers the usual matrix rank
+- For higher-order tensors, this definition leads naturally to the CP decomposition
+
+:::
+:::
+
+## Canonical Polyadic Decomposition
+
+![](../figures/Cpd.png){fig-align="center" width="60%"}
+
+::: {.columns}
+::: {.column width="55%"}
+
+
+- **CPD / PARAFAC** represents a tensor as a sum of rank-one tensors
+- Factor matrices $A=[a_1,\ldots,a_r]$, $B$, and $C$ collect the rank-one components
+
+:::
+::: {.column width="45%"}
+
+
+- **Kruskal notation**:
+  $$ T = \llbracket A,B,C \rrbracket $$
+- Equivalent operator notation:
+  $$ T = (A\otimes B\otimes C)I_r $$
+  $$ T = A\times_1 B\times_2 C\times_3 I_r $$
+:::
+:::
+
+## Matrix versus tensor case
+
+::: {.columns}
+::: {.column width="50%"}
+
+- For matrices, CPD reduces to an exact factorization $M = XY^T$
+- Matrix factorizations are never unique and can be computed efficiently with SVD
+- For tensors of order greater than two, CPD can be identifiable under mild assumptions [Kruskal1977]
+
+:::
+::: {.column width="50%"}
+
+### Why CPD matters
+
+- A unique decomposition can make factors physically interpretable
+- CPD may avoid additional regularization for identifiability
+- Computation can nevertheless be highly challenging
+- Applications include chemometrics, telecommunications, imaging, and audio [Bro1998] [Sidiropoulos2000]
+
+:::
+:::
+
+## Why is CP decomposition identifiable while matrix LRA is not?
+
+::: {.center}
+
+### Matrix LRA: rotation ambiguity
+
+For any invertible $Q \in \mathbb{R}^{r\times r}$,
+
+$$ M = AB^T = (AQ)(BQ^{-T})^T. $$
+
+Each matrix factorization admits infinitely many equivalent bases.
+
+### CPD: coupled matrix factorizations
+
+For a third-order tensor, every slice shares the same factors:
+
+$$ T[:,:,k] = A\operatorname{Diag}(C[k,:])B^T, \qquad k=1,\ldots,n_3. $$
+
+The slices are **jointly diagonalized** by $A$ and $B$.
+
+### Two slices reveal the factors
+
+For $n_3=2$,
+
+$$ T[:,:,1]T[:,:,2]^{\dagger}
+  = A\operatorname{Diag}\left(\frac{C[:,1]}{C[:,2]}\right)A^{\dagger}. $$
+
+Distinct diagonal entries determine the eigenvectors up to scaling and permutation.
+
+:::
+
+## Approximate CP decomposition computation
 
 On the surface, approximate CP decomposition is simply a particular case of approximate LRA. Let $T$ be a data tensor to decompose. Approximate CP decomposition aims at finding a rank $r$ tensor $\llbracket A, B, C \rrbracket$ as close as possible to $T$; the rank of the approximation $r$ is fixed in advance. If the Frobenius norm $\|T\|_F^2 = \sum_{i,j,k} T[i,j,k]^2$ is used as an error metric, the approximate CP decomposition computes the best rank-$r$ approximation by solving the optimization problem
 
@@ -770,7 +893,7 @@ Notice also that coercivity is achieved with nonnegativity constraints, since th
 
 ```
 
-### Tucker decomposition
+## Tucker decomposition
 In the CP decomposition, the factor matrices $A$, $B$, and $C$ can be seen as linear operators that map a diagonal tensor to the data tensor $T$. In fact, using the linear operator tensor space point of view, the map $A\otimes B\otimes C$ is a rank-one linear operator acting on tensors. The idea of Tucker decomposition is to generalize this observation by using rank-one linear operators to map large tensors to smaller tensors, thereby performing multilinear dimensionality reduction.
 
 ```{figure} ../Figures/Tucker.png

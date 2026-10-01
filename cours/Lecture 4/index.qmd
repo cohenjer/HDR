@@ -1,0 +1,910 @@
+---
+title: "Masterclass on nonnegative Low-Rank Approximations"
+subtitle: "Lecture 4 — Automatic music transcription with NMF and CNMF, 5-9 October 2026, Univ. Trento"
+date: 2026-10
+author: "Jérémy E. Cohen"
+institute: "CNRS, CREATIS, Lyon"
+bibliography: ../../all_refs.bib
+resources:
+  - "../audio/*.wav"
+format:
+  revealjs:
+    theme: white
+    auto-stretch: false
+    css: ../styles.css
+    transition: fade
+    slide-number: true
+    center: true
+    controls: true
+    progress: true
+    footer: "Masterclass — Nonnegative LRA"
+    width: 1200
+    height: 750
+    margin: 0.12
+    incremental: false
+execute:
+  echo: false
+  warning: false
+---
+
+# Automatic transcription and challenges
+
+## What is automatic music transcription?
+
+- **Automatic Music Transcription (AMT)**: convert an audio recording into a symbolic score (MIDI: pitch, onset, offset, velocity) [Benetos2018].
+- A long-standing task in music information retrieval.
+- Today: piano transcription with **weakly-supervised NMF/CNMF**, joint work with A. Marmoret and H. Wu [Wu2022].
+
+
+![](../figures/transcription.png){fig-align="center" width="100%"}
+
+
+## Why AMT is hard
+
+::: {.columns}
+::: {.column width="50%"}
+
+### Signal-level difficulties
+
+- Polyphony: many notes overlap in time and frequency
+- Timbre varies with instrument, attack, and decay
+- Mixing of sources is **non-linear** in the magnitude domain
+
+:::
+::: {.column width="50%"}
+
+### Model-level difficulties
+
+- Rank / number of notes is unknown
+- No uniqueness guarantee for blind low-rank models
+- Trained models struggle to generalize to unseen instruments
+
+:::
+:::
+
+## State of the art and our approach
+
+::: {.columns}
+::: {.column width="50%"}
+
+### Supervised deep networks
+
+- Current best performance [Hawthorne2018, Kong2020, Bittner2022]
+- Require large labelled datasets
+- Black-box, costly to retrain per instrument
+
+:::
+::: {.column width="50%"}
+
+### Our route: weakly-supervised NMF
+
+- Exploit that isolated notes are (nearly) low-rank
+- Pretrain templates on a handful of isolated notes
+- Roadmap: spectrograms $\to$ low-rank models $\to$ NMF-KL demo $\to$ convolutive NMF
+
+:::
+:::
+
+# Audio and spectrogram representation
+
+## A single piano note: comb-shaped spectrum
+
+A piano recording is a time signal $s(t)$. The Fourier transform decomposes it into a sum of pure sinusoids, $\mathcal{F}[s](w) = \int s(t) e^{-2i\pi w t}\, dt$. Harmonic instruments (piano, strings) produce **comb-shaped spectra**: a fundamental frequency and its harmonics; inharmonic instruments (drums) do not.
+
+```{python}
+#| echo: true
+import matplotlib.pyplot as plt
+import soundfile as sf
+import numpy as np
+import scipy.signal as signal
+
+# Load an isolated A4 (440Hz) note from the MAPS dataset
+A4_wav, sr = sf.read('../../tensorly_hdr/dataset/MAPS_ISOL_LG_M_S0_M69_ENSTDkAm.wav')
+A4_wav = A4_wav / np.max(np.abs(A4_wav))  # audio normalization
+A4_wav = A4_wav[:, 0]  # use only one channel if stereo
+
+frequencies_1D = np.fft.fftfreq(len(A4_wav), d=1/sr)
+# Keep only right part of the spectrum
+frequencies_1D = frequencies_1D[:len(frequencies_1D)//2]
+fourier_1D = np.fft.fft(A4_wav)
+fourier_1D = fourier_1D[:len(fourier_1D)//2]
+magnitude_1D = np.abs(fourier_1D)
+```
+
+:::{style ="text-align:center"}
+```{python}
+plt.figure(figsize=(9, 3.5))
+plt.plot(frequencies_1D, 20 * np.log10(magnitude_1D), color="#1f77b4")
+plt.xlim(0, 5000)
+plt.title('Magnitude spectrum of an isolated A4 (440 Hz)')
+plt.xlabel('Frequency (Hz)')
+plt.ylabel('Power (dB)')
+plt.tight_layout()
+plt.show()
+```
+
+:::
+
+## From spectrum to spectrogram: the STFT
+
+::: {.columns}
+::: {.column width="50%"}
+
+<audio controls src="../audio/MAPS_ISOL_LG_M_S0_M69_ENSTDkAm.wav"></audio>
+
+:::{.caption}
+A4 (440 Hz), MAPS dataset [Emiya2010]
+:::
+
+:::
+::: {.column width="50%"}
+
+- One spectrum describes the whole ~15s recording
+- But the note is not stationary: attack, decay, noise at the end
+- We need a **time-varying** spectral representation
+
+:::
+:::
+
+
+The Short-Time Fourier Transform (STFT) slides a window over the signal and computes a spectrum for each time frame:
+
+$$
+Y[f,t] = \sum_{\tau} s(\tau)\, w(\tau - t)\, e^{-2i\pi f \tau}.
+$$
+
+We use Hann windows of 4096 samples (~93ms) with heavy overlap (20ms hop), a standard trade-off for piano transcription:
+
+```{python}
+#| echo: true
+frequencies, times, Sxx = signal.stft(A4_wav, fs=sr, nperseg=4096, nfft=4096, noverlap=4096 - 882)
+half_freqs = len(frequencies) // 2
+frequencies = frequencies[:half_freqs]
+Sxx = Sxx[:half_freqs, :]  # keep only lower half
+Sxx_abs = np.abs(Sxx)
+Sphase = np.angle(Sxx)
+Sxx_dB = 20 * np.log10(Sxx_abs + 1e-10)
+```
+
+## Magnitude and phase spectrograms
+
+For AMT we typically only use the **magnitude** spectrogram below; the phase (right) is much harder to interpret and to model.
+
+:::{style="text-align:center;"}
+```{python}
+plt.figure(figsize=(10, 4))
+plt.subplot(1, 2, 1)
+plt.imshow(Sxx_dB, aspect='auto', origin='lower', extent=[times[0], times[-1], frequencies[0], frequencies[-1]])
+plt.title('Magnitude (dB)')
+plt.ylabel('Frequency (Hz)')
+plt.xlabel('Time (s)')
+plt.colorbar(label='Intensity [dB]')
+plt.subplot(1, 2, 2)
+plt.imshow(Sphase, aspect='auto', origin='lower', extent=[times[0], times[-1], frequencies[0], frequencies[-1]])
+plt.title('Phase (radians)')
+plt.xlabel('Time (s)')
+plt.colorbar(label='Phase (rad)')
+plt.tight_layout()
+plt.show()
+```
+:::
+
+# Frobenius and KL low-rank approximations
+
+## Best rank-one approximation: two losses
+
+The magnitude spectrogram of a single note is well approximated by a **rank-one matrix**: a fixed frequency profile (the comb) times a single time envelope (attack-decay). This motivates using low-rank NMF to analyse recordings with several notes.
+
+::: {.columns}
+::: {.column width="50%"}
+
+### Frobenius (Eckart-Young)
+
+$$
+\min_{u,v} \|Y - uv^T\|_F^2
+$$
+
+closed form via the truncated SVD: $u = U[:,1]$, $v=S[1,1]V[:,1]$.
+
+:::
+::: {.column width="50%"}
+
+### Kullback-Leibler
+
+$$
+\min_{u,v \geq 0} D_{\mathrm{KL}}(Y, uv^T)
+$$
+
+closed form via normalized marginals:
+$$
+u = \frac{\sum_t Y[:,t]}{\sqrt{\sum_{f,t} Y[f,t]}}, \quad
+v = \frac{\sum_f Y[f,:]}{\sqrt{\sum_{f,t} Y[f,t]}}.
+$$
+
+:::
+:::
+
+## Computing the two approximations
+
+We apply both closed-form formulas to the A4 magnitude spectrogram: the SVD gives the Frobenius-optimal rank-one factors, while row/column sums give the KL-optimal ones.
+
+```{python}
+#| echo: true
+# Best rank-one approximation of the magnitude spectrogram, Frobenius sense
+U, s, V = np.linalg.svd(Sxx_abs)
+r1_approx = s[0] * np.outer(U[:, 0], V[0, :])
+
+# Best rank-one approximation, KL sense (normalized marginals)
+ukl = np.sum(Sxx_abs, axis=1) / np.sqrt(np.sum(Sxx_abs))
+vkl = np.sum(Sxx_abs, axis=0) / np.sqrt(np.sum(Sxx_abs))
+r1_approx_kl = np.outer(ukl, vkl)
+```
+
+## Frobenius vs KL rank-one approximation
+
+:::{style ="text-align:center;"}
+```{python}
+r1_approx_dB = 20 * np.log10(np.abs(r1_approx) + 1e-10)
+r1_approx_kl_dB = 20 * np.log10(r1_approx_kl + 1e-10)
+
+plt.figure(figsize=(11, 3.6))
+plt.subplot(1, 3, 1)
+plt.imshow(Sxx_dB, aspect='auto', origin='lower', extent=[times[0], times[-1], frequencies[0], frequencies[-1]])
+plt.title('Original')
+plt.ylabel('Frequency (Hz)')
+plt.xlabel('Time (s)')
+plt.colorbar(label='dB')
+plt.subplot(1, 3, 2)
+plt.imshow(r1_approx_dB, aspect='auto', origin='lower', extent=[times[0], times[-1], frequencies[0], frequencies[-1]])
+plt.clim(np.min(r1_approx_dB), np.max(r1_approx_dB))
+plt.title('Rank-one (Frobenius)')
+plt.xlabel('Time (s)')
+plt.colorbar(label='dB')
+plt.subplot(1, 3, 3)
+plt.imshow(r1_approx_kl_dB, aspect='auto', origin='lower', extent=[times[0], times[-1], frequencies[0], frequencies[-1]])
+plt.clim(np.min(r1_approx_dB), np.max(r1_approx_dB))
+plt.title('Rank-one (KL)')
+plt.xlabel('Time (s)')
+plt.colorbar(label='dB')
+plt.tight_layout()
+plt.show()
+```
+:::
+
+Both rank-one models capture the comb-shaped spectrum well; the KL version tends to spread energy more smoothly in time.
+
+## From one note to many: additive mixing
+
+Two simultaneous notes with time signals $s_1(t), s_2(t)$ are recorded as $s(t) = s_1(t) + s_2(t)$. By linearity of the Fourier transform, $\mathcal{F}[s](w) = \mathcal{F}[s_1](w) + \mathcal{F}[s_2](w)$, but we only observe the **magnitude** $|\mathcal{F}[s](w)|$. If each $|\mathcal{F}[s_i](w)|$ is rank-one, is $|\mathcal{F}[s](w)|$ rank-two?
+
+$$
+\left|\mathcal{F}[s](w)\right|^2 = \left|\mathcal{F}[s_1](w)\right|^2 + \left|\mathcal{F}[s_2](w)\right|^2 + 2\,\mathcal{Re}\!\left(\mathcal{F}[s_1]^\ast(w)\,\mathcal{F}[s_2](w)\right)
+$$
+
+:::{style ="text-align:center; font-size: 130%;"}
+::: {.callout-important}
+<!-- The power spectrogram is **rank-two** if and only if $2\,\mathcal{Re}\!\left(\mathcal{F}[s_1]^\ast(\nu)\,\mathcal{F}[s_2](\nu)\right)=0$. -->
+When is the magnitude spectrogram rank-two? Mostly when $\left|\mathcal{F}[s](w)\right| = \left|\mathcal{F}[s_1](w)\right| + \left|\mathcal{F}[s_2](w)\right|$
+<!-- The magnitude spectrogram is **rank-two** if and only if $\sqrt{\mathcal{Re}\!\left(\mathcal{F}[s_1]^\ast(\nu)\,\mathcal{F}[s_2](\nu)\right)}=|\mathcal{F}[s_1](\nu)||\mathcal{F}[s_2](\nu)|$. -->
+:::
+:::
+
+We can study this using the polar representation of the spectra
+
+$$  \mathcal{F}[s_1](w) = A_1(w)e^{i\theta_1(w)}, \;  \mathcal{F}[s_2](w) = A_2(w)e^{i\theta_2(w)} $$
+
+$$ \left|\mathcal{F}[s](w)\right| = \sqrt{A_1(w)^2 + A_2(w)^2 + 2A_1(w)A_2(w)\cos(\theta_2(w)-\theta_1(w))} $$
+
+## When is the mixture exactly rank-two?
+
+
+- A sufficent case: the two signals are **in phase**, $\theta_1=\theta_2$
+    - We get $\sqrt{A_1^2 + A_2^2 + 2A_1A_2\cos(\theta_2(w)-\theta_1(w))} = \sqrt{A_1^2 + A_2^2 + 2A_1A_2} = \sqrt{(A_1+A_2)^2}$.
+- Another sufficient case: the two amplitudes have **disjoint support**, $A_1(w)A_2(w) = 0$.
+    - Also works for the power spectrogram $\left|\mathcal{F}[s](w)\right|^2$.
+    - This is what we use in general, as disjoint supports are more likely than in-phase signals.
+    - In practice: two notes an **octave apart** share many partials, and the disjoint support condition is violated
+    - $\Rightarrow$ low-rank models of spectrograms are prone to **octave errors**
+
+## Phase interference
+
+
+### A3 and A4 played together
+::: {.columns}
+::: {.column width="15%"}
+:::
+::: {.column width="40%"}
+
+<audio controls src="../audio/MAPS_ISOL_LG_M_S0_M69_ENSTDkAm.wav"></audio>
+
+:::
+::: {.column width="45%"}
+
+<audio controls src="../audio/MAPS_ISOL_LG_F_S1_M57_ENSTDkAm.wav"></audio>
+
+:::
+:::
+
+
+:::{style ="text-align:center;"}
+```{python}
+A3_wav, sr = sf.read('../../tensorly_hdr/dataset/MAPS_ISOL_LG_F_S1_M57_ENSTDkAm.wav')
+A3_wav = A3_wav / np.max(np.abs(A3_wav))
+A3_wav = A3_wav[:, 0]
+
+# Short rectangular-window segment for both notes
+t_1, t_2 = 2 * sr, 3 * sr
+A4_segment = A4_wav[t_1:t_2]
+A3_segment = A3_wav[t_1:t_2]
+
+A3A4_wav = A3_segment + A4_segment 
+
+freq_1D = np.fft.fftfreq(len(A4_segment), d=1/sr)
+freq_1D = freq_1D[:len(freq_1D)//2]
+fft_A4 = np.fft.fft(A4_segment)
+fft_A4 = fft_A4[:len(fft_A4)//2]
+fft_A3 = np.fft.fft(A3_segment)
+fft_A3 = fft_A3[:len(fft_A3)//2]
+fft_A3A4 = np.fft.fft(A3A4_wav)
+fft_A3A4 = fft_A3A4[:len(fft_A3A4)//2]
+mag_A4, mag_A3 = np.abs(fft_A4), np.abs(fft_A3)
+mag_A3A4 = np.abs(fft_A3A4)
+
+plt.figure(figsize=(9, 6.4))
+plt.subplot(2, 3, 2)
+plt.plot(freq_1D, mag_A4, color='blue')
+plt.xlim(0, 5000)
+plt.ylim(0, 500)
+plt.title('Spectrum of A4')
+plt.xlabel('Frequency (Hz)')
+plt.ylabel('Magnitude')
+plt.subplot(2, 3, 1)
+plt.plot(freq_1D, mag_A3, color='orange')
+plt.xlim(0, 5000)
+plt.ylim(0, 500)
+plt.title('Spectrum of A3')
+plt.xlabel('Frequency (Hz)')
+plt.ylabel('Magnitude')
+plt.subplot(2, 3, 3)
+plt.plot(freq_1D, mag_A3A4, color='green')
+plt.xlim(0, 5000)
+plt.ylim(0, 500)
+plt.title('Spectrum of A3+A4')
+plt.xlabel('Frequency (Hz)')
+plt.ylabel('Magnitude')
+plt.subplot(2, 3, 5)
+plt.plot(freq_1D, np.angle(fft_A4), color='blue')
+plt.xlim(0, 5000)
+plt.title('Phase of A4')
+plt.xlabel('Frequency (Hz)')
+plt.subplot(2, 3, 4)
+plt.plot(freq_1D, np.angle(fft_A3), color='orange')
+plt.xlim(0, 5000)
+plt.title('Phase of A3')
+plt.xlabel('Frequency (Hz)')
+plt.subplot(2, 3, 6)
+plt.plot(freq_1D, np.angle(fft_A3A4), color='green')
+plt.xlim(0, 5000)
+plt.title('Phase of A3+A4')
+plt.xlabel('Frequency (Hz)')
+plt.tight_layout()
+plt.show()
+```
+:::
+
+## Sum of magnitudes vs magnitude of sum
+We compare the sum of ampliudes to the amplitude of the sum on a short segment of each recording.
+
+To test the support condition from the previous section, we take a one-second rectangular-window segment of each note and compare their individual and combined Fourier transforms.
+
+```{python}
+#| echo: true
+A3_wav, sr = sf.read('../../tensorly_hdr/dataset/MAPS_ISOL_LG_F_S1_M57_ENSTDkAm.wav')
+A3_wav = A3_wav / np.max(np.abs(A3_wav))
+A3_wav = A3_wav[:, 0]
+
+# Short rectangular-window segment for both notes
+t_1, t_2 = 2 * sr, 3 * sr
+A4_segment = A4_wav[t_1:t_2]
+A3_segment = A3_wav[t_1:t_2]
+
+freq_1D = np.fft.fftfreq(len(A4_segment), d=1/sr)
+freq_1D = freq_1D[:len(freq_1D)//2]
+fft_A4 = np.fft.fft(A4_segment)
+fft_A4 = fft_A4[:len(fft_A4)//2]
+fft_A3 = np.fft.fft(A3_segment)
+fft_A3 = fft_A3[:len(fft_A3)//2]
+mag_A4, mag_A3 = np.abs(fft_A4), np.abs(fft_A3)
+
+magnitude_of_sum = np.abs(fft_A4 + fft_A3)
+sum_of_magnitudes = mag_A4 + mag_A3
+```
+
+## Where does the mismatch come from?
+
+The two quantities should coincide if the notes were perfectly support. The residual (left) reveals where they are not, and it matches exactly the imaginary part of the cross-spectrum (right), the phase-mismatch term from the Cauchy-Schwarz expansion.
+
+:::{style ="text-align:center;"}
+```{python}
+residual = np.abs(sum_of_magnitudes - magnitude_of_sum)
+cross = np.conjugate(fft_A4) * fft_A3
+
+plt.figure(figsize=(9, 3.2))
+plt.subplot(1, 2, 1)
+plt.plot(freq_1D, residual, color='green')
+plt.xlim(0, 5000)
+plt.title('|sum of magnitudes − magnitude of sum|')
+plt.xlabel('Frequency (Hz)')
+plt.ylabel('Magnitude')
+plt.subplot(1, 2, 2)
+plt.plot(freq_1D, np.imag(cross), color='brown')
+plt.xlim(0, 5000)
+plt.title(r'Imag. part of $\mathcal{F}[s_1]^\ast\mathcal{F}[s_2]$')
+plt.xlabel('Frequency (Hz)')
+plt.tight_layout()
+plt.show()
+```
+:::
+
+A3 and A4 are **not** orthogonal: the mismatch is largest exactly at their shared partials.
+
+## Consequences
+
+- Two notes an octave apart share fundamental and harmonics in frequency, but **not in phase**
+- The colinearity assumption behind rank-additivity fails at shared partials
+- Low-rank models (NMF included) are structurally prone to confusing octaves
+- This is a **modeling** limitation, not just an optimization one
+
+
+# Simple-piece live code demo
+
+## The recording: isolated notes then chords
+
+```{python}
+song, sr = sf.read('../../tensorly_hdr/dataset/MAPS_MUS-muss_1_ENSTDkAm.wav')
+song = song / np.max(np.abs(song))
+song = song[:, 0]
+```
+
+<audio controls src="../audio/MAPS_MUS-muss_1_ENSTDkAm.wav"></audio>
+:::{.caption}
+MAPS recording: six isolated notes, then two five-note chords [Emiya2010]
+:::
+
+![](../figures/partition.png){fig-align="center" width="70%"}
+
+## Computing the spectrogram, then fitting NMF-KL
+
+- We first cut the recording to its first six seconds (six isolated notes only) and compute its magnitude spectrogram.
+- We then fit an NMF with the KL divergence using the multiplicative-update algorithm, with a rank of 7: six notes plus one extra component expected to capture the hammer action.
+
+```{python}
+#| echo: true
+t_1, t_2 = 0, 6 * sr  # first six seconds: isolated notes only
+song_simple = song[t_1:t_2]
+frequencies, times, Sxx = signal.stft(song_simple, fs=sr, nperseg=4096, nfft=4096, noverlap=4096 - 882)
+half_freqs = len(frequencies) // 2
+frequencies = frequencies[:half_freqs]
+Sxx = Sxx[:half_freqs, :]
+Sxx_dB = 20 * np.log10(np.abs(Sxx) + 1e-10)
+Sxx_abs = np.abs(Sxx)
+
+from tensorly_hdr.nmf_kl import Lee_Seung_KL
+from tensorly_hdr.image_utils import permute_spectra
+
+rank = 7
+np.random.seed(0)
+W_init = np.abs(np.random.randn(Sxx.shape[0], rank))
+H_init = np.abs(np.random.randn(Sxx.shape[1], rank)).T
+crit, W_kl, H_kl, toc, cnt = Lee_Seung_KL(Sxx_abs, W_init, H_init, NbIter=20, verbose=False, print_it=20)
+
+# Normalize W columnwise, put the norm in H, order by increasing fundamental frequency
+W_kl_norms = np.max(W_kl, axis=0)
+W_kl = W_kl / W_kl_norms
+H_kl = H_kl.T * W_kl_norms
+perm = permute_spectra(W_kl)
+W_kl, H_kl = W_kl[:, perm], H_kl[:, perm]
+notes = ["F3", "G3", "Bb3", "Hammer", "C4", "D4", "F4"]
+```
+
+## Frequency profiles and time activations
+
+:::{style ="text-align:center;"}
+```{python}
+plt.figure(figsize=(10, 6))
+for i in range(rank):
+    plt.subplot(rank, 2, 2 * i + 1)
+    plt.plot(frequencies, W_kl[:, i])
+    plt.ylabel(notes[i])
+    if i == 0:
+        plt.title('Frequency profile ($W$)')
+    if i == rank - 1:
+        plt.xlabel('Frequency (Hz)')
+    plt.subplot(rank, 2, 2 * i + 2)
+    plt.plot(times, H_kl[:, i])
+    plt.ylim(0, np.max(H_kl))
+    if i == 0:
+        plt.title('Time activation ($H^T$)')
+    if i == rank - 1:
+        plt.xlabel('Time (s)')
+plt.tight_layout()
+plt.show()
+```
+:::
+
+## Rank-one KL reconstructions per note
+
+:::{style ="text-align:center;"}
+```{python}
+plt.figure(figsize=(12, 6))
+plt.subplot(rank // 4 + 1, 4, 1)
+plt.imshow(Sxx_dB, aspect='auto', origin='lower', extent=[times[0], times[-1], frequencies[0], frequencies[-1]])
+plt.title('Original spectrogram (dB)')
+plt.ylabel('Frequency (Hz)')
+for i in range(rank):
+    plt.subplot(rank // 4 + 1, 4, i + 2)
+    comp_dB = 20 * np.log10(np.outer(W_kl[:, i], H_kl[:, i]) + 1e-10)
+    plt.imshow(comp_dB, aspect='auto', origin='lower', extent=[times[0], times[-1], frequencies[0], frequencies[-1]])
+    plt.clim(np.min(Sxx_dB), np.max(Sxx_dB))
+    plt.title(f'Component {notes[i]} (dB)')
+plt.tight_layout()
+plt.show()
+```
+:::
+
+Six isolated notes are recovered almost perfectly, plus a "hammer" component capturing the percussive attack.
+
+## Adding the chords: rank 15
+
+We now extend the excerpt to eight seconds, adding the two five-note chords (14 distinct notes in total), and refit NMF-KL with 15 components.
+
+```{python}
+#| echo: true
+t_1, t_2 = 0, 8 * sr  # add the two five-note chords
+song_full = song[t_1:t_2]
+frequencies, times, Sxx = signal.stft(song_full, fs=sr, nperseg=4096, nfft=4096, noverlap=4096 - 882)
+half_freqs = len(frequencies) // 2
+frequencies = frequencies[:half_freqs]
+Sxx = Sxx[:half_freqs, :]
+Sxx_abs = np.abs(Sxx)
+
+rank = 15
+W_init = np.abs(np.random.randn(Sxx.shape[0], rank))
+H_init = np.abs(np.random.randn(Sxx.shape[1], rank)).T
+crit, W_kl15, H_kl15, toc, cnt = Lee_Seung_KL(Sxx_abs, W_init, H_init, NbIter=20, verbose=False, print_it=20)
+W_kl15_norms = np.max(W_kl15, axis=0)
+W_kl15 = W_kl15 / W_kl15_norms
+H_kl15 = H_kl15.T * W_kl15_norms
+perm = permute_spectra(W_kl15)
+W_kl15, H_kl15 = W_kl15[:, perm], H_kl15[:, perm]
+```
+
+## Adding the chords: rank 15
+
+:::{style ="text-align:center;"}
+```{python}
+plt.figure(figsize=(10, 6))
+for i in range(rank):
+    plt.subplot(rank, 2, 2 * i + 1)
+    plt.plot(frequencies, W_kl15[:, i])
+    plt.yticks([])
+    if i == 0:
+        plt.title('Frequency profiles')
+    if i == rank - 1:
+        plt.xlabel('Frequency (Hz)')
+    plt.subplot(rank, 2, 2 * i + 2)
+    plt.plot(times, H_kl15[:, i])
+    plt.ylim(0, np.max(H_kl15))
+    plt.yticks([])
+    if i == 0:
+        plt.title('Time activations')
+    if i == rank - 1:
+        plt.xlabel('Time (s)')
+plt.tight_layout()
+plt.show()
+```
+:::
+
+## NMF struggles with overlapping chords
+
+- There are 14 distinct notes in the two chords, but NMF-KL does **not** recover 14 clean components
+- Several components refine already-identified notes instead of finding new ones
+- Low-fundamental components are hardly interpretable, and their activations do not follow an attack-decay pattern
+- This questions both the **rank choice** and the **uniqueness** of the decomposition
+
+
+::: {.columns}
+::: {.column width="50%"}
+
+### Problems
+
+- **Model mismatch**: the rank-one hypothesis for a single note is only approximate, so NMF spends extra components on it rather than on new notes
+- **Identifiability**: no guarantee that output spectra stay comb-shaped; uniqueness is unclear as soon as notes overlap, the rule with chords
+
+:::
+::: {.column width="50%"}
+
+### Attempted fixes
+
+- Standard pipeline: pick the fundamental frequency of each rank-one component, threshold its activation [Vincent2008]
+- Parametrize activations to follow an attack-decay pattern [Cheng2016]
+- We instead enrich the *model* itself, not just the post-processing
+
+:::
+:::
+
+## Our route: convolutive NMF + weak supervision
+
+
+:::{style ="font-size: 130%;"}
+::: {.callout-tip}
+### Two ideas combined [Wu2022]
+
+1. Replace the rank-one note model by a **convolutive** rank-one model (better fit to attack/decay)
+2. **Pretrain** the templates on isolated note recordings (weak supervision) instead of learning them blindly
+:::
+:::
+
+# CNMF model, algorithm, and results
+
+## Rank-one convolutive model
+
+A single note spectrogram is modeled as a convolution of a small time-frequency template with a time activation:
+
+$$
+\hat{Y}[f,t] = \sum_{\tau=0}^{T-1} W[f,\tau]\, h[t-\tau],
+$$
+
+where $T$ is the convolution window length (captures attack + early decay), fixing the main weakness of the plain rank-one model. Stacking shifted copies of $h$ into a Toeplitz matrix $\tilde{H}$, this is a constrained rank-$T$ NMF:
+
+$$
+\hat{Y} = W\tilde{H}.
+$$
+
+The full **Convolutive NMF** [Smaragdis2006] sums such terms over $r$ components:
+
+$$
+\hat{Y} = \sum_{q=1}^{r}\sum_{\tau=0}^{T-1} W[f,\tau,q]\, H[q,t-\tau].
+$$
+
+## NMF vs CNMF visually
+
+
+![](../figures/CNMFvsNMF.png){fig-align="center" width="100%"}
+
+## NMF vs CNMF multiplicative updates
+
+Following the MM2 algorithm of [Fagot2019], with $\hat{Y}$ the current reconstruction:
+
+$$
+W^{(k+1)} = W^{(k)} \ast \frac{\frac{Y}{\hat{Y}^{(k)}} {\tilde{H}^{(k)}}^T}{\mathbf{1}\otimes\sum_t \tilde{H}^{(k)}[:,t]},
+$$
+$$
+H^{(k+1)}[:,t] = H^{(k)}[:,t] \ast \frac{W^{(k)}\times_{1,2}\frac{Y}{\hat{Y}}[:,t:t+T]}{\sum_{f,\tau} W^{(k)}[f,\tau,:]\mathbf{1}_{t+\tau\leq n}}.
+$$
+
+Same majorization principle as plain NMF; CNMF is harder to optimize in practice, with many non-trivial local minima.
+
+
+
+## Rank-one CNMF on A4
+
+We now pretrain templates on isolated notes: MAPS provides an isolated recording for every note we need, and for each one we fit a **rank-one CNMF** to obtain a template $W$. Per-note templates will later be stacked into a tensor $W \in \mathbb{R}_+^{f \times T \times r}$ and used to transcribe full recordings. We start with A4:
+
+```{python}
+#| echo: true
+from tensorly_hdr.cnmf import convolutive_nmf, shift_m
+
+A4_wav_train = A4_wav[sr // 3: sr * 4]  # avoid the noisy tail of the recording
+frequencies, times, Sxx = signal.stft(A4_wav_train, fs=sr, nperseg=4096, nfft=4096, noverlap=4096 - 882)
+half_freqs = len(frequencies) // 2
+Sxx_dB = 20 * np.log10(np.abs(Sxx[:half_freqs, :]) + 1e-10)
+Sxx_abs = np.abs(Sxx[:half_freqs, :])
+Sxx_abs = Sxx_abs / np.max(Sxx_abs)
+
+T = 20
+W_r1, H_r1, err_r1 = convolutive_nmf(
+    Sxx_abs, rank=1, T=T, itmax=10, eps=1e-16, tol=0,
+    print_it=1, n_iter_inner=10, init="separable", verbose=False
+)
+W_cnmf, h_cnmf = W_r1[:, :, 0], H_r1[0, :]
+```
+
+## Template vs reconstructed spectrogram
+
+:::{style ="text-align:center;"}
+```{python}
+Sxx_cnmf_approx_dB = 20 * np.log10(W_cnmf @ shift_m(h_cnmf, T) + 1e-10)
+plt.figure(figsize=(10, 4))
+plt.subplot(1, 3, 1)
+W_cnmf_db = 20 * np.log10(W_cnmf + 1e-10)
+plt.imshow(W_cnmf_db, aspect='auto', origin='lower', extent=[0, T, frequencies[0], frequencies[half_freqs]])
+plt.clim(np.min(Sxx_dB), np.max(Sxx_dB))
+plt.title('CNMF template $W$')
+plt.xlabel('Conv. index')
+plt.ylabel('Frequency (Hz)')
+plt.colorbar(label='dB')
+plt.subplot(1, 3, 2)
+plt.imshow(Sxx_cnmf_approx_dB, aspect='auto', origin='lower', extent=[times[0], times[-1], frequencies[0], frequencies[half_freqs]])
+plt.clim(np.min(Sxx_dB), np.max(Sxx_dB))
+plt.title('Reconstructed A4')
+plt.xlabel('Time (s)')
+plt.colorbar(label='dB')
+plt.subplot(1, 3, 3)
+plt.imshow(Sxx_dB, aspect='auto', origin='lower', extent=[times[0], times[-1], frequencies[0], frequencies[half_freqs]])
+plt.title('Recorded A4')
+plt.xlabel('Time (s)')
+plt.colorbar(label='dB')
+plt.tight_layout()
+plt.show()
+```
+:::
+
+The attack is well captured, but high-frequency content after the attack is not fully realistic (echoes in the template).
+
+## Rank-two CNMF cleans the template
+
+A second, randomly-initialized component can absorb this echo/noise, leaving the first template with a cleaner comb spectrum:
+
+```{python}
+#| echo: true
+W_r2, H_r2, err_r2 = convolutive_nmf(
+    Sxx_abs, rank=2, T=T, itmax=10, eps=1e-16, tol=0,
+    print_it=1, n_iter_inner=10, init="separable", verbose=False
+)
+```
+
+:::{style ="text-align:center;"}
+```{python}
+plt.figure(figsize=(9, 4))
+plt.subplot(1, 2, 1)
+plt.imshow(20 * np.log10(W_r2[:, :, 0] + 1e-10), aspect='auto', origin='lower', extent=[0, T, frequencies[0], frequencies[half_freqs]])
+plt.clim(np.min(Sxx_dB), np.max(Sxx_dB))
+plt.title('Template 1 (attack, comb)')
+plt.xlabel('Conv. index')
+plt.ylabel('Frequency (Hz)')
+plt.subplot(1, 2, 2)
+plt.imshow(20 * np.log10(W_r2[:, :, 1] + 1e-10), aspect='auto', origin='lower', extent=[0, T, frequencies[0], frequencies[half_freqs]])
+plt.clim(np.min(Sxx_dB), np.max(Sxx_dB))
+plt.title('Template 2 (noise / decay)')
+plt.xlabel('Conv. index')
+plt.tight_layout()
+plt.show()
+```
+:::
+
+For speed, we keep **rank-one** CNMF per note in the pipeline below.
+
+## Learning 14 note templates
+
+We repeat the rank-one CNMF fit for every isolated note in the `notes_to_learn` folder, and stack the resulting templates into a tensor $W$ ordered by increasing MIDI pitch:
+
+```{python}
+#| echo: true
+import os
+import re
+from tensorly_hdr.cnmf import convolutive_nmf
+
+data_dir = '../../tensorly_hdr/dataset/notes_to_learn'
+T = 10
+Wlist, names = [], []
+for filename in os.listdir(data_dir):
+    names.append(re.search(r'M(\d+)_', filename).group(1))
+    wav, sr = sf.read(os.path.join(data_dir, filename))
+    wav = wav / np.max(np.abs(wav))
+    wav = wav[:, 0][0:sr * 4]
+    freqs, _, S = signal.stft(wav, fs=sr, nperseg=4096, nfft=4096, noverlap=4096 - 882)
+    S = S[:, :-2]
+    half = len(freqs) // 2
+    S_abs = np.abs(S[:half, :])
+    S_abs = S_abs / np.max(S_abs)
+    W1, H1, _ = convolutive_nmf(S_abs, rank=1, T=T, itmax=10, eps=1e-16, tol=0, print_it=10, n_iter_inner=10, init="separable", verbose=False)
+    Wlist.append(W1[:, :, 0])
+
+rank = len(Wlist)
+W = np.stack(Wlist, axis=2)
+perm = np.argsort(names)
+W = W[:, :, perm]
+names_music = ["G2", "A2", "F3", "G3", "A3", "Bb3", "C4", "D4", "F4", "G4", "Bb4", "C5", "D5", "F5"]
+```
+
+## Transcribing by convolutive regression
+
+With templates $W$ fixed, transcribing the 8-second excerpt (six notes + two chords) now only requires estimating the activations $H$, by convolutive regression against the fixed dictionary:
+
+```{python}
+#| echo: true
+from tensorly_hdr.cnmf import convolutive_regression
+
+t_1, t_2 = 0, 8 * sr
+song_tr = song[t_1:t_2]
+frequencies, times, Sxx = signal.stft(song_tr, fs=sr, nperseg=4096, nfft=4096, noverlap=4096 - 882)
+Sxx = Sxx[:, :-2]
+times = times[:-2]
+half_freqs = len(frequencies) // 2
+frequencies = frequencies[:half_freqs]
+Sxx = Sxx[:half_freqs, :]
+Sxx_dB = 20 * np.log10(np.abs(Sxx) + 1e-10)
+Sxx_abs = np.abs(Sxx)
+
+H_tr, err = convolutive_regression(Sxx_abs, W, itmax=50, verbose=False, print_it=25)
+```
+
+## Transcription result
+
+:::{style ="text-align:center;"}
+```{python}
+from matplotlib import gridspec
+
+# Two side-by-side blocks of 7 notes (bass | treble) to keep the figure landscape
+n_left = rank // 2
+n_right = rank - n_left
+
+fig = plt.figure(figsize=(13, 6), constrained_layout=True)
+gs = gridspec.GridSpec(n_left, 7, figure=fig, width_ratios=[0.2, 1.1, 1.1, 0.25, 0.2, 1.1, 1.1])
+
+def plot_note(row, col0, r):
+    ax1 = fig.add_subplot(gs[row, col0])
+    im = ax1.imshow(20 * np.log10(W[:, :, r] + 1e-16), aspect='auto', origin='lower', extent=[0, T, frequencies[0], frequencies[-1]])
+    im.set_clim(np.min(Sxx_dB), np.max(Sxx_dB))
+    ax1.set_xticks([]); ax1.set_yticks([])
+    ax1.set_ylabel(names_music[r], fontsize=8)
+    if row == 0:
+        ax1.set_title("Templ.", fontsize=9)
+    ax2 = fig.add_subplot(gs[row, col0 + 1])
+    ax2.plot(times, H_tr[r, :])
+    ax2.set_xticks([]); ax2.set_yticks([])
+    if row == 0:
+        ax2.set_title("Activation", fontsize=9)
+    ax3 = fig.add_subplot(gs[row, col0 + 2])
+    comp = W[:, :, r] @ shift_m(H_tr[r, :], T=T)
+    im = ax3.imshow(20 * np.log10(comp + 1e-16), aspect='auto', origin='lower', extent=[times[0], times[-1], frequencies[0], frequencies[-1]])
+    im.set_clim(np.min(Sxx_dB), np.max(Sxx_dB))
+    ax3.set_xticks([]); ax3.set_yticks([])
+    if row == 0:
+        ax3.set_title("Component", fontsize=9)
+
+for i in range(n_left):
+    plot_note(i, 0, i)
+for i in range(n_right):
+    plot_note(i, 4, n_left + i)
+plt.show()
+```
+:::
+
+The two five-note chords are correctly identified, with imperfect but plausible relative activations.
+
+## Transcription performance
+
+
+F-measure (%) at 50ms tolerance, per piano [Wu2022]:
+
+| Method | EN1 | EN2 | AkB1 | AkB2 | AkC | AkS |
+|---|---|---|---|---|---|---|
+| CNMF | **88** | **80** | **95** | **90** | 94 | **90** |
+| AD [Cheng2016] | 82 | 69 | 68 | 73 | 61 | 69 |
+| DNN [Kong2020] | **89** | 77 | **98** | **95** | **98** | 87 |
+
+CNMF with weak supervision reaches performance close to fully supervised deep networks.
+
+
+:::{style="font-size:70%; text-align:center;"}
+Note-wise **precision** $= \mathrm{TP}/(\mathrm{TP}+\mathrm{FP})$, **recall** $= \mathrm{TP}/(\mathrm{TP}+\mathrm{FN})$, **F-measure** $= 2\,\mathrm{PR}/(\mathrm{P}+\mathrm{R})$ (TP/FP/FN counted at 50ms tolerance on onsets).
+:::
+
+## Generalization
+
+| Train \\ Test | AkC | EN1 | EN2 | AkB1 | AkB2 |
+|---|---|---|---|---|---|
+| AkC | **94** | 74 | 74 | 77 | 77 |
+| EN1 | 74 | **88** | 76 | 67 | 68 |
+
+Performance drops sharply across pianos: the pipeline is **not robust to distribution shift**.
+
+
+## Takeaways and research directions
+
+- Single-note spectrograms are nearly low-rank, but the additive mixture is not exactly low-rank: phase interference and octave errors are structural, not just numerical
+- Plain NMF-KL is a good first analysis tool, but lacks a reliable rank / uniqueness story for chords
+- Convolutive NMF with pretrained templates recovers competitive transcriptions with **weak supervision only**
+- Open problems: robustness to instrument/recording shift, joint source separation and AMT — part of my ongoing research project
