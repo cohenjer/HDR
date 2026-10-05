@@ -1,0 +1,1354 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<script src="index_files/libs/clipboard/clipboard.min.js"></script>
+<script src="index_files/libs/quarto-html/tabby.min.js"></script>
+<script src="index_files/libs/quarto-html/popper.min.js"></script>
+<script src="index_files/libs/quarto-html/tippy.umd.min.js"></script>
+<link href="index_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="index_files/libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="index_files/libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.10.18">
+
+  <meta name="author" content="Jeremy E. Cohen">
+  <meta name="dcterms.date" content="2026-10-01">
+  <title>Masterclass on nonnegative Low-Rank Approximations</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="index_files/libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="index_files/libs/revealjs/dist/reveal.css">
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: 1.5em;}
+    div.column{flex: auto;}
+    @media screen {
+    div.columns{gap: min(4vw, 1.5em);}
+    div.column{overflow-x: auto;}
+    }
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+      vertical-align: middle;
+    }
+  </style>
+  <link rel="stylesheet" href="index_files/libs/revealjs/dist/theme/quarto-03ee58d93aa56ae2ee8298346d0b2a97.css">
+  <link rel="stylesheet" href="../styles.css">
+  <link href="index_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="index_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="index_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="index_files/libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <style type="text/css">
+    .reveal div.sourceCode {
+      margin: 0;
+      overflow: auto;
+    }
+    .reveal div.hanging-indent {
+      margin-left: 1em;
+      text-indent: -1em;
+    }
+    .reveal .slide:not(.center) {
+      height: 100%;
+    }
+    .reveal .slide.scrollable {
+      overflow-y: auto;
+    }
+    .reveal .footnotes {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide .absolute {
+      position: absolute;
+      display: block;
+    }
+    .reveal .footnotes ol {
+      counter-reset: ol;
+      list-style-type: none; 
+      margin-left: 0;
+    }
+    .reveal .footnotes ol li:before {
+      counter-increment: ol;
+      content: counter(ol) ". "; 
+    }
+    .reveal .footnotes ol li > p:first-child {
+      display: inline-block;
+    }
+    .reveal .slide ul,
+    .reveal .slide ol {
+      margin-bottom: 0.5em;
+    }
+    .reveal .slide ul li,
+    .reveal .slide ol li {
+      margin-top: 0.4em;
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide ul[role="tablist"] li {
+      margin-bottom: 0;
+    }
+    .reveal .slide ul li > *:first-child,
+    .reveal .slide ol li > *:first-child {
+      margin-block-start: 0;
+    }
+    .reveal .slide ul li > *:last-child,
+    .reveal .slide ol li > *:last-child {
+      margin-block-end: 0;
+    }
+    .reveal .slide .columns:nth-child(3) {
+      margin-block-start: 0.8em;
+    }
+    .reveal blockquote {
+      box-shadow: none;
+    }
+    .reveal .tippy-content>* {
+      margin-top: 0.2em;
+      margin-bottom: 0.7em;
+    }
+    .reveal .tippy-content>*:last-child {
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide > img.stretch.quarto-figure-center,
+    .reveal .slide > img.r-stretch.quarto-figure-center {
+      display: block;
+      margin-left: auto;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-left,
+    .reveal .slide > img.r-stretch.quarto-figure-left  {
+      display: block;
+      margin-left: 0;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-right,
+    .reveal .slide > img.r-stretch.quarto-figure-right  {
+      display: block;
+      margin-left: auto;
+      margin-right: 0; 
+    }
+  </style>
+</head>
+<body class="quarto-light">
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" class="quarto-title-block center">
+  <h1 class="title">Masterclass on nonnegative Low-Rank Approximations</h1>
+  <p class="subtitle">Lecture 2 - Nonnegative regression: NNLS, NNKL, and algorithms</p>
+
+<div class="quarto-title-authors">
+<div class="quarto-title-author">
+<div class="quarto-title-author-name">
+Jeremy E. Cohen
+</div>
+        <p class="quarto-title-affiliation">
+            CNRS, CREATIS, Lyon
+          </p>
+    </div>
+</div>
+
+  <p class="date">2026-10-01</p>
+</section>
+<section>
+<section id="nonnegative-regression" class="title-slide slide level1 center">
+<h1>Nonnegative regression</h1>
+<p>In alternating optimization,</p>
+<p><span class="math display">\[
+\min_{W \geq 0, H\geq 0} \|Y - WH^T\|_F^2
+\]</span></p>
+<p>fixing all but one factor turns a nonnegative LRA problem into a nonnegative regression problem.</p>
+<p><span class="math display">\[
+\min_{W \geq 0} \|Y - WH^T\|_F^2
+\]</span></p>
+<div style="text-align:center; font-size=130%;">
+<p><strong>Today: understand this optimization problem and the algorithms that solve it.</strong></p>
+</div>
+</section>
+<section id="from-a-matrix-to-a-vector-problem" class="slide level2 center">
+<h2>From a matrix to a vector problem</h2>
+<p>The problem is separable rowwise,</p>
+<p><span class="math display">\[
+\| Y - WH^T \|_F^2 = \sum_{i=1}^{m} \| Y[i,:] - W[i,:]H^T\|_2^2.
+\]</span></p>
+<p>We need to minimize a quadratic form for each rows <span class="math inline">\(W[i,:]:=x\)</span>, leading to solving <span class="math inline">\(m\)</span> problems of the form</p>
+<p><span class="math display">\[
+\min_{x\geq 0} \| y - Ux \|_2^2.
+\]</span></p>
+</section>
+<section id="nonnegative-regression-1" class="slide level2 center">
+<h2>Nonnegative regression</h2>
+<p>Given observations <span class="math inline">\(y \in \mathbb{R}^m\)</span> and a dictionary <span class="math inline">\(U \in \mathbb{R}^{m \times n}\)</span>:</p>
+<p><span class="math display">\[
+\min_{x \geq 0} f(y, Ux).
+\]</span></p>
+<div class="columns">
+<div class="column">
+<ul>
+<li><span class="math inline">\(x\)</span>: nonnegative coefficients</li>
+<li><span class="math inline">\(Ux\)</span>: reconstructed observation</li>
+<li><span class="math inline">\(f\)</span>: separable, convex loss in its second argument</li>
+</ul>
+<p>Two losses will organize the lecture:</p>
+<ul>
+<li>Euclidean distance: <strong>NNLS</strong></li>
+<li>Kullback-Leibler divergence: <strong>NNKL</strong></li>
+</ul>
+</div><div class="column">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="../figures/nnlsU.png" class="quarto-figure quarto-figure-center" style="width:100.0%"></p>
+</figure>
+</div>
+</div></div>
+</section>
+<section id="why-nonnegativity-matters" class="slide level2 center">
+<h2>Why nonnegativity matters</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<h3 id="interpretation">Interpretation</h3>
+<p>Without constraints, least squares gives</p>
+<p><span class="math display">\[
+x_{\mathrm{LS}} = U^\dagger y.
+\]</span></p>
+<p>Negative coefficients can be difficult to interpret as abundances, intensities…</p>
+<ul>
+<li>Question: is this clear to everyone ?</li>
+</ul>
+</div><div class="column" style="width:50%;">
+<h3 id="solution-uniqueness-and-properties">Solution uniqueness and properties</h3>
+<p>Nonnegativity is an informative prior:</p>
+<ul>
+<li>underdetermined problems can still have unique solutions</li>
+<li>solutions are naturally sparse</li>
+<li>feasible reconstructions form a cone</li>
+</ul>
+</div></div>
+</section></section>
+<section>
+<section id="nnls-the-euclidean-case" class="title-slide slide level1 center">
+<h1>NNLS: the Euclidean case</h1>
+
+</section>
+<section id="problem-formulation" class="slide level2 center">
+<h2>Problem formulation</h2>
+<p>The nonnegative least-squares problem is</p>
+<p><span class="math display">\[
+\boxed{\text{NNLS:}\quad x^* \in \arg\min_{x \geq 0} \|y - Ux\|_2^2 \quad}
+\]</span></p>
+<ul>
+<li>It is a convex quadratic program.</li>
+<li>A solution always exists (projection on a convex set, see next slide)</li>
+<li>There is generally no closed-form formula.</li>
+</ul>
+<p>For full columns rank matrix <span class="math inline">\(U\)</span>, the projected estimate <span class="math inline">\([U^\dagger y]^+\)</span> is generally <strong>not</strong> the NNLS solution.</p>
+</section>
+<section id="nnls-as-projection-on-a-cone" class="slide level2 center">
+<h2>NNLS as projection on a cone</h2>
+<p>Define the cone generated by the columns of <span class="math inline">\(U\)</span>:</p>
+<div class="columns">
+<div class="column">
+<p><span class="math display">\[
+\mathcal{C}(U) = \{Ux : x \geq 0\}.
+\]</span></p>
+<p>Then NNLS can be written as</p>
+<p><span class="math display">\[
+\min_{z \in \mathcal{C}(U)} \|y-z\|_2^2.
+\]</span></p>
+<p>The reconstructed vector <span class="math inline">\(z^*=Ux^*\)</span> is the orthogonal projection of <span class="math inline">\(y\)</span> onto the cone.</p>
+</div><div class="column">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="../figures/Nnlsproj2.png" class="quarto-figure quarto-figure-center" style="width:72.0%"></p>
+</figure>
+</div>
+</div></div>
+<p>When <span class="math inline">\(y\)</span> lies outside the cone, its projection often lands on a lower-dimensional facet. The corresponding coefficient vector <span class="math inline">\(x^*\)</span> is sparse.</p>
+<div style="text-align:center; font-size:130%;">
+<div class="callout callout-caution callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Caution</strong></p>
+</div>
+<div class="callout-content">
+<p>The actual shape of the cone depends on matrix <span class="math inline">\(U\)</span>. Most of the intuition in this masterclass assumes that <span class="math inline">\(U\)</span> is nonnegative.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="kkt-conditions" class="slide level2 center">
+<h2>KKT conditions</h2>
+<p>The geometry gives intuition. The KKT conditions transform this intuition into a set of equations.</p>
+<p>Consider the Lagragian</p>
+<p><span class="math display">\[
+\mathcal{L}(x,\lambda) = \|y-Ux\|_2^2 - \langle \lambda,x\rangle,
+\]</span></p>
+<p>an optimal pair <span class="math inline">\((x^*,\lambda^*)\)</span> satisfies</p>
+<p><span class="math display">\[
+\begin{aligned}
+&amp;x^* \geq 0, \qquad \lambda^* \geq 0,\\
+&amp;\lambda^*[i]x^*[i] = 0,\\
+&amp;2U^T(Ux^*-y)-\lambda^*=0.
+\end{aligned}
+\]</span></p>
+<p>These conditions separate active coefficients from inactive ones.</p>
+</section>
+<section id="kkt-conditions-on-the-support" class="slide level2 center">
+<h2>KKT conditions on the support</h2>
+<p>Let <span class="math inline">\(S = \operatorname{supp}(x^*)\)</span> and <span class="math inline">\(r^* = y-Ux^*\)</span>.</p>
+<p>On the support:</p>
+<p><span class="math display">\[
+U[:,S]^T r^* = 0.
+\]</span></p>
+<p>Outside the support:</p>
+<p><span class="math display">\[
+U[:,S^c]^T r^* \leq 0.
+\]</span></p>
+<p>So the active atoms are orthogonal to the residual.</p>
+<div style="text-align:center; font-size:130%;">
+<div class="callout callout-tip callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Tip</strong></p>
+</div>
+<div class="callout-content">
+<p>If the optimal support is known and <span class="math inline">\(U[:,S]\)</span> is invertible, the solution can be computed exactly!</p>
+<p><span class="math display">\[ U^T[:,S]U[:,S]x^\ast = U^T[:,S]y \]</span></p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="the-night-sky-theorem" class="slide level2 center">
+<h2>The night-sky theorem</h2>
+<div style="text-align:center; font-size:130%;">
+<div class="callout callout-tip callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Theorem</strong></p>
+</div>
+<div class="callout-content">
+<p>If <span class="math inline">\(y \notin \mathcal{C}(U)\)</span> and <span class="math inline">\(\operatorname{spark}(U)&gt;m\)</span>, then NNLS has a unique solution with</p>
+<p><span class="math display">\[
+|\operatorname{supp}(x^*)| \leq m-1.
+\]</span></p>
+</div>
+</div>
+</div>
+</div>
+<p>This is the <strong>night-sky theorem</strong>:</p>
+<ul>
+<li>an underdetermined NNLS problem can have a unique solution.</li>
+<li>the solution is sparse even without an explicit sparsity penalty.</li>
+<li>knowing the support reduces the problem to least squares.</li>
+</ul>
+<h4 id="proof-elements">Proof elements</h4>
+<ul>
+<li>The residual cannot be null, and is uniquely defined.</li>
+<li>The condition <span class="math inline">\(U[:,S]^T r^* = 0\)</span> imposes that columns of <span class="math inline">\(U[:,S]\)</span> are in the orthogonal space of <span class="math inline">\(r^\ast\)</span>, of dimension <span class="math inline">\(m-1\)</span>.
+<ul>
+<li>Thus <span class="math inline">\(U[:,S]\)</span> is also always full column rank, and there exists a solution with a support of size at most <span class="math inline">\(m-1\)</span>.</li>
+</ul></li>
+<li>If there are no groups of <span class="math inline">\(m\)</span> colinear colums (the spark condition), then <span class="math inline">\(S\)</span> is unique, and so is <span class="math inline">\(x^\ast\)</span>.</li>
+</ul>
+</section>
+<section id="nnls-recap" class="slide level2 center">
+<h2>NNLS recap</h2>
+<p>NNLS is simultaneously:</p>
+<ul>
+<li>a constrained quadratic program.</li>
+<li>a projection onto a convex cone.</li>
+<li>a support-estimation problem.</li>
+</ul>
+<p>Its algorithms will exploit one of these three viewpoints. We will explore them in a second part of the talk.</p>
+</section></section>
+<section>
+<section id="nnkl-the-poisson-case" class="title-slide slide level1 center">
+<h1>NNKL: the Poisson case</h1>
+
+</section>
+<section id="why-replace-the-euclidean-loss" class="slide level2 center">
+<h2>Why replace the Euclidean loss?</h2>
+<p>The Euclidean loss treats absolute errors equally across the signal range.</p>
+<div class="columns">
+<div class="column">
+<p>For data with large dynamic range or count measurements:</p>
+<ul>
+<li>small values may be scientifically important</li>
+<li>variance can grow with the signal</li>
+<li>relative error can matter more than absolute error</li>
+</ul>
+<p>A Poisson model gives a different data fidelity term.</p>
+</div><div class="column">
+<p><span class="math display">\[ (100 - 101)^2 = 1\]</span></p>
+<p><span class="math display">\[ (1-2)^2 = 1 \]</span></p>
+</div></div>
+</section>
+<section id="nnkl-problem-formulation" class="slide level2 center">
+<h2>NNKL problem formulation</h2>
+<p>For Poisson observations (distribution of counting things),</p>
+<p><span class="math display">\[
+Y[i] \mid x \sim \mathcal{P}((Ux)[i]),
+\]</span></p>
+<p>maximum likelihood leads to the generalized KL divergence</p>
+<p><span class="math display">\[
+D_{\mathrm{KL}}(y,z)
+= \sum_i y[i]\log\frac{y[i]}{z[i]} + z[i]-y[i].
+\]</span></p>
+<p>The nonnegative KL regression problem is</p>
+<p><span class="math display">\[
+\boxed{\text{NNKL:} \quad x^* \in \arg\min_{x \geq 0} D_{\mathrm{KL}}(y,Ux). \quad}
+\]</span></p>
+</section>
+<section id="kl-divergence-in-one-dimension" class="slide level2 center">
+<h2>KL divergence in one dimension</h2>
+<p>The scalar KL divergence is minimized at <span class="math inline">\(q=p\)</span>.</p>
+<p><span class="math display">\[
+D_{\mathrm{KL}}(p,q)=p\log\left(\frac{p}{q}\right)+q-p.
+\]</span></p>
+<div class="columns">
+<div class="column">
+<p>For the reference value <span class="math inline">\(p=2.5\)</span>, the curve is:</p>
+<div id="e48d5e09" class="cell" data-execution_count="1">
+<div class="cell-output cell-output-display">
+<div>
+<figure>
+<p><img data-src="index_files/figure-revealjs/cell-2-output-1.png" width="759" height="326"></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column">
+<p><span class="math display">\[D_{\mathrm{KL}}(100,101) = 100\log(100/101) + 1 \approx 0.005 \]</span></p>
+<p><span class="math display">\[D_{\mathrm{KL}}(1,2) = \log(1/2) + 1 \approx 0.31  \]</span> <span class="math display">\[D_{\mathrm{KL}}(2,1) = 2\log(2) - 1 \approx 0.39  \]</span></p>
+</div></div>
+</section>
+<section id="nnls-and-nnkl-different-geometries" class="slide level2 center">
+<h2>NNLS and NNKL: different geometries</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p><strong>NNLS</strong></p>
+<p><span class="math display">\[
+\|y-Ux\|_2^2
+\]</span></p>
+<ul>
+<li>quadratic</li>
+<li>orthogonal projection</li>
+<li>closed form solution if the support is known</li>
+</ul>
+</div><div class="column" style="width:50%;">
+<p><strong>NNKL</strong></p>
+<p><span class="math display">\[
+D_{\mathrm{KL}}(y,Ux)
+\]</span></p>
+<ul>
+<li>Poisson likelihood</li>
+<li>non-Euclidean projection</li>
+<li>no closed-form even with support (see later)</li>
+</ul>
+</div></div>
+</section>
+<section id="difficulty-1-curvature-near-zero" class="slide level2 center">
+<h2>Difficulty 1: curvature near zero</h2>
+<p>The KL curvature is</p>
+<p><span class="math display">\[
+\frac{\partial^2 D_{\mathrm{KL}}(y,z)}{\partial z^2}
+= \frac{y}{z^2}.
+\]</span></p>
+<p>It becomes unbounded as <span class="math inline">\(z \to 0\)</span>.</p>
+<p>Consequences:</p>
+<ul>
+<li>No global Lipschitz constant for the gradient: <span class="math inline">\(\forall y\geq 0, \;\forall L \geq 0,\; \exists z \geq 0 \text{ s.t. } \|\nabla_x D_{\mathrm{KL}}(y,z)\| &gt; L\|z\|\)</span>.</li>
+<li>No universally safe fixed gradient step.</li>
+<li>Sparse data can make first-order methods inefficient.</li>
+</ul>
+</section>
+<section id="difficulty-2-no-strong-convexity" class="slide level2 center">
+<h2>Difficulty 2: no strong convexity</h2>
+<p>KL divergence is strictly convex, but generally not strongly convex: for large <span class="math inline">\(z\)</span>, it becomes asymptotically linear.</p>
+<div class="columns">
+<div class="column">
+<p><br> <br></p>
+<ul>
+<li>gradient methods need not have a global linear rate</li>
+<li>large dynamic ranges make the problem harder</li>
+<li>zeros in <span class="math inline">\(y\)</span> create broad linear regions</li>
+</ul>
+</div><div class="column">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="../figures/Lipschitz.png" class="quarto-figure quarto-figure-center" style="width:90.0%"></p>
+</figure>
+</div>
+</div></div>
+</section>
+<section id="difficulty-3-the-support-is-not-enough" class="slide level2 center">
+<h2>Difficulty 3: the support is not enough</h2>
+<p>On a known support <span class="math inline">\(S\)</span>, the NNKL KKT equation is</p>
+<p><span class="math display">\[
+U[:,S]^T\left(1-\frac{y}{Ux^*}\right)=0.
+\]</span></p>
+<div style="text-align:center">
+<div id="8707d9c0" class="cell" data-execution_count="2">
+<div class="cell-output cell-output-display">
+<div>
+<figure>
+<p><img data-src="index_files/figure-revealjs/cell-3-output-1.png" width="952" height="374"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>y = [6. 1. 2.], Ux* = [4.49999918 2.25000209 2.25000009], residual 1-y/(Ux*) = [-0.33333358  0.55555597  0.11111115]</code></pre>
+</div>
+</div>
+</div>
+<p>Here <span class="math inline">\(y\)</span> lies outside the model cone <span class="math inline">\(\{Ux : x\geq 0\}\)</span>: solving the KKT equation on the full support <span class="math inline">\(\{1,2\}\)</span> would give a solution violating nonnegativity, so the true projection <span class="math inline">\(Ux^*\)</span> falls on a facet of the cone (<span class="math inline">\(x_2=0\)</span>), leaving column 2 inactive. Even locating the solution on this facet requires solving an optimization problem.</p>
+</section>
+<section id="bonus-trick-optimal-scaling-for-nnkl" class="slide level2 center">
+<h2>Bonus trick: optimal scaling for NNKL</h2>
+<p>Consider scaling a candidate reconstruction by <span class="math inline">\(\alpha\)</span>:</p>
+<p><span class="math display">\[
+\min_{\alpha \geq 0} D_{\mathrm{KL}}(y,\alpha Ux).
+\]</span></p>
+<p>At the optimum,</p>
+<p><span class="math display">\[
+\alpha^* = \frac{\sum_i y[i]}{\sum_i (Ux)[i]}.
+\]</span></p>
+<p>Thus any optimal solution satisfies</p>
+<p><span class="math display">\[
+\sum_i (Ux^*)[i] = \sum_i y[i].
+\]</span></p>
+<p>When columns of <span class="math inline">\(U\)</span> sum to one, the model and data have matching marginals.</p>
+</section></section>
+<section>
+<section id="three-algorithmic-viewpoints" class="title-slide slide level1 center">
+<h1>Three algorithmic viewpoints</h1>
+
+</section>
+<section id="which-algorithm-for-which-problem" class="slide level2 center">
+<h2>Which algorithm for which problem?</h2>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Method</th>
+<th style="text-align: center;">NNLS</th>
+<th style="text-align: center;">NNKL</th>
+<th style="text-align: left;">Main idea</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Active-Set</td>
+<td style="text-align: center;">yes</td>
+<td style="text-align: center;">no</td>
+<td style="text-align: left;">search for the support</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">HALS</td>
+<td style="text-align: center;">yes</td>
+<td style="text-align: center;">no</td>
+<td style="text-align: left;">exact coordinate blocks</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Multiplicative Updates</td>
+<td style="text-align: center;">yes</td>
+<td style="text-align: center;">yes</td>
+<td style="text-align: left;">scaled first-order steps</td>
+</tr>
+</tbody>
+</table>
+<p>The best method depends on the shape of the regression:</p>
+<ul>
+<li>one vector or a matrix of right-hand sides?</li>
+<li>Euclidean or KL loss?</li>
+<li>sparse solution or dense iterates?</li>
+</ul>
+</section></section>
+<section>
+<section id="active-set-for-nnls" class="title-slide slide level1 center">
+<h1>Active-Set for NNLS</h1>
+
+</section>
+<section id="active-set-search-for-the-support" class="slide level2 center">
+<h2>Active-Set: search for the support</h2>
+<p>If the support <span class="math inline">\(S\)</span> were known, NNLS would reduce to</p>
+<p><span class="math display">\[
+\min_{x[S]} \|y-U[:,S]x[S]\|_2^2.
+\]</span></p>
+<p>Active-Set (AS) alternates between:</p>
+<ol type="1">
+<li>adding a promising atom</li>
+<li>solving least squares on the active support</li>
+<li>removing coefficients that violate nonnegativity</li>
+</ol>
+</section>
+<section id="step-1-select-an-atom" class="slide level2 center">
+<h2>Step 1: select an atom</h2>
+<p>With residual <span class="math inline">\(r=y-Ux\)</span>, choose the inactive atom most correlated with <span class="math inline">\(r\)</span>:</p>
+<p><span class="math display">\[
+j = \arg\max_{i\notin S} \langle U[:,i],r\rangle,
+\qquad S \leftarrow S \cup \{j\}.
+\]</span></p>
+<ul>
+<li>This follows the KKT condition: at optimality, correlations vanish on the support and are negative outside it.</li>
+<li>Other perspective: choose the column of <span class="math inline">\(U\)</span> that is most correlated with the residual, likely to “explain” the remaining data the best.</li>
+</ul>
+</section>
+<section id="step-2-solve-on-the-active-support" class="slide level2 center">
+<h2>Step 2: solve on the active support</h2>
+<p>Compute the unconstrained restricted least-squares solution</p>
+<p><span class="math display">\[
+z[S] = U[:,S]^\dagger y,
+\qquad z[S^c]=0.
+\]</span></p>
+<ul>
+<li>If <span class="math inline">\(z \geq 0\)</span>, accept it and continue with the next iteration. Stop if KKT conditions show optimality.</li>
+<li>If some entries of <span class="math inline">\(z\)</span> are negative, the candidate is infeasible, go to step 3.</li>
+</ul>
+</section>
+<section id="step-3-return-to-the-feasible-cone" class="slide level2 center">
+<h2>Step 3: return to the feasible cone</h2>
+<p>Move from the current feasible point <span class="math inline">\(x\)</span> toward <span class="math inline">\(z\)</span>:</p>
+<p><span class="math display">\[
+x \leftarrow x+t(z-x),
+\]</span></p>
+<p>with the largest feasible step</p>
+<p><span class="math display">\[
+t^* = \min_{i:z[i]&lt;0}\frac{x[i]}{x[i]-z[i]}.
+\]</span></p>
+<ul>
+<li>At least (an often exactly) one coefficient reaches zero, so the support is reduced.</li>
+<li>The cost decreases along the segment <span class="math inline">\((x,z)\)</span> by convexity!
+<ul>
+<li>This guarantees that the same support is never visited twice, since all operators in AS reduce the cost, and a given support leads to a fixed residual error.</li>
+</ul></li>
+</ul>
+<p>Then go back to step 2.</p>
+</section>
+<section id="summary-of-active-set" class="slide level2 center">
+<h2>Summary of Active-Set</h2>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="../figures/active_set.png" class="quarto-figure quarto-figure-center" style="width:50.0%"></p>
+</figure>
+</div>
+</section>
+<section id="active-set-what-is-guaranteed" class="slide level2 center">
+<h2>Active-Set: what is guaranteed?</h2>
+<p>Every accepted step decreases the NNLS cost.</p>
+<p>A support is not revisited unless the optimum has been reached. Therefore AS terminates after finitely many support changes, although the worst-case number of supports is exponential.</p>
+<p>AS is especially attractive when:</p>
+<ul>
+<li>the unknown is a single vector</li>
+<li>the solution is sparse</li>
+<li>initialization is close to the solution</li>
+</ul>
+</section></section>
+<section>
+<section id="hals-for-matrix-nnls" class="title-slide slide level1 center">
+<h1>HALS for matrix NNLS</h1>
+
+</section>
+<section id="why-active-set-does-not-scale-to-batches" class="slide level2 center">
+<h2>Why Active-Set does not scale to batches</h2>
+<p>Matrix NNLS is</p>
+<p><span class="math display">\[
+\min_{H^T\geq 0} \|Y-WH^T\|_F^2.
+\]</span></p>
+<p>Each column of <span class="math inline">\(H^T\)</span> is a separate NNLS problem, potentially with a different support.</p>
+<p>Solving restricted linear systems independently is expensive.</p>
+<div style="text-align:center; font-size:130%;">
+<div class="callout callout-tip callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>HALS strategy</strong></p>
+</div>
+<div class="callout-content">
+<p>Work on rank-one terms, alternatively.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="hals-the-matrix-view" class="slide level2 center">
+<h2>HALS: the matrix view</h2>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="../figures/hals.png" class="quarto-figure quarto-figure-center" style="width:72.0%"></p>
+</figure>
+</div>
+<p>HALS is exact alternating optimization:</p>
+<ul>
+<li>each row update decreases the objective</li>
+<li>all right-hand sides are updated together</li>
+<li>with nonzero columns of <span class="math inline">\(U\)</span>, convergence is to the global NNLS minimizer</li>
+</ul>
+<p>Lecture 3: we will implement HALS to compute NMF and Nonnegative Tucker decomposition!</p>
+</section>
+<section id="the-one-dimensional-nnls-building-block" class="slide level2 center">
+<h2>The one-dimensional NNLS building block</h2>
+<div class="columns">
+<div class="column">
+<p>For <span class="math inline">\(a \neq 0\)</span> and <span class="math inline">\(Z\)</span> fixed, <span class="math display">\[
+\arg\min_{h\geq 0}\|Z-ah^T\|_F^2
+= \left[\frac{a^TZ}{\|a\|_2^2}\right]_+.
+\]</span></p>
+<p>Each entry is just a scalar quadratic minimization:</p>
+<p><span class="math display">\[
+h[i] = \max\left(0,\frac{a^TZ[:,i]}{\|a\|_2^2}\right).
+\]</span></p>
+</div><div class="column">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="../figures/nnls1d.png" class="quarto-figure quarto-figure-center" style="width:100.0%"></p>
+</figure>
+</div>
+</div></div>
+</section>
+<section id="hals-update" class="slide level2 center">
+<h2>HALS update</h2>
+<p>To update row <span class="math inline">\(j\)</span> of <span class="math inline">\(H^T\)</span>, remove its current contribution:</p>
+<p><span class="math display">\[
+Z = Y - U[:, -j]H^T[-j,:].
+\]</span></p>
+<p>Then update the whole row at once:</p>
+<p><span class="math display">\[
+H^T[j,:]
+\leftarrow
+\left[\frac{U[:,j]^TZ}{\|U[:,j]\|_2^2}\right]_+.
+\]</span></p>
+<p>This is an exact minimization over one block, because the cost is separable with respect to entries in a single row.</p>
+</section></section>
+<section>
+<section id="multiplicative-updates" class="title-slide slide level1 center">
+<h1>Multiplicative Updates</h1>
+
+</section>
+<section id="a-common-update-pattern" class="slide level2 center">
+<h2>A common update pattern</h2>
+<p>Multiplicative Updates (MU) preserve nonnegativity by construction:</p>
+<p><span class="math display">\[
+x^{(k+1)} = x^{(k)} \ast \frac{\text{nonnegative numerator}}{\text{nonnegative denominator}}.
+\]</span></p>
+<p>For NNLS:</p>
+<p><span class="math display">\[
+x^{(k+1)} = x^{(k)}\ast
+\frac{U^Ty}{U^TUx^{(k)}}.
+\]</span></p>
+<p>For NNKL:</p>
+<p><span class="math display">\[
+x^{(k+1)} = x^{(k)}\ast
+\frac{U^T\left(y/Ux^{(k)}\right)}{U^T1}.
+\]</span></p>
+<p>All products and divisions are elementwise.</p>
+</section>
+<section id="mu-as-a-gradient-ratio" class="slide level2 center">
+<h2>MU as a gradient ratio</h2>
+<p>The gradients can be split into positive and negative parts:</p>
+<p><span class="math display">\[
+\nabla f = \nabla^+ f - \nabla^- f.
+\]</span></p>
+<p>Then MU has the mnemonic form</p>
+<p><span class="math display">\[
+x^{(k+1)} = x^{(k)}\ast
+\frac{\nabla^- f(x^{(k)})}{\nabla^+ f(x^{(k)})}.
+\]</span></p>
+<p>At a stationary point, the ratio tends to one wherever <span class="math inline">\(x&gt;0\)</span>.</p>
+</section>
+<section id="mm-optimize-a-majorant" class="slide level2 center">
+<h2>MM: optimize a majorant</h2>
+<p>At the current iterate <span class="math inline">\(x^{(k)}\)</span>, build a surrogate <span class="math inline">\(\xi(x,x^{(k)})\)</span> such that</p>
+<p><span class="math display">\[
+\xi(x,x^{(k)}) \geq f(y,Ux),
+\qquad
+\xi(x^{(k)},x^{(k)}) = f(y,Ux^{(k)}).
+\]</span></p>
+<p>Then take the next iterate by minimizing the surrogate:</p>
+<p><span class="math display">\[
+x^{(k+1)} \in \arg\min_{x\geq 0} \xi(x,x^{(k)}).
+\]</span></p>
+<p>The important design goals are <strong>global upper-bounding</strong>, <strong>tightness</strong>, and a tractable minimization.</p>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="../figures/Mmprinciple.png" class="quarto-figure quarto-figure-center" style="width:100.0%"></p>
+</figure>
+</div>
+</div><div class="column" style="width:50%;">
+<p>The majorant touches the cost at <span class="math inline">\(x^{(k)}\)</span> and is easier to minimize. Its minimizer gives a guaranteed descent step.</p>
+</div></div>
+</section>
+<section id="jensen-constructs-the-majorant" class="slide level2 center">
+<h2>Jensen constructs the majorant</h2>
+<p>Jensen’s inequality gives</p>
+<p><span class="math display">\[
+f\left(y[i],\sum_j\lambda_{i,j}u_{i,j}\right)
+\leq \sum_j\lambda_{i,j}f(y[i],u_{i,j}).
+\]</span></p>
+<p>Convexity turns one coupled loss into a sum of simpler losses.</p>
+<p>Let</p>
+<p><span class="math display">\[
+\hat y[i] = (Ux^{(k)})[i],
+\qquad
+\lambda_{i,j} = \frac{U[i,j]x^{(k)}[j]}{\hat y[i]}.
+\qquad
+u_{i,j}=\frac{x[j]}{x^{(k)}[j]}\hat y[i].
+\]</span></p>
+<p>For each observation <span class="math inline">\(i\)</span>,</p>
+<p><span class="math display">\[
+\sum_j \lambda_{i,j}=1,
+\]</span></p>
+<p>so the current reconstruction defines a convex combination.</p>
+</section>
+<section id="the-jensen-majorant-is-separable" class="slide level2 center">
+<h2>The Jensen majorant is separable</h2>
+<p>We get</p>
+<p><span class="math display">\[
+\sum_j \lambda_{i,j}u_{i,j}
+= \sum_j U[i,j]x[j] = (Ux)[i].
+\]</span></p>
+<p>Therefore the Jensen bound is the majorant</p>
+<p><span class="math display">\[
+\xi(x,x^{(k)})
+= \sum_{i,j}\frac{U[i,j]x^{(k)}[j]}{\hat y[i]}
+f\left(y[i],\frac{x[j]}{x^{(k)}[j]}\hat y[i]\right).
+\]</span></p>
+<p>Each term depends on only one coefficient <span class="math inline">\(x[j]\)</span>, so the minimization separates across <span class="math inline">\(j\)</span>.</p>
+</section>
+<section id="from-the-majorant-to-mu" class="slide level2 center">
+<h2>From the majorant to MU</h2>
+<p>For every coefficient <span class="math inline">\(x[j]\)</span>, set the derivative of the majorant to zero:</p>
+<p><span class="math display">\[
+0=\sum_i U[i,j]
+\frac{\partial f}{\partial z}
+\left(y[i],\frac{x[j]}{x^{(k)}[j]}\hat y[i]\right).
+\]</span></p>
+<p>The two losses give two scalar equations:</p>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p><strong>Euclidean loss</strong></p>
+<p><span class="math display">\[
+\frac{\partial f}{\partial z}=z-y
+\]</span></p>
+<p><span class="math display">\[
+x^{(k+1)}
+=x^{(k)}\ast\frac{U^Ty}{U^TUx^{(k)}}.
+\]</span></p>
+</div><div class="column" style="width:50%;">
+<p><strong>KL divergence</strong></p>
+<p><span class="math display">\[
+\frac{\partial f}{\partial z}=1-\frac{y}{z}
+\]</span></p>
+<p><span class="math display">\[
+x^{(k+1)}
+=x^{(k)}\ast
+\frac{U^T(y/(Ux^{(k)}))}{U^T1}.
+\]</span></p>
+</div></div>
+</section>
+<section id="mm-guarantees-descent" class="slide level2 center">
+<h2>MM guarantees descent</h2>
+<p>Because the surrogate is tight at the current iterate,</p>
+<p><span class="math display">\[
+f(x^{(k+1)})
+\leq \xi(x^{(k+1)},x^{(k)})
+\leq \xi(x^{(k)},x^{(k)})
+= f(x^{(k)}).
+\]</span></p>
+<p>MU decreases the objective, but descent alone does not guarantee a fast rate or a unique limit point.</p>
+</section>
+<section id="positivity-and-zero-locking" class="slide level2 center">
+<h2>Positivity and zero-locking</h2>
+<p>If an entry becomes exactly zero, multiplication keeps it zero forever. This is <strong>zero-locking</strong>.</p>
+<p>A common safeguard is to enforce <span class="math inline">\(x\geq\epsilon\)</span>:</p>
+<p><span class="math display">\[
+x^{(k+1)} \leftarrow
+\max\left(x^{(k)}\ast\frac{\nabla^- f}{\nabla^+ f},\epsilon\right).
+\]</span></p>
+<p>Strict positivity also avoids division by zero and helps with the KL curvature near zero.</p>
+</section>
+<section id="why-mu-is-natural-for-nnkl" class="slide level2 center">
+<h2>Why MU is natural for NNKL</h2>
+<p>For Poisson data,</p>
+<p><span class="math display">\[
+Y[i]\mid x \sim \mathcal{P}((Ux)[i]).
+\]</span></p>
+<p>The latent contribution of component <span class="math inline">\(j\)</span> to observation <span class="math inline">\(i\)</span> is proportional to</p>
+<p><span class="math display">\[
+\frac{U[i,j]x[j]}{(Ux)[i]}.
+\]</span></p>
+<p>The EM algorithm updates these latent responsibilities, then re-estimates <span class="math inline">\(x\)</span>. The resulting update is exactly NNKL MU.</p>
+</section></section>
+<section>
+<section id="rank-one-approximations" class="title-slide slide level1 center">
+<h1>Rank-one approximations</h1>
+
+</section>
+<section id="rank-one-kl-approximation" class="slide level2 center">
+<h2>Rank-one KL approximation</h2>
+<p>For nonnegative <span class="math inline">\(Y\)</span>, consider</p>
+<p><span class="math display">\[
+\min_{w,h\geq 0} D_{\mathrm{KL}}(Y,wh^T).
+\]</span></p>
+<p>The optimal scaling conditions imply</p>
+<p><span class="math display">\[
+h^*[j]\sum_i w^*[i] = \sum_i Y[i,j],
+\]</span></p>
+<p>and</p>
+<p><span class="math display">\[
+w^*[i]\sum_j h^*[j] = \sum_j Y[i,j].
+\]</span></p>
+<p>Thus the rank-one factors are proportional to the column and row marginals of <span class="math inline">\(Y\)</span>.</p>
+</section>
+<section id="rank-one-frobenius-approximation" class="slide level2 center">
+<h2>Rank-one Frobenius approximation</h2>
+<p>For nonnegative <span class="math inline">\(Y\)</span>,</p>
+<p><span class="math display">\[
+\min_{w,h\geq 0}\|Y-wh^T\|_F^2
+\]</span></p>
+<p>is solved by the leading rank-one SVD approximation, made nonnegative by taking absolute values of the leading singular vectors.</p>
+<p>The Perron-Frobenius theorem guarantees nonnegative leading singular vectors for positive matrices.</p>
+</section>
+<section id="what-to-remember" class="slide level2 center">
+<h2>What to remember</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p><strong>NNLS</strong></p>
+<ul>
+<li>cone projection</li>
+<li>KKT support conditions</li>
+<li>Active-Set for sparse vectors</li>
+<li>HALS for matrix updates</li>
+</ul>
+</div><div class="column" style="width:50%;">
+<p><strong>NNKL</strong></p>
+<ul>
+<li>Poisson likelihood</li>
+<li>difficult curvature near zero</li>
+<li>optimal scaling</li>
+<li>MU and EM</li>
+</ul>
+</div></div>
+</section>
+<section id="the-optimization-core-of-nonnegative-lra" class="slide level2 center">
+<h2>The optimization core of nonnegative LRA</h2>
+<p>Lecture 1 gave the model:</p>
+<p><span class="math display">\[
+\min_{W,H\geq 0} \|Y-WH^T\|_F^2.
+\]</span></p>
+<p>Lecture 2 opened the inner loop:</p>
+<p><span class="math display">\[
+\min_{x\geq 0} f(y,Wx).
+\]</span></p>
+<p>The same regression problems reappear inside NMF, nonnegative CP, nonnegative Tucker, and many other structured models.</p>
+<div style="text-align:center; font-size=130%;">
+<p><strong>Any questions ?</strong></p>
+</div>
+
+</section></section>
+    </div>
+  <div class="quarto-auto-generated-content" style="display: none;">
+<div class="footer footer-default">
+<p>Masterclass - Nonnegative LRA</p>
+</div>
+</div></div>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script>
+  <script src="index_files/libs/revealjs/dist/reveal.js"></script>
+  <!-- reveal.js plugins -->
+  <script src="index_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="index_files/libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="index_files/libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="index_files/libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="index_files/libs/revealjs/plugin/quarto-support/support.js"></script>
+  
+
+  <script src="index_files/libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="index_files/libs/revealjs/plugin/search/search.js"></script>
+  <script src="index_files/libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="index_files/libs/revealjs/plugin/math/math.js"></script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+'controlsAuto': false,
+'previewLinksAuto': false,
+'pdfSeparateFragments': false,
+'autoAnimateEasing': "ease",
+'autoAnimateDuration': 1,
+'autoAnimateUnmatched': true,
+'jumpToSlide': true,
+'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleScrollView(event)\"><kbd>r</kbd> Scroll View Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"5\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true},
+'smaller': false,
+ 
+        // Display controls in the bottom right corner
+        controls: true,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: false,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'edges',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: 'c/t',
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: true,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: true,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'linear',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: false,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'fade',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'none',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1200,
+
+        height: 750,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 0.12,
+
+        // Bounds for smallest/largest possible scale to apply to content
+        minScale: 0.5,
+
+        maxScale: 2,
+
+        math: {
+          mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, QuartoSupport,
+
+          RevealMath,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    <script id="quarto-html-after-body" type="application/javascript">
+      window.document.addEventListener("DOMContentLoaded", function (event) {
+        const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+        tabsets.forEach(function(tabset) {
+          const tabby = new Tabby('#' + tabset.id);
+        });
+        const isCodeAnnotation = (el) => {
+          for (const clz of el.classList) {
+            if (clz.startsWith('code-annotation-')) {                     
+              return true;
+            }
+          }
+          return false;
+        }
+        const onCopySuccess = function(e) {
+          // button target
+          const button = e.trigger;
+          // don't keep focus
+          button.blur();
+          // flash "checked"
+          button.classList.add('code-copy-button-checked');
+          var currentTitle = button.getAttribute("title");
+          button.setAttribute("title", "Copied!");
+          let tooltip;
+          if (window.bootstrap) {
+            button.setAttribute("data-bs-toggle", "tooltip");
+            button.setAttribute("data-bs-placement", "left");
+            button.setAttribute("data-bs-title", "Copied!");
+            tooltip = new bootstrap.Tooltip(button, 
+              { trigger: "manual", 
+                customClass: "code-copy-button-tooltip",
+                offset: [0, -8]});
+            tooltip.show();    
+          }
+          setTimeout(function() {
+            if (tooltip) {
+              tooltip.hide();
+              button.removeAttribute("data-bs-title");
+              button.removeAttribute("data-bs-toggle");
+              button.removeAttribute("data-bs-placement");
+            }
+            button.setAttribute("title", currentTitle);
+            button.classList.remove('code-copy-button-checked');
+          }, 1000);
+          // clear code selection
+          e.clearSelection();
+        }
+        const getTextToCopy = function(trigger) {
+          const outerScaffold = trigger.parentElement.cloneNode(true);
+          const codeEl = outerScaffold.querySelector('code');
+          for (const childEl of codeEl.children) {
+            if (isCodeAnnotation(childEl)) {
+              childEl.remove();
+            }
+          }
+          return codeEl.innerText;
+        }
+        const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+          text: getTextToCopy
+        });
+        clipboard.on('success', onCopySuccess);
+        if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+          const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+            text: getTextToCopy,
+            container: window.document.getElementById('quarto-embedded-source-code-modal')
+          });
+          clipboardModal.on('success', onCopySuccess);
+        }
+          var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+          var mailtoRegex = new RegExp(/^mailto:/);
+            var filterRegex = new RegExp('/' + window.location.host + '/');
+          var isInternal = (href) => {
+              return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+          }
+          // Inspect non-navigation links and adorn them if external
+         var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+          for (var i=0; i<links.length; i++) {
+            const link = links[i];
+            if (!isInternal(link.href)) {
+              // undo the damage that might have been done by quarto-nav.js in the case of
+              // links that we want to consider external
+              if (link.dataset.originalHref !== undefined) {
+                link.href = link.dataset.originalHref;
+              }
+            }
+          }
+        function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+          const config = {
+            allowHTML: true,
+            maxWidth: 500,
+            delay: 100,
+            arrow: false,
+            appendTo: function(el) {
+                return el.closest('section.slide') || el.parentElement;
+            },
+            interactive: true,
+            interactiveBorder: 10,
+            theme: 'light-border',
+            placement: 'bottom-start',
+          };
+          if (contentFn) {
+            config.content = contentFn;
+          }
+          if (onTriggerFn) {
+            config.onTrigger = onTriggerFn;
+          }
+          if (onUntriggerFn) {
+            config.onUntrigger = onUntriggerFn;
+          }
+            config['offset'] = [0,0];
+            config['maxWidth'] = 700;
+          window.tippy(el, config); 
+        }
+        const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+        for (var i=0; i<noterefs.length; i++) {
+          const ref = noterefs[i];
+          tippyHover(ref, function() {
+            // use id or data attribute instead here
+            let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+            try { href = new URL(href).hash; } catch {}
+            const id = href.replace(/^#\/?/, "");
+            const note = window.document.getElementById(id);
+            if (note) {
+              return note.innerHTML;
+            } else {
+              return "";
+            }
+          });
+        }
+        const findCites = (el) => {
+          const parentEl = el.parentElement;
+          if (parentEl) {
+            const cites = parentEl.dataset.cites;
+            if (cites) {
+              return {
+                el,
+                cites: cites.split(' ')
+              };
+            } else {
+              return findCites(el.parentElement)
+            }
+          } else {
+            return undefined;
+          }
+        };
+        var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+        for (var i=0; i<bibliorefs.length; i++) {
+          const ref = bibliorefs[i];
+          const citeInfo = findCites(ref);
+          if (citeInfo) {
+            tippyHover(citeInfo.el, function() {
+              var popup = window.document.createElement('div');
+              citeInfo.cites.forEach(function(cite) {
+                var citeDiv = window.document.createElement('div');
+                citeDiv.classList.add('hanging-indent');
+                citeDiv.classList.add('csl-entry');
+                var biblioDiv = window.document.getElementById('ref-' + cite);
+                if (biblioDiv) {
+                  citeDiv.innerHTML = biblioDiv.innerHTML;
+                }
+                popup.appendChild(citeDiv);
+              });
+              return popup.innerHTML;
+            });
+          }
+        }
+      });
+      </script>
+    
+
+</body></html>

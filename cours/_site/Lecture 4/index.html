@@ -1,0 +1,1342 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<script src="index_files/libs/clipboard/clipboard.min.js"></script>
+<script src="index_files/libs/quarto-html/tabby.min.js"></script>
+<script src="index_files/libs/quarto-html/popper.min.js"></script>
+<script src="index_files/libs/quarto-html/tippy.umd.min.js"></script>
+<link href="index_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="index_files/libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="index_files/libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.10.18">
+
+  <meta name="author" content="Jérémy E. Cohen">
+  <meta name="dcterms.date" content="2026-10-01">
+  <title>Masterclass on nonnegative Low-Rank Approximations</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="index_files/libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="index_files/libs/revealjs/dist/reveal.css">
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: 1.5em;}
+    div.column{flex: auto;}
+    @media screen {
+    div.columns{gap: min(4vw, 1.5em);}
+    div.column{overflow-x: auto;}
+    }
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      { color: #003b4f; background-color: #f1f3f5; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #003b4f; } /* Normal */
+    code span.al { color: #ad0000; } /* Alert */
+    code span.an { color: #5e5e5e; } /* Annotation */
+    code span.at { color: #657422; } /* Attribute */
+    code span.bn { color: #ad0000; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #003b4f; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #20794d; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #5e5e5e; } /* Comment */
+    code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
+    code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
+    code span.dt { color: #ad0000; } /* DataType */
+    code span.dv { color: #ad0000; } /* DecVal */
+    code span.er { color: #ad0000; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #ad0000; } /* Float */
+    code span.fu { color: #4758ab; } /* Function */
+    code span.im { color: #00769e; } /* Import */
+    code span.in { color: #5e5e5e; } /* Information */
+    code span.kw { color: #003b4f; font-weight: bold; } /* Keyword */
+    code span.op { color: #5e5e5e; } /* Operator */
+    code span.ot { color: #003b4f; } /* Other */
+    code span.pp { color: #ad0000; } /* Preprocessor */
+    code span.sc { color: #5e5e5e; } /* SpecialChar */
+    code span.ss { color: #20794d; } /* SpecialString */
+    code span.st { color: #20794d; } /* String */
+    code span.va { color: #111111; } /* Variable */
+    code span.vs { color: #20794d; } /* VerbatimString */
+    code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="index_files/libs/revealjs/dist/theme/quarto-03ee58d93aa56ae2ee8298346d0b2a97.css">
+  <link rel="stylesheet" href="../styles.css">
+  <link href="index_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="index_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="index_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="index_files/libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <style type="text/css">
+    .reveal div.sourceCode {
+      margin: 0;
+      overflow: auto;
+    }
+    .reveal div.hanging-indent {
+      margin-left: 1em;
+      text-indent: -1em;
+    }
+    .reveal .slide:not(.center) {
+      height: 100%;
+    }
+    .reveal .slide.scrollable {
+      overflow-y: auto;
+    }
+    .reveal .footnotes {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide .absolute {
+      position: absolute;
+      display: block;
+    }
+    .reveal .footnotes ol {
+      counter-reset: ol;
+      list-style-type: none; 
+      margin-left: 0;
+    }
+    .reveal .footnotes ol li:before {
+      counter-increment: ol;
+      content: counter(ol) ". "; 
+    }
+    .reveal .footnotes ol li > p:first-child {
+      display: inline-block;
+    }
+    .reveal .slide ul,
+    .reveal .slide ol {
+      margin-bottom: 0.5em;
+    }
+    .reveal .slide ul li,
+    .reveal .slide ol li {
+      margin-top: 0.4em;
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide ul[role="tablist"] li {
+      margin-bottom: 0;
+    }
+    .reveal .slide ul li > *:first-child,
+    .reveal .slide ol li > *:first-child {
+      margin-block-start: 0;
+    }
+    .reveal .slide ul li > *:last-child,
+    .reveal .slide ol li > *:last-child {
+      margin-block-end: 0;
+    }
+    .reveal .slide .columns:nth-child(3) {
+      margin-block-start: 0.8em;
+    }
+    .reveal blockquote {
+      box-shadow: none;
+    }
+    .reveal .tippy-content>* {
+      margin-top: 0.2em;
+      margin-bottom: 0.7em;
+    }
+    .reveal .tippy-content>*:last-child {
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide > img.stretch.quarto-figure-center,
+    .reveal .slide > img.r-stretch.quarto-figure-center {
+      display: block;
+      margin-left: auto;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-left,
+    .reveal .slide > img.r-stretch.quarto-figure-left  {
+      display: block;
+      margin-left: 0;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-right,
+    .reveal .slide > img.r-stretch.quarto-figure-right  {
+      display: block;
+      margin-left: auto;
+      margin-right: 0; 
+    }
+  </style>
+</head>
+<body class="quarto-light">
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" class="quarto-title-block center">
+  <h1 class="title">Masterclass on nonnegative Low-Rank Approximations</h1>
+  <p class="subtitle">Lecture 4 — Automatic music transcription with NMF and CNMF, 5-9 October 2026, Univ. Trento</p>
+
+<div class="quarto-title-authors">
+<div class="quarto-title-author">
+<div class="quarto-title-author-name">
+Jérémy E. Cohen
+</div>
+        <p class="quarto-title-affiliation">
+            CNRS, CREATIS, Lyon
+          </p>
+    </div>
+</div>
+
+  <p class="date">2026-10-01</p>
+</section>
+<section>
+<section id="automatic-transcription-and-challenges" class="title-slide slide level1 center">
+<h1>Automatic transcription and challenges</h1>
+
+</section>
+<section id="what-is-automatic-music-transcription" class="slide level2 center">
+<h2>What is automatic music transcription?</h2>
+<ul>
+<li><strong>Automatic Music Transcription (AMT)</strong>: convert an audio recording into a symbolic score (MIDI: pitch, onset, offset, velocity) [Benetos2018].</li>
+<li>A long-standing task in music information retrieval.</li>
+<li>Today: piano transcription with <strong>weakly-supervised NMF/CNMF</strong>, joint work with A. Marmoret and H. Wu [Wu2022].</li>
+</ul>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="../figures/transcription.png" class="quarto-figure quarto-figure-center" style="width:100.0%"></p>
+</figure>
+</div>
+</section>
+<section id="why-amt-is-hard" class="slide level2 center">
+<h2>Why AMT is hard</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<h3 id="signal-level-difficulties">Signal-level difficulties</h3>
+<ul>
+<li>Polyphony: many notes overlap in time and frequency</li>
+<li>Timbre varies with instrument, attack, and decay</li>
+<li>Mixing of sources is <strong>non-linear</strong> in the magnitude domain</li>
+</ul>
+</div><div class="column" style="width:50%;">
+<h3 id="model-level-difficulties">Model-level difficulties</h3>
+<ul>
+<li>Rank / number of notes is unknown</li>
+<li>No uniqueness guarantee for blind low-rank models</li>
+<li>Trained models struggle to generalize to unseen instruments</li>
+</ul>
+</div></div>
+</section>
+<section id="state-of-the-art-and-our-approach" class="slide level2 center">
+<h2>State of the art and our approach</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<h3 id="supervised-deep-networks">Supervised deep networks</h3>
+<ul>
+<li>Current best performance [Hawthorne2018, Kong2020, Bittner2022]</li>
+<li>Require large labelled datasets</li>
+<li>Black-box, costly to retrain per instrument</li>
+</ul>
+</div><div class="column" style="width:50%;">
+<h3 id="our-route-weakly-supervised-nmf">Our route: weakly-supervised NMF</h3>
+<ul>
+<li>Exploit that isolated notes are (nearly) low-rank</li>
+<li>Pretrain templates on a handful of isolated notes</li>
+<li>Roadmap: spectrograms <span class="math inline">\(\to\)</span> low-rank models <span class="math inline">\(\to\)</span> NMF-KL demo <span class="math inline">\(\to\)</span> convolutive NMF</li>
+</ul>
+</div></div>
+</section></section>
+<section>
+<section id="audio-and-spectrogram-representation" class="title-slide slide level1 center">
+<h1>Audio and spectrogram representation</h1>
+
+</section>
+<section id="a-single-piano-note-comb-shaped-spectrum" class="slide level2 center">
+<h2>A single piano note: comb-shaped spectrum</h2>
+<p>A piano recording is a time signal <span class="math inline">\(s(t)\)</span>. The Fourier transform decomposes it into a sum of pure sinusoids, <span class="math inline">\(\mathcal{F}[s](w) = \int s(t) e^{-2i\pi w t}\, dt\)</span>. Harmonic instruments (piano, strings) produce <strong>comb-shaped spectra</strong>: a fundamental frequency and its harmonics; inharmonic instruments (drums) do not.</p>
+<div id="53a11c1f" class="cell" data-execution_count="1">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="" aria-label="1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-2"><a href="" aria-label="2"></a><span class="im">import</span> soundfile <span class="im">as</span> sf</span>
+<span id="cb1-3"><a href="" aria-label="3"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-4"><a href="" aria-label="4"></a><span class="im">import</span> scipy.signal <span class="im">as</span> signal</span>
+<span id="cb1-5"><a href="" aria-label="5"></a></span>
+<span id="cb1-6"><a href="" aria-label="6"></a><span class="co"># Load an isolated A4 (440Hz) note from the MAPS dataset</span></span>
+<span id="cb1-7"><a href="" aria-label="7"></a>A4_wav, sr <span class="op">=</span> sf.read(<span class="st">'../../tensorly_hdr/dataset/MAPS_ISOL_LG_M_S0_M69_ENSTDkAm.wav'</span>)</span>
+<span id="cb1-8"><a href="" aria-label="8"></a>A4_wav <span class="op">=</span> A4_wav <span class="op">/</span> np.<span class="bu">max</span>(np.<span class="bu">abs</span>(A4_wav))  <span class="co"># audio normalization</span></span>
+<span id="cb1-9"><a href="" aria-label="9"></a>A4_wav <span class="op">=</span> A4_wav[:, <span class="dv">0</span>]  <span class="co"># use only one channel if stereo</span></span>
+<span id="cb1-10"><a href="" aria-label="10"></a></span>
+<span id="cb1-11"><a href="" aria-label="11"></a>frequencies_1D <span class="op">=</span> np.fft.fftfreq(<span class="bu">len</span>(A4_wav), d<span class="op">=</span><span class="dv">1</span><span class="op">/</span>sr)</span>
+<span id="cb1-12"><a href="" aria-label="12"></a><span class="co"># Keep only right part of the spectrum</span></span>
+<span id="cb1-13"><a href="" aria-label="13"></a>frequencies_1D <span class="op">=</span> frequencies_1D[:<span class="bu">len</span>(frequencies_1D)<span class="op">//</span><span class="dv">2</span>]</span>
+<span id="cb1-14"><a href="" aria-label="14"></a>fourier_1D <span class="op">=</span> np.fft.fft(A4_wav)</span>
+<span id="cb1-15"><a href="" aria-label="15"></a>fourier_1D <span class="op">=</span> fourier_1D[:<span class="bu">len</span>(fourier_1D)<span class="op">//</span><span class="dv">2</span>]</span>
+<span id="cb1-16"><a href="" aria-label="16"></a>magnitude_1D <span class="op">=</span> np.<span class="bu">abs</span>(fourier_1D)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div style="text-align:center">
+<div id="dd96efd5" class="cell" data-execution_count="2">
+<div class="cell-output cell-output-display">
+<div>
+<figure>
+<p><img data-src="index_files/figure-revealjs/cell-3-output-1.png" width="856" height="326"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="from-spectrum-to-spectrogram-the-stft" class="slide level2 center">
+<h2>From spectrum to spectrogram: the STFT</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<audio controls="" src="../audio/MAPS_ISOL_LG_M_S0_M69_ENSTDkAm.wav">
+</audio>
+<div class="caption">
+<p>A4 (440 Hz), MAPS dataset [Emiya2010]</p>
+</div>
+</div><div class="column" style="width:50%;">
+<ul>
+<li>One spectrum describes the whole ~15s recording</li>
+<li>But the note is not stationary: attack, decay, noise at the end</li>
+<li>We need a <strong>time-varying</strong> spectral representation</li>
+</ul>
+</div></div>
+<p>The Short-Time Fourier Transform (STFT) slides a window over the signal and computes a spectrum for each time frame:</p>
+<p><span class="math display">\[
+Y[f,t] = \sum_{\tau} s(\tau)\, w(\tau - t)\, e^{-2i\pi f \tau}.
+\]</span></p>
+<p>We use Hann windows of 4096 samples (~93ms) with heavy overlap (20ms hop), a standard trade-off for piano transcription:</p>
+<div id="299a89bb" class="cell" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="" aria-label="1"></a>frequencies, times, Sxx <span class="op">=</span> signal.stft(A4_wav, fs<span class="op">=</span>sr, nperseg<span class="op">=</span><span class="dv">4096</span>, nfft<span class="op">=</span><span class="dv">4096</span>, noverlap<span class="op">=</span><span class="dv">4096</span> <span class="op">-</span> <span class="dv">882</span>)</span>
+<span id="cb2-2"><a href="" aria-label="2"></a>half_freqs <span class="op">=</span> <span class="bu">len</span>(frequencies) <span class="op">//</span> <span class="dv">2</span></span>
+<span id="cb2-3"><a href="" aria-label="3"></a>frequencies <span class="op">=</span> frequencies[:half_freqs]</span>
+<span id="cb2-4"><a href="" aria-label="4"></a>Sxx <span class="op">=</span> Sxx[:half_freqs, :]  <span class="co"># keep only lower half</span></span>
+<span id="cb2-5"><a href="" aria-label="5"></a>Sxx_abs <span class="op">=</span> np.<span class="bu">abs</span>(Sxx)</span>
+<span id="cb2-6"><a href="" aria-label="6"></a>Sphase <span class="op">=</span> np.angle(Sxx)</span>
+<span id="cb2-7"><a href="" aria-label="7"></a>Sxx_dB <span class="op">=</span> <span class="dv">20</span> <span class="op">*</span> np.log10(Sxx_abs <span class="op">+</span> <span class="fl">1e-10</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="magnitude-and-phase-spectrograms" class="slide level2 center">
+<h2>Magnitude and phase spectrograms</h2>
+<p>For AMT we typically only use the <strong>magnitude</strong> spectrogram below; the phase (right) is much harder to interpret and to model.</p>
+<div style="text-align:center;">
+<div id="07d28f85" class="cell" data-execution_count="4">
+<div class="cell-output cell-output-display">
+<div>
+<figure>
+<p><img data-src="index_files/figure-revealjs/cell-5-output-1.png" width="947" height="374"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</section></section>
+<section>
+<section id="frobenius-and-kl-low-rank-approximations" class="title-slide slide level1 center">
+<h1>Frobenius and KL low-rank approximations</h1>
+
+</section>
+<section id="best-rank-one-approximation-two-losses" class="slide level2 center">
+<h2>Best rank-one approximation: two losses</h2>
+<p>The magnitude spectrogram of a single note is well approximated by a <strong>rank-one matrix</strong>: a fixed frequency profile (the comb) times a single time envelope (attack-decay). This motivates using low-rank NMF to analyse recordings with several notes.</p>
+<div class="columns">
+<div class="column" style="width:50%;">
+<h3 id="frobenius-eckart-young">Frobenius (Eckart-Young)</h3>
+<p><span class="math display">\[
+\min_{u,v} \|Y - uv^T\|_F^2
+\]</span></p>
+<p>closed form via the truncated SVD: <span class="math inline">\(u = U[:,1]\)</span>, <span class="math inline">\(v=S[1,1]V[:,1]\)</span>.</p>
+</div><div class="column" style="width:50%;">
+<h3 id="kullback-leibler">Kullback-Leibler</h3>
+<p><span class="math display">\[
+\min_{u,v \geq 0} D_{\mathrm{KL}}(Y, uv^T)
+\]</span></p>
+<p>closed form via normalized marginals: <span class="math display">\[
+u = \frac{\sum_t Y[:,t]}{\sqrt{\sum_{f,t} Y[f,t]}}, \quad
+v = \frac{\sum_f Y[f,:]}{\sqrt{\sum_{f,t} Y[f,t]}}.
+\]</span></p>
+</div></div>
+</section>
+<section id="computing-the-two-approximations" class="slide level2 center">
+<h2>Computing the two approximations</h2>
+<p>We apply both closed-form formulas to the A4 magnitude spectrogram: the SVD gives the Frobenius-optimal rank-one factors, while row/column sums give the KL-optimal ones.</p>
+<div id="8e30a046" class="cell" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="" aria-label="1"></a><span class="co"># Best rank-one approximation of the magnitude spectrogram, Frobenius sense</span></span>
+<span id="cb3-2"><a href="" aria-label="2"></a>U, s, V <span class="op">=</span> np.linalg.svd(Sxx_abs)</span>
+<span id="cb3-3"><a href="" aria-label="3"></a>r1_approx <span class="op">=</span> s[<span class="dv">0</span>] <span class="op">*</span> np.outer(U[:, <span class="dv">0</span>], V[<span class="dv">0</span>, :])</span>
+<span id="cb3-4"><a href="" aria-label="4"></a></span>
+<span id="cb3-5"><a href="" aria-label="5"></a><span class="co"># Best rank-one approximation, KL sense (normalized marginals)</span></span>
+<span id="cb3-6"><a href="" aria-label="6"></a>ukl <span class="op">=</span> np.<span class="bu">sum</span>(Sxx_abs, axis<span class="op">=</span><span class="dv">1</span>) <span class="op">/</span> np.sqrt(np.<span class="bu">sum</span>(Sxx_abs))</span>
+<span id="cb3-7"><a href="" aria-label="7"></a>vkl <span class="op">=</span> np.<span class="bu">sum</span>(Sxx_abs, axis<span class="op">=</span><span class="dv">0</span>) <span class="op">/</span> np.sqrt(np.<span class="bu">sum</span>(Sxx_abs))</span>
+<span id="cb3-8"><a href="" aria-label="8"></a>r1_approx_kl <span class="op">=</span> np.outer(ukl, vkl)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="frobenius-vs-kl-rank-one-approximation" class="slide level2 center">
+<h2>Frobenius vs KL rank-one approximation</h2>
+<div style="text-align:center;">
+<div id="20a27511" class="cell" data-execution_count="6">
+<div class="cell-output cell-output-display">
+<div>
+<figure>
+<p><img data-src="index_files/figure-revealjs/cell-7-output-1.png" width="1050" height="336"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<p>Both rank-one models capture the comb-shaped spectrum well; the KL version tends to spread energy more smoothly in time.</p>
+</section>
+<section id="from-one-note-to-many-additive-mixing" class="slide level2 center">
+<h2>From one note to many: additive mixing</h2>
+<p>Two simultaneous notes with time signals <span class="math inline">\(s_1(t), s_2(t)\)</span> are recorded as <span class="math inline">\(s(t) = s_1(t) + s_2(t)\)</span>. By linearity of the Fourier transform, <span class="math inline">\(\mathcal{F}[s](w) = \mathcal{F}[s_1](w) + \mathcal{F}[s_2](w)\)</span>, but we only observe the <strong>magnitude</strong> <span class="math inline">\(|\mathcal{F}[s](w)|\)</span>. If each <span class="math inline">\(|\mathcal{F}[s_i](w)|\)</span> is rank-one, is <span class="math inline">\(|\mathcal{F}[s](w)|\)</span> rank-two?</p>
+<p><span class="math display">\[
+\left|\mathcal{F}[s](w)\right|^2 = \left|\mathcal{F}[s_1](w)\right|^2 + \left|\mathcal{F}[s_2](w)\right|^2 + 2\,\mathcal{Re}\!\left(\mathcal{F}[s_1]^\ast(w)\,\mathcal{F}[s_2](w)\right)
+\]</span></p>
+<div style="text-align:center; font-size: 130%;">
+<div class="callout callout-important callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Important</strong></p>
+</div>
+<div class="callout-content">
+<!-- The power spectrogram is **rank-two** if and only if $2\,\mathcal{Re}\!\left(\mathcal{F}[s_1]^\ast(\nu)\,\mathcal{F}[s_2](\nu)\right)=0$. -->
+<p>When is the magnitude spectrogram rank-two? Mostly when <span class="math inline">\(\left|\mathcal{F}[s](w)\right| = \left|\mathcal{F}[s_1](w)\right| + \left|\mathcal{F}[s_2](w)\right|\)</span> <!-- The magnitude spectrogram is **rank-two** if and only if $\sqrt{\mathcal{Re}\!\left(\mathcal{F}[s_1]^\ast(\nu)\,\mathcal{F}[s_2](\nu)\right)}=|\mathcal{F}[s_1](\nu)||\mathcal{F}[s_2](\nu)|$. --></p>
+</div>
+</div>
+</div>
+</div>
+<p>We can study this using the polar representation of the spectra</p>
+<p><span class="math display">\[  \mathcal{F}[s_1](w) = A_1(w)e^{i\theta_1(w)}, \;  \mathcal{F}[s_2](w) = A_2(w)e^{i\theta_2(w)} \]</span></p>
+<p><span class="math display">\[ \left|\mathcal{F}[s](w)\right| = \sqrt{A_1(w)^2 + A_2(w)^2 + 2A_1(w)A_2(w)\cos(\theta_2(w)-\theta_1(w))} \]</span></p>
+</section>
+<section id="when-is-the-mixture-exactly-rank-two" class="slide level2 center">
+<h2>When is the mixture exactly rank-two?</h2>
+<ul>
+<li>A sufficent case: the two signals are <strong>in phase</strong>, <span class="math inline">\(\theta_1=\theta_2\)</span>
+<ul>
+<li>We get <span class="math inline">\(\sqrt{A_1^2 + A_2^2 + 2A_1A_2\cos(\theta_2(w)-\theta_1(w))} = \sqrt{A_1^2 + A_2^2 + 2A_1A_2} = \sqrt{(A_1+A_2)^2}\)</span>.</li>
+</ul></li>
+<li>Another sufficient case: the two amplitudes have <strong>disjoint support</strong>, <span class="math inline">\(A_1(w)A_2(w) = 0\)</span>.
+<ul>
+<li>Also works for the power spectrogram <span class="math inline">\(\left|\mathcal{F}[s](w)\right|^2\)</span>.</li>
+<li>This is what we use in general, as disjoint supports are more likely than in-phase signals.</li>
+<li>In practice: two notes an <strong>octave apart</strong> share many partials, and the disjoint support condition is violated</li>
+<li><span class="math inline">\(\Rightarrow\)</span> low-rank models of spectrograms are prone to <strong>octave errors</strong></li>
+</ul></li>
+</ul>
+</section>
+<section id="phase-interference" class="slide level2 center">
+<h2>Phase interference</h2>
+<h3 id="a3-and-a4-played-together">A3 and A4 played together</h3>
+<div class="columns">
+<div class="column" style="width:30%;">
+
+</div><div class="column" style="width:25%;">
+<audio controls="" src="../audio/MAPS_ISOL_LG_M_S0_M69_ENSTDkAm.wav">
+</audio>
+</div><div class="column" style="width:45%;">
+<audio controls="" src="../audio/MAPS_ISOL_LG_F_S1_M57_ENSTDkAm.wav">
+</audio>
+</div></div>
+<div style="text-align:center;">
+<div id="50a47b00" class="cell" data-execution_count="7">
+<div class="cell-output cell-output-display">
+<div>
+<figure>
+<p><img data-src="index_files/figure-revealjs/cell-8-output-1.png" width="872" height="604"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="sum-of-magnitudes-vs-magnitude-of-sum" class="slide level2 center">
+<h2>Sum of magnitudes vs magnitude of sum</h2>
+<p>We compare the sum of ampliudes to the amplitude of the sum on a short segment of each recording.</p>
+<p>To test the support condition from the previous section, we take a one-second rectangular-window segment of each note and compare their individual and combined Fourier transforms.</p>
+<div id="d77fde8b" class="cell" data-execution_count="8">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="" aria-label="1"></a>A3_wav, sr <span class="op">=</span> sf.read(<span class="st">'../../tensorly_hdr/dataset/MAPS_ISOL_LG_F_S1_M57_ENSTDkAm.wav'</span>)</span>
+<span id="cb4-2"><a href="" aria-label="2"></a>A3_wav <span class="op">=</span> A3_wav <span class="op">/</span> np.<span class="bu">max</span>(np.<span class="bu">abs</span>(A3_wav))</span>
+<span id="cb4-3"><a href="" aria-label="3"></a>A3_wav <span class="op">=</span> A3_wav[:, <span class="dv">0</span>]</span>
+<span id="cb4-4"><a href="" aria-label="4"></a></span>
+<span id="cb4-5"><a href="" aria-label="5"></a><span class="co"># Short rectangular-window segment for both notes</span></span>
+<span id="cb4-6"><a href="" aria-label="6"></a>t_1, t_2 <span class="op">=</span> <span class="dv">2</span> <span class="op">*</span> sr, <span class="dv">3</span> <span class="op">*</span> sr</span>
+<span id="cb4-7"><a href="" aria-label="7"></a>A4_segment <span class="op">=</span> A4_wav[t_1:t_2]</span>
+<span id="cb4-8"><a href="" aria-label="8"></a>A3_segment <span class="op">=</span> A3_wav[t_1:t_2]</span>
+<span id="cb4-9"><a href="" aria-label="9"></a></span>
+<span id="cb4-10"><a href="" aria-label="10"></a>freq_1D <span class="op">=</span> np.fft.fftfreq(<span class="bu">len</span>(A4_segment), d<span class="op">=</span><span class="dv">1</span><span class="op">/</span>sr)</span>
+<span id="cb4-11"><a href="" aria-label="11"></a>freq_1D <span class="op">=</span> freq_1D[:<span class="bu">len</span>(freq_1D)<span class="op">//</span><span class="dv">2</span>]</span>
+<span id="cb4-12"><a href="" aria-label="12"></a>fft_A4 <span class="op">=</span> np.fft.fft(A4_segment)</span>
+<span id="cb4-13"><a href="" aria-label="13"></a>fft_A4 <span class="op">=</span> fft_A4[:<span class="bu">len</span>(fft_A4)<span class="op">//</span><span class="dv">2</span>]</span>
+<span id="cb4-14"><a href="" aria-label="14"></a>fft_A3 <span class="op">=</span> np.fft.fft(A3_segment)</span>
+<span id="cb4-15"><a href="" aria-label="15"></a>fft_A3 <span class="op">=</span> fft_A3[:<span class="bu">len</span>(fft_A3)<span class="op">//</span><span class="dv">2</span>]</span>
+<span id="cb4-16"><a href="" aria-label="16"></a>mag_A4, mag_A3 <span class="op">=</span> np.<span class="bu">abs</span>(fft_A4), np.<span class="bu">abs</span>(fft_A3)</span>
+<span id="cb4-17"><a href="" aria-label="17"></a></span>
+<span id="cb4-18"><a href="" aria-label="18"></a>magnitude_of_sum <span class="op">=</span> np.<span class="bu">abs</span>(fft_A4 <span class="op">+</span> fft_A3)</span>
+<span id="cb4-19"><a href="" aria-label="19"></a>sum_of_magnitudes <span class="op">=</span> mag_A4 <span class="op">+</span> mag_A3</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="where-does-the-mismatch-come-from" class="slide level2 center">
+<h2>Where does the mismatch come from?</h2>
+<p>The two quantities should coincide if the notes were perfectly support. The residual (left) reveals where they are not, and it matches exactly the imaginary part of the cross-spectrum (right), the phase-mismatch term from the Cauchy-Schwarz expansion.</p>
+<div style="text-align:center;">
+<div id="5952c365" class="cell" data-execution_count="9">
+<div class="cell-output cell-output-display">
+<div>
+<figure>
+<p><img data-src="index_files/figure-revealjs/cell-10-output-1.png" width="856" height="297"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<p>A3 and A4 are <strong>not</strong> orthogonal: the mismatch is largest exactly at their shared partials.</p>
+</section>
+<section id="consequences" class="slide level2 center">
+<h2>Consequences</h2>
+<ul>
+<li>Two notes an octave apart share fundamental and harmonics in frequency, but <strong>not in phase</strong></li>
+<li>The colinearity assumption behind rank-additivity fails at shared partials</li>
+<li>Low-rank models (NMF included) are structurally prone to confusing octaves</li>
+<li>This is a <strong>modeling</strong> limitation, not just an optimization one</li>
+</ul>
+</section></section>
+<section>
+<section id="simple-piece-live-code-demo" class="title-slide slide level1 center">
+<h1>Simple-piece live code demo</h1>
+
+</section>
+<section id="the-recording-isolated-notes-then-chords" class="slide level2 center">
+<h2>The recording: isolated notes then chords</h2>
+<audio controls="" src="../audio/MAPS_MUS-muss_1_ENSTDkAm.wav">
+</audio>
+<div class="caption">
+<p>MAPS recording: six isolated notes, then two five-note chords [Emiya2010]</p>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="../figures/partition.png" class="quarto-figure quarto-figure-center" style="width:70.0%"></p>
+</figure>
+</div>
+</section>
+<section id="computing-the-spectrogram-then-fitting-nmf-kl" class="slide level2 center">
+<h2>Computing the spectrogram, then fitting NMF-KL</h2>
+<ul>
+<li>We first cut the recording to its first six seconds (six isolated notes only) and compute its magnitude spectrogram.</li>
+<li>We then fit an NMF with the KL divergence using the multiplicative-update algorithm, with a rank of 7: six notes plus one extra component expected to capture the hammer action.</li>
+</ul>
+<div id="b685833c" class="cell" data-execution_count="11">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="" aria-label="1"></a>t_1, t_2 <span class="op">=</span> <span class="dv">0</span>, <span class="dv">6</span> <span class="op">*</span> sr  <span class="co"># first six seconds: isolated notes only</span></span>
+<span id="cb5-2"><a href="" aria-label="2"></a>song_simple <span class="op">=</span> song[t_1:t_2]</span>
+<span id="cb5-3"><a href="" aria-label="3"></a>frequencies, times, Sxx <span class="op">=</span> signal.stft(song_simple, fs<span class="op">=</span>sr, nperseg<span class="op">=</span><span class="dv">4096</span>, nfft<span class="op">=</span><span class="dv">4096</span>, noverlap<span class="op">=</span><span class="dv">4096</span> <span class="op">-</span> <span class="dv">882</span>)</span>
+<span id="cb5-4"><a href="" aria-label="4"></a>half_freqs <span class="op">=</span> <span class="bu">len</span>(frequencies) <span class="op">//</span> <span class="dv">2</span></span>
+<span id="cb5-5"><a href="" aria-label="5"></a>frequencies <span class="op">=</span> frequencies[:half_freqs]</span>
+<span id="cb5-6"><a href="" aria-label="6"></a>Sxx <span class="op">=</span> Sxx[:half_freqs, :]</span>
+<span id="cb5-7"><a href="" aria-label="7"></a>Sxx_dB <span class="op">=</span> <span class="dv">20</span> <span class="op">*</span> np.log10(np.<span class="bu">abs</span>(Sxx) <span class="op">+</span> <span class="fl">1e-10</span>)</span>
+<span id="cb5-8"><a href="" aria-label="8"></a>Sxx_abs <span class="op">=</span> np.<span class="bu">abs</span>(Sxx)</span>
+<span id="cb5-9"><a href="" aria-label="9"></a></span>
+<span id="cb5-10"><a href="" aria-label="10"></a><span class="im">from</span> tensorly_hdr.nmf_kl <span class="im">import</span> Lee_Seung_KL</span>
+<span id="cb5-11"><a href="" aria-label="11"></a><span class="im">from</span> tensorly_hdr.image_utils <span class="im">import</span> permute_spectra</span>
+<span id="cb5-12"><a href="" aria-label="12"></a></span>
+<span id="cb5-13"><a href="" aria-label="13"></a>rank <span class="op">=</span> <span class="dv">7</span></span>
+<span id="cb5-14"><a href="" aria-label="14"></a>np.random.seed(<span class="dv">0</span>)</span>
+<span id="cb5-15"><a href="" aria-label="15"></a>W_init <span class="op">=</span> np.<span class="bu">abs</span>(np.random.randn(Sxx.shape[<span class="dv">0</span>], rank))</span>
+<span id="cb5-16"><a href="" aria-label="16"></a>H_init <span class="op">=</span> np.<span class="bu">abs</span>(np.random.randn(Sxx.shape[<span class="dv">1</span>], rank)).T</span>
+<span id="cb5-17"><a href="" aria-label="17"></a>crit, W_kl, H_kl, toc, cnt <span class="op">=</span> Lee_Seung_KL(Sxx_abs, W_init, H_init, NbIter<span class="op">=</span><span class="dv">20</span>, verbose<span class="op">=</span><span class="va">False</span>, print_it<span class="op">=</span><span class="dv">20</span>)</span>
+<span id="cb5-18"><a href="" aria-label="18"></a></span>
+<span id="cb5-19"><a href="" aria-label="19"></a><span class="co"># Normalize W columnwise, put the norm in H, order by increasing fundamental frequency</span></span>
+<span id="cb5-20"><a href="" aria-label="20"></a>W_kl_norms <span class="op">=</span> np.<span class="bu">max</span>(W_kl, axis<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb5-21"><a href="" aria-label="21"></a>W_kl <span class="op">=</span> W_kl <span class="op">/</span> W_kl_norms</span>
+<span id="cb5-22"><a href="" aria-label="22"></a>H_kl <span class="op">=</span> H_kl.T <span class="op">*</span> W_kl_norms</span>
+<span id="cb5-23"><a href="" aria-label="23"></a>perm <span class="op">=</span> permute_spectra(W_kl)</span>
+<span id="cb5-24"><a href="" aria-label="24"></a>W_kl, H_kl <span class="op">=</span> W_kl[:, perm], H_kl[:, perm]</span>
+<span id="cb5-25"><a href="" aria-label="25"></a>notes <span class="op">=</span> [<span class="st">"F3"</span>, <span class="st">"G3"</span>, <span class="st">"Bb3"</span>, <span class="st">"Hammer"</span>, <span class="st">"C4"</span>, <span class="st">"D4"</span>, <span class="st">"F4"</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="frequency-profiles-and-time-activations" class="slide level2 center">
+<h2>Frequency profiles and time activations</h2>
+<div style="text-align:center;">
+<div id="68a2fab5" class="cell" data-execution_count="12">
+<div class="cell-output cell-output-display">
+<div>
+<figure>
+<p><img data-src="index_files/figure-revealjs/cell-13-output-1.png" width="950" height="566"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="rank-one-kl-reconstructions-per-note" class="slide level2 center">
+<h2>Rank-one KL reconstructions per note</h2>
+<div style="text-align:center;">
+<div id="dcd35145" class="cell" data-execution_count="13">
+<div class="cell-output cell-output-display">
+<div>
+<figure>
+<p><img data-src="index_files/figure-revealjs/cell-14-output-1.png" width="1145" height="566"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<p>Six isolated notes are recovered almost perfectly, plus a “hammer” component capturing the percussive attack.</p>
+</section>
+<section id="adding-the-chords-rank-15" class="slide level2 center">
+<h2>Adding the chords: rank 15</h2>
+<p>We now extend the excerpt to eight seconds, adding the two five-note chords (14 distinct notes in total), and refit NMF-KL with 15 components.</p>
+<div id="f20c0fdc" class="cell" data-execution_count="14">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="" aria-label="1"></a>t_1, t_2 <span class="op">=</span> <span class="dv">0</span>, <span class="dv">8</span> <span class="op">*</span> sr  <span class="co"># add the two five-note chords</span></span>
+<span id="cb6-2"><a href="" aria-label="2"></a>song_full <span class="op">=</span> song[t_1:t_2]</span>
+<span id="cb6-3"><a href="" aria-label="3"></a>frequencies, times, Sxx <span class="op">=</span> signal.stft(song_full, fs<span class="op">=</span>sr, nperseg<span class="op">=</span><span class="dv">4096</span>, nfft<span class="op">=</span><span class="dv">4096</span>, noverlap<span class="op">=</span><span class="dv">4096</span> <span class="op">-</span> <span class="dv">882</span>)</span>
+<span id="cb6-4"><a href="" aria-label="4"></a>half_freqs <span class="op">=</span> <span class="bu">len</span>(frequencies) <span class="op">//</span> <span class="dv">2</span></span>
+<span id="cb6-5"><a href="" aria-label="5"></a>frequencies <span class="op">=</span> frequencies[:half_freqs]</span>
+<span id="cb6-6"><a href="" aria-label="6"></a>Sxx <span class="op">=</span> Sxx[:half_freqs, :]</span>
+<span id="cb6-7"><a href="" aria-label="7"></a>Sxx_abs <span class="op">=</span> np.<span class="bu">abs</span>(Sxx)</span>
+<span id="cb6-8"><a href="" aria-label="8"></a></span>
+<span id="cb6-9"><a href="" aria-label="9"></a>rank <span class="op">=</span> <span class="dv">15</span></span>
+<span id="cb6-10"><a href="" aria-label="10"></a>W_init <span class="op">=</span> np.<span class="bu">abs</span>(np.random.randn(Sxx.shape[<span class="dv">0</span>], rank))</span>
+<span id="cb6-11"><a href="" aria-label="11"></a>H_init <span class="op">=</span> np.<span class="bu">abs</span>(np.random.randn(Sxx.shape[<span class="dv">1</span>], rank)).T</span>
+<span id="cb6-12"><a href="" aria-label="12"></a>crit, W_kl15, H_kl15, toc, cnt <span class="op">=</span> Lee_Seung_KL(Sxx_abs, W_init, H_init, NbIter<span class="op">=</span><span class="dv">20</span>, verbose<span class="op">=</span><span class="va">False</span>, print_it<span class="op">=</span><span class="dv">20</span>)</span>
+<span id="cb6-13"><a href="" aria-label="13"></a>W_kl15_norms <span class="op">=</span> np.<span class="bu">max</span>(W_kl15, axis<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb6-14"><a href="" aria-label="14"></a>W_kl15 <span class="op">=</span> W_kl15 <span class="op">/</span> W_kl15_norms</span>
+<span id="cb6-15"><a href="" aria-label="15"></a>H_kl15 <span class="op">=</span> H_kl15.T <span class="op">*</span> W_kl15_norms</span>
+<span id="cb6-16"><a href="" aria-label="16"></a>perm <span class="op">=</span> permute_spectra(W_kl15)</span>
+<span id="cb6-17"><a href="" aria-label="17"></a>W_kl15, H_kl15 <span class="op">=</span> W_kl15[:, perm], H_kl15[:, perm]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="adding-the-chords-rank-15-1" class="slide level2 center">
+<h2>Adding the chords: rank 15</h2>
+<div style="text-align:center;">
+<div id="4e89906f" class="cell" data-execution_count="15">
+<div class="cell-output cell-output-display">
+<div>
+<figure>
+<p><img data-src="index_files/figure-revealjs/cell-16-output-1.png" width="763" height="525"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="nmf-struggles-with-overlapping-chords" class="slide level2 center">
+<h2>NMF struggles with overlapping chords</h2>
+<ul>
+<li>There are 14 distinct notes in the two chords, but NMF-KL does <strong>not</strong> recover 14 clean components</li>
+<li>Several components refine already-identified notes instead of finding new ones</li>
+<li>Low-fundamental components are hardly interpretable, and their activations do not follow an attack-decay pattern</li>
+<li>This questions both the <strong>rank choice</strong> and the <strong>uniqueness</strong> of the decomposition</li>
+</ul>
+<div class="columns">
+<div class="column" style="width:50%;">
+<h3 id="problems">Problems</h3>
+<ul>
+<li><strong>Model mismatch</strong>: the rank-one hypothesis for a single note is only approximate, so NMF spends extra components on it rather than on new notes</li>
+<li><strong>Identifiability</strong>: no guarantee that output spectra stay comb-shaped; uniqueness is unclear as soon as notes overlap, the rule with chords</li>
+</ul>
+</div><div class="column" style="width:50%;">
+<h3 id="attempted-fixes">Attempted fixes</h3>
+<ul>
+<li>Standard pipeline: pick the fundamental frequency of each rank-one component, threshold its activation [Vincent2008]</li>
+<li>Parametrize activations to follow an attack-decay pattern [Cheng2016]</li>
+<li>We instead enrich the <em>model</em> itself, not just the post-processing</li>
+</ul>
+</div></div>
+</section>
+<section id="our-route-convolutive-nmf-weak-supervision" class="slide level2 center">
+<h2>Our route: convolutive NMF + weak supervision</h2>
+<div style="font-size: 130%;">
+<div class="callout callout-tip callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Two ideas combined [Wu2022]</strong></p>
+</div>
+<div class="callout-content">
+<ol type="1">
+<li>Replace the rank-one note model by a <strong>convolutive</strong> rank-one model (better fit to attack/decay)</li>
+<li><strong>Pretrain</strong> the templates on isolated note recordings (weak supervision) instead of learning them blindly</li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+</section></section>
+<section>
+<section id="cnmf-model-algorithm-and-results" class="title-slide slide level1 center">
+<h1>CNMF model, algorithm, and results</h1>
+
+</section>
+<section id="rank-one-convolutive-model" class="slide level2 center">
+<h2>Rank-one convolutive model</h2>
+<p>A single note spectrogram is modeled as a convolution of a small time-frequency template with a time activation:</p>
+<p><span class="math display">\[
+\hat{Y}[f,t] = \sum_{\tau=0}^{T-1} W[f,\tau]\, h[t-\tau],
+\]</span></p>
+<p>where <span class="math inline">\(T\)</span> is the convolution window length (captures attack + early decay), fixing the main weakness of the plain rank-one model. Stacking shifted copies of <span class="math inline">\(h\)</span> into a Toeplitz matrix <span class="math inline">\(\tilde{H}\)</span>, this is a constrained rank-<span class="math inline">\(T\)</span> NMF:</p>
+<p><span class="math display">\[
+\hat{Y} = W\tilde{H}.
+\]</span></p>
+<p>The full <strong>Convolutive NMF</strong> [Smaragdis2006] sums such terms over <span class="math inline">\(r\)</span> components:</p>
+<p><span class="math display">\[
+\hat{Y} = \sum_{q=1}^{r}\sum_{\tau=0}^{T-1} W[f,\tau,q]\, H[q,t-\tau].
+\]</span></p>
+</section>
+<section id="nmf-vs-cnmf-visually" class="slide level2 center">
+<h2>NMF vs CNMF visually</h2>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="../figures/CNMFvsNMF.png" class="quarto-figure quarto-figure-center" style="width:100.0%"></p>
+</figure>
+</div>
+</section>
+<section id="nmf-vs-cnmf-multiplicative-updates" class="slide level2 center">
+<h2>NMF vs CNMF multiplicative updates</h2>
+<p>Following the MM2 algorithm of [Fagot2019], with <span class="math inline">\(\hat{Y}\)</span> the current reconstruction:</p>
+<p><span class="math display">\[
+W^{(k+1)} = W^{(k)} \ast \frac{\frac{Y}{\hat{Y}^{(k)}} {\tilde{H}^{(k)}}^T}{\mathbf{1}\otimes\sum_t \tilde{H}^{(k)}[:,t]},
+\]</span> <span class="math display">\[
+H^{(k+1)}[:,t] = H^{(k)}[:,t] \ast \frac{W^{(k)}\times_{1,2}\frac{Y}{\hat{Y}}[:,t:t+T]}{\sum_{f,\tau} W^{(k)}[f,\tau,:]\mathbf{1}_{t+\tau\leq n}}.
+\]</span></p>
+<p>Same majorization principle as plain NMF; CNMF is harder to optimize in practice, with many non-trivial local minima.</p>
+</section>
+<section id="rank-one-cnmf-on-a4" class="slide level2 center">
+<h2>Rank-one CNMF on A4</h2>
+<p>We now pretrain templates on isolated notes: MAPS provides an isolated recording for every note we need, and for each one we fit a <strong>rank-one CNMF</strong> to obtain a template <span class="math inline">\(W\)</span>. Per-note templates will later be stacked into a tensor <span class="math inline">\(W \in \mathbb{R}_+^{f \times T \times r}\)</span> and used to transcribe full recordings. We start with A4:</p>
+<div id="d00cc8d0" class="cell" data-execution_count="16">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="" aria-label="1"></a><span class="im">from</span> tensorly_hdr.cnmf <span class="im">import</span> convolutive_nmf, shift_m</span>
+<span id="cb7-2"><a href="" aria-label="2"></a></span>
+<span id="cb7-3"><a href="" aria-label="3"></a>A4_wav_train <span class="op">=</span> A4_wav[sr <span class="op">//</span> <span class="dv">3</span>: sr <span class="op">*</span> <span class="dv">4</span>]  <span class="co"># avoid the noisy tail of the recording</span></span>
+<span id="cb7-4"><a href="" aria-label="4"></a>frequencies, times, Sxx <span class="op">=</span> signal.stft(A4_wav_train, fs<span class="op">=</span>sr, nperseg<span class="op">=</span><span class="dv">4096</span>, nfft<span class="op">=</span><span class="dv">4096</span>, noverlap<span class="op">=</span><span class="dv">4096</span> <span class="op">-</span> <span class="dv">882</span>)</span>
+<span id="cb7-5"><a href="" aria-label="5"></a>half_freqs <span class="op">=</span> <span class="bu">len</span>(frequencies) <span class="op">//</span> <span class="dv">2</span></span>
+<span id="cb7-6"><a href="" aria-label="6"></a>Sxx_dB <span class="op">=</span> <span class="dv">20</span> <span class="op">*</span> np.log10(np.<span class="bu">abs</span>(Sxx[:half_freqs, :]) <span class="op">+</span> <span class="fl">1e-10</span>)</span>
+<span id="cb7-7"><a href="" aria-label="7"></a>Sxx_abs <span class="op">=</span> np.<span class="bu">abs</span>(Sxx[:half_freqs, :])</span>
+<span id="cb7-8"><a href="" aria-label="8"></a>Sxx_abs <span class="op">=</span> Sxx_abs <span class="op">/</span> np.<span class="bu">max</span>(Sxx_abs)</span>
+<span id="cb7-9"><a href="" aria-label="9"></a></span>
+<span id="cb7-10"><a href="" aria-label="10"></a>T <span class="op">=</span> <span class="dv">20</span></span>
+<span id="cb7-11"><a href="" aria-label="11"></a>W_r1, H_r1, err_r1 <span class="op">=</span> convolutive_nmf(</span>
+<span id="cb7-12"><a href="" aria-label="12"></a>    Sxx_abs, rank<span class="op">=</span><span class="dv">1</span>, T<span class="op">=</span>T, itmax<span class="op">=</span><span class="dv">10</span>, eps<span class="op">=</span><span class="fl">1e-16</span>, tol<span class="op">=</span><span class="dv">0</span>,</span>
+<span id="cb7-13"><a href="" aria-label="13"></a>    print_it<span class="op">=</span><span class="dv">1</span>, n_iter_inner<span class="op">=</span><span class="dv">10</span>, init<span class="op">=</span><span class="st">"separable"</span>, verbose<span class="op">=</span><span class="va">False</span></span>
+<span id="cb7-14"><a href="" aria-label="14"></a>)</span>
+<span id="cb7-15"><a href="" aria-label="15"></a>W_cnmf, h_cnmf <span class="op">=</span> W_r1[:, :, <span class="dv">0</span>], H_r1[<span class="dv">0</span>, :]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="template-vs-reconstructed-spectrogram" class="slide level2 center">
+<h2>Template vs reconstructed spectrogram</h2>
+<div style="text-align:center;">
+<div id="3bacaa12" class="cell" data-execution_count="17">
+<div class="cell-output cell-output-display">
+<div>
+<figure>
+<p><img data-src="index_files/figure-revealjs/cell-18-output-1.png" width="957" height="373"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<p>The attack is well captured, but high-frequency content after the attack is not fully realistic (echoes in the template).</p>
+</section>
+<section id="rank-two-cnmf-cleans-the-template" class="slide level2 center">
+<h2>Rank-two CNMF cleans the template</h2>
+<p>A second, randomly-initialized component can absorb this echo/noise, leaving the first template with a cleaner comb spectrum:</p>
+<div id="f964c6ff" class="cell" data-execution_count="18">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="" aria-label="1"></a>W_r2, H_r2, err_r2 <span class="op">=</span> convolutive_nmf(</span>
+<span id="cb8-2"><a href="" aria-label="2"></a>    Sxx_abs, rank<span class="op">=</span><span class="dv">2</span>, T<span class="op">=</span>T, itmax<span class="op">=</span><span class="dv">10</span>, eps<span class="op">=</span><span class="fl">1e-16</span>, tol<span class="op">=</span><span class="dv">0</span>,</span>
+<span id="cb8-3"><a href="" aria-label="3"></a>    print_it<span class="op">=</span><span class="dv">1</span>, n_iter_inner<span class="op">=</span><span class="dv">10</span>, init<span class="op">=</span><span class="st">"separable"</span>, verbose<span class="op">=</span><span class="va">False</span></span>
+<span id="cb8-4"><a href="" aria-label="4"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div style="text-align:center;">
+<div id="d31ec790" class="cell" data-execution_count="19">
+<div class="cell-output cell-output-display">
+<div>
+<figure>
+<p><img data-src="index_files/figure-revealjs/cell-20-output-1.png" width="863" height="374"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<p>For speed, we keep <strong>rank-one</strong> CNMF per note in the pipeline below.</p>
+</section>
+<section id="learning-14-note-templates" class="slide level2 center">
+<h2>Learning 14 note templates</h2>
+<p>We repeat the rank-one CNMF fit for every isolated note in the <code>notes_to_learn</code> folder, and stack the resulting templates into a tensor <span class="math inline">\(W\)</span> ordered by increasing MIDI pitch:</p>
+<div id="c2fa879e" class="cell" data-execution_count="20">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="" aria-label="1"></a><span class="im">import</span> os</span>
+<span id="cb9-2"><a href="" aria-label="2"></a><span class="im">import</span> re</span>
+<span id="cb9-3"><a href="" aria-label="3"></a><span class="im">from</span> tensorly_hdr.cnmf <span class="im">import</span> convolutive_nmf</span>
+<span id="cb9-4"><a href="" aria-label="4"></a></span>
+<span id="cb9-5"><a href="" aria-label="5"></a>data_dir <span class="op">=</span> <span class="st">'../../tensorly_hdr/dataset/notes_to_learn'</span></span>
+<span id="cb9-6"><a href="" aria-label="6"></a>T <span class="op">=</span> <span class="dv">10</span></span>
+<span id="cb9-7"><a href="" aria-label="7"></a>Wlist, names <span class="op">=</span> [], []</span>
+<span id="cb9-8"><a href="" aria-label="8"></a><span class="cf">for</span> filename <span class="kw">in</span> os.listdir(data_dir):</span>
+<span id="cb9-9"><a href="" aria-label="9"></a>    names.append(re.search(<span class="vs">r'M</span><span class="kw">(</span><span class="dv">\d</span><span class="op">+</span><span class="kw">)</span><span class="vs">_'</span>, filename).group(<span class="dv">1</span>))</span>
+<span id="cb9-10"><a href="" aria-label="10"></a>    wav, sr <span class="op">=</span> sf.read(os.path.join(data_dir, filename))</span>
+<span id="cb9-11"><a href="" aria-label="11"></a>    wav <span class="op">=</span> wav <span class="op">/</span> np.<span class="bu">max</span>(np.<span class="bu">abs</span>(wav))</span>
+<span id="cb9-12"><a href="" aria-label="12"></a>    wav <span class="op">=</span> wav[:, <span class="dv">0</span>][<span class="dv">0</span>:sr <span class="op">*</span> <span class="dv">4</span>]</span>
+<span id="cb9-13"><a href="" aria-label="13"></a>    freqs, _, S <span class="op">=</span> signal.stft(wav, fs<span class="op">=</span>sr, nperseg<span class="op">=</span><span class="dv">4096</span>, nfft<span class="op">=</span><span class="dv">4096</span>, noverlap<span class="op">=</span><span class="dv">4096</span> <span class="op">-</span> <span class="dv">882</span>)</span>
+<span id="cb9-14"><a href="" aria-label="14"></a>    S <span class="op">=</span> S[:, :<span class="op">-</span><span class="dv">2</span>]</span>
+<span id="cb9-15"><a href="" aria-label="15"></a>    half <span class="op">=</span> <span class="bu">len</span>(freqs) <span class="op">//</span> <span class="dv">2</span></span>
+<span id="cb9-16"><a href="" aria-label="16"></a>    S_abs <span class="op">=</span> np.<span class="bu">abs</span>(S[:half, :])</span>
+<span id="cb9-17"><a href="" aria-label="17"></a>    S_abs <span class="op">=</span> S_abs <span class="op">/</span> np.<span class="bu">max</span>(S_abs)</span>
+<span id="cb9-18"><a href="" aria-label="18"></a>    W1, H1, _ <span class="op">=</span> convolutive_nmf(S_abs, rank<span class="op">=</span><span class="dv">1</span>, T<span class="op">=</span>T, itmax<span class="op">=</span><span class="dv">10</span>, eps<span class="op">=</span><span class="fl">1e-16</span>, tol<span class="op">=</span><span class="dv">0</span>, print_it<span class="op">=</span><span class="dv">10</span>, n_iter_inner<span class="op">=</span><span class="dv">10</span>, init<span class="op">=</span><span class="st">"separable"</span>, verbose<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb9-19"><a href="" aria-label="19"></a>    Wlist.append(W1[:, :, <span class="dv">0</span>])</span>
+<span id="cb9-20"><a href="" aria-label="20"></a></span>
+<span id="cb9-21"><a href="" aria-label="21"></a>rank <span class="op">=</span> <span class="bu">len</span>(Wlist)</span>
+<span id="cb9-22"><a href="" aria-label="22"></a>W <span class="op">=</span> np.stack(Wlist, axis<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb9-23"><a href="" aria-label="23"></a>perm <span class="op">=</span> np.argsort(names)</span>
+<span id="cb9-24"><a href="" aria-label="24"></a>W <span class="op">=</span> W[:, :, perm]</span>
+<span id="cb9-25"><a href="" aria-label="25"></a>names_music <span class="op">=</span> [<span class="st">"G2"</span>, <span class="st">"A2"</span>, <span class="st">"F3"</span>, <span class="st">"G3"</span>, <span class="st">"A3"</span>, <span class="st">"Bb3"</span>, <span class="st">"C4"</span>, <span class="st">"D4"</span>, <span class="st">"F4"</span>, <span class="st">"G4"</span>, <span class="st">"Bb4"</span>, <span class="st">"C5"</span>, <span class="st">"D5"</span>, <span class="st">"F5"</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="transcribing-by-convolutive-regression" class="slide level2 center">
+<h2>Transcribing by convolutive regression</h2>
+<p>With templates <span class="math inline">\(W\)</span> fixed, transcribing the 8-second excerpt (six notes + two chords) now only requires estimating the activations <span class="math inline">\(H\)</span>, by convolutive regression against the fixed dictionary:</p>
+<div id="c706d856" class="cell" data-execution_count="21">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="" aria-label="1"></a><span class="im">from</span> tensorly_hdr.cnmf <span class="im">import</span> convolutive_regression</span>
+<span id="cb10-2"><a href="" aria-label="2"></a></span>
+<span id="cb10-3"><a href="" aria-label="3"></a>t_1, t_2 <span class="op">=</span> <span class="dv">0</span>, <span class="dv">8</span> <span class="op">*</span> sr</span>
+<span id="cb10-4"><a href="" aria-label="4"></a>song_tr <span class="op">=</span> song[t_1:t_2]</span>
+<span id="cb10-5"><a href="" aria-label="5"></a>frequencies, times, Sxx <span class="op">=</span> signal.stft(song_tr, fs<span class="op">=</span>sr, nperseg<span class="op">=</span><span class="dv">4096</span>, nfft<span class="op">=</span><span class="dv">4096</span>, noverlap<span class="op">=</span><span class="dv">4096</span> <span class="op">-</span> <span class="dv">882</span>)</span>
+<span id="cb10-6"><a href="" aria-label="6"></a>Sxx <span class="op">=</span> Sxx[:, :<span class="op">-</span><span class="dv">2</span>]</span>
+<span id="cb10-7"><a href="" aria-label="7"></a>times <span class="op">=</span> times[:<span class="op">-</span><span class="dv">2</span>]</span>
+<span id="cb10-8"><a href="" aria-label="8"></a>half_freqs <span class="op">=</span> <span class="bu">len</span>(frequencies) <span class="op">//</span> <span class="dv">2</span></span>
+<span id="cb10-9"><a href="" aria-label="9"></a>frequencies <span class="op">=</span> frequencies[:half_freqs]</span>
+<span id="cb10-10"><a href="" aria-label="10"></a>Sxx <span class="op">=</span> Sxx[:half_freqs, :]</span>
+<span id="cb10-11"><a href="" aria-label="11"></a>Sxx_dB <span class="op">=</span> <span class="dv">20</span> <span class="op">*</span> np.log10(np.<span class="bu">abs</span>(Sxx) <span class="op">+</span> <span class="fl">1e-10</span>)</span>
+<span id="cb10-12"><a href="" aria-label="12"></a>Sxx_abs <span class="op">=</span> np.<span class="bu">abs</span>(Sxx)</span>
+<span id="cb10-13"><a href="" aria-label="13"></a></span>
+<span id="cb10-14"><a href="" aria-label="14"></a>H_tr, err <span class="op">=</span> convolutive_regression(Sxx_abs, W, itmax<span class="op">=</span><span class="dv">50</span>, verbose<span class="op">=</span><span class="va">False</span>, print_it<span class="op">=</span><span class="dv">25</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="transcription-result" class="slide level2 center">
+<h2>Transcription result</h2>
+<div style="text-align:center;">
+<div id="a20e093a" class="cell" data-execution_count="22">
+<div class="cell-output cell-output-display">
+<div>
+<figure>
+<p><img data-src="index_files/figure-revealjs/cell-23-output-1.png" width="1259" height="587"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<p>The two five-note chords are correctly identified, with imperfect but plausible relative activations.</p>
+</section>
+<section id="transcription-performance" class="slide level2 center">
+<h2>Transcription performance</h2>
+<p>F-measure (%) at 50ms tolerance, per piano [Wu2022]:</p>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>Method</th>
+<th>EN1</th>
+<th>EN2</th>
+<th>AkB1</th>
+<th>AkB2</th>
+<th>AkC</th>
+<th>AkS</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>CNMF</td>
+<td><strong>88</strong></td>
+<td><strong>80</strong></td>
+<td><strong>95</strong></td>
+<td><strong>90</strong></td>
+<td>94</td>
+<td><strong>90</strong></td>
+</tr>
+<tr class="even">
+<td>AD [Cheng2016]</td>
+<td>82</td>
+<td>69</td>
+<td>68</td>
+<td>73</td>
+<td>61</td>
+<td>69</td>
+</tr>
+<tr class="odd">
+<td>DNN [Kong2020]</td>
+<td><strong>89</strong></td>
+<td>77</td>
+<td><strong>98</strong></td>
+<td><strong>95</strong></td>
+<td><strong>98</strong></td>
+<td>87</td>
+</tr>
+</tbody>
+</table>
+<p>CNMF with weak supervision reaches performance close to fully supervised deep networks.</p>
+<div style="font-size:70%; text-align:center;">
+<p>Note-wise <strong>precision</strong> <span class="math inline">\(= \mathrm{TP}/(\mathrm{TP}+\mathrm{FP})\)</span>, <strong>recall</strong> <span class="math inline">\(= \mathrm{TP}/(\mathrm{TP}+\mathrm{FN})\)</span>, <strong>F-measure</strong> <span class="math inline">\(= 2\,\mathrm{PR}/(\mathrm{P}+\mathrm{R})\)</span> (TP/FP/FN counted at 50ms tolerance on onsets).</p>
+</div>
+</section>
+<section id="generalization" class="slide level2 center">
+<h2>Generalization</h2>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>Train \ Test</th>
+<th>AkC</th>
+<th>EN1</th>
+<th>EN2</th>
+<th>AkB1</th>
+<th>AkB2</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>AkC</td>
+<td><strong>94</strong></td>
+<td>74</td>
+<td>74</td>
+<td>77</td>
+<td>77</td>
+</tr>
+<tr class="even">
+<td>EN1</td>
+<td>74</td>
+<td><strong>88</strong></td>
+<td>76</td>
+<td>67</td>
+<td>68</td>
+</tr>
+</tbody>
+</table>
+<p>Performance drops sharply across pianos: the pipeline is <strong>not robust to distribution shift</strong>.</p>
+</section>
+<section id="takeaways-and-research-directions" class="slide level2 center">
+<h2>Takeaways and research directions</h2>
+<ul>
+<li>Single-note spectrograms are nearly low-rank, but the additive mixture is not exactly low-rank: phase interference and octave errors are structural, not just numerical</li>
+<li>Plain NMF-KL is a good first analysis tool, but lacks a reliable rank / uniqueness story for chords</li>
+<li>Convolutive NMF with pretrained templates recovers competitive transcriptions with <strong>weak supervision only</strong></li>
+<li>Open problems: robustness to instrument/recording shift, joint source separation and AMT — part of my ongoing research project</li>
+</ul>
+
+</section></section>
+    </div>
+  <div class="quarto-auto-generated-content" style="display: none;">
+<div class="footer footer-default">
+<p>Masterclass — Nonnegative LRA</p>
+</div>
+</div></div>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script>
+  <script src="index_files/libs/revealjs/dist/reveal.js"></script>
+  <!-- reveal.js plugins -->
+  <script src="index_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="index_files/libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="index_files/libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="index_files/libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="index_files/libs/revealjs/plugin/quarto-support/support.js"></script>
+  
+
+  <script src="index_files/libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="index_files/libs/revealjs/plugin/search/search.js"></script>
+  <script src="index_files/libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="index_files/libs/revealjs/plugin/math/math.js"></script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+'controlsAuto': false,
+'previewLinksAuto': false,
+'pdfSeparateFragments': false,
+'autoAnimateEasing': "ease",
+'autoAnimateDuration': 1,
+'autoAnimateUnmatched': true,
+'jumpToSlide': true,
+'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleScrollView(event)\"><kbd>r</kbd> Scroll View Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"5\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true},
+'smaller': false,
+ 
+        // Display controls in the bottom right corner
+        controls: true,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: false,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'edges',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: 'c/t',
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: true,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: true,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'linear',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: false,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'fade',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'none',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1200,
+
+        height: 750,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 0.12,
+
+        // Bounds for smallest/largest possible scale to apply to content
+        minScale: 0.5,
+
+        maxScale: 2,
+
+        math: {
+          mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, QuartoSupport,
+
+          RevealMath,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    <script id="quarto-html-after-body" type="application/javascript">
+      window.document.addEventListener("DOMContentLoaded", function (event) {
+        const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+        tabsets.forEach(function(tabset) {
+          const tabby = new Tabby('#' + tabset.id);
+        });
+        const isCodeAnnotation = (el) => {
+          for (const clz of el.classList) {
+            if (clz.startsWith('code-annotation-')) {                     
+              return true;
+            }
+          }
+          return false;
+        }
+        const onCopySuccess = function(e) {
+          // button target
+          const button = e.trigger;
+          // don't keep focus
+          button.blur();
+          // flash "checked"
+          button.classList.add('code-copy-button-checked');
+          var currentTitle = button.getAttribute("title");
+          button.setAttribute("title", "Copied!");
+          let tooltip;
+          if (window.bootstrap) {
+            button.setAttribute("data-bs-toggle", "tooltip");
+            button.setAttribute("data-bs-placement", "left");
+            button.setAttribute("data-bs-title", "Copied!");
+            tooltip = new bootstrap.Tooltip(button, 
+              { trigger: "manual", 
+                customClass: "code-copy-button-tooltip",
+                offset: [0, -8]});
+            tooltip.show();    
+          }
+          setTimeout(function() {
+            if (tooltip) {
+              tooltip.hide();
+              button.removeAttribute("data-bs-title");
+              button.removeAttribute("data-bs-toggle");
+              button.removeAttribute("data-bs-placement");
+            }
+            button.setAttribute("title", currentTitle);
+            button.classList.remove('code-copy-button-checked');
+          }, 1000);
+          // clear code selection
+          e.clearSelection();
+        }
+        const getTextToCopy = function(trigger) {
+          const outerScaffold = trigger.parentElement.cloneNode(true);
+          const codeEl = outerScaffold.querySelector('code');
+          for (const childEl of codeEl.children) {
+            if (isCodeAnnotation(childEl)) {
+              childEl.remove();
+            }
+          }
+          return codeEl.innerText;
+        }
+        const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+          text: getTextToCopy
+        });
+        clipboard.on('success', onCopySuccess);
+        if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+          const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+            text: getTextToCopy,
+            container: window.document.getElementById('quarto-embedded-source-code-modal')
+          });
+          clipboardModal.on('success', onCopySuccess);
+        }
+          var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+          var mailtoRegex = new RegExp(/^mailto:/);
+            var filterRegex = new RegExp('/' + window.location.host + '/');
+          var isInternal = (href) => {
+              return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+          }
+          // Inspect non-navigation links and adorn them if external
+         var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+          for (var i=0; i<links.length; i++) {
+            const link = links[i];
+            if (!isInternal(link.href)) {
+              // undo the damage that might have been done by quarto-nav.js in the case of
+              // links that we want to consider external
+              if (link.dataset.originalHref !== undefined) {
+                link.href = link.dataset.originalHref;
+              }
+            }
+          }
+        function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+          const config = {
+            allowHTML: true,
+            maxWidth: 500,
+            delay: 100,
+            arrow: false,
+            appendTo: function(el) {
+                return el.closest('section.slide') || el.parentElement;
+            },
+            interactive: true,
+            interactiveBorder: 10,
+            theme: 'light-border',
+            placement: 'bottom-start',
+          };
+          if (contentFn) {
+            config.content = contentFn;
+          }
+          if (onTriggerFn) {
+            config.onTrigger = onTriggerFn;
+          }
+          if (onUntriggerFn) {
+            config.onUntrigger = onUntriggerFn;
+          }
+            config['offset'] = [0,0];
+            config['maxWidth'] = 700;
+          window.tippy(el, config); 
+        }
+        const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+        for (var i=0; i<noterefs.length; i++) {
+          const ref = noterefs[i];
+          tippyHover(ref, function() {
+            // use id or data attribute instead here
+            let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+            try { href = new URL(href).hash; } catch {}
+            const id = href.replace(/^#\/?/, "");
+            const note = window.document.getElementById(id);
+            if (note) {
+              return note.innerHTML;
+            } else {
+              return "";
+            }
+          });
+        }
+        const findCites = (el) => {
+          const parentEl = el.parentElement;
+          if (parentEl) {
+            const cites = parentEl.dataset.cites;
+            if (cites) {
+              return {
+                el,
+                cites: cites.split(' ')
+              };
+            } else {
+              return findCites(el.parentElement)
+            }
+          } else {
+            return undefined;
+          }
+        };
+        var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+        for (var i=0; i<bibliorefs.length; i++) {
+          const ref = bibliorefs[i];
+          const citeInfo = findCites(ref);
+          if (citeInfo) {
+            tippyHover(citeInfo.el, function() {
+              var popup = window.document.createElement('div');
+              citeInfo.cites.forEach(function(cite) {
+                var citeDiv = window.document.createElement('div');
+                citeDiv.classList.add('hanging-indent');
+                citeDiv.classList.add('csl-entry');
+                var biblioDiv = window.document.getElementById('ref-' + cite);
+                if (biblioDiv) {
+                  citeDiv.innerHTML = biblioDiv.innerHTML;
+                }
+                popup.appendChild(citeDiv);
+              });
+              return popup.innerHTML;
+            });
+          }
+        }
+      });
+      </script>
+    
+
+</body></html>
