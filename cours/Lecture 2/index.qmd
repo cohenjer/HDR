@@ -1087,3 +1087,9 @@ The same regression problems reappear inside NMF, nonnegative CP, nonnegative Tu
 
 :::
 
+::: {.callout-important}
+
+Link for Lecture 3 lab session: __https://github.com/cohenjer/HDR/tree/main/cours/Lecture%203__
+
+:::
+
